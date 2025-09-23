@@ -65,7 +65,7 @@ ZunResult TextHelper::CreateTextBuffer()
     {
         std::printf("%s\n", TTF_GetError());
 
-        GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_FONTS_NOT_FOUND);
+        g_GameErrorContext.Fatal(TH_ERR_FONTS_NOT_FOUND);
         return ZUN_ERROR;
     }
 

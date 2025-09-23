@@ -325,7 +325,7 @@ i32 GameWindow::InitD3dRendering(void)
             //            {
             //                present_params.BackBufferFormat = D3DFMT_X8R8G8B8;
             g_Supervisor.cfg.colorMode16bit = 0;
-            GameErrorContext::Log(&g_GameErrorContext, TH_ERR_SCREEN_INIT_32BITS);
+            g_GameErrorContext.Log(TH_ERR_SCREEN_INIT_32BITS);
             //            }
             //            else
             //            {

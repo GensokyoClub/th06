@@ -1295,15 +1295,14 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
     return ZUN_SUCCESS;
 }
 
+#define AnmF32Arg(index) (*(f32 *)&curInstr->args[index])
+#define AnmI32Arg(index) (*(i32 *)&curInstr->args[index])
+#define AnmU32Arg(index) (*(u32 *)&curInstr->args[index])
+#define AnmI16Arg(index) (*(i16 *)&curInstr->args[index])
+
 i32 AnmManager::ExecuteScript(AnmVm *vm)
 {
     AnmRawInstr *curInstr;
-    u32 *local_c;
-    f32 *local_10;
-    f32 *local_14;
-    f32 *local_18;
-    f32 *local_1c;
-    u32 *local_20;
     AnmRawInstr *nextInstr;
     ZunColor local_28;
     ZunColor local_2c;
@@ -1333,28 +1332,27 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
             return 1;
         case AnmOpcode_SetActiveSprite:
             vm->flags.isVisible = 1;
-            this->SetActiveSprite(vm, curInstr->args[0] + this->spriteIndices[vm->anmFileIndex]);
+            this->SetActiveSprite(vm, AnmI32Arg(0) + this->spriteIndices[vm->anmFileIndex]);
             vm->timeOfLastSpriteSet = vm->currentTimeInScript.AsFrames();
             break;
         case AnmOpcode_SetRandomSprite:
             vm->flags.isVisible = 1;
-            local_c = &curInstr->args[0];
-            this->SetActiveSprite(vm, local_c[0] + g_Rng.GetRandomU16InRange(local_c[1]) +
+            this->SetActiveSprite(vm, AnmI32Arg(0) + g_Rng.GetRandomU16InRange(AnmI32Arg(1)) +
                                           this->spriteIndices[vm->anmFileIndex]);
             vm->timeOfLastSpriteSet = vm->currentTimeInScript.AsFrames();
             break;
         case AnmOpcode_SetScale:
-            vm->scaleX = *(f32 *)&curInstr->args[0];
-            vm->scaleY = *(f32 *)&curInstr->args[1];
+            vm->scaleX = AnmF32Arg(0);
+            vm->scaleY = AnmF32Arg(1);
             break;
         case AnmOpcode_SetAlpha:
-            COLOR_SET_COMPONENT(vm->color, COLOR_ALPHA_BYTE_IDX, curInstr->args[0] & 0xff);
+            COLOR_SET_COMPONENT(vm->color, COLOR_ALPHA_BYTE_IDX, AnmI32Arg(0) & 0xff);
             break;
         case AnmOpcode_SetColor:
-            vm->color = COLOR_COMBINE_ALPHA(curInstr->args[0], vm->color);
+            vm->color = COLOR_COMBINE_ALPHA(AnmI32Arg(0), vm->color);
             break;
         case AnmOpcode_Jump:
-            vm->currentInstruction = (AnmRawInstr *)(((u8 *)vm->beginingOfScript->args) + curInstr->args[0] - 4);
+            vm->currentInstruction = (AnmRawInstr *)(((u8 *)vm->beginingOfScript->args) + AnmI32Arg(0) - 4);
             vm->currentTimeInScript.current = vm->currentInstruction->time;
             continue;
         case AnmOpcode_FlipX:
@@ -1362,44 +1360,39 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
             vm->scaleX *= -1.f;
             break;
         case AnmOpcode_25:
-            vm->flags.flag5 = curInstr->args[0];
+            vm->flags.flag5 = AnmI32Arg(0);
             break;
         case AnmOpcode_FlipY:
             vm->flags.flip ^= 2;
             vm->scaleY *= -1.f;
             break;
         case AnmOpcode_SetRotation:
-            local_10 = (f32 *)&curInstr->args[0];
-            vm->rotation.x = *local_10++;
-            vm->rotation.y = *local_10++;
-            vm->rotation.z = *local_10;
+            vm->rotation.x = AnmF32Arg(0);
+            vm->rotation.y = AnmF32Arg(1);
+            vm->rotation.z = AnmF32Arg(2);
             break;
         case AnmOpcode_SetAngleVel:
-            local_14 = (f32 *)&curInstr->args[0];
-            vm->angleVel.x = *local_14++;
-            vm->angleVel.y = *local_14++;
-            vm->angleVel.z = *local_14;
+            vm->angleVel.x = AnmF32Arg(0);
+            vm->angleVel.y = AnmF32Arg(1);
+            vm->angleVel.z = AnmF32Arg(2);
             break;
         case AnmOpcode_SetScaleSpeed:
-            local_18 = (f32 *)&curInstr->args[0];
-            vm->scaleInterpFinalX = *local_18++;
-            vm->scaleInterpFinalY = *local_18;
+            vm->scaleInterpFinalX = AnmF32Arg(0);
+            vm->scaleInterpFinalY = AnmF32Arg(1);
             vm->scaleInterpEndTime = 0;
             break;
         case AnmOpcode_30:
-            local_1c = (f32 *)&curInstr->args[0];
-            vm->scaleInterpFinalX = *local_1c++;
-            vm->scaleInterpFinalY = *local_1c++;
-            vm->scaleInterpEndTime = *(u16 *)local_1c;
+            vm->scaleInterpFinalX = AnmF32Arg(0);
+            vm->scaleInterpFinalY = AnmF32Arg(1);
+            vm->scaleInterpEndTime = AnmI16Arg(2);
             vm->scaleInterpTime.InitializeForPopup();
             vm->scaleInterpInitialX = vm->scaleX;
             vm->scaleInterpInitialY = vm->scaleY;
             break;
         case AnmOpcode_Fade:
-            local_20 = (u32 *)&curInstr->args[0];
             vm->alphaInterpInitial = vm->color;
-            vm->alphaInterpFinal = COLOR_SET_ALPHA2(vm->color, local_20[0]);
-            vm->alphaInterpEndTime = local_20[1];
+            vm->alphaInterpFinal = COLOR_SET_ALPHA2(vm->color, AnmU32Arg(0));
+            vm->alphaInterpEndTime = AnmU32Arg(1);
             vm->alphaInterpTime.InitializeForPopup();
             break;
         case AnmOpcode_SetBlendAdditive:
@@ -1411,12 +1404,11 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
         case AnmOpcode_SetPosition:
             if (vm->flags.flag5 == 0)
             {
-                vm->pos = ZunVec3(*(f32 *)&curInstr->args[0], *(f32 *)&curInstr->args[1], *(f32 *)&curInstr->args[2]);
+                vm->pos = ZunVec3(AnmF32Arg(0), AnmF32Arg(1), AnmF32Arg(2));
             }
             else
             {
-                vm->posOffset =
-                    ZunVec3(*(f32 *)&curInstr->args[0], *(f32 *)&curInstr->args[1], *(f32 *)&curInstr->args[2]);
+                vm->posOffset = ZunVec3(AnmF32Arg(0), AnmF32Arg(1), AnmF32Arg(2));
             }
             break;
         case AnmOpcode_PosTimeAccel:
@@ -1430,15 +1422,16 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
         PosTimeDoStuff:
             if (vm->flags.flag5 == 0)
             {
-                memcpy(&vm->posInterpInitial, &vm->pos, sizeof(ZunVec3));
+                // This was supposedly originally a memcpy, but any sane compiler should compile a struct assignment to a memcpy
+                vm->posInterpInitial = vm->pos;
             }
             else
             {
-                memcpy(&vm->posInterpInitial, &vm->posOffset, sizeof(ZunVec3));
+                // This was supposedly originally a memcpy, but any sane compiler should compile a struct assignment to a memcpy
+                vm->posInterpInitial = vm->posOffset;
             }
-            vm->posInterpFinal =
-                ZunVec3(*(f32 *)&curInstr->args[0], *(f32 *)&curInstr->args[1], *(f32 *)&curInstr->args[2]);
-            vm->posInterpEndTime = curInstr->args[3];
+            vm->posInterpFinal = ZunVec3(AnmF32Arg(0), AnmF32Arg(1), AnmF32Arg(2));
+            vm->posInterpEndTime = AnmI32Arg(3);
             vm->posInterpTime.InitializeForPopup();
             break;
         case AnmOpcode_StopHide:
@@ -1453,10 +1446,10 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
         yolo:
             nextInstr = NULL;
             curInstr = vm->beginingOfScript;
-            while ((curInstr->opcode != AnmOpcode_InterruptLabel || vm->pendingInterrupt != curInstr->args[0]) &&
+            while ((curInstr->opcode != AnmOpcode_InterruptLabel || vm->pendingInterrupt != AnmI32Arg(0)) &&
                    curInstr->opcode != AnmOpcode_Exit && curInstr->opcode != AnmOpcode_ExitHide)
             {
-                if (curInstr->opcode == AnmOpcode_InterruptLabel && curInstr->args[0] == 0xffffffff)
+                if (curInstr->opcode == AnmOpcode_InterruptLabel && AnmI32Arg(0) == -1)
                 {
                     nextInstr = curInstr;
                 }
@@ -1481,16 +1474,16 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
             vm->flags.isVisible = 1;
             continue;
         case AnmOpcode_SetVisibility:
-            vm->flags.isVisible = curInstr->args[0];
+            vm->flags.isVisible = AnmI32Arg(0);
             break;
         case AnmOpcode_23:
             vm->flags.anchor = AnmVmAnchor_TopLeft;
             break;
         case AnmOpcode_SetAutoRotate:
-            vm->autoRotate = curInstr->args[0];
+            vm->autoRotate = AnmI32Arg(0);
             break;
         case AnmOpcode_27:
-            vm->uvScrollPos.x += *(f32 *)&curInstr->args[0];
+            vm->uvScrollPos.x += AnmF32Arg(0);
             if (vm->uvScrollPos.x >= 1.0f)
             {
                 vm->uvScrollPos.x -= 1.0f;
@@ -1501,7 +1494,7 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
             }
             break;
         case AnmOpcode_28:
-            vm->uvScrollPos.y += *(f32 *)&curInstr->args[0];
+            vm->uvScrollPos.y += AnmF32Arg(0);
             if (vm->uvScrollPos.y >= 1.0f)
             {
                 vm->uvScrollPos.y -= 1.0f;
@@ -1512,7 +1505,7 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
             }
             break;
         case AnmOpcode_31:
-            vm->flags.zWriteDisable = curInstr->args[0];
+            vm->flags.zWriteDisable = AnmI32Arg(0);
             break;
         case AnmOpcode_Nop:
         case AnmOpcode_InterruptLabel:
@@ -1641,6 +1634,11 @@ stop:
     vm->currentTimeInScript.Tick();
     return 0;
 }
+
+#undef AnmI32Arg
+#undef AnmF32Arg
+#undef AnmU32Arg
+#undef AnmI16Arg
 
 void AnmManager::DrawTextToSprite(u32 textureDstIdx, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight,
                                   i32 fontWidth, i32 fontHeight, ZunColor textColor, ZunColor shadowColor,

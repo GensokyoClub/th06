@@ -312,12 +312,6 @@ struct ZunViewport
 
 #define RADIANS(degrees) ((degrees * ZUN_PI / 180.0f))
 
-#define sincos(in, out_sine, out_cosine)                                                                               \
-    {                                                                                                                  \
-        out_sine = std::sin(in);                                                                                       \
-        out_cosine = std::cos(in);                                                                                     \
-    }
-
 inline void fsincos_wrapper(f32 *out_sine, f32 *out_cosine, f32 angle)
 {
     *out_sine = std::sin(angle);

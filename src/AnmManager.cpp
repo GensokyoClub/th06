@@ -959,7 +959,7 @@ ZunResult AnmManager::Draw(AnmVm *vm)
         return ZUN_ERROR;
     }
     z = vm->rotation.z;
-    sincos(z, zSine, zCosine);
+    fsincos_wrapper(&zSine, &zCosine, z);
     xOffset = rintf(vm->pos.x);
     yOffset = rintf(vm->pos.y);
     spriteXCenter = rintf((vm->sprite->widthPx * vm->scaleX) / 2.0f);

@@ -3,6 +3,7 @@
 #include "inttypes.hpp"
 #include "ZunResult.hpp"
 #include <windows.h>
+#include <mmsystem.h>
 
 namespace th06
 {

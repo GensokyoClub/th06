@@ -132,7 +132,7 @@ ZunResult MidiDevice::UnprepareHeader(LPMIDIHDR pmh)
         utils::DebugPrint2("error :\n");
     }
 
-    if (this->midiOutDev.handle == 0)
+    if (this->handle == 0)
     {
         utils::DebugPrint2("error :\n");
     }

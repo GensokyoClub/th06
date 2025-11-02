@@ -485,12 +485,6 @@ void GameWindow::InitD3dDevice(void)
 
     g_glFuncTable.glEnable(GL_TEXTURE_2D);
     g_glFuncTable.glEnableClientState(GL_VERTEX_ARRAY);
-
-    if (((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1) != 0)
-    {
-        g_glFuncTable.glEnable(GL_DEPTH_TEST);
-    }
-
     g_glFuncTable.glEnable(GL_BLEND);
 
     if (((g_Supervisor.cfg.opts >> GCOS_SUPPRESS_USE_OF_GOROUD_SHADING) & 1) == 1)
@@ -502,6 +496,7 @@ void GameWindow::InitD3dDevice(void)
 
     if (((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1) == 0)
     {
+        g_glFuncTable.glEnable(GL_DEPTH_TEST);
         g_glFuncTable.glDepthFunc(GL_LEQUAL);
     }
     else

@@ -90,7 +90,7 @@ project "th06"
 
   filter { "system:windows", "action:vs*" }
     warnings "Extra"
-    links { "SDL2", "SDL2main", "SDL2_image", "SDL2_ttf" }
+    links { "SDL2", "SDL2main", "SDL2_image", "SDL2_ttf", "iconv" }
 
     local SDL2_DIR       = os.getenv("SDL2_DIR")
     local SDL2_IMAGE_DIR = os.getenv("SDL2_IMAGE_DIR")
@@ -119,8 +119,8 @@ project "th06"
   filter {}
 
   filter { "system:windows", "action:not vs*" }
-    local pc_cflags = os.outputof("pkg-config --cflags sdl2 SDL2_image SDL2_ttf") or ""
-    local pc_libs   = os.outputof("pkg-config --libs   sdl2 SDL2_image SDL2_ttf") or ""
+    local pc_cflags = os.outputof("pkg-config --cflags sdl2 SDL2_image SDL2_ttf iconv") or ""
+    local pc_libs   = os.outputof("pkg-config --libs   sdl2 SDL2_image SDL2_ttf iconv") or ""
     if #pc_cflags > 0 then buildoptions { pc_cflags } end
     if #pc_libs   > 0 then linkoptions  { pc_libs }   end
   filter {}

@@ -88,7 +88,7 @@ RenderResult GameWindow::Render()
             {
                 g_LastFrameTime = slowdown;
             }
-            delta = fabs(slowdown - g_LastFrameTime);
+            delta = std::fabs(slowdown - g_LastFrameTime);
             if (delta >= FRAME_TIME)
             {
                 do
@@ -418,7 +418,7 @@ i32 GameWindow::InitD3dRendering(void)
     half_height = (float)GAME_WINDOW_HEIGHT / 2.0;
     aspect_ratio = (float)GAME_WINDOW_WIDTH / (float)GAME_WINDOW_HEIGHT;
     field_of_view_y = 0.52359879; // PI / 6.0f
-    camera_distance = half_height / tanf(field_of_view_y / 2.0f);
+    camera_distance = half_height / ZUN_TANF(field_of_view_y / 2.0f);
     up.x = 0.0;
     up.y = 1.0;
     up.z = 0.0;

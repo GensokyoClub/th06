@@ -1095,7 +1095,7 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
     else
     {
         scaledXCenter = vm->sprite->widthPx * vm->scaleX / 2.0f;
-        worldTransformMatrix.m[3][0] = std::fabsf(scaledXCenter) + vm->pos.x;
+        worldTransformMatrix.m[3][0] = ZUN_FABSF(scaledXCenter) + vm->pos.x;
     }
 
     if ((vm->flags.anchor & AnmVmAnchor_Top) == 0)
@@ -1105,7 +1105,7 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
     else
     {
         scaledYCenter = vm->sprite->heightPx * vm->scaleY / 2.0f;
-        worldTransformMatrix.m[3][1] = -vm->pos.y - std::fabsf(scaledYCenter);
+        worldTransformMatrix.m[3][1] = -vm->pos.y - ZUN_FABSF(scaledYCenter);
     }
 
     worldTransformMatrix.m[3][2] = vm->pos.z;

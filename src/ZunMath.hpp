@@ -7,6 +7,21 @@
 #include <cmath>
 #include <cstring>
 
+// EoSD makes extensive use of the float versions of math functions made standard in C99
+//   These were mostly added to C++ with C++17, but GNU bikeshedded so hard, they didn't add
+//   them to their headers until 2023. To allow compilation where the older headers are
+//   still used, these macros force the overloaded float version of the base math function.
+#define ZUN_SINF(angle)  (std::sin((f32)(angle)))
+#define ZUN_COSF(angle)  (std::cos((f32)(angle)))
+#define ZUN_TANF(angle)  (std::tan((f32)(angle)))
+#define ZUN_SQRTF(n)     (std::sqrt((f32)(n)))
+#define ZUN_FABSF(n)     (std::fabs((f32)(n)))
+#define ZUN_FMODF(x, y)  (std::fmod((f32)(x), (f32)(y)))
+#define ZUN_ATAN2F(x, y) (std::atan2((f32)(x), (f32)(y)))
+#define ZUN_POWF(x, y)   (std::pow((f32)(x), (f32)(y)))
+#define ZUN_RINTF(n)     (std::rintf((f32)(x)))
+
+
 namespace th06
 {
 
@@ -30,7 +45,7 @@ struct ZunVec2
 
     f32 VectorLength()
     {
-        return sqrt(this->x * this->x + this->y * this->y);
+        return std::sqrt((f64) (this->x * this->x + this->y * this->y));
     }
 
     f64 VectorLengthF64()
@@ -121,7 +136,7 @@ struct ZunVec3
 
     f32 getMagnitude()
     {
-        return std::sqrtf(this->x * this->x + this->y * this->y + this->z * this->z);
+        return ZUN_SQRTF(this->x * this->x + this->y * this->y + this->z * this->z);
     }
 
     void getNormalized(ZunVec3 &norm)
@@ -220,9 +235,9 @@ struct ZunMatrix
         // Rotation matrix takes a counter-clockwise angle
         // angle = -angle;
 
-        f32 angleCos = std::cosf(angle);
+        f32 angleCos = ZUN_COSF(angle);
         f32 negativeCos = 1 - angleCos;
-        f32 angleSin = std::sinf(angle);
+        f32 angleSin = ZUN_SINF(angle);
 
         ZunMatrix rotationMatrix;
 
@@ -329,8 +344,10 @@ inline f32 invertf(f32 x)
     return 1.f / x;
 }
 
+// TODO: Check value of x87 control word RC field in EoSD to verify this is actually correct
 inline f32 rintf(f32 float_in)
 {
+    // Was originally x87 frndint
     return std::round(float_in);
 }
 
@@ -401,7 +418,7 @@ inline void perspectiveMatrixFromFOV(f32 verticalFOV, f32 aspectRatio, f32 nearP
     // This should be uncommented if pixel off-by-one errors show up
     // g_glFuncTable.glTranslatef(0.5f / GAME_WINDOW_WIDTH, 0.5f / GAME_WINDOW_HEIGHT, 0.0f);
 
-    f32 vertical = std::tanf(verticalFOV / 2) * nearPlane;
+    f32 vertical = ZUN_TANF(verticalFOV / 2) * nearPlane;
     f32 horizontal = vertical * aspectRatio;
 
     g_glFuncTable.glFrustumf(-horizontal, horizontal, -vertical, vertical, nearPlane, farPlane);

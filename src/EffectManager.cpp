@@ -104,8 +104,8 @@ i32 EffectManager::EffectUpdateCallback4(Effect *effect)
 
     effect->pos2.getNormalized(normalizedPos);
 
-    verticalAngle = std::sinf(effect->angleRelated);
-    horizontalAngle = std::cosf(effect->angleRelated);
+    verticalAngle = ZUN_SINF(effect->angleRelated);
+    horizontalAngle = ZUN_COSF(effect->angleRelated);
 
     effect->quaternion.x = normalizedPos.x * verticalAngle;
     effect->quaternion.y = normalizedPos.y * verticalAngle;
@@ -167,8 +167,8 @@ i32 EffectManager::EffectCallbackAttract(Effect *effect)
         effect->position = effect->pos1;
 
         angle = g_Rng.GetRandomF32ZeroToOne() * ZUN_2PI - ZUN_PI;
-        effect->pos2.x = cosf(angle);
-        effect->pos2.y = sinf(angle);
+        effect->pos2.x = ZUN_COSF(angle);
+        effect->pos2.y = ZUN_SINF(angle);
         effect->pos2.z = 0.0;
     }
 
@@ -188,8 +188,8 @@ i32 EffectManager::EffectCallbackAttractSlow(Effect *effect)
         effect->position = effect->pos1;
 
         angle = g_Rng.GetRandomF32ZeroToOne() * ZUN_2PI - ZUN_PI;
-        effect->pos2.x = std::cosf(angle);
-        effect->pos2.y = std::sinf(angle);
+        effect->pos2.x = ZUN_COSF(angle);
+        effect->pos2.y = ZUN_SINF(angle);
         effect->pos2.z = 0.0;
     }
 

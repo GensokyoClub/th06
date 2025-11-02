@@ -726,7 +726,7 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                     else
                     {
                         curBullet->velocity += curBullet->ex4Acceleration * g_Supervisor.effectiveFramerateMultiplier;
-                        curBullet->angle = atan2f(curBullet->velocity.y, curBullet->velocity.x);
+                        curBullet->angle = ZUN_ATAN2F(curBullet->velocity.y, curBullet->velocity.x);
                     }
                 }
                 else if (curBullet->exFlags & 0x20)

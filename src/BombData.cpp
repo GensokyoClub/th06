@@ -64,10 +64,10 @@ void BombData::BombReimuACalc(Player *player)
             angle.x = g_Rng.GetRandomF32ZeroToOne() * ZUN_2PI - ZUN_PI;
 
             player->bombInfo.bombRegionVelocities[i].x =
-                cosf(angle.x) * player->bombInfo.reimuABombProjectilesRelated[i];
+                ZUN_COSF(angle.x) * player->bombInfo.reimuABombProjectilesRelated[i];
 
             player->bombInfo.bombRegionVelocities[i].y =
-                sinf(angle.x) * player->bombInfo.reimuABombProjectilesRelated[i];
+                ZUN_SINF(angle.x) * player->bombInfo.reimuABombProjectilesRelated[i];
             player->unk_838[i] = 0;
 
             for (bombSprite = &player->bombInfo.sprites[0][i * 4], bombIdx = 0; bombIdx < 4; bombIdx++, bombSprite++)
@@ -99,7 +99,7 @@ void BombData::BombReimuACalc(Player *player)
                 angle.x = bombPivot.x - player->bombInfo.bombRegionPositions[i].x;
                 angle.y = bombPivot.y - player->bombInfo.bombRegionPositions[i].y;
 
-                vecLength = std::sqrtf(angle.x * angle.x + angle.y * angle.y) /
+                vecLength = ZUN_SQRTF(angle.x * angle.x + angle.y * angle.y) /
                             (player->bombInfo.reimuABombProjectilesRelated[i] / 8.0f);
                 if (vecLength < 1.0f)
                 {
@@ -107,7 +107,7 @@ void BombData::BombReimuACalc(Player *player)
                 }
                 angle.x = angle.x / vecLength + player->bombInfo.bombRegionVelocities[i].x;
                 angle.y = angle.y / vecLength + player->bombInfo.bombRegionVelocities[i].y;
-                vecLength = std::sqrtf(angle.x * angle.x + angle.y * angle.y);
+                vecLength = ZUN_SQRTF(angle.x * angle.x + angle.y * angle.y);
 
                 player->bombInfo.reimuABombProjectilesRelated[i] = ZUN_MIN(vecLength, 10.0f);
 
@@ -375,9 +375,9 @@ void BombData::BombMarisaACalc(Player *player)
 
             starAngle = i * ZUN_2PI / 8.0f;
 
-            player->bombInfo.bombRegionVelocities[i].x = cosf(starAngle) * 2;
+            player->bombInfo.bombRegionVelocities[i].x = ZUN_COSF(starAngle) * 2;
 
-            player->bombInfo.bombRegionVelocities[i].y = sinf(starAngle) * 2;
+            player->bombInfo.bombRegionVelocities[i].y = ZUN_SINF(starAngle) * 2;
             player->bombInfo.bombRegionVelocities[i].z = 0.0f;
         }
         g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB_REIMARI);
@@ -530,8 +530,8 @@ void BombData::BombMarisaBDraw(Player *player)
     {
         spriteAngle = (((ZUN_PI / 5) * i) / 3.0f - ZUN_PI) + ((2 * ZUN_PI) / 5);
         bombSprite->pos = player->positionCenter;
-        bombSprite->pos.x += (cosf(spriteAngle) * bombSprite->sprite->heightPx * bombSprite->scaleY) / 2.0f;
-        bombSprite->pos.y += (sinf(spriteAngle) * bombSprite->sprite->heightPx * bombSprite->scaleY) / 2.0f;
+        bombSprite->pos.x += (ZUN_COSF(spriteAngle) * bombSprite->sprite->heightPx * bombSprite->scaleY) / 2.0f;
+        bombSprite->pos.y += (ZUN_SINF(spriteAngle) * bombSprite->sprite->heightPx * bombSprite->scaleY) / 2.0f;
         spriteAngle = (ZUN_PI / 2) - spriteAngle;
         bombSprite->rotation.z = utils::AddNormalizeAngle(spriteAngle, ZUN_PI);
         bombSprite->pos.x += g_GameManager.arcadeRegionTopLeftPos.x;

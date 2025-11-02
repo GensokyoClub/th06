@@ -67,6 +67,7 @@ project "th06"
 
   if os.target() == "windows" then
     files { "src/midi/MidiWin32.cpp" }
+    links { "winmm" }
   elseif os.target() == "linux" and _OPTIONS["no-asoundlib"] == nil then
     defines { "LIBASOUND_MIDI_SUPPORT" }
     files { "src/midi/MidiAlsa.cpp" }

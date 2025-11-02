@@ -72,7 +72,7 @@ ZunResult TextHelper::CreateTextBuffer()
         return ZUN_ERROR;
     }
 
-    g_Iconv = iconv_open("UTF-8", "MS932");
+    g_Iconv = iconv_open("UTF-8", "CP932");
 
     if (g_Iconv == (iconv_t)-1)
     {

@@ -65,9 +65,9 @@ project "th06"
 
   kind "WindowedApp"
 
-  if _TARGET_OS == "windows" then
+  if os.target() == "windows" then
     files { "src/midi/MidiWin32.cpp" }
-  elseif _TARGET_OS == "linux" and _OPTIONS["no-asoundlib"] == nil then
+  elseif os.target() == "linux" and _OPTIONS["no-asoundlib"] == nil then
     defines { "LIBASOUND_MIDI_SUPPORT" }
     files { "src/midi/MidiAlsa.cpp" }
     links { "asound" }

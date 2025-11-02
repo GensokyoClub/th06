@@ -5,7 +5,7 @@
 
 #include <SDL2/SDL_timer.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "midi/MidiWin32.hpp"
 #elif defined(LIBASOUND_MIDI_SUPPORT)
 #include "midi/MidiAlsa.hpp"

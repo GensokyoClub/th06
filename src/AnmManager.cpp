@@ -105,12 +105,7 @@ u8 *AnmManager::ExtractSurfacePixels(SDL_Surface *src, u8 pixelDepth)
     u8 *pixelData = new u8[dstPitch * src->h];
     u8 *dstPtr = pixelData;
     u8 *srcPtr = (u8 *)src->pixels;
-    //    u8 *srcPtr = ((u8 *) src->pixels) + (src->h - 1) * srcPitch;
-
-    // D3D textures use vertical coordinates starting from the top, whereas OpenGL textures start from the bottom
-    // Because of this, textures must be flipped when loaded
-
-    // Flipping disabled for now
+    
     for (int i = 0; i < src->h; i++)
     {
         std::memcpy(dstPtr, srcPtr, dstPitch);

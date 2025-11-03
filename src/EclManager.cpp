@@ -41,7 +41,7 @@ ZunResult EclManager::Load(char *eclPath)
     this->eclFile = (EclRawHeader *)FileSystem::OpenPath(eclPath, false);
     if (this->eclFile == NULL)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_ECLMANAGER_ENEMY_DATA_CORRUPT);
+        g_GameErrorContext.Log(TH_ERR_ECLMANAGER_ENEMY_DATA_CORRUPT);
         return ZUN_ERROR;
     }
     this->eclFile->timelineOffsets[0] =

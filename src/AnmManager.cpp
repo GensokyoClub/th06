@@ -241,7 +241,7 @@ ZunResult AnmManager::LoadTextureAlphaChannel(i32 textureIdx, char *textureName,
     if (surfaceDesc.Format != D3DFMT_A8R8G8B8 && surfaceDesc.Format != D3DFMT_A4R4G4B4 &&
         surfaceDesc.Format != D3DFMT_A1R5G5B5)
     {
-        GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_ANMMANAGER_UNK_TEX_FORMAT);
+        g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_UNK_TEX_FORMAT);
         goto err;
     }
 
@@ -344,7 +344,7 @@ ZunResult AnmManager::LoadAnm(i32 anmIdx, char *path, i32 spriteIdxOffset)
 
     if (anm == NULL)
     {
-        GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_ANMMANAGER_SPRITE_CORRUPTED, path);
+        g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_SPRITE_CORRUPTED, path);
         return ZUN_ERROR;
     }
 
@@ -358,7 +358,7 @@ ZunResult AnmManager::LoadAnm(i32 anmIdx, char *path, i32 spriteIdxOffset)
     }
     else if (this->LoadTexture(anm->textureIdx, anmName, anm->format, anm->colorKey) != ZUN_SUCCESS)
     {
-        GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, anmName);
+        g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, anmName);
         return ZUN_ERROR;
     }
 
@@ -367,7 +367,7 @@ ZunResult AnmManager::LoadAnm(i32 anmIdx, char *path, i32 spriteIdxOffset)
         anmName = (char *)((u8 *)anm + anm->mipmapNameOffset);
         if (this->LoadTextureAlphaChannel(anm->textureIdx, anmName, anm->format, anm->colorKey) != ZUN_SUCCESS)
         {
-            GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, anmName);
+            g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, anmName);
             return ZUN_ERROR;
         }
     }
@@ -1459,7 +1459,7 @@ ZunResult AnmManager::LoadSurface(i32 surfaceIdx, char *path)
     u8 *data = FileSystem::OpenPath(path, 0);
     if (data == NULL)
     {
-        GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_CANNOT_BE_LOADED, path);
+        g_GameErrorContext.Fatal(TH_ERR_CANNOT_BE_LOADED, path);
         return ZUN_ERROR;
     }
 

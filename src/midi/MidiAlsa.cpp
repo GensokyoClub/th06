@@ -97,6 +97,11 @@ bool MidiDevice::SendLongMsg(u8 *buf, u32 len)
 {
     snd_seq_event_t event;
 
+    if (this->sourcePort < 0)
+    {
+        return false;
+    }
+
     snd_seq_ev_clear(&event);
 
     // None of EoSD's MIDIs hit this condition, but it's good to be safe

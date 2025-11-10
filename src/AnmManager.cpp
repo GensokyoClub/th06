@@ -339,6 +339,20 @@ bool AnmManager::LoadTexture(i32 textureIdx, char *textureName, i32 textureForma
     textureSurface = LoadToSurfaceWithFormat(textureName, g_TextureFormatSDLMapping[textureFormat],
                                              (u8 **)&this->textures[textureIdx].fileData);
 
+    // Hideous hack to account for ANM entries that report a different texture size than the actual size
+    AnmRawEntry *entry = this->anmFiles[textureIdx];
+    if (textureSurface->w != entry->width || textureSurface->h != entry->height)
+    {
+        SDL_Surface *textureSurface2 = SDL_CreateRGBSurfaceWithFormat(0, entry->width, entry->height,
+                                                                      g_TextureFormatBytesPerPixel[textureFormat] * 8,
+                                                                      g_TextureFormatSDLMapping[textureFormat]);
+        SDL_Rect srcRect = {0, 0, textureSurface->w, textureSurface->h};
+        SDL_Rect dstRect = {0, 0, entry->width, entry->height};
+        SDL_BlitScaled(textureSurface, &srcRect, textureSurface2, &dstRect);
+        SDL_FreeSurface(textureSurface);
+        textureSurface = textureSurface2;
+    }
+
     if (textureSurface == NULL)
     {
         return false;
@@ -945,7 +959,7 @@ bool AnmManager::Draw(AnmVm *vm)
         return false;
     }
     z = vm->rotation.z;
-    sincos(z, zSine, zCosine);
+    fsincos_wrapper(&zSine, &zCosine, z);
     xOffset = rintf(vm->pos.x);
     yOffset = rintf(vm->pos.y);
     spriteXCenter = rintf((vm->sprite->widthPx * vm->scaleX) / 2.0f);
@@ -1081,7 +1095,7 @@ bool AnmManager::Draw3(AnmVm *vm)
     else
     {
         scaledXCenter = vm->sprite->widthPx * vm->scaleX / 2.0f;
-        worldTransformMatrix.m[3][0] = std::fabsf(scaledXCenter) + vm->pos.x;
+        worldTransformMatrix.m[3][0] = ZUN_FABSF(scaledXCenter) + vm->pos.x;
     }
 
     if ((vm->flags.anchor & AnmVmAnchor_Top) == 0)
@@ -1091,7 +1105,7 @@ bool AnmManager::Draw3(AnmVm *vm)
     else
     {
         scaledYCenter = vm->sprite->heightPx * vm->scaleY / 2.0f;
-        worldTransformMatrix.m[3][1] = -vm->pos.y - std::fabsf(scaledYCenter);
+        worldTransformMatrix.m[3][1] = -vm->pos.y - ZUN_FABSF(scaledYCenter);
     }
 
     worldTransformMatrix.m[3][2] = vm->pos.z;
@@ -1408,12 +1422,14 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
         PosTimeDoStuff:
             if (vm->flags.flag5 == 0)
             {
-                // This was supposedly originally a memcpy, but any sane compiler should compile a struct assignment to a memcpy
+                // This was supposedly originally a memcpy, but any sane compiler should compile a struct assignment to
+                // a memcpy
                 vm->posInterpInitial = vm->pos;
             }
             else
             {
-                // This was supposedly originally a memcpy, but any sane compiler should compile a struct assignment to a memcpy
+                // This was supposedly originally a memcpy, but any sane compiler should compile a struct assignment to
+                // a memcpy
                 vm->posInterpInitial = vm->posOffset;
             }
             vm->posInterpFinal = ZunVec3(AnmF32Arg(0), AnmF32Arg(1), AnmF32Arg(2));
@@ -1648,7 +1664,8 @@ void AnmManager::DrawTextToSprite(u32 textureDstIdx, i32 xPos, i32 yPos, i32 spr
     return;
 }
 
-void AnmManager::DrawVmTextFmt(AnmManager *anmMgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
+void AnmManager::DrawVmTextFmt(AnmManager *anmMgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt,
+                               ...)
 {
     u32 fontWidth;
     char buffer[64];
@@ -1665,7 +1682,8 @@ void AnmManager::DrawVmTextFmt(AnmManager *anmMgr, AnmVm *vm, ZunColor textColor
     return;
 }
 
-void AnmManager::DrawStringFormat(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
+void AnmManager::DrawStringFormat(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt,
+                                  ...)
 {
     char buf[64];
     va_list args;
@@ -1688,7 +1706,8 @@ void AnmManager::DrawStringFormat(AnmManager *mgr, AnmVm *vm, ZunColor textColor
     return;
 }
 
-void AnmManager::DrawStringFormat2(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
+void AnmManager::DrawStringFormat2(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor,
+                                   const char *fmt, ...)
 {
     char buf[64];
     va_list args;

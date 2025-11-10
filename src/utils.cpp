@@ -50,8 +50,8 @@ void Rotate(ZunVec3 *outVector, ZunVec3 *point, f32 angle)
     f32 sinOut;
     f32 cosOut;
 
-    sinOut = std::sinf(angle);
-    cosOut = std::cosf(angle);
+    sinOut = ZUN_SINF(angle);
+    cosOut = ZUN_COSF(angle);
     outVector->x = cosOut * point->x + sinOut * point->y;
     outVector->y = cosOut * point->y - sinOut * point->x;
 }

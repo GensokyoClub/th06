@@ -7,6 +7,11 @@ workspace "th06"
   configurations { "Debug", "Release" }
   location "build"
 
+newoption {
+   trigger = "no-asoundlib",
+   description = "Disables use of the ALSA MIDI interface on Linux. Results in a build without MIDI support."
+}
+
 project "th06"
   language "C++"
   cppdialect "C++20"
@@ -35,6 +40,7 @@ project "th06"
     "src/ItemManager.cpp",
     "src/main.cpp",
     "src/MainMenu.cpp",
+    "src/MidiOutput.cpp",
     "src/MusicRoom.cpp",
     "src/Player.cpp",
     "src/ReplayManager.cpp",
@@ -58,6 +64,18 @@ project "th06"
   filter {}
 
   kind "WindowedApp"
+
+  if os.target() == "windows" then
+    files { "src/midi/MidiWin32.cpp" }
+    links { "winmm" }
+  elseif os.target() == "linux" and _OPTIONS["no-asoundlib"] == nil then
+    defines { "LIBASOUND_MIDI_SUPPORT" }
+    files { "src/midi/MidiAlsa.cpp" }
+    links { "asound" }
+  else
+    print("Note: Build won't include MIDI support")
+    files { "src/midi/MidiDefault.cpp" }
+  end
 
   filter "system:linux"
     local sdl2_cflags = os.outputof("sdl2-config --cflags") or ""
@@ -107,7 +125,7 @@ project "th06"
 
   filter { "system:windows", "action:vs*" }
     warnings "Extra"
-    links { "SDL2", "SDL2main", "SDL2_image", "SDL2_ttf" }
+    links { "SDL2", "SDL2main", "SDL2_image", "SDL2_ttf", "iconv" }
 
     local SDL2_DIR       = os.getenv("SDL2_DIR")
     local SDL2_IMAGE_DIR = os.getenv("SDL2_IMAGE_DIR")
@@ -135,8 +153,8 @@ project "th06"
     end
 
   filter { "system:windows", "action:not vs*" }
-    local pc_cflags = os.outputof("pkg-config --cflags sdl2 SDL2_image SDL2_ttf") or ""
-    local pc_libs   = os.outputof("pkg-config --libs   sdl2 SDL2_image SDL2_ttf") or ""
+    local pc_cflags = os.outputof("pkg-config --cflags sdl2 SDL2_image SDL2_ttf iconv") or ""
+    local pc_libs   = os.outputof("pkg-config --libs   sdl2 SDL2_image SDL2_ttf iconv") or ""
     if #pc_cflags > 0 then buildoptions { pc_cflags } end
     if #pc_libs   > 0 then linkoptions  { pc_libs }   end
   filter {}

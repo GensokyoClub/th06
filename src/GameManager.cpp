@@ -25,14 +25,14 @@ namespace th06
 DIFFABLE_STATIC_ARRAY_ASSIGN(u32, 5, g_ExtraLivesScores) = {10000000, 20000000, 40000000, 60000000, 1900000000};
 
 DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 9, g_EclFiles) = {"dummy",
-                                                       "data/ecldata1.ecl",
-                                                       "data/ecldata2.ecl",
-                                                       "data/ecldata3.ecl",
-                                                       "data/ecldata4.ecl",
-                                                       "data/ecldata5.ecl",
-                                                       "data/ecldata6.ecl",
-                                                       "data/ecldata7.ecl",
-                                                       NULL};
+                                                             "data/ecldata1.ecl",
+                                                             "data/ecldata2.ecl",
+                                                             "data/ecldata3.ecl",
+                                                             "data/ecldata4.ecl",
+                                                             "data/ecldata5.ecl",
+                                                             "data/ecldata6.ecl",
+                                                             "data/ecldata7.ecl",
+                                                             NULL};
 
 struct AnmStageFiles
 {
@@ -331,7 +331,8 @@ bool GameManager::AddedCallback(GameManager *mgr)
             catk->numSuccess = 0;
         }
         scoredat = ResultScreen::OpenScore("score.dat");
-        g_GameManager.highScore = ResultScreen::GetHighScore(scoredat, NULL, g_GameManager.CharacterShotType(), g_GameManager.difficulty);
+        g_GameManager.highScore =
+            ResultScreen::GetHighScore(scoredat, NULL, g_GameManager.CharacterShotType(), g_GameManager.difficulty);
         ResultScreen::ParseCatk(scoredat, mgr->catk);
         ResultScreen::ParseClrd(scoredat, mgr->clrd);
         ResultScreen::ParsePscr(scoredat, (Pscr *)mgr->pscr);
@@ -417,7 +418,7 @@ bool GameManager::AddedCallback(GameManager *mgr)
         return false;
     }
     if (!EnemyManager::RegisterChain(g_AnmStageFiles[mgr->currentStage].file1,
-                                    g_AnmStageFiles[mgr->currentStage].file2))
+                                     g_AnmStageFiles[mgr->currentStage].file2))
     {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_ENEMYMANAGER);
         return false;
@@ -507,7 +508,7 @@ void GameManager::SetupCameraStageBackground(f32 extraRenderDistance)
     viewportMiddleHeight = g_Supervisor.viewport.Height / 2.0f;
     aspectRatio = (f32)g_Supervisor.viewport.Width / (f32)g_Supervisor.viewport.Height;
     fov = ZUN_PI * (30.0f / 180.0f);
-    cameraDistance = viewportMiddleHeight / tanf(fov / 2);
+    cameraDistance = viewportMiddleHeight / ZUN_TANF(fov / 2);
     upVec.x = 0.0f;
     upVec.y = 1.0f;
     upVec.z = 0.0f;
@@ -520,7 +521,7 @@ void GameManager::SetupCameraStageBackground(f32 extraRenderDistance)
     createViewMatrix(eyeVec, atVec, upVec);
     g_glFuncTable.glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat *)&g_Supervisor.viewMatrix.m);
     //    D3DXMatrixLookAtLH(&g_Supervisor.viewMatrix, &eyeVec, &atVec, &upVec);
-    g_GameManager.cameraDistance = fabsf(cameraDistance);
+    g_GameManager.cameraDistance = ZUN_FABSF(cameraDistance);
     perspectiveMatrixFromFOV(fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
     g_glFuncTable.glGetFloatv(GL_PROJECTION_MATRIX, (GLfloat *)&g_Supervisor.projectionMatrix.m);
     //    D3DXMatrixPerspectiveFovLH(&g_Supervisor.projectionMatrix, fov, aspectRatio, 100.0f,
@@ -549,7 +550,7 @@ void GameManager::SetupCamera(f32 extraRenderDistance)
     viewportMiddleHeight = g_Supervisor.viewport.Height / 2.0f;
     aspectRatio = (f32)g_Supervisor.viewport.Width / (f32)g_Supervisor.viewport.Height;
     fov = ZUN_PI * (30.0f / 180.0f);
-    cameraDistance = viewportMiddleHeight / tanf(fov / 2);
+    cameraDistance = viewportMiddleHeight / ZUN_TANF(fov / 2);
     upVec.x = 0.0f;
     upVec.y = 1.0f;
     upVec.z = 0.0f;
@@ -565,7 +566,7 @@ void GameManager::SetupCamera(f32 extraRenderDistance)
     createViewMatrix(eyeVec, atVec, upVec);
     g_glFuncTable.glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat *)&g_Supervisor.viewMatrix.m);
     //    D3DXMatrixLookAtLH(&g_Supervisor.viewMatrix, &eyeVec, &atVec, &upVec);
-    g_GameManager.cameraDistance = fabsf(cameraDistance);
+    g_GameManager.cameraDistance = ZUN_FABSF(cameraDistance);
     perspectiveMatrixFromFOV(fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
     g_glFuncTable.glGetFloatv(GL_PROJECTION_MATRIX, (GLfloat *)&g_Supervisor.projectionMatrix.m);
     //    D3DXMatrixPerspectiveFovLH(&g_Supervisor.projectionMatrix, fov, aspectRatio, 100.0f,

@@ -17,16 +17,18 @@ u8 *FileSystem::OpenPath(const char *filepath)
 
     utils::DebugPrint2("%s Load ... \n", filepath);
     file = std::fopen(filepath, "rb");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         utils::DebugPrint2("error : %s is not found.\n", filepath);
         return NULL;
     }
-    else {
+    else
+    {
         std::fseek(file, 0, SEEK_END);
         fsize = std::ftell(file);
         g_LastFileSize = fsize;
         std::fseek(file, 0, SEEK_SET);
-        data = (u8*)std::malloc(fsize);
+        data = (u8 *)std::malloc(fsize);
         std::fread(data, 1, fsize, file);
         std::fclose(file);
     }

@@ -78,6 +78,7 @@
 #define TH_JP_ERR_STAGE_DATA_CORRUPTED "ステージデータが見つかりません。データが壊れています\n"
 #define TH_JP_ERR_MIDI_FAILED_TO_READ_FILE "error : MIDI File が読み込めない %s \n"
 #define TH_JP_ERR_MIDI_NOT_LOADED "error : まだMIDIが読み込まれていないのに再生しようとしている\n"
+#define TH_JP_ERR_NO_MIDI_SUPPORT "このビルドにシステムMIDI APIじゃありません\n"
 #define TH_JP_ERR_FONTS_NOT_FOUND "フォントファイルが見つかりません\n"
 #define TH_JP_ERR_ICONV_INIT_FAILED "シフトJISからUTF-8に変換するiconvが作れません\n"
 
@@ -169,6 +170,7 @@
 #define TH_EN_ERR_STAGE_DATA_CORRUPTED "Stage data not found. Data is corrupted.\n"
 #define TH_EN_ERR_MIDI_FAILED_TO_READ_FILE "error : MIDI File %s could not be read.\n"
 #define TH_EN_ERR_MIDI_NOT_LOADED "error : MIDI not loaded before being playback started.\n"
+#define TH_EN_ERR_NO_MIDI_SUPPORT "Warning: build doesn't contain support for MIDI output.\n"
 #define TH_EN_ERR_FONTS_NOT_FOUND "Couldn't find font files.\n"
 #define TH_EN_ERR_ICONV_INIT_FAILED "Couldn't create a Shift JIS to UTF-8 iconv instance.\n"
 
@@ -273,6 +275,7 @@
 #define TH_ERR_STAGE_DATA_CORRUPTED TH_MAKE_LANG_STR(TH_LANG, _ERR_STAGE_DATA_CORRUPTED)
 #define TH_ERR_MIDI_FAILED_TO_READ_FILE TH_MAKE_LANG_STR(TH_LANG, _ERR_MIDI_FAILED_TO_READ_FILE)
 #define TH_ERR_MIDI_NOT_LOADED TH_MAKE_LANG_STR(TH_LANG, _ERR_MIDI_NOT_LOADED)
+#define TH_ERR_NO_MIDI_SUPPORT TH_MAKE_LANG_STR(TH_LANG, _ERR_NO_MIDI_SUPPORT)
 #define TH_ERR_FONTS_NOT_FOUND TH_MAKE_LANG_STR(TH_LANG, _ERR_FONTS_NOT_FOUND)
 #define TH_ERR_ICONV_INIT_FAILED TH_MAKE_LANG_STR(TH_LANG, _ERR_ICONV_INIT_FAILED)
 #define TH_REIMU_A_BOMB_NAME TH_MAKE_LANG_STR(TH_LANG, _REIMU_A_BOMB_NAME)

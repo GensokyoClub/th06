@@ -40,8 +40,6 @@ ChainElem::~ChainElem()
 
 Chain::Chain()
 {
-    //    midiOutputDeviceCount = midiOutGetNumDevs();
-    unk = 0;
 }
 
 bool Chain::AddToCalcChain(ChainElem *elem, int priority)

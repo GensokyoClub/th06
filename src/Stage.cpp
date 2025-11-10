@@ -325,7 +325,7 @@ bool Stage::AddedCallback(Stage *stage)
     stage->skyFogInterpDuration = 0;
 
     if (!stage->LoadStageData(g_StageFiles[g_GameManager.currentStage].anmFile,
-                             g_StageFiles[g_GameManager.currentStage].stdFile))
+                              g_StageFiles[g_GameManager.currentStage].stdFile))
     {
         return false;
     }

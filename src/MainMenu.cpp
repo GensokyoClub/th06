@@ -1738,7 +1738,6 @@ u32 MainMenu::OnUpdateOptionsMenu()
                     g_Supervisor.cfg.musicMode = MIDI + 1;
                 }
                 g_Supervisor.cfg.musicMode -= 1;
-                g_Supervisor.SetupMidiPlayback("bgm/th06_01.mid");
                 g_Supervisor.PlayAudio("bgm/th06_01.mid");
                 break;
 
@@ -1808,7 +1807,6 @@ u32 MainMenu::OnUpdateOptionsMenu()
                 {
                     g_Supervisor.cfg.musicMode = OFF;
                 }
-                g_Supervisor.SetupMidiPlayback("bgm/th06_01.mid");
                 g_Supervisor.PlayAudio("bgm/th06_01.mid");
                 break;
             case CURSOR_OPTIONS_POS_PLAYSOUNDS:
@@ -1862,7 +1860,6 @@ u32 MainMenu::OnUpdateOptionsMenu()
                 g_Supervisor.cfg.defaultDifficulty = NORMAL;
                 g_Supervisor.cfg.windowed = false;
                 g_Supervisor.cfg.frameskipConfig = 0;
-                g_Supervisor.SetupMidiPlayback("bgm/th06_01.mid");
                 g_Supervisor.PlayAudio("bgm/th06_01.mid");
                 break;
 
@@ -2208,11 +2205,6 @@ bool MainMenu::AddedCallback(MainMenu *m)
     i32 i;
     ScoreDat *scoredat;
     AnmManager *anmmgr;
-
-    if (g_GameManager.demoMode == 0)
-    {
-        g_Supervisor.SetupMidiPlayback("bgm/th06_01.mid");
-    }
 
     anmmgr = g_AnmManager;
 

@@ -32,8 +32,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(ExInsn, 17, g_EclExInsn) = {
     EnemyEclInstr::ExInsStage6XFunc10,        EnemyEclInstr::ExInsStage6Func11,
     EnemyEclInstr::ExInsStage4Func12,         EnemyEclInstr::ExInsStageXFunc13,
     EnemyEclInstr::ExInsStageXFunc14,         EnemyEclInstr::ExInsStageXFunc15,
-    EnemyEclInstr::ExInsStageXFunc16
-};
+    EnemyEclInstr::ExInsStageXFunc16};
 
 bool EclManager::Load(const char *eclPath)
 {
@@ -960,8 +959,8 @@ bool EclManager::RunEcl(Enemy *enemy)
                     local_bc = local_bc * local_bc * local_bc * local_bc;
                 }
                 enemy->axisSpeed = enemy->moveInterp * local_bc + enemy->moveInterpStartPos - enemy->position;
-                enemy->angle = atan2f(enemy->axisSpeed.y, enemy->axisSpeed.x);
-                if (enemy->moveInterpTimer.current <= 0)
+                enemy->angle = ZUN_ATAN2F(enemy->axisSpeed.y, enemy->axisSpeed.x);
+                if ((ZunBool)(enemy->moveInterpTimer.current <= 0))
                 {
                     enemy->flags.unk1 = 0;
                     enemy->position = enemy->moveInterpStartPos + enemy->moveInterp;

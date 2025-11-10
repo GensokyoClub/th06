@@ -2,7 +2,16 @@
 
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
-// #include <Windows.h>
+
+#include <SDL2/SDL_timer.h>
+
+#ifdef _WIN32
+#include "midi/MidiWin32.hpp"
+#elif defined(LIBASOUND_MIDI_SUPPORT)
+#include "midi/MidiAlsa.hpp"
+#else
+#include "midi/MidiDefault.hpp"
+#endif
 
 namespace th06
 {
@@ -14,14 +23,15 @@ struct MidiTimer
     virtual void OnTimerElapsed() = 0;
 
     i32 StopTimer();
-    u32 StartTimer(u32 delay, LPTIMECALLBACK cb, DWORD_PTR data);
+    void StartTimer(u32 delay, SDL_TimerCallback cb, void *data);
 
-    static void CALLBACK DefaultTimerCallback(u32 uTimerID, u32 uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2);
+    //    static void CALLBACK DefaultTimerCallback(u32 uTimerID, u32 uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR
+    //    dw2);
+    static u32 SDLCALL DefaultTimerCallback(u32 interval, MidiTimer *timer);
 
-    u32 timerId;
-    TIMECAPS timeCaps;
+    SDL_TimerID timerId;
+    u32 lastTimerTicks;
 };
-ZUN_ASSERT_SIZE(MidiTimer, 0x10);
 
 enum MidiOpcode
 {
@@ -67,31 +77,15 @@ enum MidiOpcode
 
 struct MidiTrack
 {
-    u32 trackPlaying;
-    i32 trackLengthOther;
+    bool trackPlaying;
+    u32 nextMessageTimePos;
     u32 trackLength;
     u8 opcode;
     u8 *trackData;
     u8 *curTrackDataCursor;
-    u8 *startTrackDataMaybe;
-    u32 unk1c;
+    u8 *loopPointTarget;
+    u32 loopPointTimePos;
 };
-ZUN_ASSERT_SIZE(MidiTrack, 0x20);
-
-struct MidiDevice
-{
-    MidiDevice();
-    ~MidiDevice();
-
-    bool Close();
-    bool OpenDevice(u32 uDeviceId);
-    bool SendShortMsg(u8 midiStatus, u8 firstByte, u8 secondByte);
-    bool SendLongMsg(LPMIDIHDR pmh);
-
-    HMIDIOUT handle;
-    u32 deviceId;
-};
-ZUN_ASSERT_SIZE(MidiDevice, 0x8);
 
 struct MidiChannel
 {
@@ -102,7 +96,6 @@ struct MidiChannel
     u8 effectOneDepth;
     u8 effectThreeDepth;
     u8 channelVolume;
-    u8 modifiedVolume;
 };
 
 struct MidiOutput : MidiTimer
@@ -112,9 +105,7 @@ struct MidiOutput : MidiTimer
 
     void OnTimerElapsed();
 
-    bool UnprepareHeader(LPMIDIHDR pmh);
-
-    bool StopPlayback();
+    ZunResult StopPlayback();
     void LoadTracks();
     void ClearTracks();
     bool ReadFileData(u32 idx, char *path);
@@ -129,48 +120,25 @@ struct MidiOutput : MidiTimer
     u32 SetFadeOut(u32 ms);
     void FadeOutSetVolume(i32 volume);
 
-    static u16 Ntohs(u16 val);
-    static u32 SkipVariableLength(u8 **curTrackDataCursor);
+    static u32 ReadVariableLength(u8 **curTrackDataCursor);
 
-    static u32 Ntohl(u32 val)
-    {
-        u8 tmp[4];
-
-        tmp[0] = ((u8 *)&val)[3];
-        tmp[1] = ((u8 *)&val)[2];
-        tmp[2] = ((u8 *)&val)[1];
-        tmp[3] = ((u8 *)&val)[0];
-
-        return *(const u32 *)tmp;
-    }
-
-    MIDIHDR *midiHeaders[32];
-    i32 midiHeadersCursor;
     u8 *midiFileData[32];
     i32 numTracks;
     u32 format;
     i32 divisions;
     i32 tempo;
-    u32 unk124;
-    unsigned __int64 volume;
-    __int64 unk130;
+    u64 elapsedMS;
+    u64 tickBase;
     MidiTrack *tracks;
     MidiDevice midiOutDev;
-    u8 unk144[16];
     MidiChannel channels[16];
-    i8 unk2c4;
     f32 fadeOutVolumeMultiplier;
     u32 fadeOutLastSetVolume;
-    u32 unk2d0;
-    u32 unk2d4;
-    u32 unk2d8;
-    u32 unk2dc;
-    u32 fadeOutFlag;
+    bool fadeOutFlag;
     i32 fadeOutInterval;
     i32 fadeOutElapsedMS;
-    u32 unk2ec;
-    ULONGLONG unk2f0;
-    ULONGLONG unk2f8;
+    u32 loopPointTempo;
+    u64 loopPointMSCount;
+    u64 loopPointBaseTicks;
 };
-ZUN_ASSERT_SIZE(MidiOutput, 0x300);
 }; // namespace th06

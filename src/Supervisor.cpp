@@ -335,7 +335,7 @@ bool Supervisor::AddedCallback(Supervisor *s)
     s->startupTimeBeforeMenuMusic = SDL_GetTicks();
     Supervisor::SetupDInput(s);
 
-    //    s->midiOutput = new MidiOutput();
+    s->midiOutput = new MidiOutput();
 
     // Replacing a seeding method that used win32 timeGetTime
     g_Rng.Initialize((u16)std::time(NULL));
@@ -493,12 +493,12 @@ bool Supervisor::DeletedCallback(Supervisor *s)
     // g_AnmManager->ReleaseAnm(0);
     AsciiManager::CutChain();
     g_SoundPlayer.StopBGM();
-    //    if (s->midiOutput != NULL)
-    //    {
-    //        s->midiOutput->StopPlayback();
-    //        delete s->midiOutput;
-    //        s->midiOutput = NULL;
-    //    }
+    if (s->midiOutput != NULL)
+    {
+        s->midiOutput->StopPlayback();
+        delete s->midiOutput;
+        s->midiOutput = NULL;
+    }
     ReplayManager::SaveReplay(NULL, NULL);
     TextHelper::ReleaseTextBuffer();
     //    if (s->keyboard != NULL)
@@ -785,10 +785,10 @@ bool Supervisor::ReadMidiFile(u32 midiFileIdx, char *path)
     // Return conventions seem opposite of normal? But they're never used anyway
     if (g_Supervisor.cfg.musicMode == MIDI)
     {
-        //        if (g_Supervisor.midiOutput != NULL)
-        //        {
-        //            g_Supervisor.midiOutput->ReadFileData(midiFileIdx, path);
-        //        }
+        if (g_Supervisor.midiOutput != NULL)
+        {
+            g_Supervisor.midiOutput->ReadFileData(midiFileIdx, path);
+        }
 
         return false;
     }
@@ -798,46 +798,22 @@ bool Supervisor::ReadMidiFile(u32 midiFileIdx, char *path)
 
 bool Supervisor::PlayMidiFile(i32 midiFileIdx)
 {
-    //    MidiOutput *globalMidiController;
-    //
     if (g_Supervisor.cfg.musicMode == MIDI)
     {
-        //        if (g_Supervisor.midiOutput != NULL)
-        //        {
-        //            globalMidiController = g_Supervisor.midiOutput;
-        //            globalMidiController->StopPlayback();
-        //            globalMidiController->ParseFile(midiFileIdx);
-        //            globalMidiController->Play();
-        //        }
-        //
-        return true;
+        if (g_Supervisor.midiOutput != NULL)
+        {
+            g_Supervisor.midiOutput->StopPlayback();
+            g_Supervisor.midiOutput->ParseFile(midiFileIdx);
+            g_Supervisor.midiOutput->Play();
+        }
+
+        return ZUN_SUCCESS;
     }
 
     return false;
 }
 
-bool Supervisor::SetupMidiPlayback(const char *path)
-{
-    // There doesn't seem to be a way to recreate the jump assembly needed without gotos?
-    // Standard short circuiting boolean operators and nested conditionals don't seem to work, at least
-    if (g_Supervisor.cfg.musicMode == MIDI)
-    {
-        goto success;
-    }
-    else if (g_Supervisor.cfg.musicMode == WAV)
-    {
-        goto success;
-    }
-    else
-    {
-        return false;
-    }
-
-success:
-    return true;
-}
-
-bool Supervisor::PlayAudio(const char *path)
+ZunResult Supervisor::PlayAudio(char *path)
 {
     char wavName[256];
     char wavPos[256];
@@ -845,14 +821,12 @@ bool Supervisor::PlayAudio(const char *path)
 
     if (g_Supervisor.cfg.musicMode == MIDI)
     {
-        //        if (g_Supervisor.midiOutput != NULL)
-        //        {
-        //            MidiOutput *midiOutput = g_Supervisor.midiOutput;
-        //            midiOutput->StopPlayback();
-        //            midiOutput->LoadFile(path);
-        //            midiOutput->Play();
-        //        }
-        utils::DebugPrint2("Midi output is currently not supported! (and might not ever be)");
+        if (g_Supervisor.midiOutput != NULL)
+        {
+            g_Supervisor.midiOutput->StopPlayback();
+            g_Supervisor.midiOutput->LoadFile(path);
+            g_Supervisor.midiOutput->Play();
+        }
     }
     else if (g_Supervisor.cfg.musicMode == WAV)
     {
@@ -887,10 +861,10 @@ bool Supervisor::StopAudio()
 {
     if (g_Supervisor.cfg.musicMode == MIDI)
     {
-        //        if (g_Supervisor.midiOutput != NULL)
-        //        {
-        //            g_Supervisor.midiOutput->StopPlayback();
-        //        }
+        if (g_Supervisor.midiOutput != NULL)
+        {
+            g_Supervisor.midiOutput->StopPlayback();
+        }
     }
     else
     {
@@ -911,10 +885,10 @@ bool Supervisor::FadeOutMusic(f32 fadeOutSeconds)
 {
     if (g_Supervisor.cfg.musicMode == MIDI)
     {
-        //        if (g_Supervisor.midiOutput != NULL)
-        //        {
-        //            g_Supervisor.midiOutput->SetFadeOut(1000.0f * fadeOutSeconds);
-        //        }
+        if (g_Supervisor.midiOutput != NULL)
+        {
+            g_Supervisor.midiOutput->SetFadeOut(1000.0f * fadeOutSeconds);
+        }
     }
     else
     {

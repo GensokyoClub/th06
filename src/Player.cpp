@@ -114,8 +114,8 @@ bool Player::AddedCallback(Player *p)
     p->grabItemSize.z = 5.0;
     p->playerDirection = MOVEMENT_NONE;
     std::memcpy(&p->characterData, &g_CharData[g_GameManager.CharacterShotType()], sizeof(CharacterData));
-    p->characterData.diagonalMovementSpeed = p->characterData.orthogonalMovementSpeed / std::sqrtf(2.0);
-    p->characterData.diagonalMovementSpeedFocus = p->characterData.orthogonalMovementSpeedFocus / std::sqrtf(2.0);
+    p->characterData.diagonalMovementSpeed = p->characterData.orthogonalMovementSpeed / ZUN_SQRTF(2.0);
+    p->characterData.diagonalMovementSpeedFocus = p->characterData.orthogonalMovementSpeedFocus / ZUN_SQRTF(2.0);
     p->fireBulletCallback = p->characterData.fireBulletCallback;
     p->fireBulletFocusCallback = p->characterData.fireBulletFocusCallback;
     p->playerState = PLAYER_STATE_SPAWNING;
@@ -1022,7 +1022,7 @@ f32 Player::AngleFromPlayer(ZunVec3 *pos)
         return ZUN_PI / 2;
     }
 
-    return std::atan2(relY, relX);
+    return ZUN_ATAN2F(relY, relX);
 }
 
 f32 Player::AngleToPlayer(ZunVec3 *pos)
@@ -1039,7 +1039,7 @@ f32 Player::AngleToPlayer(ZunVec3 *pos)
         return RADIANS(90.0f);
     }
 
-    return std::atan2(relY, relX);
+    return ZUN_ATAN2F(relY, relX);
 }
 
 void Player::SpawnBullets(Player *p, u32 timer)
@@ -1146,9 +1146,9 @@ FireBulletResult Player::FireSingleBullet(Player *player, PlayerBullet *bullet, 
         bullet->unk_134.z = bulletData->direction;
         bullet->unk_134.y = bulletData->velocity;
 
-        bullet->velocity.x = std::cosf(bulletData->direction) * bulletData->velocity;
+        bullet->velocity.x = ZUN_COSF(bulletData->direction) * bulletData->velocity;
 
-        bullet->velocity.y = std::sinf(bulletData->direction) * bulletData->velocity;
+        bullet->velocity.y = ZUN_SINF(bulletData->direction) * bulletData->velocity;
 
         bullet->unk_140.InitializeForPopup();
 

@@ -20,6 +20,11 @@ int main(int argc, char *argv[])
     (void)argc;
     (void)argv;
 
+// TODO: Find a better solution for locales / encoding on Windows, because it's all a mess
+#ifdef _WIN32
+    setlocale(LC_ALL, ".UTF8");
+#endif
+
     i32 renderResult = 0;
     //    MSG msg;
     //    i32 waste1, waste2, waste3, waste4, waste5, waste6;

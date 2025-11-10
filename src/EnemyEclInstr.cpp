@@ -44,8 +44,8 @@ void MoveDirTime(Enemy *enemy, EclRawInstr *instr)
     alu = &instr->args.alu;
     angle = *GetVarFloat(enemy, &alu->arg1.f32Param, NULL);
 
-    enemy->moveInterp.x = std::cos(angle) * alu->arg2.f32Param * (f32)alu->res / 2.0f;
-    enemy->moveInterp.y = std::sin(angle) * alu->arg2.f32Param * (f32)alu->res / 2.0f;
+    enemy->moveInterp.x = ZUN_COSF(angle) * alu->arg2.f32Param * alu->res / 2.0f;
+    enemy->moveInterp.y = ZUN_SINF(angle) * alu->arg2.f32Param * alu->res / 2.0f;
     enemy->moveInterp.z = 0.0f;
 
     enemy->moveInterpStartPos = enemy->position;
@@ -83,8 +83,8 @@ void MoveTime(Enemy *enemy, EclRawInstr *instr)
     alu = &instr->args.alu;
     angle = *GetVarFloat(enemy, &enemy->angle, NULL);
 
-    enemy->moveInterp.x = std::cos(angle) * enemy->speed * (f32)alu->res / 2.0f;
-    enemy->moveInterp.y = std::sin(angle) * enemy->speed * (f32)alu->res / 2.0f;
+    enemy->moveInterp.x = ZUN_COSF(angle) * enemy->speed * alu->res / 2.0f;
+    enemy->moveInterp.y = ZUN_SINF(angle) * enemy->speed * alu->res / 2.0f;
     enemy->moveInterp.z = 0.0f;
 
     enemy->moveInterpStartPos = enemy->position;
@@ -379,7 +379,7 @@ void MathMod(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsV
     {
         lhsPtr = (i32 *)GetVarFloat(enemy, (f32 *)lhsVarId, NULL);
         rhsPtr = (i32 *)GetVarFloat(enemy, (f32 *)rhsVarId, NULL);
-        *(f32 *)outPtr = fmodf(*(f32 *)lhsPtr, *(f32 *)rhsPtr);
+        *(f32 *)outPtr = ZUN_FMODF(*(f32 *)lhsPtr, *(f32 *)rhsPtr);
     }
     return;
 }
@@ -397,7 +397,7 @@ void MathAtan2(Enemy *enemy, EclVarId outVarId, f32 *x1, f32 *y1, f32 *y2, f32 *
         x1Ptr = GetVarFloat(enemy, y1, NULL);
         y2Ptr = GetVarFloat(enemy, y2, NULL);
         x2Ptr = GetVarFloat(enemy, x2, NULL);
-        *outPtr = atan2f(*x2Ptr - *x1Ptr, *y2Ptr - *y1Ptr);
+        *outPtr = ZUN_ATAN2F(*x2Ptr - *x1Ptr, *y2Ptr - *y1Ptr);
     }
     return;
 }
@@ -686,14 +686,14 @@ void ExInsStage5Func5(Enemy *enemy, EclRawInstr *instr)
         matrixIn = -matrixIn;
 
         matrixOutSeed = ZUN_PI / 4;
-        cosOut = cosf(matrixOutSeed);
-        sinOut = sinf(matrixOutSeed);
+        cosOut = ZUN_COSF(matrixOutSeed);
+        sinOut = ZUN_SINF(matrixOutSeed);
         matrixOut = matrixIn;
         matrixIn.x = matrixOut.x * cosOut + matrixOut.y * sinOut;
         matrixIn.y = -matrixOut.x * sinOut + matrixOut.y * cosOut;
         matrixOutSeed = -ZUN_PI / 18;
-        cosOut = cosf(matrixOutSeed);
-        sinOut = sinf(matrixOutSeed);
+        cosOut = ZUN_COSF(matrixOutSeed);
+        sinOut = ZUN_SINF(matrixOutSeed);
         bulletProps.angle1 = 0.0;
         bulletAngle = -ZUN_PI / 4;
 
@@ -752,8 +752,8 @@ void ExInsStage6XFunc6(Enemy *enemy, EclRawInstr *instr)
         }
 
         particlePos = enemy->position;
-        particlePos.x += cosf(finalAngle) * distanceModifier;
-        particlePos.y += sinf(finalAngle) * distanceModifier;
+        particlePos.x += ZUN_COSF(finalAngle) * distanceModifier;
+        particlePos.y += ZUN_SINF(finalAngle) * distanceModifier;
         effect = g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_19, &particlePos, 1, COLOR_DEEPBLUE);
         effect->unk_11c.x = (g_Rng.GetRandomF32ZeroToOne() * 40.0f - 20.0f) / 60.0f;
         effect->unk_11c.y = (8.0f * baseAngleModifier) / 60.0f - (4.0f / 15.0f);
@@ -761,8 +761,8 @@ void ExInsStage6XFunc6(Enemy *enemy, EclRawInstr *instr)
         effect->unk_128 = -effect->unk_11c / 120.0f;
 
         particlePos = enemy->position;
-        particlePos.x -= cosf(finalAngle) * distanceModifier;
-        particlePos.y += sinf(finalAngle) * distanceModifier;
+        particlePos.x -= ZUN_COSF(finalAngle) * distanceModifier;
+        particlePos.y += ZUN_SINF(finalAngle) * distanceModifier;
         effect = g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_19, &particlePos, 1, COLOR_DEEPBLUE);
         effect->unk_11c.x = (g_Rng.GetRandomF32ZeroToOne() * 40.0f - 20.0f) / 60.0f;
         effect->unk_11c.y = (8.0f * baseAngleModifier) / 60.0f - (4.0f / 15.0f);
@@ -807,8 +807,8 @@ void ExInsStage6Func7(Enemy *enemy, EclRawInstr *instr)
         for (i = 0; i < 8; i++)
         {
             positionVectors[i] = enemy->position;
-            positionVectors[i].x += cosf(laserAngle) * lengthMultiplier;
-            positionVectors[i].y += sinf(laserAngle) * lengthMultiplier;
+            positionVectors[i].x += ZUN_COSF(laserAngle) * lengthMultiplier;
+            positionVectors[i].y += ZUN_SINF(laserAngle) * lengthMultiplier;
             laserAngle += ZUN_PI / 4;
         }
 
@@ -880,8 +880,8 @@ void ExInsStage6Func7(Enemy *enemy, EclRawInstr *instr)
                     enemy->bulletProps.position = laserProps.position;
                     g_BulletManager.SpawnBulletPattern(&enemy->bulletProps);
                 }
-                positionVectors[i].x += cosf(laserAngle) * lengthMultiplier;
-                positionVectors[i].y += sinf(laserAngle) * lengthMultiplier;
+                positionVectors[i].x += ZUN_COSF(laserAngle) * lengthMultiplier;
+                positionVectors[i].y += ZUN_SINF(laserAngle) * lengthMultiplier;
                 laserAngle += ZUN_PI / 4;
             }
             laserAngle += angleDiff - (ZUN_PI * 2);
@@ -962,7 +962,7 @@ void ExInsStage6Func9(Enemy *enemy, EclRawInstr *instr)
                        (enemy->position.y - currentBullet->pos.y) * (enemy->position.y - currentBullet->pos.y);
             if (distance > 0.1f)
             {
-                distance = sqrtf(distance);
+                distance = ZUN_SQRTF(distance);
             }
             else
             {
@@ -1142,7 +1142,7 @@ void ExInsStageXFunc15(Enemy *enemy, EclRawInstr *instr)
             currentBullet->sprites.spriteBullet.sprite->heightPx >= 30.0f)
         {
             totalIterations++;
-            enemyAngle = atan2f(currentBullet->pos.y - enemy->position.y, currentBullet->pos.x - enemy->position.x);
+            enemyAngle = ZUN_ATAN2F(currentBullet->pos.y - enemy->position.y, currentBullet->pos.x - enemy->position.x);
 
             for (j = 0, innerBullet = g_BulletManager.bullets; j < ARRAY_SIZE_SIGNED(g_BulletManager.bullets);
                  j++, innerBullet++)
@@ -1154,7 +1154,7 @@ void ExInsStageXFunc15(Enemy *enemy, EclRawInstr *instr)
 
                 if (innerBullet->sprites.spriteBullet.sprite != NULL &&
                     innerBullet->sprites.spriteBullet.sprite->heightPx < 30.0f && innerBullet->speed == 0.0f &&
-                    (distance = sqrtf(
+                    (distance = ZUN_SQRTF(
                          (innerBullet->pos.x - currentBullet->pos.x) * (innerBullet->pos.x - currentBullet->pos.x) +
                          (innerBullet->pos.y - currentBullet->pos.y) * (innerBullet->pos.y - currentBullet->pos.y))) <
                         64.0f)
@@ -1164,7 +1164,7 @@ void ExInsStageXFunc15(Enemy *enemy, EclRawInstr *instr)
                     innerBullet->timer.InitializeForPopup();
                     innerBullet->ex5Int0 = 120;
                     bulletsAngle =
-                        atan2f(innerBullet->pos.y - enemy->position.y, innerBullet->pos.x - enemy->position.x);
+                        ZUN_ATAN2F(innerBullet->pos.y - enemy->position.y, innerBullet->pos.x - enemy->position.x);
                     innerBullet->angle = (bulletsAngle - enemyAngle) * 2.2f + enemyAngle;
                     sincosmul(&innerBullet->ex4Acceleration, innerBullet->angle, 0.01f);
                     innerBullet->spriteOffset += 1;

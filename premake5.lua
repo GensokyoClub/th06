@@ -67,6 +67,40 @@ project "th06"
     links { "SDL2_image", "SDL2_ttf", "m" }
   filter {}
 
+  filter "system:emscripten"
+    kind "WindowedApp"
+    targetextension ".html"
+    targetname "th06_web"
+
+    buildoptions {
+      "-g",
+      "-gsource-map",
+      "-sUSE_SDL=2",
+      "-sUSE_SDL_IMAGE=2",
+      "-sUSE_SDL_TTF=2",
+    }
+
+    linkoptions {
+      "-g",
+      "-gsource-map",
+      "-sUSE_SDL=2",
+      "-sUSE_SDL_IMAGE=2",
+      "-sUSE_SDL_TTF=2",
+      "-sALLOW_MEMORY_GROWTH=1",
+      "-sASSERTIONS=1",
+      "-sLEGACY_GL_EMULATION=1",
+      "--preload-file ../data",
+      "--preload-file ../bgm",
+    }
+
+    defines { "EMSCRIPTEN" }
+
+    -- Emscripten puts the compiled files in same dir by default
+    targetdir "web"
+    objdir "obj/emscripten/%{cfg.buildcfg}/"
+
+  filter {}
+
   filter "system:windows"
     defines { "NOMINMAX", "WIN32_LEAN_AND_MEAN" }
   filter {}

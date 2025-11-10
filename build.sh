@@ -3,10 +3,13 @@ set -e
 
 NPROC=$(nproc)
 BUILD_TYPE="Debug"
+OS=""
 
 for arg in "$@"; do
     if [ "$arg" = "--clean" ]; then
         CLEAN=true
+    elif [ "$arg" = "--emscripten" ]; then
+        OS="emscripten"
     elif [ "$arg" = "Release" ] || [ "$arg" = "Debug" ] || [ "$arg" = "All" ]; then
         BUILD_TYPE=$arg
     fi
@@ -18,7 +21,11 @@ if [ "$CLEAN" = true ]; then
 fi
 
 
-premake5 --cc=clang ninja
+if [ "$OS" = "emscripten" ]; then
+    premake5 --os=emscripten ninja
+else
+    premake5 --cc=clang ninja
+fi;
 cd build
 
 if [ "$BUILD_TYPE" = "All" ]; then

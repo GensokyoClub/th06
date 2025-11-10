@@ -960,7 +960,7 @@ bool EclManager::RunEcl(Enemy *enemy)
                 }
                 enemy->axisSpeed = enemy->moveInterp * local_bc + enemy->moveInterpStartPos - enemy->position;
                 enemy->angle = ZUN_ATAN2F(enemy->axisSpeed.y, enemy->axisSpeed.x);
-                if ((ZunBool)(enemy->moveInterpTimer.current <= 0))
+                if ((enemy->moveInterpTimer.current <= 0))
                 {
                     enemy->flags.unk1 = 0;
                     enemy->position = enemy->moveInterpStartPos + enemy->moveInterp;

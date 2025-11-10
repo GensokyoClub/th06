@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ZunResult.hpp"
 #include "inttypes.hpp"
 
 #include <SDL2/SDL_timer.h>
@@ -105,7 +104,7 @@ struct MidiOutput : MidiTimer
 
     void OnTimerElapsed();
 
-    ZunResult StopPlayback();
+    bool StopPlayback();
     void LoadTracks();
     void ClearTracks();
     bool ReadFileData(u32 idx, char *path);

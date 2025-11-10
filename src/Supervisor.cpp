@@ -807,13 +807,13 @@ bool Supervisor::PlayMidiFile(i32 midiFileIdx)
             g_Supervisor.midiOutput->Play();
         }
 
-        return ZUN_SUCCESS;
+        return true;
     }
 
     return false;
 }
 
-ZunResult Supervisor::PlayAudio(char *path)
+bool Supervisor::PlayAudio(char *path)
 {
     char wavName[256];
     char wavPos[256];

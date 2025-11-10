@@ -67,7 +67,7 @@ fail:
     return false;
 }
 
-ZunResult MidiDevice::Close()
+bool MidiDevice::Close()
 {
     this->Reset();
 
@@ -89,7 +89,7 @@ ZunResult MidiDevice::Close()
         this->sequencer = NULL;
     }
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
 bool MidiDevice::SendLongMsg(u8 *buf, u32 len)

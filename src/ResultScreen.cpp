@@ -35,13 +35,13 @@ DIFFABLE_STATIC_ASSIGN(const char *, g_AlphabetList) =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ.,:;\xA5@abcdefghijklmnopqrstuvwxyz+-/*=%0123456789(){}[]<>#!?'\"$      --";
 
 DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 6, g_CharacterList) = {TH_HAKUREI_REIMU_SPIRIT,  TH_HAKUREI_REIMU_DREAM,
-                                                            TH_KIRISAME_MARISA_DEVIL, TH_KIRISAME_MARISA_LOVE,
-                                                            TH_SATSUKI_RIN_FLOWER,    TH_SATSUKI_RIN_WIND};
+                                                                  TH_KIRISAME_MARISA_DEVIL, TH_KIRISAME_MARISA_LOVE,
+                                                                  TH_SATSUKI_RIN_FLOWER,    TH_SATSUKI_RIN_WIND};
 
 DIFFABLE_STATIC_ARRAY_ASSIGN(f32, 5, g_SpellcardsWeightsList) = {1.0f, 1.5f, 1.5f, 2.0f, 2.5f};
 
 DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 5, g_RightAlignedDifficultyList) = {"     Easy", "   Normal", "     Hard",
-                                                                         "  Lunatic", "    Extra"};
+                                                                               "  Lunatic", "    Extra"};
 
 DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 4, g_ShortCharacterList2) = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
 
@@ -2137,7 +2137,8 @@ bool ResultScreen::AddedCallback(ResultScreen *resultScreen)
     }
 
     if (resultScreen->resultScreenState == RESULT_SCREEN_STATE_EXIT &&
-        (u32)g_GameManager.pscr[g_GameManager.CharacterShotType()][g_GameManager.currentStage - 1][g_GameManager.difficulty]
+        (u32)g_GameManager
+                .pscr[g_GameManager.CharacterShotType()][g_GameManager.currentStage - 1][g_GameManager.difficulty]
                 .score < g_GameManager.score)
     {
         g_GameManager.pscr[g_GameManager.CharacterShotType()][g_GameManager.currentStage - 1][g_GameManager.difficulty]

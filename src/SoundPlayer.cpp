@@ -318,7 +318,7 @@ bool SoundPlayer::InitSoundBuffers()
     for (int idx = 0; idx < ARRAY_SIZE_SIGNED(g_SoundBufferIdxVol); idx++)
     {
         if (!this->LoadSound(idx, g_SFXList[g_SoundBufferIdxVol[idx].bufferIdx],
-                            1.0f / std::powf(10.0f, (float)g_SoundBufferIdxVol[idx].volume / -2000)))
+                             1.0f / std::powf(10.0f, (float)g_SoundBufferIdxVol[idx].volume / -2000)))
         {
             GameErrorContext::Log(&g_GameErrorContext, TH_ERR_SOUNDPLAYER_FAILED_TO_LOAD_SOUND_FILE, g_SFXList[idx]);
             return false;

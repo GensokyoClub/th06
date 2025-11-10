@@ -11,16 +11,15 @@
 //   These were mostly added to C++ with C++17, but GNU bikeshedded so hard, they didn't add
 //   them to their headers until 2023. To allow compilation where the older headers are
 //   still used, these macros force the overloaded float version of the base math function.
-#define ZUN_SINF(angle)  (std::sin((f32)(angle)))
-#define ZUN_COSF(angle)  (std::cos((f32)(angle)))
-#define ZUN_TANF(angle)  (std::tan((f32)(angle)))
-#define ZUN_SQRTF(n)     (std::sqrt((f32)(n)))
-#define ZUN_FABSF(n)     (std::fabs((f32)(n)))
-#define ZUN_FMODF(x, y)  (std::fmod((f32)(x), (f32)(y)))
+#define ZUN_SINF(angle) (std::sin((f32)(angle)))
+#define ZUN_COSF(angle) (std::cos((f32)(angle)))
+#define ZUN_TANF(angle) (std::tan((f32)(angle)))
+#define ZUN_SQRTF(n) (std::sqrt((f32)(n)))
+#define ZUN_FABSF(n) (std::fabs((f32)(n)))
+#define ZUN_FMODF(x, y) (std::fmod((f32)(x), (f32)(y)))
 #define ZUN_ATAN2F(x, y) (std::atan2((f32)(x), (f32)(y)))
-#define ZUN_POWF(x, y)   (std::pow((f32)(x), (f32)(y)))
-#define ZUN_RINTF(n)     (std::rintf((f32)(x)))
-
+#define ZUN_POWF(x, y) (std::pow((f32)(x), (f32)(y)))
+#define ZUN_RINTF(n) (std::rintf((f32)(x)))
 
 namespace th06
 {
@@ -45,7 +44,7 @@ struct ZunVec2
 
     f32 VectorLength()
     {
-        return std::sqrt((f64) (this->x * this->x + this->y * this->y));
+        return std::sqrt((f64)(this->x * this->x + this->y * this->y));
     }
 
     f64 VectorLengthF64()

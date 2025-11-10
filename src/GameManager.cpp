@@ -25,14 +25,14 @@ namespace th06
 DIFFABLE_STATIC_ARRAY_ASSIGN(u32, 5, g_ExtraLivesScores) = {10000000, 20000000, 40000000, 60000000, 1900000000};
 
 DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 9, g_EclFiles) = {"dummy",
-                                                       "data/ecldata1.ecl",
-                                                       "data/ecldata2.ecl",
-                                                       "data/ecldata3.ecl",
-                                                       "data/ecldata4.ecl",
-                                                       "data/ecldata5.ecl",
-                                                       "data/ecldata6.ecl",
-                                                       "data/ecldata7.ecl",
-                                                       NULL};
+                                                             "data/ecldata1.ecl",
+                                                             "data/ecldata2.ecl",
+                                                             "data/ecldata3.ecl",
+                                                             "data/ecldata4.ecl",
+                                                             "data/ecldata5.ecl",
+                                                             "data/ecldata6.ecl",
+                                                             "data/ecldata7.ecl",
+                                                             NULL};
 
 struct AnmStageFiles
 {
@@ -331,7 +331,8 @@ bool GameManager::AddedCallback(GameManager *mgr)
             catk->numSuccess = 0;
         }
         scoredat = ResultScreen::OpenScore("score.dat");
-        g_GameManager.highScore = ResultScreen::GetHighScore(scoredat, NULL, g_GameManager.CharacterShotType(), g_GameManager.difficulty);
+        g_GameManager.highScore =
+            ResultScreen::GetHighScore(scoredat, NULL, g_GameManager.CharacterShotType(), g_GameManager.difficulty);
         ResultScreen::ParseCatk(scoredat, mgr->catk);
         ResultScreen::ParseClrd(scoredat, mgr->clrd);
         ResultScreen::ParsePscr(scoredat, (Pscr *)mgr->pscr);
@@ -417,7 +418,7 @@ bool GameManager::AddedCallback(GameManager *mgr)
         return false;
     }
     if (!EnemyManager::RegisterChain(g_AnmStageFiles[mgr->currentStage].file1,
-                                    g_AnmStageFiles[mgr->currentStage].file2))
+                                     g_AnmStageFiles[mgr->currentStage].file2))
     {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_ENEMYMANAGER);
         return false;

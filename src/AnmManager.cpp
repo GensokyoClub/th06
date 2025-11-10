@@ -1422,12 +1422,14 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
         PosTimeDoStuff:
             if (vm->flags.flag5 == 0)
             {
-                // This was supposedly originally a memcpy, but any sane compiler should compile a struct assignment to a memcpy
+                // This was supposedly originally a memcpy, but any sane compiler should compile a struct assignment to
+                // a memcpy
                 vm->posInterpInitial = vm->pos;
             }
             else
             {
-                // This was supposedly originally a memcpy, but any sane compiler should compile a struct assignment to a memcpy
+                // This was supposedly originally a memcpy, but any sane compiler should compile a struct assignment to
+                // a memcpy
                 vm->posInterpInitial = vm->posOffset;
             }
             vm->posInterpFinal = ZunVec3(AnmF32Arg(0), AnmF32Arg(1), AnmF32Arg(2));
@@ -1662,7 +1664,8 @@ void AnmManager::DrawTextToSprite(u32 textureDstIdx, i32 xPos, i32 yPos, i32 spr
     return;
 }
 
-void AnmManager::DrawVmTextFmt(AnmManager *anmMgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
+void AnmManager::DrawVmTextFmt(AnmManager *anmMgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt,
+                               ...)
 {
     u32 fontWidth;
     char buffer[64];
@@ -1679,7 +1682,8 @@ void AnmManager::DrawVmTextFmt(AnmManager *anmMgr, AnmVm *vm, ZunColor textColor
     return;
 }
 
-void AnmManager::DrawStringFormat(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
+void AnmManager::DrawStringFormat(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt,
+                                  ...)
 {
     char buf[64];
     va_list args;
@@ -1702,7 +1706,8 @@ void AnmManager::DrawStringFormat(AnmManager *mgr, AnmVm *vm, ZunColor textColor
     return;
 }
 
-void AnmManager::DrawStringFormat2(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
+void AnmManager::DrawStringFormat2(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor,
+                                   const char *fmt, ...)
 {
     char buf[64];
     va_list args;

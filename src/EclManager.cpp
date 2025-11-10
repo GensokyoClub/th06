@@ -32,8 +32,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(ExInsn, 17, g_EclExInsn) = {
     EnemyEclInstr::ExInsStage6XFunc10,        EnemyEclInstr::ExInsStage6Func11,
     EnemyEclInstr::ExInsStage4Func12,         EnemyEclInstr::ExInsStageXFunc13,
     EnemyEclInstr::ExInsStageXFunc14,         EnemyEclInstr::ExInsStageXFunc15,
-    EnemyEclInstr::ExInsStageXFunc16
-};
+    EnemyEclInstr::ExInsStageXFunc16};
 
 bool EclManager::Load(const char *eclPath)
 {

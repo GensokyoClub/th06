@@ -1,15 +1,15 @@
 #pragma once
 
-#include "inttypes.hpp"
 #include "ZunResult.hpp"
-#include <windows.h>
+#include "inttypes.hpp"
 #include <mmsystem.h>
+#include <windows.h>
 
 namespace th06
 {
 struct MidiDevice
 {
-public:
+  public:
     MidiDevice();
     ~MidiDevice();
 
@@ -18,7 +18,7 @@ public:
     bool SendShortMsg(u8 midiStatus, u8 firstByte, u8 secondByte);
     bool SendLongMsg(u8 *buf, u32 len);
 
-private:
+  private:
     ZunResult UnprepareHeader(LPMIDIHDR pmh);
 
     HMIDIOUT handle;

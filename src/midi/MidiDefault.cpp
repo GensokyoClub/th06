@@ -1,6 +1,6 @@
 #include "MidiDefault.hpp"
-#include "i18n.hpp"
 #include "GameErrorContext.hpp"
+#include "i18n.hpp"
 
 namespace th06
 {
@@ -15,9 +15,9 @@ MidiDevice::~MidiDevice()
 
 bool MidiDevice::OpenDevice(u32 uDeviceId)
 {
-    (void) uDeviceId;
+    (void)uDeviceId;
 
-    if(!printedWarning)
+    if (!printedWarning)
     {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_NO_MIDI_SUPPORT);
         printedWarning = true;

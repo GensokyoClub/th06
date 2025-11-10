@@ -16,27 +16,27 @@ struct ZunTimer
         this->Initialize();
     }
 
-    ZunBool operator==(i32 time)
+    bool operator==(i32 time)
     {
         return this->current == time;
     }
 
-    ZunBool operator>=(i32 time)
+    bool operator>=(i32 time)
     {
         return this->current >= time;
     }
 
-    ZunBool operator>(i32 time)
+    bool operator>(i32 time)
     {
         return this->current > time;
     }
 
-    ZunBool operator<(i32 time)
+    bool operator<(i32 time)
     {
         return this->current < time;
     }
 
-    ZunBool operator<=(i32 time)
+    bool operator<=(i32 time)
     {
         return this->current <= time;
     }
@@ -81,7 +81,7 @@ struct ZunTimer
         return this->current;
     }
 
-    ZunBool HasTicked()
+    bool HasTicked()
     {
         return this->current != this->previous;
     }

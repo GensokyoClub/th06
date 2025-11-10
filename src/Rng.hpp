@@ -41,5 +41,5 @@ struct Rng
     }
 };
 
-DIFFABLE_EXTERN(Rng, g_Rng);
+extern Rng g_Rng;
 }; // namespace th06

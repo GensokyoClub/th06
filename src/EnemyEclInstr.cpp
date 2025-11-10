@@ -8,7 +8,6 @@
 #include "Gui.hpp"
 #include "Player.hpp"
 #include "Rng.hpp"
-#include "ZunBool.hpp"
 #include "utils.hpp"
 
 namespace th06
@@ -30,12 +29,12 @@ ZUN_ASSERT_SIZE(PatchouliShottypeVars, 0x18);
 
 DIFFABLE_STATIC_ARRAY_ASSIGN(PatchouliShottypeVars, 2, g_PatchouliShottypeVars) = {{{{0, 3, 1}, {2, 3, 4}}},
                                                                                    {{{1, 4, 0}, {4, 2, 3}}}};
-DIFFABLE_STATIC(i32, g_PlayerShot);
-DIFFABLE_STATIC(f32, g_PlayerDistance);
-DIFFABLE_STATIC(f32, g_PlayerAngle);
+i32 g_PlayerShot;
+f32 g_PlayerDistance;
+f32 g_PlayerAngle;
 DIFFABLE_STATIC_ARRAY(f32, 6, g_StarAngleTable);
-DIFFABLE_STATIC(ZunVec3, g_EnemyPosVector);
-DIFFABLE_STATIC(ZunVec3, g_PlayerPosVector);
+ZunVec3 g_EnemyPosVector;
+ZunVec3 g_PlayerPosVector;
 
 void MoveDirTime(Enemy *enemy, EclRawInstr *instr)
 {
@@ -979,12 +978,12 @@ void ExInsStage6Func11(Enemy *enemy, EclRawInstr *instr)
 {
     Bullet *currentBullet;
     i32 i;
-    f32 unusedRandomNumber;
+    // f32 unusedRandomNumber;
 
     currentBullet = g_BulletManager.bullets;
     EnemyBulletShooter unusedBulletProps;
 
-    unusedRandomNumber = g_Rng.GetRandomF32InRange(ZUN_PI * 2) - ZUN_PI;
+    // unusedRandomNumber = g_Rng.GetRandomF32InRange(ZUN_PI * 2) - ZUN_PI;
     g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &enemy->position, 1, COLOR_WHITE);
 
     for (i = 0; i < ARRAY_SIZE_SIGNED(g_BulletManager.bullets); i++, currentBullet++)

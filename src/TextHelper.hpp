@@ -2,7 +2,6 @@
 
 #include "AnmManager.hpp"
 #include "ZunColor.hpp"
-#include "ZunResult.hpp"
 #include "inttypes.hpp"
 
 // #include <d3d8.h>
@@ -20,10 +19,10 @@ namespace th06
 // };
 struct TextHelper
 {
-    static ZunResult CreateTextBuffer();
+    static bool CreateTextBuffer();
     static void ReleaseTextBuffer();
     static void RenderTextToTexture(i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontHeight,
-                                    i32 fontWidth, ZunColor textColor, ZunColor shadowColor, char *string,
+                                    i32 fontWidth, ZunColor textColor, ZunColor shadowColor, const char *string,
                                     TextureData *outTexture);
 
     TextHelper();

@@ -253,7 +253,7 @@ void BombData::BombReimuBCalc(Player *player)
 {
     AnmVm *bombSprite;
     i32 i;
-    ZunVec3 unusedVector;
+    // ZunVec3 unusedVector;
 
     if (player->bombInfo.timer >= player->bombInfo.duration)
     {
@@ -349,7 +349,7 @@ void BombData::BombMarisaACalc(Player *player)
 {
 
     f32 starAngle;
-    i32 unused[3];
+    // i32 unused[3];
     AnmVm *starSprite;
     i32 i;
 

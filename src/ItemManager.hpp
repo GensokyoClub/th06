@@ -5,11 +5,9 @@
 #include "diffbuild.hpp"
 #include "inttypes.hpp"
 
-// #include <d3dx8math.h>
-
 namespace th06
 {
-enum ItemType // This enum is 1 byte in size on Enemy
+enum ItemType : i16 // This enum is 1 byte in size on Enemy
 {
     ITEM_POWER_SMALL,
     ITEM_POINT,
@@ -18,7 +16,8 @@ enum ItemType // This enum is 1 byte in size on Enemy
     ITEM_FULL_POWER,
     ITEM_LIFE,
     ITEM_POINT_BULLET,
-    ITEM_NO_ITEM = 0xffffffff,
+    // Might need to be 0xffffff? That causes zed to freak out though..
+    ITEM_NO_ITEM = -1,
 };
 
 struct Item
@@ -49,5 +48,5 @@ struct ItemManager
 };
 ZUN_ASSERT_SIZE(ItemManager, 0x2894c);
 
-DIFFABLE_EXTERN(ItemManager, g_ItemManager);
+extern ItemManager g_ItemManager;
 }; // namespace th06

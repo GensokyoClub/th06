@@ -8,11 +8,9 @@
 #include "SoundPlayer.hpp"
 #include "utils.hpp"
 
-// #include <d3dx8math.h>
-
 namespace th06
 {
-DIFFABLE_STATIC(ItemManager, g_ItemManager);
+ItemManager g_ItemManager;
 
 ItemManager::ItemManager() {
 

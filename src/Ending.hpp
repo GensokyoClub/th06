@@ -2,7 +2,6 @@
 
 #include "AnmVm.hpp"
 #include "Chain.hpp"
-#include "ZunResult.hpp"
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
@@ -53,17 +52,17 @@ struct Ending
         this->backgroundScrollSpeed = 0.0f;
     }
 
-    static ZunResult RegisterChain();
+    static bool RegisterChain();
     static ChainCallbackResult OnUpdate(Ending *ending);
     static ChainCallbackResult OnDraw(Ending *ending);
-    static ZunResult AddedCallback(Ending *ending);
-    static ZunResult DeletedCallback(Ending *ending);
+    static bool AddedCallback(Ending *ending);
+    static bool DeletedCallback(Ending *ending);
 
     i32 ReadEndFileParameter();
 
-    ZunResult ParseEndFile();
+    bool ParseEndFile();
 
-    ZunResult LoadEnding(char *endFilePath);
+    bool LoadEnding(const char *endFilePath);
     void FadingEffect();
 
     ChainElem *calcChain;
@@ -72,7 +71,7 @@ struct Ending
     f32 backgroundScrollSpeed;
     AnmVm sprites[16];
     char *endFileData;
-    ZunBool hasSeenEnding;
+    bool hasSeenEnding;
     ZunTimer timer1;
     ZunTimer timer2;
     ZunTimer timer3;

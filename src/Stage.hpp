@@ -5,9 +5,6 @@
 #include "ZunTimer.hpp"
 #include "diffbuild.hpp"
 #include "inttypes.hpp"
-// #include "zwave.hpp"
-// #include <d3d8.h>
-// #include <d3dx8math.h>
 
 namespace th06
 {
@@ -80,8 +77,8 @@ enum SpellcardState
 
 struct StageFile
 {
-    char *anmFile;
-    char *stdFile;
+    const char *anmFile;
+    const char *stdFile;
 };
 ZUN_ASSERT_SIZE(StageFile, 0x8);
 
@@ -98,17 +95,17 @@ enum StageOpcode
 struct Stage
 {
     Stage();
-    static ZunResult RegisterChain(u32 stage);
+    static bool RegisterChain(u32 stage);
     static void CutChain();
     static ChainCallbackResult OnUpdate(Stage *stage);
     static ChainCallbackResult OnDrawHighPrio(Stage *stage);
     static ChainCallbackResult OnDrawLowPrio(Stage *stage);
-    static ZunResult AddedCallback(Stage *stage);
-    static ZunResult DeletedCallback(Stage *stage);
+    static bool AddedCallback(Stage *stage);
+    static bool DeletedCallback(Stage *stage);
 
-    ZunResult LoadStageData(char *anmpath, char *stdpath);
-    ZunResult UpdateObjects();
-    ZunResult RenderObjects(i32 zLevel);
+    bool LoadStageData(const char *anmpath, const char *stdpath);
+    bool UpdateObjects();
+    bool RenderObjects(i32 zLevel);
 
     AnmVm *quadVms;
     RawStageHeader *stdData;
@@ -144,5 +141,5 @@ struct Stage
 };
 ZUN_ASSERT_SIZE(Stage, 0x2f4);
 
-DIFFABLE_EXTERN(Stage, g_Stage)
+extern Stage g_Stage;
 }; // namespace th06

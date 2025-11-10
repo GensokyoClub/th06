@@ -1,3 +1,8 @@
+require "premake-ninja/ninja"
+premake.path = premake.path .. "/premake-ninja"
+
+
+
 workspace "th06"
   configurations { "Debug", "Release" }
   location "build"
@@ -10,9 +15,8 @@ newoption {
 project "th06"
   language "C++"
   cppdialect "C++20"
-  targetname "th06"
   targetdir "."
-  objdir "obj"
+  objdir "obj/%{cfg.buildcfg}/"
 
   files {
     "src/AnmManager.cpp",
@@ -49,10 +53,6 @@ project "th06"
     "src/TextHelper.cpp",
     "src/utils.cpp",
     "src/ZunTimer.cpp",
-    "src/pbg3/FileAbstraction.cpp",
-    "src/pbg3/IPbg3Parser.cpp",
-    "src/pbg3/Pbg3Archive.cpp",
-    "src/pbg3/Pbg3Parser.cpp",
     -- keep headers visible
     "src/**.hpp"
   }
@@ -60,7 +60,7 @@ project "th06"
   includedirs { "src" }
 
   filter "toolset:gcc"   buildoptions { "-Wall", "-Wextra", "-Wpedantic" }
-  filter "toolset:clang" buildoptions { "-Wall", "-Wextra", "-Wpedantic", "-Wno-gnu-anonymous-struct" }
+  filter "toolset:clang" buildoptions { "-Wall", "-Wextra", "-Wpedantic", "-Wno-gnu-anonymous-struct", "-Wno-unused-parameter", "-Wno-unused-but-set-variable", "-Wno-unused-variable", "-Wno-nontrivial-memcall", "-Wno-c99-extensions", "-Wno-switch", "-Wno-c++11-narrowing" }
   filter {}
 
   kind "WindowedApp"
@@ -83,6 +83,40 @@ project "th06"
     if #sdl2_cflags > 0 then buildoptions { sdl2_cflags } end
     if #sdl2_libs   > 0 then linkoptions  { sdl2_libs }   end
     links { "SDL2_image", "SDL2_ttf", "m" }
+  filter {}
+
+  filter "system:emscripten"
+    kind "WindowedApp"
+    targetextension ".html"
+    targetname "th06_web"
+
+    buildoptions {
+      "-g",
+      "-gsource-map",
+      "-sUSE_SDL=2",
+      "-sUSE_SDL_IMAGE=2",
+      "-sUSE_SDL_TTF=2",
+    }
+
+    linkoptions {
+      "-g",
+      "-gsource-map",
+      "-sUSE_SDL=2",
+      "-sUSE_SDL_IMAGE=2",
+      "-sUSE_SDL_TTF=2",
+      "-sALLOW_MEMORY_GROWTH=1",
+      "-sASSERTIONS=1",
+      "-sLEGACY_GL_EMULATION=1",
+      "--preload-file ../data",
+      "--preload-file ../bgm",
+    }
+
+    defines { "EMSCRIPTEN" }
+
+    -- Emscripten puts the compiled files in same dir by default
+    targetdir "web"
+    objdir "obj/emscripten/%{cfg.buildcfg}/"
+
   filter {}
 
   filter "system:windows"
@@ -117,7 +151,6 @@ project "th06"
       filter { "architecture:x86"    } libdirs { SDL2_TTF_DIR .. "/lib/x86" }
       filter {}
     end
-  filter {}
 
   filter { "system:windows", "action:not vs*" }
     local pc_cflags = os.outputof("pkg-config --cflags sdl2 SDL2_image SDL2_ttf iconv") or ""
@@ -128,11 +161,13 @@ project "th06"
 
   filter "configurations:Debug"
     defines { "DEBUG" }
+    targetname "th06_debug"
     symbols "On"
     optimize "Off"
 
   filter "configurations:Release"
     defines { "NDEBUG" }
+    targetname "th06_release"
     optimize "Speed"
     symbols "Off"
 

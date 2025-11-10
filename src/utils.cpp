@@ -4,7 +4,6 @@
 #endif
 
 #include "ZunMath.hpp"
-#include "i18n.hpp"
 #include "utils.hpp"
 
 namespace th06

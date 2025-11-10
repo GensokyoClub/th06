@@ -2,14 +2,10 @@
 
 #include "ItemManager.hpp"
 #include "SoundPlayer.hpp"
-#include "ZunBool.hpp"
 #include "ZunColor.hpp"
 #include "ZunMath.hpp"
-#include "ZunResult.hpp"
 #include "diffbuild.hpp"
 #include "inttypes.hpp"
-// #include <Windows.h>
-// #include <d3dx8math.h>
 
 namespace th06
 {
@@ -342,7 +338,7 @@ struct EclRawHeader
     i16 subCount;
     i16 mainCount;
     u32 timelineOffsets[3];
-    u32 subOffsets[0];
+    u32 subOffsets[];
 };
 ZUN_ASSERT_SIZE(EclRawHeader, 0x10);
 
@@ -488,10 +484,10 @@ enum EclRawInstrOpcode
 
 struct EclManager
 {
-    ZunResult Load(char *ecl);
+    bool Load(const char *ecl);
     void Unload();
-    ZunResult RunEcl(Enemy *enemy);
-    ZunResult CallEclSub(EnemyEclContext *enemyEcl, i16 subId);
+    bool RunEcl(Enemy *enemy);
+    bool CallEclSub(EnemyEclContext *enemyEcl, i16 subId);
 
     EclRawHeader *eclFile;
     EclTimelineInstr *timelinePtrs[3];
@@ -500,5 +496,5 @@ struct EclManager
 };
 ZUN_ASSERT_SIZE(EclManager, 0xc);
 
-DIFFABLE_EXTERN(EclManager, g_EclManager);
+extern EclManager g_EclManager;
 }; // namespace th06

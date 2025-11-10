@@ -99,25 +99,25 @@ MidiOutput::~MidiOutput()
     }
 }
 
-ZunResult MidiOutput::ReadFileData(u32 idx, char *path)
+bool MidiOutput::ReadFileData(u32 idx, char *path)
 {
     if (g_Supervisor.cfg.musicMode != MIDI)
     {
-        return ZUN_SUCCESS;
+        return true;
     }
 
     this->StopPlayback();
     this->ReleaseFileData(idx);
 
-    this->midiFileData[idx] = FileSystem::OpenPath(path, false);
+    this->midiFileData[idx] = FileSystem::OpenPath(path);
 
     if (this->midiFileData[idx] == NULL)
     {
         g_GameErrorContext.Log(&g_GameErrorContext, TH_ERR_MIDI_FAILED_TO_READ_FILE, path);
-        return ZUN_ERROR;
+        return false;
     }
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
 void MidiOutput::ReleaseFileData(u32 idx)
@@ -145,7 +145,7 @@ void MidiOutput::ClearTracks()
     this->numTracks = 0;
 }
 
-ZunResult MidiOutput::ParseFile(i32 fileIdx)
+bool MidiOutput::ParseFile(i32 fileIdx)
 {
     u8 hdrRaw[8];
     u32 trackLength;
@@ -158,7 +158,7 @@ ZunResult MidiOutput::ParseFile(i32 fileIdx)
     if (currentCursor == NULL)
     {
         utils::DebugPrint2(TH_ERR_MIDI_NOT_LOADED);
-        return ZUN_ERROR;
+        return false;
     }
 
     // Read midi header chunk
@@ -205,20 +205,20 @@ ZunResult MidiOutput::ParseFile(i32 fileIdx)
         currentCursor += trackLength;
     }
     this->tempo = 1'000'000;
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult MidiOutput::LoadFile(char *midiPath)
+bool MidiOutput::LoadFile(char *midiPath)
 {
-    if (this->ReadFileData(0x1f, midiPath) != ZUN_SUCCESS)
+    if (!this->ReadFileData(0x1f, midiPath))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     this->ParseFile(0x1f);
     this->ReleaseFileData(0x1f);
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
 void MidiOutput::LoadTracks()
@@ -240,32 +240,32 @@ void MidiOutput::LoadTracks()
     }
 }
 
-ZunResult MidiOutput::Play()
+bool MidiOutput::Play()
 {
     if (this->tracks == NULL)
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     this->LoadTracks();
     this->midiOutDev.OpenDevice(0xFFFF'FFFF);
     this->StartTimer(1, NULL, NULL);
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult MidiOutput::StopPlayback()
+bool MidiOutput::StopPlayback()
 {
     if (this->tracks == NULL)
     {
-        return ZUN_ERROR;
+        return false;
     }
     else
     {
         this->StopTimer();
         this->midiOutDev.Close();
 
-        return ZUN_SUCCESS;
+        return true;
     }
 }
 

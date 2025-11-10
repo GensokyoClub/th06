@@ -1,8 +1,6 @@
 #pragma once
 
 #include "AnmVm.hpp"
-#include "ZunBool.hpp"
-#include "ZunResult.hpp"
 #include "diffbuild.hpp"
 #include "inttypes.hpp"
 
@@ -92,23 +90,23 @@ ZUN_ASSERT_SIZE(Laser, 0x270);
 struct BulletManager
 {
     BulletManager();
-    static ZunResult RegisterChain(char *bulletAnmPath);
+    static bool RegisterChain(const char *bulletAnmPath);
     static void CutChain();
-    static ZunResult AddedCallback(BulletManager *mgr);
-    static ZunResult DeletedCallback(BulletManager *mgr);
+    static bool AddedCallback(BulletManager *mgr);
+    static bool DeletedCallback(BulletManager *mgr);
     static ChainCallbackResult OnUpdate(BulletManager *mgr);
     static ChainCallbackResult OnDraw(BulletManager *mgr);
 
     static void DrawBulletNoHwVertex(Bullet *bullet);
     static void DrawBullet(Bullet *bullet);
 
-    void RemoveAllBullets(ZunBool turnIntoItem);
+    void RemoveAllBullets(bool turnIntoItem);
     void InitializeToZero();
 
     void TurnAllBulletsIntoPoints();
 
-    i32 DespawnBullets(i32 maxBonusScore, ZunBool awardPoints);
-    ZunResult SpawnBulletPattern(EnemyBulletShooter *bulletProps);
+    i32 DespawnBullets(i32 maxBonusScore, bool awardPoints);
+    bool SpawnBulletPattern(EnemyBulletShooter *bulletProps);
     Laser *SpawnLaserPattern(EnemyLaserShooter *bulletProps);
     u32 SpawnSingleBullet(EnemyBulletShooter *bulletProps, i32 bulletIdx1, i32 bulletIdx2, f32 angle);
     BulletTypeSprites bulletTypeTemplates[16];
@@ -117,10 +115,10 @@ struct BulletManager
     i32 nextBulletIndex;
     i32 bulletCount;
     ZunTimer time;
-    char *bulletAnmPath;
+    const char *bulletAnmPath;
 };
 ZUN_ASSERT_SIZE(BulletManager, 0xf5c18);
 
-DIFFABLE_EXTERN(u32 *, g_EffectsColor);
-DIFFABLE_EXTERN(BulletManager, g_BulletManager);
+extern u32 *g_EffectsColor;
+extern BulletManager g_BulletManager;
 }; // namespace th06

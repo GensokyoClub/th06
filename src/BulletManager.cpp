@@ -16,9 +16,9 @@
 
 namespace th06
 {
-DIFFABLE_STATIC(BulletManager, g_BulletManager);
-DIFFABLE_STATIC(ChainElem, g_BulletManagerCalcChain);
-DIFFABLE_STATIC(ChainElem, g_BulletManagerDrawChain);
+BulletManager g_BulletManager;
+ChainElem g_BulletManagerCalcChain;
+ChainElem g_BulletManagerDrawChain;
 DIFFABLE_STATIC_ARRAY_ASSIGN(u32, 28, g_EffectsColorWithTextureBlending) = {
     0xff000000, 0xff303030, 0xff606060, 0xff500000, 0xff900000, 0xffff2020, 0xff400040,
     0xff800080, 0xffff30ff, 0xff000050, 0xff000090, 0xff2020ff, 0xff203060, 0xff304090,
@@ -377,7 +377,7 @@ u32 BulletManager::SpawnSingleBullet(EnemyBulletShooter *bulletProps, i32 bullet
     return 0;
 }
 
-void BulletManager::RemoveAllBullets(ZunBool turnIntoItem)
+void BulletManager::RemoveAllBullets(bool turnIntoItem)
 {
     f32 cosine;
     f32 sine;
@@ -442,7 +442,7 @@ void BulletManager::TurnAllBulletsIntoPoints()
     this->RemoveAllBullets(true);
 }
 
-i32 BulletManager::DespawnBullets(i32 maxBonusScore, ZunBool awardPoints)
+i32 BulletManager::DespawnBullets(i32 maxBonusScore, bool awardPoints)
 {
     i32 bulletScore;
     i32 totalBonusScore;
@@ -529,7 +529,7 @@ i32 BulletManager::DespawnBullets(i32 maxBonusScore, ZunBool awardPoints)
     return totalBonusScore;
 }
 
-ZunResult BulletManager::SpawnBulletPattern(EnemyBulletShooter *bulletProps)
+bool BulletManager::SpawnBulletPattern(EnemyBulletShooter *bulletProps)
 {
     i32 idx1, idx2;
     f32 angle;
@@ -551,7 +551,7 @@ out:
     {
         g_SoundPlayer.PlaySoundByIdx(bulletProps->sfx);
     }
-    return ZUN_SUCCESS;
+    return true;
 }
 
 Laser *BulletManager::SpawnLaserPattern(EnemyLaserShooter *bulletProps)
@@ -610,7 +610,7 @@ Laser *BulletManager::SpawnLaserPattern(EnemyLaserShooter *bulletProps)
     return laser;
 }
 
-ZunResult BulletManager::RegisterChain(char *bulletAnmPath)
+bool BulletManager::RegisterChain(const char *bulletAnmPath)
 {
     BulletManager *mgr = &g_BulletManager;
 
@@ -632,9 +632,9 @@ ZunResult BulletManager::RegisterChain(char *bulletAnmPath)
     g_BulletManagerCalcChain.deletedCallback = (ChainDeletedCallback)BulletManager::DeletedCallback;
     g_BulletManagerCalcChain.arg = mgr;
 
-    if (g_Chain.AddToCalcChain(&g_BulletManagerCalcChain, TH_CHAIN_PRIO_CALC_BULLETMANAGER) != ZUN_SUCCESS)
+    if (!g_Chain.AddToCalcChain(&g_BulletManagerCalcChain, TH_CHAIN_PRIO_CALC_BULLETMANAGER))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     g_BulletManagerDrawChain.callback = (ChainCallback)BulletManager::OnDraw;
@@ -642,7 +642,7 @@ ZunResult BulletManager::RegisterChain(char *bulletAnmPath)
     g_BulletManagerDrawChain.deletedCallback = NULL;
     g_BulletManagerDrawChain.arg = mgr;
     g_Chain.AddToDrawChain(&g_BulletManagerDrawChain, TH_CHAIN_PRIO_DRAW_BULLETMANAGER);
-    return ZUN_SUCCESS;
+    return true;
 }
 
 ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
@@ -707,7 +707,7 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
             {
                 if (curBullet->exFlags & 1)
                 {
-                    if ((ZunBool)(curBullet->timer.current <= 16))
+                    if (curBullet->timer.current <= 16)
                     {
                         bulletSpeed = 5.0f - curBullet->timer.AsFramesFloat() * 5.0f / 16.0f;
                         sincosmul(&curBullet->velocity, curBullet->angle, bulletSpeed + curBullet->speed);
@@ -719,7 +719,7 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                 }
                 else if (curBullet->exFlags & 0x10)
                 {
-                    if ((ZunBool)(curBullet->timer.current >= curBullet->ex5Int0))
+                    if (curBullet->timer.current >= curBullet->ex5Int0)
                     {
                         curBullet->exFlags &= ~0x10;
                     }
@@ -731,7 +731,7 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                 }
                 else if (curBullet->exFlags & 0x20)
                 {
-                    if ((ZunBool)(curBullet->timer.current >= curBullet->ex5Int0))
+                    if (curBullet->timer.current >= curBullet->ex5Int0)
                     {
                         curBullet->exFlags &= ~0x20;
                     }
@@ -746,8 +746,7 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                 }
                 if (curBullet->exFlags & 0x40)
                 {
-                    if ((ZunBool)(curBullet->timer.current >=
-                                  curBullet->dirChangeInterval * (curBullet->dirChangeNumTimes + 1)))
+                    if (curBullet->timer.current >= curBullet->dirChangeInterval * (curBullet->dirChangeNumTimes + 1))
                     {
                         curBullet->dirChangeNumTimes++;
 
@@ -773,8 +772,7 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                 }
                 else if (curBullet->exFlags & 0x100)
                 {
-                    if ((ZunBool)(curBullet->timer.current >=
-                                  curBullet->dirChangeInterval * (curBullet->dirChangeNumTimes + 1)))
+                    if (curBullet->timer.current >= curBullet->dirChangeInterval * (curBullet->dirChangeNumTimes + 1))
                     {
                         curBullet->dirChangeNumTimes++;
 
@@ -800,8 +798,7 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                 }
                 else if (curBullet->exFlags & 0x80)
                 {
-                    if ((ZunBool)(curBullet->timer.current >=
-                                  curBullet->dirChangeInterval * (curBullet->dirChangeNumTimes + 1)))
+                    if (curBullet->timer.current >= curBullet->dirChangeInterval * (curBullet->dirChangeNumTimes + 1))
                     {
                         curBullet->dirChangeNumTimes++;
 
@@ -1011,13 +1008,13 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                 laserSize.x = local_14 / 2.0f;
             }
 
-            if ((ZunBool)(curLaser->timer.current >= curLaser->grazeDelay))
+            if (curLaser->timer.current >= curLaser->grazeDelay)
             {
                 g_Player.CalcLaserHitbox(&laserCenter, &laserSize, &curLaser->pos, curLaser->angle,
                                          curLaser->timer.AsFrames() % 12 == 0);
             }
 
-            if ((ZunBool)(curLaser->timer.current < curLaser->startTime))
+            if (curLaser->timer.current < curLaser->startTime)
             {
                 break;
             }
@@ -1028,7 +1025,7 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
             g_Player.CalcLaserHitbox(&laserCenter, &laserSize, &curLaser->pos, curLaser->angle,
                                      curLaser->timer.AsFrames() % 12 == 0);
 
-            if ((ZunBool)(curLaser->timer.current < curLaser->duration))
+            if (curLaser->timer.current < curLaser->duration)
             {
                 break;
             }
@@ -1064,13 +1061,13 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                 }
             }
 
-            if ((ZunBool)(curLaser->timer.current < curLaser->grazeInterval))
+            if (curLaser->timer.current < curLaser->grazeInterval)
             {
                 g_Player.CalcLaserHitbox(&laserCenter, &laserSize, &curLaser->pos, curLaser->angle,
                                          curLaser->timer.AsFrames() % 12 == 0);
             }
 
-            if ((ZunBool)(curLaser->timer.current < curLaser->endTime))
+            if (curLaser->timer.current < curLaser->endTime)
             {
                 break;
             }
@@ -1335,20 +1332,20 @@ void BulletManager::DrawBulletNoHwVertex(Bullet *bullet)
     g_AnmManager->Draw(anmVm);
 }
 
-ZunResult BulletManager::AddedCallback(BulletManager *mgr)
+bool BulletManager::AddedCallback(BulletManager *mgr)
 {
     u32 idx;
 
-    if ((ZunBool)(g_Supervisor.curState != SUPERVISOR_STATE_GAMEMANAGER_REINIT))
+    if (g_Supervisor.curState != SUPERVISOR_STATE_GAMEMANAGER_REINIT)
     {
-        if (g_AnmManager->LoadAnm(ANM_FILE_BULLET3, "data/etama3.anm", ANM_OFFSET_BULLET3) != ZUN_SUCCESS)
+        if (!g_AnmManager->LoadAnm(ANM_FILE_BULLET3, "data/etama3.anm", ANM_OFFSET_BULLET3))
         {
-            return ZUN_ERROR;
+            return false;
         }
 
-        if (g_AnmManager->LoadAnm(ANM_FILE_BULLET4, "data/etama4.anm", ANM_OFFSET_BULLET4) != ZUN_SUCCESS)
+        if (!g_AnmManager->LoadAnm(ANM_FILE_BULLET4, "data/etama4.anm", ANM_OFFSET_BULLET4))
         {
-            return ZUN_ERROR;
+            return false;
         }
     }
 
@@ -1420,10 +1417,10 @@ ZunResult BulletManager::AddedCallback(BulletManager *mgr)
     }
 
     memset(&g_ItemManager, 0, sizeof(ItemManager));
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult BulletManager::DeletedCallback(BulletManager *arg)
+bool BulletManager::DeletedCallback(BulletManager *arg)
 {
     if ((i32)(g_Supervisor.curState != SUPERVISOR_STATE_GAMEMANAGER_REINIT))
     {
@@ -1431,7 +1428,7 @@ ZunResult BulletManager::DeletedCallback(BulletManager *arg)
         g_AnmManager->ReleaseAnm(ANM_FILE_BULLET4);
     }
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
 void BulletManager::CutChain()

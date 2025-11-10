@@ -202,7 +202,7 @@ ScreenEffect *ScreenEffect::RegisterChain(i32 effect, u32 ticks, u32 effectParam
     createdEffect->shakinessParam = effectParam2;
     createdEffect->unusedParam = unusedEffectParam;
 
-    if (g_Chain.AddToCalcChain(calcChainElem, TH_CHAIN_PRIO_CALC_SCREENEFFECT) != 0)
+    if (!g_Chain.AddToCalcChain(calcChainElem, TH_CHAIN_PRIO_CALC_SCREENEFFECT))
     {
         return NULL;
     }
@@ -309,13 +309,13 @@ ChainCallbackResult ScreenEffect::ShakeScreen(ScreenEffect *effect)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-ZunResult ScreenEffect::AddedCallback(ScreenEffect *effect)
+bool ScreenEffect::AddedCallback(ScreenEffect *effect)
 {
     effect->timer.InitializeForPopup();
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult ScreenEffect::DeletedCallback(ScreenEffect *effect)
+bool ScreenEffect::DeletedCallback(ScreenEffect *effect)
 {
     effect->calcChainElement->deletedCallback = NULL;
     g_Chain.Cut(effect->drawChainElement);
@@ -323,6 +323,6 @@ ZunResult ScreenEffect::DeletedCallback(ScreenEffect *effect)
     delete effect;
     effect = NULL;
 
-    return ZUN_SUCCESS;
+    return true;
 }
 }; // namespace th06

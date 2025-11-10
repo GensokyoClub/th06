@@ -7,15 +7,14 @@
 #include "ChainPriorities.hpp"
 #include "GameManager.hpp"
 #include "Rng.hpp"
-#include "ZunResult.hpp"
 #include "utils.hpp"
 
 namespace th06
 {
-DIFFABLE_STATIC(EffectManager, g_EffectManager);
+EffectManager g_EffectManager;
 
-DIFFABLE_STATIC(ChainElem, g_EffectManagerCalcChain);
-DIFFABLE_STATIC(ChainElem, g_EffectManagerDrawChain);
+ChainElem g_EffectManagerCalcChain;
+ChainElem g_EffectManagerDrawChain;
 
 DIFFABLE_STATIC_ARRAY_ASSIGN(EffectInfo, 20, g_Effects) = {
     {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_SMALL, NULL},
@@ -306,66 +305,66 @@ ChainCallbackResult EffectManager::OnDraw(EffectManager *mgr)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-ZunResult EffectManager::AddedCallback(EffectManager *mgr)
+bool EffectManager::AddedCallback(EffectManager *mgr)
 {
     mgr->Reset();
     switch (g_GameManager.currentStage)
     {
     case 0:
     case 1:
-        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff01.anm", ANM_OFFSET_EFFECTS) != ZUN_SUCCESS)
+        if (!g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff01.anm", ANM_OFFSET_EFFECTS))
         {
-            return ZUN_ERROR;
+            return false;
         }
         break;
     case 2:
-        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff02.anm", ANM_OFFSET_EFFECTS) != ZUN_SUCCESS)
+        if (!g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff02.anm", ANM_OFFSET_EFFECTS))
         {
-            return ZUN_ERROR;
+            return false;
         }
         break;
     case 3:
-        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff03.anm", ANM_OFFSET_EFFECTS) != ZUN_SUCCESS)
+        if (!g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff03.anm", ANM_OFFSET_EFFECTS))
         {
-            return ZUN_ERROR;
+            return false;
         }
         break;
     case 4:
-        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff04.anm", ANM_OFFSET_EFFECTS) != ZUN_SUCCESS)
+        if (!g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff04.anm", ANM_OFFSET_EFFECTS))
         {
-            return ZUN_ERROR;
+            return false;
         }
         break;
     case 5:
-        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff05.anm", ANM_OFFSET_EFFECTS) != ZUN_SUCCESS)
+        if (!g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff05.anm", ANM_OFFSET_EFFECTS))
         {
-            return ZUN_ERROR;
+            return false;
         }
         break;
     case 6:
-        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff05.anm", ANM_OFFSET_EFFECTS) != ZUN_SUCCESS)
+        if (!g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff05.anm", ANM_OFFSET_EFFECTS))
         {
-            return ZUN_ERROR;
+            return false;
         }
         break;
     case 7:
-        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff04.anm", ANM_OFFSET_EFFECTS) != ZUN_SUCCESS)
+        if (!g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff04.anm", ANM_OFFSET_EFFECTS))
         {
-            return ZUN_ERROR;
+            return false;
         }
         break;
     }
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult EffectManager::DeletedCallback(EffectManager *p)
+bool EffectManager::DeletedCallback(EffectManager *p)
 {
     g_AnmManager->ReleaseAnm(ANM_FILE_EFFECTS);
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult EffectManager::RegisterChain()
+bool EffectManager::RegisterChain()
 {
     EffectManager *mgr = &g_EffectManager;
     mgr->Reset();
@@ -377,9 +376,9 @@ ZunResult EffectManager::RegisterChain()
     g_EffectManagerCalcChain.deletedCallback = (ChainAddedCallback)mgr->DeletedCallback;
     g_EffectManagerCalcChain.arg = mgr;
 
-    if (g_Chain.AddToCalcChain(&g_EffectManagerCalcChain, TH_CHAIN_PRIO_CALC_EFFECTMANAGER))
+    if (!g_Chain.AddToCalcChain(&g_EffectManagerCalcChain, TH_CHAIN_PRIO_CALC_EFFECTMANAGER))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     g_EffectManagerDrawChain.callback = (ChainCallback)mgr->OnDraw;
@@ -388,7 +387,7 @@ ZunResult EffectManager::RegisterChain()
     g_EffectManagerDrawChain.arg = mgr;
     g_Chain.AddToDrawChain(&g_EffectManagerDrawChain, TH_CHAIN_PRIO_DRAW_EFFECTMANAGER);
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
 void EffectManager::CutChain()

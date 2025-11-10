@@ -7,7 +7,6 @@
 #include "StageMenu.hpp"
 #include "ZunColor.hpp"
 #include "ZunMath.hpp"
-#include "ZunResult.hpp"
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
@@ -55,14 +54,14 @@ struct AsciiManager
 {
     AsciiManager();
 
-    static ZunResult RegisterChain();
+    static bool RegisterChain();
     static void CutChain();
 
     static ChainCallbackResult OnUpdate(AsciiManager *s);
     static ChainCallbackResult OnDrawMenus(AsciiManager *s);
     static ChainCallbackResult OnDrawPopups(AsciiManager *s);
-    static ZunResult AddedCallback(AsciiManager *s);
-    static ZunResult DeletedCallback(AsciiManager *s);
+    static bool AddedCallback(AsciiManager *s);
+    static bool DeletedCallback(AsciiManager *s);
 
     void InitializeVms();
 
@@ -70,7 +69,7 @@ struct AsciiManager
     void DrawPopupsWithHwVertexProcessing();
     void DrawPopupsWithoutHwVertexProcessing();
 
-    void AddString(ZunVec3 *position, char *text);
+    void AddString(ZunVec3 *position, const char *text);
     void AddFormatText(ZunVec3 *position, const char *fmt, ...);
     void CreatePopup1(ZunVec3 *position, i32 value, ZunColor color);
     void CreatePopup2(ZunVec3 *position, i32 value, ZunColor color);
@@ -90,11 +89,11 @@ struct AsciiManager
     u32 isGui;
     // If true, we are drawing the currently selected element of the MainMenu
     // class.
-    ZunBool isSelected;
+    bool isSelected;
     i32 nextPopupIndex1;
     i32 nextPopupIndex2;
     // Seems unused
-    WeirdPadding unk3;
+    // WeirdPadding unk3;
     // Menu that shows up when the player presses the menu button while in-game.
     StageMenu gameMenu;
     // Menu that shows up when the player dies after losing their last life.
@@ -102,5 +101,5 @@ struct AsciiManager
     AsciiManagerPopup popups[515];
 };
 ZUN_ASSERT_SIZE(AsciiManager, 0xc1ac);
-DIFFABLE_EXTERN(AsciiManager, g_AsciiManager);
+extern AsciiManager g_AsciiManager;
 }; // namespace th06

@@ -5,7 +5,7 @@
 
 namespace th06
 {
-DIFFABLE_STATIC(Chain, g_Chain)
+Chain g_Chain;
 
 Chain::~Chain()
 {
@@ -42,7 +42,7 @@ Chain::Chain()
 {
 }
 
-int Chain::AddToCalcChain(ChainElem *elem, int priority)
+bool Chain::AddToCalcChain(ChainElem *elem, int priority)
 {
     ChainElem *cur;
 
@@ -81,7 +81,7 @@ int Chain::AddToCalcChain(ChainElem *elem, int priority)
 
     if (elem->addedCallback != NULL)
     {
-        int res = elem->addedCallback(elem->arg);
+        bool res = elem->addedCallback(elem->arg);
         elem->addedCallback = NULL;
 
         return res;

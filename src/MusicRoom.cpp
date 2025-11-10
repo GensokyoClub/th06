@@ -12,24 +12,24 @@
 namespace th06
 {
 
-ZunResult MusicRoom::CheckInputEnable()
+bool MusicRoom::CheckInputEnable()
 {
     if (this->waitFramesCount >= 8)
     {
         this->enableInput = 1;
     }
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunBool MusicRoom::ProcessInput()
+bool MusicRoom::ProcessInput()
 {
     i32 i;
     char lineCharBuffer[64];
-    i32 listPos;
+    // i32 listPos;
 
     // This variable is never used after this?
-    listPos = this->listingOffset;
+    // listPos = this->listingOffset;
 
     if (WAS_PRESSED(TH_BUTTON_UP))
     {
@@ -109,7 +109,7 @@ ZunBool MusicRoom::ProcessInput()
     return false;
 }
 
-ZunResult MusicRoom::RegisterChain()
+bool MusicRoom::RegisterChain()
 {
     static MusicRoom g_MusicRoom;
     MusicRoom *musicRoom;
@@ -122,16 +122,16 @@ ZunResult MusicRoom::RegisterChain()
     musicRoom->calc_chain->addedCallback = (ChainAddedCallback)MusicRoom::AddedCallback;
     musicRoom->calc_chain->deletedCallback = (ChainDeletedCallback)MusicRoom::DeletedCallback;
 
-    if (g_Chain.AddToCalcChain(musicRoom->calc_chain, TH_CHAIN_PRIO_CALC_MAINMENU))
+    if (!g_Chain.AddToCalcChain(musicRoom->calc_chain, TH_CHAIN_PRIO_CALC_MAINMENU))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     musicRoom->draw_chain = g_Chain.CreateElem((ChainCallback)MusicRoom::OnDraw);
     musicRoom->draw_chain->arg = musicRoom;
     g_Chain.AddToDrawChain(musicRoom->draw_chain, TH_CHAIN_PRIO_DRAW_MAINMENU);
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
 ChainCallbackResult MusicRoom::OnUpdate(MusicRoom *musicRoom)
@@ -142,7 +142,7 @@ ChainCallbackResult MusicRoom::OnUpdate(MusicRoom *musicRoom)
         switch (musicRoom->enableInput)
         {
         case false:
-            if (!musicRoom->CheckInputEnable())
+            if (musicRoom->CheckInputEnable())
             {
                 break;
             }
@@ -226,7 +226,7 @@ ChainCallbackResult MusicRoom::OnDraw(MusicRoom *musicRoom)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-ZunResult MusicRoom::AddedCallback(MusicRoom *musicRoom)
+bool MusicRoom::AddedCallback(MusicRoom *musicRoom)
 {
     u32 charIndex;
     char *currChar;
@@ -235,34 +235,34 @@ ZunResult MusicRoom::AddedCallback(MusicRoom *musicRoom)
     char lineCharBuffer[64];
     i32 lineIndex;
 
-    if (g_AnmManager->LoadSurface(0, "data/result/music.jpg") != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadSurface(0, "data/result/music.jpg"))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
-    if (g_AnmManager->LoadAnm(ANM_FILE_MUSIC00, "data/music00.anm", ANM_OFFSET_MUSIC00) != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadAnm(ANM_FILE_MUSIC00, "data/music00.anm", ANM_OFFSET_MUSIC00))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
-    if (g_AnmManager->LoadAnm(ANM_FILE_MUSIC01, "data/music01.anm", ANM_OFFSET_MUSIC01) != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadAnm(ANM_FILE_MUSIC01, "data/music01.anm", ANM_OFFSET_MUSIC01))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
-    if (g_AnmManager->LoadAnm(ANM_FILE_MUSIC02, "data/music02.anm", ANM_OFFSET_MUSIC02) != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadAnm(ANM_FILE_MUSIC02, "data/music02.anm", ANM_OFFSET_MUSIC02))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     g_AnmManager->SetAndExecuteScriptIdx(musicRoom->mainVm, ANM_OFFSET_MUSIC00);
     musicRoom->waitFramesCount = 0;
-    currChar = (char *)FileSystem::OpenPath("data/musiccmt.txt", 0);
+    currChar = (char *)FileSystem::OpenPath("data/musiccmt.txt");
     fileBase = currChar;
 
     if (currChar == NULL)
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     musicRoom->trackDescriptors = new TrackDescriptor[ARRAY_SIZE_SIGNED(musicRoom->titleSprites)]();
@@ -400,10 +400,10 @@ finishMusiccmtRead:
 
     std::free(fileBase);
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult MusicRoom::DeletedCallback(MusicRoom *musicRoom)
+bool MusicRoom::DeletedCallback(MusicRoom *musicRoom)
 {
     delete musicRoom->trackDescriptors;
     musicRoom->trackDescriptors = NULL;
@@ -415,7 +415,7 @@ ZunResult MusicRoom::DeletedCallback(MusicRoom *musicRoom)
     g_Chain.Cut(musicRoom->draw_chain);
     musicRoom->draw_chain = NULL;
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
 } // namespace th06

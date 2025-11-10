@@ -19,13 +19,12 @@
 #include "ScreenEffect.hpp"
 #include "SoundPlayer.hpp"
 #include "Supervisor.hpp"
-#include "ZunBool.hpp"
 #include "i18n.hpp"
 #include "utils.hpp"
 
 namespace th06
 {
-DIFFABLE_STATIC(Player, g_Player);
+Player g_Player;
 
 DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterData, 4, g_CharData) = {
     /* ReimuA  */ {4.0, 2.0, 4.0, 2.0, Player::FireBulletReimuA, Player::FireBulletReimuA},
@@ -38,7 +37,7 @@ Player::Player()
 {
 }
 
-ZunResult Player::RegisterChain(u8 unk)
+bool Player::RegisterChain(u8 unk)
 {
     Player *p = &g_Player;
     std::memset(p, 0, sizeof(Player));
@@ -53,13 +52,13 @@ ZunResult Player::RegisterChain(u8 unk)
     p->chainDraw2->arg = p;
     p->chainCalc->addedCallback = (ChainAddedCallback)Player::AddedCallback;
     p->chainCalc->deletedCallback = (ChainDeletedCallback)Player::DeletedCallback;
-    if (g_Chain.AddToCalcChain(p->chainCalc, TH_CHAIN_PRIO_CALC_PLAYER))
+    if (!g_Chain.AddToCalcChain(p->chainCalc, TH_CHAIN_PRIO_CALC_PLAYER))
     {
-        return ZUN_ERROR;
+        return false;
     }
     g_Chain.AddToDrawChain(p->chainDraw1, TH_CHAIN_PRIO_DRAW_LOW_PRIO_PLAYER);
     g_Chain.AddToDrawChain(p->chainDraw2, TH_CHAIN_PRIO_DRAW_HIGH_PRIO_PLAYER);
-    return ZUN_SUCCESS;
+    return true;
 }
 
 void Player::CutChain()
@@ -73,7 +72,7 @@ void Player::CutChain()
     return;
 }
 
-ZunResult Player::AddedCallback(Player *p)
+bool Player::AddedCallback(Player *p)
 {
     PlayerBullet *curBullet;
     i32 idx;
@@ -83,17 +82,17 @@ ZunResult Player::AddedCallback(Player *p)
     case CHARA_REIMU:
         // This is likely an inline function from g_Supervisor returning an i32.
         if ((i32)(g_Supervisor.curState != SUPERVISOR_STATE_GAMEMANAGER_REINIT) &&
-            g_AnmManager->LoadAnm(ANM_FILE_PLAYER, "data/player00.anm", ANM_OFFSET_PLAYER) != ZUN_SUCCESS)
+            !g_AnmManager->LoadAnm(ANM_FILE_PLAYER, "data/player00.anm", ANM_OFFSET_PLAYER))
         {
-            return ZUN_ERROR;
+            return false;
         }
         g_AnmManager->SetAndExecuteScriptIdx(&p->playerSprite, ANM_SCRIPT_PLAYER_IDLE);
         break;
     case CHARA_MARISA:
         if ((i32)(g_Supervisor.curState != SUPERVISOR_STATE_GAMEMANAGER_REINIT) &&
-            g_AnmManager->LoadAnm(ANM_FILE_PLAYER, "data/player01.anm", ANM_OFFSET_PLAYER) != ZUN_SUCCESS)
+            !g_AnmManager->LoadAnm(ANM_FILE_PLAYER, "data/player01.anm", ANM_OFFSET_PLAYER))
         {
-            return ZUN_ERROR;
+            return false;
         }
         g_AnmManager->SetAndExecuteScriptIdx(&p->playerSprite, ANM_SCRIPT_PLAYER_IDLE);
         break;
@@ -139,16 +138,16 @@ ZunResult Player::AddedCallback(Player *p)
     p->verticalMovementSpeedMultiplierDuringBomb = 1.0;
     p->horizontalMovementSpeedMultiplierDuringBomb = 1.0;
     p->respawnTimer = 8;
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult Player::DeletedCallback(Player *p)
+bool Player::DeletedCallback(Player *p)
 {
     if ((i32)(g_Supervisor.curState != SUPERVISOR_STATE_GAMEMANAGER_REINIT))
     {
         g_AnmManager->ReleaseAnm(ANM_FILE_PLAYER);
     }
-    return ZUN_SUCCESS;
+    return true;
 }
 
 ChainCallbackResult Player::OnUpdate(Player *p)
@@ -222,7 +221,7 @@ ChainCallbackResult Player::OnUpdate(Player *p)
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, 2);
                     g_GameManager.currentPower = 0;
                     g_Gui.flags.flag2 = 2;
-                    g_GameManager.extraLives = 255;
+                    g_GameManager.extraLives = 0xFF;
                 }
                 g_GameManager.DecreaseSubrank(1600);
             }
@@ -341,7 +340,7 @@ ChainCallbackResult Player::OnUpdate(Player *p)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-i32 Player::CalcDamageToEnemy(ZunVec3 *enemyPos, ZunVec3 *enemyHitboxSize, ZunBool *hitWithLazerDuringBomb)
+i32 Player::CalcDamageToEnemy(ZunVec3 *enemyPos, ZunVec3 *enemyHitboxSize, bool *hitWithLazerDuringBomb)
 {
     ZunVec3 bulletTopLeft;
     i32 damage;
@@ -363,7 +362,7 @@ i32 Player::CalcDamageToEnemy(ZunVec3 *enemyPos, ZunVec3 *enemyHitboxSize, ZunBo
     for (idx = 0; idx < ARRAY_SIZE_SIGNED(this->bullets); idx++, bullet++)
     {
         if (bullet->bulletState == BULLET_STATE_UNUSED ||
-            bullet->bulletState != BULLET_STATE_FIRED && bullet->bulletType != BULLET_TYPE_2)
+            (bullet->bulletState != BULLET_STATE_FIRED && bullet->bulletType != BULLET_TYPE_2))
         {
             continue;
         }
@@ -629,7 +628,7 @@ ChainCallbackResult Player::OnDrawLowPrio(Player *p)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-ZunResult Player::HandlePlayerInputs()
+bool Player::HandlePlayerInputs()
 {
     float intermediateFloat;
 
@@ -876,7 +875,7 @@ ZunResult Player::HandlePlayerInputs()
         intermediateFloat *= intermediateFloat;
         horizontalOrbOffset = -16.0f * intermediateFloat + 24.0f;
 
-        if ((ZunBool)(this->focusMovementTimer.current >= 8))
+        if (this->focusMovementTimer.current >= 8)
         {
             this->orbState = ORB_FOCUSED;
         }
@@ -915,7 +914,7 @@ ZunResult Player::HandlePlayerInputs()
         intermediateFloat *= intermediateFloat;
         intermediateFloat = 1.0f - intermediateFloat;
         horizontalOrbOffset = -16.0f * intermediateFloat + 24.0f;
-        if ((ZunBool)(this->focusMovementTimer.current >= 8))
+        if (this->focusMovementTimer.current >= 8)
         {
             this->orbState = ORB_UNFOCUSED;
         }
@@ -936,7 +935,7 @@ ZunResult Player::HandlePlayerInputs()
         this->StartFireBulletTimer(this);
     }
     this->previousFrameInput = g_CurFrameInput;
-    return ZUN_SUCCESS;
+    return true;
 }
 
 void Player::DrawBullets(Player *p)
@@ -988,11 +987,11 @@ void Player::StartFireBulletTimer(Player *p)
     }
 }
 
-ZunResult Player::UpdateFireBulletsTimer(Player *p)
+bool Player::UpdateFireBulletsTimer(Player *p)
 {
     if (p->fireBulletTimer.AsFrames() < 0)
     {
-        return ZUN_SUCCESS;
+        return true;
     }
 
     if (p->fireBulletTimer.HasTicked() && (!g_Player.bombInfo.isInUse || g_GameManager.character != CHARA_MARISA ||
@@ -1008,7 +1007,7 @@ ZunResult Player::UpdateFireBulletsTimer(Player *p)
     {
         p->fireBulletTimer.SetCurrent(-1);
     }
-    return ZUN_SUCCESS;
+    return true;
 }
 
 f32 Player::AngleFromPlayer(ZunVec3 *pos)
@@ -1097,8 +1096,8 @@ FireBulletResult Player::FireSingleBullet(Player *player, PlayerBullet *bullet, 
     CharacterPowerBulletData *bulletData;
     f32 *pfVar4;
     i32 bulletFrame;
-    i32 unused;
-    i32 unused2;
+    // i32 unused;
+    // i32 unused2;
 
     while (g_GameManager.currentPower >= powerData->power)
     {
@@ -1253,7 +1252,7 @@ i32 Player::CalcKillBoxCollision(ZunVec3 *bulletCenter, ZunVec3 *bulletSize)
     f32 bulletLeft, bulletTop, bulletRight, bulletBottom;
     f32 bombProjectileLeft, bombProjectileTop, bombProjectileRight, bombProjectileBottom;
     i32 curBombIdx;
-    i32 padding1, padding2, padding3, padding4;
+    // i32 padding1, padding2, padding3, padding4;
 
     curBombProjectile = this->bombProjectiles;
     bulletLeft = bulletCenter->x - bulletSize->x / 2.0f;

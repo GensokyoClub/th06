@@ -6,7 +6,7 @@
 
 namespace th06
 {
-DIFFABLE_STATIC(GameErrorContext, g_GameErrorContext)
+GameErrorContext g_GameErrorContext;
 
 const char *GameErrorContext::Log(GameErrorContext *ctx, const char *fmt, ...)
 {

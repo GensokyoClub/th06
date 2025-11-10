@@ -4,7 +4,6 @@
 #include "Effect.hpp"
 #include "ZunColor.hpp"
 #include "ZunMath.hpp"
-#include "ZunResult.hpp"
 #include "inttypes.hpp"
 
 namespace th06
@@ -41,11 +40,11 @@ struct EffectManager
 
     EffectManager();
 
-    static ZunResult RegisterChain();
+    static bool RegisterChain();
     static void CutChain();
     static ChainCallbackResult OnUpdate(EffectManager *mgr);
-    static ZunResult AddedCallback(EffectManager *mgr);
-    static ZunResult DeletedCallback(EffectManager *mgr);
+    static bool AddedCallback(EffectManager *mgr);
+    static bool DeletedCallback(EffectManager *mgr);
 
     static i32 EffectCallbackRandomSplash(Effect *);
     static i32 EffectCallbackRandomSplashBig(Effect *);
@@ -60,5 +59,5 @@ struct EffectManager
 };
 ZUN_ASSERT_SIZE(EffectManager, 0x2f984);
 
-DIFFABLE_EXTERN(EffectManager, g_EffectManager);
+extern EffectManager g_EffectManager;
 }; // namespace th06

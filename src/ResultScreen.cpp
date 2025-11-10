@@ -31,23 +31,23 @@ DIFFABLE_STATIC_ASSIGN(u32, g_DefaultMagic) = 'DMYS';
 
 // EoSD assumes every character in this array is a single byte, which is a safe assumption in SJIS, but not
 //   in UTF-8, so we have to encode '･' with an escape sequence
-DIFFABLE_STATIC_ASSIGN(char *, g_AlphabetList) =
+DIFFABLE_STATIC_ASSIGN(const char *, g_AlphabetList) =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ.,:;\xA5@abcdefghijklmnopqrstuvwxyz+-/*=%0123456789(){}[]<>#!?'\"$      --";
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(char *, 6, g_CharacterList) = {TH_HAKUREI_REIMU_SPIRIT,  TH_HAKUREI_REIMU_DREAM,
+DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 6, g_CharacterList) = {TH_HAKUREI_REIMU_SPIRIT,  TH_HAKUREI_REIMU_DREAM,
                                                             TH_KIRISAME_MARISA_DEVIL, TH_KIRISAME_MARISA_LOVE,
                                                             TH_SATSUKI_RIN_FLOWER,    TH_SATSUKI_RIN_WIND};
 
 DIFFABLE_STATIC_ARRAY_ASSIGN(f32, 5, g_SpellcardsWeightsList) = {1.0f, 1.5f, 1.5f, 2.0f, 2.5f};
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(char *, 5, g_RightAlignedDifficultyList) = {"     Easy", "   Normal", "     Hard",
+DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 5, g_RightAlignedDifficultyList) = {"     Easy", "   Normal", "     Hard",
                                                                          "  Lunatic", "    Extra"};
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(char *, 4, g_ShortCharacterList2) = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
+DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 4, g_ShortCharacterList2) = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
 
 #define DEFAULT_HIGH_SCORE_NAME "Nanashi "
 
-ScoreDat *ResultScreen::OpenScore(char *path)
+ScoreDat *ResultScreen::OpenScore(const char *path)
 {
     u8 *bytes;
     i32 bytesShifted;
@@ -62,7 +62,7 @@ ScoreDat *ResultScreen::OpenScore(char *path)
     ScoreDat *scoreDat;
 
     scoreDat = (ScoreDat *)malloc(sizeof(ScoreDat));
-    scoreRaw = (ScoreRaw *)FileSystem::OpenPath(path, true);
+    scoreRaw = (ScoreRaw *)FileSystem::OpenPath(path);
     if (scoreRaw == NULL)
     {
     FAILED_TO_READ:
@@ -232,7 +232,7 @@ void ResultScreen::FreeAllScores(ScoreListNode *scores)
     }
 }
 
-ZunResult ResultScreen::ParseCatk(ScoreDat *scoreDat, Catk *outCatk)
+bool ResultScreen::ParseCatk(ScoreDat *scoreDat, Catk *outCatk)
 {
 
     i32 cursor;
@@ -242,7 +242,7 @@ ZunResult ResultScreen::ParseCatk(ScoreDat *scoreDat, Catk *outCatk)
 
     if (outCatk == NULL)
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     parsedCatk = (Catk *)header->ShiftBytes(header->dataOffset);
@@ -259,10 +259,10 @@ ZunResult ResultScreen::ParseCatk(ScoreDat *scoreDat, Catk *outCatk)
         cursor -= parsedCatk->base.th6kLen;
         parsedCatk = (Catk *)&parsedCatk->name[parsedCatk->base.th6kLen - 0x18];
     }
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult ResultScreen::ParseClrd(ScoreDat *scoreDat, Clrd *outClrd)
+bool ResultScreen::ParseClrd(ScoreDat *scoreDat, Clrd *outClrd)
 {
     i32 cursor;
     Clrd *parsedClrd;
@@ -273,7 +273,7 @@ ZunResult ResultScreen::ParseClrd(ScoreDat *scoreDat, Clrd *outClrd)
 
     if (outClrd == NULL)
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     for (characterShotType = 0; characterShotType < CLRD_NUM_CHARACTERS; characterShotType++)
@@ -307,10 +307,10 @@ ZunResult ResultScreen::ParseClrd(ScoreDat *scoreDat, Clrd *outClrd)
         cursor -= parsedClrd->base.th6kLen;
         parsedClrd = (Clrd *)(((u8 *)&parsedClrd->base) + parsedClrd->base.th6kLen);
     }
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult ResultScreen::ParsePscr(ScoreDat *scoreDat, Pscr *outClrd)
+bool ResultScreen::ParsePscr(ScoreDat *scoreDat, Pscr *outClrd)
 {
     i32 cursor;
     Pscr *parsedPscr;
@@ -323,7 +323,7 @@ ZunResult ResultScreen::ParsePscr(ScoreDat *scoreDat, Pscr *outClrd)
 
     if (outClrd == NULL)
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     for (pscr = outClrd, character = 0; character < PSCR_NUM_CHARS_SHOTTYPES; character++)
@@ -363,7 +363,7 @@ ZunResult ResultScreen::ParsePscr(ScoreDat *scoreDat, Pscr *outClrd)
         cursor -= parsedPscr->base.th6kLen;
         parsedPscr = parsedPscr->ShiftBytes(parsedPscr->base.th6kLen);
     }
-    return ZUN_SUCCESS;
+    return true;
 }
 
 void ResultScreen::ReleaseScoreDat(ScoreDat *scoreDat)
@@ -870,13 +870,13 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
             for (idx = 0; idx < ARRAY_SIZE_SIGNED(this->replays); idx++)
             {
                 std::sprintf(replayToReadPath, "./replay/th6_%.2d.rpy", idx + 1);
-                replayLoaded = (ReplayHeader *)FileSystem::OpenPath(replayToReadPath, 1);
+                replayLoaded = (ReplayHeader *)FileSystem::OpenPath(replayToReadPath);
                 if (replayLoaded == NULL)
                 {
                     continue;
                 }
 
-                if (ReplayManager::ValidateReplayData(replayLoaded, g_LastFileSize) == ZUN_SUCCESS)
+                if (ReplayManager::ValidateReplayData(replayLoaded, g_LastFileSize))
                 {
                     this->replays[idx] = *replayLoaded;
                 }
@@ -1141,7 +1141,7 @@ void ResultScreen::MoveCursor(ResultScreen *resultScreen, i32 length)
     }
 }
 
-ZunBool ResultScreen::MoveCursorHorizontally(ResultScreen *resultScreen, i32 length)
+bool ResultScreen::MoveCursorHorizontally(ResultScreen *resultScreen, i32 length)
 {
     if (WAS_PRESSED_PERIODIC(TH_BUTTON_LEFT))
     {
@@ -1169,7 +1169,7 @@ ZunBool ResultScreen::MoveCursorHorizontally(ResultScreen *resultScreen, i32 len
     }
 }
 
-ZunResult ResultScreen::CheckConfirmButton()
+bool ResultScreen::CheckConfirmButton()
 {
     AnmVm *viewport;
 
@@ -1198,7 +1198,7 @@ ZunResult ResultScreen::CheckConfirmButton()
         }
         break;
     }
-    return ZUN_SUCCESS;
+    return true;
 }
 
 u32 ResultScreen::DrawFinalStats()
@@ -1324,10 +1324,8 @@ u32 ResultScreen::DrawFinalStats()
     return 0;
 }
 
-ZunResult ResultScreen::RegisterChain(i32 unk)
+bool ResultScreen::RegisterChain(i32 unk)
 {
-
-    i32 unused[16];
     ResultScreen *resultScreen;
     resultScreen = new ResultScreen();
 
@@ -1350,21 +1348,20 @@ ZunResult ResultScreen::RegisterChain(i32 unk)
         }
     }
 
-    if (g_Chain.AddToCalcChain(resultScreen->calcChain, TH_CHAIN_PRIO_CALC_RESULTSCREEN))
+    if (!g_Chain.AddToCalcChain(resultScreen->calcChain, TH_CHAIN_PRIO_CALC_RESULTSCREEN))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     resultScreen->drawChain = g_Chain.CreateElem((ChainCallback)ResultScreen::OnDraw);
     resultScreen->drawChain->arg = resultScreen;
     g_Chain.AddToDrawChain(resultScreen->drawChain, TH_CHAIN_PRIO_DRAW_RESULTSCREEN);
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
 ResultScreen::ResultScreen()
 {
-    i32 unused[12];
     std::memset(this, 0, sizeof(ResultScreen));
     this->cursor = 1;
 }
@@ -1720,9 +1717,9 @@ ChainCallbackResult ResultScreen::OnUpdate(ResultScreen *resultScreen)
 
 ChainCallbackResult th06::ResultScreen::OnDraw(ResultScreen *resultScreen)
 {
-    u8 unused[12];
-    u8 unused2;
-    u8 unused3;
+    // u8 unused[12];
+    // u8 unused2;
+    // u8 unused3;
 
     AnmVm *sprite;
     char keyboardCharacter[2];
@@ -2036,7 +2033,7 @@ ChainCallbackResult th06::ResultScreen::OnDraw(ResultScreen *resultScreen)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-ZunResult ResultScreen::AddedCallback(ResultScreen *resultScreen)
+bool ResultScreen::AddedCallback(ResultScreen *resultScreen)
 {
 
     i32 slot;
@@ -2047,29 +2044,29 @@ ZunResult ResultScreen::AddedCallback(ResultScreen *resultScreen)
     if (resultScreen->resultScreenState != RESULT_SCREEN_STATE_EXIT)
     {
 
-        if (g_AnmManager->LoadSurface(0, "data/result/result.jpg") != ZUN_SUCCESS)
+        if (!g_AnmManager->LoadSurface(0, "data/result/result.jpg"))
         {
-            return ZUN_ERROR;
+            return false;
         }
 
-        if (g_AnmManager->LoadAnm(ANM_FILE_RESULT00, "data/result00.anm", ANM_OFFSET_RESULT00) != ZUN_SUCCESS)
+        if (!g_AnmManager->LoadAnm(ANM_FILE_RESULT00, "data/result00.anm", ANM_OFFSET_RESULT00))
         {
-            return ZUN_ERROR;
+            return false;
         }
 
-        if (g_AnmManager->LoadAnm(ANM_FILE_RESULT01, "data/result01.anm", ANM_OFFSET_RESULT01) != ZUN_SUCCESS)
+        if (!g_AnmManager->LoadAnm(ANM_FILE_RESULT01, "data/result01.anm", ANM_OFFSET_RESULT01))
         {
-            return ZUN_ERROR;
+            return false;
         }
 
-        if (g_AnmManager->LoadAnm(ANM_FILE_RESULT02, "data/result02.anm", ANM_OFFSET_RESULT02) != ZUN_SUCCESS)
+        if (!g_AnmManager->LoadAnm(ANM_FILE_RESULT02, "data/result02.anm", ANM_OFFSET_RESULT02))
         {
-            return ZUN_ERROR;
+            return false;
         }
 
-        if (g_AnmManager->LoadAnm(ANM_FILE_RESULT03, "data/result03.anm", ANM_OFFSET_RESULT03) != ZUN_SUCCESS)
+        if (!g_AnmManager->LoadAnm(ANM_FILE_RESULT03, "data/result03.anm", ANM_OFFSET_RESULT03))
         {
-            return ZUN_ERROR;
+            return false;
         }
 
         sprite = &resultScreen->unk_40[0];
@@ -2140,7 +2137,7 @@ ZunResult ResultScreen::AddedCallback(ResultScreen *resultScreen)
     }
 
     if (resultScreen->resultScreenState == RESULT_SCREEN_STATE_EXIT &&
-        g_GameManager.pscr[g_GameManager.CharacterShotType()][g_GameManager.currentStage - 1][g_GameManager.difficulty]
+        (u32)g_GameManager.pscr[g_GameManager.CharacterShotType()][g_GameManager.currentStage - 1][g_GameManager.difficulty]
                 .score < g_GameManager.score)
     {
         g_GameManager.pscr[g_GameManager.CharacterShotType()][g_GameManager.currentStage - 1][g_GameManager.difficulty]
@@ -2149,10 +2146,10 @@ ZunResult ResultScreen::AddedCallback(ResultScreen *resultScreen)
 
     resultScreen->unk_39a0.activeSpriteIndex = -1;
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult ResultScreen::DeletedCallback(ResultScreen *resultScreen)
+bool ResultScreen::DeletedCallback(ResultScreen *resultScreen)
 {
     i32 character;
     i32 difficulty;
@@ -2184,7 +2181,7 @@ ZunResult ResultScreen::DeletedCallback(ResultScreen *resultScreen)
     delete resultScreen;
     resultScreen = NULL;
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
 }; // namespace th06

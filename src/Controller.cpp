@@ -12,8 +12,8 @@
 namespace th06
 {
 // DIFFABLE_STATIC(JOYCAPSA, g_JoystickCaps)
-DIFFABLE_STATIC(u16, g_FocusButtonConflictState)
-DIFFABLE_STATIC(u8 *, keyboardState);
+u16 g_FocusButtonConflictState;
+u8 *keyboardState;
 
 u16 Controller::GetJoystickCaps(void)
 {
@@ -281,7 +281,7 @@ u32 Controller::SetButtonFromControllerInputs(u16 *outButtons, i16 controllerBut
     return pressed ? touhouButton & 0xFFFF : 0;
 }
 
-DIFFABLE_STATIC_ARRAY(u8, SDL_CONTROLLER_BUTTON_MAX, g_ControllerData)
+DIFFABLE_STATIC_ARRAY(u8, SDL_CONTROLLER_BUTTON_MAX, g_ControllerData);
 
 // This is for rebinding keys
 u8 *th06::Controller::GetControllerState()

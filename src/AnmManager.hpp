@@ -9,8 +9,6 @@
 #include "AnmVm.hpp"
 #include "GLFunc.hpp"
 #include "GameManager.hpp"
-#include "ZunResult.hpp"
-#include "ZunTimer.hpp"
 #include "diffbuild.hpp"
 #include "inttypes.hpp"
 
@@ -153,9 +151,10 @@ struct AnmManager
     //    void ReleaseVertexBuffer();
     void SetupVertexBuffer();
 
-    ZunResult CreateEmptyTexture(i32 textureIdx, u32 width, u32 height, i32 textureFormat);
-    ZunResult LoadTexture(i32 textureIdx, char *textureName, i32 textureFormat, ZunColor colorKey);
-    ZunResult LoadTextureAlphaChannel(i32 textureIdx, char *textureName, i32 textureFormat, ZunColor colorKey);
+    bool CreateEmptyTexture(i32 textureIdx, u32 width, u32 height, i32 textureFormat);
+    bool LoadTexture(i32 textureIdx, char *textureName, i32 textureFormat, ZunColor colorKey);
+    bool LoadTextureAlphaChannel(i32 textureIdx, char *textureName, i32 textureFormat, ZunColor colorKey);
+
     void ReleaseTexture(i32 textureIdx);
     void TakeScreenshotIfRequested();
     void TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width, i32 height);
@@ -203,23 +202,23 @@ struct AnmManager
     }
 
     i32 ExecuteScript(AnmVm *vm);
-    ZunResult Draw(AnmVm *vm);
+    bool Draw(AnmVm *vm);
     void DrawTextToSprite(u32 spriteDstIndex, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontWidth,
-                          i32 fontHeight, ZunColor textColor, ZunColor shadowColor, char *strToPrint);
-    static void DrawStringFormat(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, char *fmt, ...);
-    static void DrawStringFormat2(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, char *fmt, ...);
-    static void DrawVmTextFmt(AnmManager *anm_mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, char *fmt, ...);
-    ZunResult DrawNoRotation(AnmVm *vm);
-    ZunResult DrawOrthographic(AnmVm *vm, bool roundToPixel);
-    ZunResult DrawFacingCamera(AnmVm *vm);
-    ZunResult Draw2(AnmVm *vm);
-    ZunResult Draw3(AnmVm *vm);
+                          i32 fontHeight, ZunColor textColor, ZunColor shadowColor, const char *strToPrint);
+    static void DrawStringFormat(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
+    static void DrawStringFormat2(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
+    static void DrawVmTextFmt(AnmManager *anm_mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
+    bool DrawNoRotation(AnmVm *vm);
+    bool DrawOrthographic(AnmVm *vm, bool roundToPixel);
+    bool DrawFacingCamera(AnmVm *vm);
+    bool Draw2(AnmVm *vm);
+    bool Draw3(AnmVm *vm);
 
     void LoadSprite(u32 spriteIdx, AnmLoadedSprite *sprite);
-    ZunResult SetActiveSprite(AnmVm *vm, u32 spriteIdx);
+    bool SetActiveSprite(AnmVm *vm, u32 spriteIdx);
 
     void ReleaseSurfaces(void);
-    ZunResult LoadSurface(i32 surfaceIdx, const char *path);
+    bool LoadSurface(i32 surfaceIdx, const char *path);
     void ReleaseSurface(i32 surfaceIdx);
     void CopySurfaceToBackBuffer(i32 surfaceIdx, i32 left, i32 top, i32 x, i32 y);
     void CopySurfaceRectToBackBuffer(i32 surfaceIdx, i32 rectX, i32 rectY, i32 rectLeft, i32 rectTop, i32 width,
@@ -229,13 +228,13 @@ struct AnmManager
                            float yOffset);
 
     void ReleaseAnm(i32 anmIdx);
-    ZunResult LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset);
+    bool LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset);
     void ExecuteAnmIdx(AnmVm *vm, i32 anmFileIdx)
     {
         vm->anmFileIndex = anmFileIdx;
         vm->pos = ZunVec3(0, 0, 0);
         vm->posOffset = ZunVec3(0, 0, 0);
-        ;
+
         vm->fontHeight = 15;
         vm->fontWidth = 15;
 
@@ -291,5 +290,5 @@ struct AnmManager
 };
 ZUN_ASSERT_SIZE(AnmManager, 0x2112c);
 
-DIFFABLE_EXTERN(AnmManager *, g_AnmManager);
+extern AnmManager *g_AnmManager;
 }; // namespace th06

@@ -12,10 +12,8 @@
 #include "MidiOutput.hpp"
 #include "ZunBool.hpp"
 #include "ZunMath.hpp"
-#include "ZunResult.hpp"
 #include "diffbuild.hpp"
 #include "inttypes.hpp"
-#include "pbg3/Pbg3Archive.hpp"
 
 namespace th06
 {
@@ -108,11 +106,11 @@ enum SupervisorState
 
 struct Supervisor
 {
-    static ZunResult RegisterChain();
+    static bool RegisterChain();
     static ChainCallbackResult OnUpdate(Supervisor *s);
     static ChainCallbackResult OnDraw(Supervisor *s);
-    static ZunResult AddedCallback(Supervisor *s);
-    static ZunResult DeletedCallback(Supervisor *s);
+    static bool AddedCallback(Supervisor *s);
+    static bool DeletedCallback(Supervisor *s);
     static void DrawFpsCounter();
 
     ZunBool ReadMidiFile(u32 midiFileIdx, char *path);
@@ -121,12 +119,12 @@ struct Supervisor
     ZunResult StopAudio();
     ZunResult FadeOutMusic(f32 fadeOutSeconds);
 
-    static ZunResult SetupDInput(Supervisor *s);
+    static bool SetupDInput(Supervisor *s);
 
-    i32 LoadPbg3(i32 pbg3FileIdx, char *filename);
-    void ReleasePbg3(i32 pbg3FileIdx);
+    // i32 LoadPbg3(i32 pbg3FileIdx, const char *filename);
+    // void ReleasePbg3(i32 pbg3FileIdx);
 
-    ZunResult LoadConfig(const char *path);
+    bool LoadConfig(const char *path);
 
     void TickTimer(i32 *frames, f32 *subframes);
 
@@ -149,19 +147,11 @@ struct Supervisor
         return (this->cfg.opts >> GCOS_FORCE_60FPS & 1) || this->vsyncEnabled;
     }
 
-    //    HINSTANCE hInstance;
-    //    PDIRECT3D8 d3dIface;
-    //    PDIRECT3DDEVICE8 d3dDevice;
-    //    LPDIRECTINPUT8 dinputIface;
-    //    LPDIRECTINPUTDEVICE8A keyboard;
-    //    LPDIRECTINPUTDEVICE8A controller;
     SDL_GameController *gameController;
-    //    DIDEVCAPS controllerCaps;
     SDL_Window *gameWindow;
     ZunMatrix viewMatrix;
     ZunMatrix projectionMatrix;
     ZunViewport viewport;
-    //    D3DPRESENT_PARAMETERS presentParameters;
     GameConfiguration cfg;
     GameConfiguration defaultConfig;
     i32 calcCount;
@@ -171,7 +161,7 @@ struct Supervisor
 
     i32 unk194;
     i32 unk198;
-    ZunBool isInEnding;
+    bool isInEnding;
 
     i32 vsyncEnabled;
     u32 lastFrameTime;
@@ -183,23 +173,19 @@ struct Supervisor
     f32 unk1b4;
     f32 unk1b8;
 
-    Pbg3Archive *pbg3Archives[16];
-    Pbg3ArchiveName pbg3ArchiveNames[16];
-
     u8 hasD3dHardwareVertexProcessing;
     u8 lockableBackbuffer;
     u8 colorMode16Bits;
 
     u32 startupTimeBeforeMenuMusic;
-    //    D3DCAPS8 d3dCaps;
 };
 ZUN_ASSERT_SIZE(Supervisor, 0x4d8);
 
-DIFFABLE_EXTERN(ControllerMapping, g_ControllerMapping)
-DIFFABLE_EXTERN(Supervisor, g_Supervisor)
-DIFFABLE_EXTERN(u16, g_LastFrameInput)
-DIFFABLE_EXTERN(u16, g_CurFrameInput)
-DIFFABLE_EXTERN(u16, g_IsEigthFrameOfHeldInput)
-DIFFABLE_EXTERN(SDL_Surface *, g_TextBufferSurface)
-DIFFABLE_EXTERN(u16, g_NumOfFramesInputsWereHeld);
+extern ControllerMapping g_ControllerMapping;
+extern Supervisor g_Supervisor;
+extern u16 g_LastFrameInput;
+extern u16 g_CurFrameInput;
+extern u16 g_IsEigthFrameOfHeldInput;
+extern SDL_Surface *g_TextBufferSurface;
+extern u16 g_NumOfFramesInputsWereHeld;
 }; // namespace th06

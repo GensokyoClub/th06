@@ -27,7 +27,7 @@
 
 namespace th06
 {
-DIFFABLE_STATIC(Supervisor, g_Supervisor)
+Supervisor g_Supervisor;
 DIFFABLE_STATIC_ASSIGN(ControllerMapping, g_ControllerMapping) = {
     (i16)SDL_CONTROLLER_BUTTON_A,
     (i16)SDL_CONTROLLER_BUTTON_B,
@@ -39,11 +39,11 @@ DIFFABLE_STATIC_ASSIGN(ControllerMapping, g_ControllerMapping) = {
     (i16)SDL_CONTROLLER_BUTTON_DPAD_RIGHT,
     (i16)SDL_CONTROLLER_BUTTON_RIGHTSHOULDER,
 };
-DIFFABLE_STATIC(SDL_Surface *, g_TextBufferSurface)
-DIFFABLE_STATIC(u16, g_LastFrameInput);
-DIFFABLE_STATIC(u16, g_CurFrameInput);
-DIFFABLE_STATIC(u16, g_IsEigthFrameOfHeldInput);
-DIFFABLE_STATIC(u16, g_NumOfFramesInputsWereHeld);
+SDL_Surface *g_TextBufferSurface;
+u16 g_LastFrameInput;
+u16 g_CurFrameInput;
+u16 g_IsEigthFrameOfHeldInput;
+u16 g_NumOfFramesInputsWereHeld;
 
 ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
 {
@@ -83,7 +83,7 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
         case SUPERVISOR_STATE_INIT:
         REINIT_MAINMENU:
             s->curState = SUPERVISOR_STATE_MAINMENU;
-            if (MainMenu::RegisterChain(0) != ZUN_SUCCESS)
+            if (!MainMenu::RegisterChain(0))
             {
                 return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
             }
@@ -94,7 +94,7 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
             case SUPERVISOR_STATE_EXITSUCCESS:
                 return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
             case SUPERVISOR_STATE_GAMEMANAGER:
-                if (GameManager::RegisterChain() != ZUN_SUCCESS)
+                if (!GameManager::RegisterChain())
                 {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
@@ -102,20 +102,20 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
             case SUPERVISOR_STATE_EXITERROR:
                 return CHAIN_CALLBACK_RESULT_EXIT_GAME_ERROR;
             case SUPERVISOR_STATE_RESULTSCREEN:
-                if (ResultScreen::RegisterChain(NULL) != ZUN_SUCCESS)
+                if (!ResultScreen::RegisterChain(0))
                 {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
                 break;
             case SUPERVISOR_STATE_MUSICROOM:
-                if (MusicRoom::RegisterChain() != ZUN_SUCCESS)
+                if (!MusicRoom::RegisterChain())
                 {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
                 break;
             case SUPERVISOR_STATE_ENDING:
                 GameManager::CutChain();
-                if (Ending::RegisterChain() != ZUN_SUCCESS)
+                if (!Ending::RegisterChain())
                 {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
@@ -148,14 +148,14 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
 
             case SUPERVISOR_STATE_RESULTSCREEN_FROMGAME:
                 GameManager::CutChain();
-                if (ResultScreen::RegisterChain(true) != ZUN_SUCCESS)
+                if (!ResultScreen::RegisterChain(true))
                 {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
                 break;
             case SUPERVISOR_STATE_GAMEMANAGER_REINIT:
                 GameManager::CutChain();
-                if (GameManager::RegisterChain() != ZUN_SUCCESS)
+                if (!GameManager::RegisterChain())
                 {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
@@ -170,7 +170,7 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
                 s->curState = SUPERVISOR_STATE_INIT;
                 ReplayManager::SaveReplay(NULL, NULL);
                 s->curState = SUPERVISOR_STATE_MAINMENU;
-                if (MainMenu::RegisterChain(1) != ZUN_SUCCESS)
+                if (!MainMenu::RegisterChain(1))
                 {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
@@ -178,7 +178,7 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
 
             case 10:
                 GameManager::CutChain();
-                if (Ending::RegisterChain() != ZUN_SUCCESS)
+                if (!Ending::RegisterChain())
                 {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
@@ -217,7 +217,7 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
                 s->curState = SUPERVISOR_STATE_INIT;
                 goto REINIT_MAINMENU;
             case SUPERVISOR_STATE_RESULTSCREEN_FROMGAME:
-                if (ResultScreen::RegisterChain(true) != ZUN_SUCCESS)
+                if (!ResultScreen::RegisterChain(true))
                 {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
@@ -279,7 +279,7 @@ ChainCallbackResult Supervisor::OnDraw(Supervisor *s)
 //     return TRUE;
 // }
 
-ZunResult Supervisor::RegisterChain()
+bool Supervisor::RegisterChain()
 {
     ChainElem *chain;
     Supervisor *supervisor = &g_Supervisor;
@@ -292,32 +292,26 @@ ZunResult Supervisor::RegisterChain()
     chain->arg = supervisor;
     chain->addedCallback = (ChainAddedCallback)Supervisor::AddedCallback;
     chain->deletedCallback = (ChainDeletedCallback)Supervisor::DeletedCallback;
-    if (g_Chain.AddToCalcChain(chain, TH_CHAIN_PRIO_CALC_SUPERVISOR) != 0)
+    if (!g_Chain.AddToCalcChain(chain, TH_CHAIN_PRIO_CALC_SUPERVISOR))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     chain = g_Chain.CreateElem((ChainCallback)Supervisor::OnDraw);
     chain->arg = supervisor;
     g_Chain.AddToDrawChain(chain, TH_CHAIN_PRIO_DRAW_SUPERVISOR);
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult Supervisor::AddedCallback(Supervisor *s)
+bool Supervisor::AddedCallback(Supervisor *s)
 {
     i32 i;
 
-    for (i = 0; i < (i32)(sizeof(s->pbg3Archives) / sizeof(s->pbg3Archives[0])); i++)
-    {
-        s->pbg3Archives[i] = NULL;
-    }
-
-    g_Pbg3Archives = s->pbg3Archives;
-    if (s->LoadPbg3(IN_PBG3_INDEX, TH_IN_DAT_FILE))
-    {
-        return ZUN_ERROR;
-    }
+    // if (s->LoadPbg3(IN_PBG3_INDEX, TH_IN_DAT_FILE))
+    // {
+    //     return ZUN_ERROR;
+    // }
 
     // D3DX code swaps twice to copy to both buffers
 
@@ -347,33 +341,33 @@ ZunResult Supervisor::AddedCallback(Supervisor *s)
     g_Rng.Initialize((u16)std::time(NULL));
 
     g_SoundPlayer.InitSoundBuffers();
-    if (g_AnmManager->LoadAnm(ANM_FILE_TEXT, "data/text.anm", ANM_OFFSET_TEXT) != 0)
+    if (!g_AnmManager->LoadAnm(ANM_FILE_TEXT, "data/text.anm", ANM_OFFSET_TEXT))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
-    if (AsciiManager::RegisterChain() != 0)
+    if (!AsciiManager::RegisterChain())
     {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_ASCIIMANAGER_INIT_FAILED);
-        return ZUN_ERROR;
+        return false;
     }
 
     s->unk198 = 0;
     g_AnmManager->SetupVertexBuffer();
 
-    if (TextHelper::CreateTextBuffer() != ZUN_SUCCESS)
+    if (!TextHelper::CreateTextBuffer())
     {
-        return ZUN_ERROR;
+        return false;
     }
 
-    s->ReleasePbg3(IN_PBG3_INDEX);
-    if (g_Supervisor.LoadPbg3(MD_PBG3_INDEX, TH_MD_DAT_FILE) != 0)
-        return ZUN_ERROR;
+    // s->ReleasePbg3(IN_PBG3_INDEX);
+    // if (g_Supervisor.LoadPbg3(MD_PBG3_INDEX, TH_MD_DAT_FILE) != 0)
+    //     return ZUN_ERROR;
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult Supervisor::SetupDInput(Supervisor *supervisor)
+bool Supervisor::SetupDInput(Supervisor *supervisor)
 {
     //    HINSTANCE hInst;
     //
@@ -469,7 +463,7 @@ ZunResult Supervisor::SetupDInput(Supervisor *supervisor)
     //
     //        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_PAD_FOUND);
     //    }
-    return ZUN_SUCCESS;
+    return true;
 }
 
 // BOOL CALLBACK Supervisor::EnumGameControllersCb(LPCDIDEVICEINSTANCEA pdidInstance, LPVOID pContext)
@@ -487,16 +481,16 @@ ZunResult Supervisor::SetupDInput(Supervisor *supervisor)
 //     return FALSE;
 // }
 
-ZunResult Supervisor::DeletedCallback(Supervisor *s)
+bool Supervisor::DeletedCallback(Supervisor *s)
 {
-    i32 pbg3Idx;
+    // i32 pbg3Idx;
 
     //    g_AnmManager->ReleaseVertexBuffer();
-    for (pbg3Idx = 0; pbg3Idx < ARRAY_SIZE_SIGNED(s->pbg3Archives); pbg3Idx += 1)
-    {
-        s->ReleasePbg3(pbg3Idx);
-    }
-    g_AnmManager->ReleaseAnm(0);
+    // for (pbg3Idx = 0; pbg3Idx < ARRAY_SIZE_SIGNED(s->pbg3Archives); pbg3Idx += 1)
+    // {
+    //     s->ReleasePbg3(pbg3Idx);
+    // }
+    // g_AnmManager->ReleaseAnm(0);
     AsciiManager::CutChain();
     g_SoundPlayer.StopBGM();
     if (s->midiOutput != NULL)
@@ -530,7 +524,7 @@ ZunResult Supervisor::DeletedCallback(Supervisor *s)
     //        s->dinputIface->Release();
     //        s->dinputIface = NULL;
     //    }
-    return ZUN_SUCCESS;
+    return true;
 }
 
 void Supervisor::DrawFpsCounter()
@@ -596,62 +590,65 @@ void Supervisor::TickTimer(i32 *frames, f32 *subframes)
     }
 }
 
-void Supervisor::ReleasePbg3(i32 pbg3FileIdx)
-{
-    if (this->pbg3Archives[pbg3FileIdx] == NULL)
-    {
-        return;
-    }
+// void Supervisor::ReleasePbg3(i32 pbg3FileIdx)
+// {
+//     // if (this->pbg3Archives[pbg3FileIdx] == NULL)
+//     // {
+//     //     return;
+//     // }
 
-    // Double free! Release is called internally by the Pbg3Archive destructor,
-    // and as such should not be called directly. By calling it directly here,
-    // it ends up being called twice, which will cause the resources owned by
-    // Pbg3Archive to be freed multiple times, which can result in crashes.
-    //
-    // For some reason, this double-free doesn't cause crashes in the original
-    // game. However, this can cause problems in dllbuilds of the game. Maybe
-    // some accuracy improvements in the PBG3 handling will remove this
-    // difference.
-    this->pbg3Archives[pbg3FileIdx]->Release();
-    delete this->pbg3Archives[pbg3FileIdx];
-    this->pbg3Archives[pbg3FileIdx] = NULL;
-}
+//     // Double free! Release is called internally by the Pbg3Archive destructor,
+//     // and as such should not be called directly. By calling it directly here,
+//     // it ends up being called twice, which will cause the resources owned by
+//     // Pbg3Archive to be freed multiple times, which can result in crashes.
+//     //
+//     // For some reason, this double-free doesn't cause crashes in the original
+//     // game. However, this can cause problems in dllbuilds of the game. Maybe
+//     // some accuracy improvements in the PBG3 handling will remove this
+//     // difference.
+//     // this->pbg3Archives[pbg3FileIdx]->Release();
+//     // delete this->pbg3Archives[pbg3FileIdx];
+//     // this->pbg3Archives[pbg3FileIdx] = NULL;
+// }
 
-i32 Supervisor::LoadPbg3(i32 pbg3FileIdx, char *filename)
-{
-    if (this->pbg3Archives[pbg3FileIdx] == NULL || strcmp(filename, this->pbg3ArchiveNames[pbg3FileIdx]) != 0)
-    {
-        this->ReleasePbg3(pbg3FileIdx);
-        this->pbg3Archives[pbg3FileIdx] = new Pbg3Archive();
-        utils::DebugPrint("%s open ...\n", filename);
-        if (this->pbg3Archives[pbg3FileIdx]->Load(filename) != 0)
-        {
-            std::strcpy(this->pbg3ArchiveNames[pbg3FileIdx], filename);
+// i32 Supervisor::LoadPbg3(i32 pbg3FileIdx, const char *filename)
+// {
+//     if (this->pbg3Archives[pbg3FileIdx] == NULL || strcmp(filename, this->pbg3ArchiveNames[pbg3FileIdx]) != 0)
+//     {
+//         this->ReleasePbg3(pbg3FileIdx);
+//         this->pbg3Archives[pbg3FileIdx] = new Pbg3Archive();
+//         utils::DebugPrint("%s open ...\n", filename);
+//         if (this->pbg3Archives[pbg3FileIdx]->Load(filename) != 0)
+//         {
+//             std::strcpy(this->pbg3ArchiveNames[pbg3FileIdx], filename);
 
-            char verPath[128];
-            std::sprintf(verPath, "ver%.4x.dat", GAME_VERSION);
-            i32 res = this->pbg3Archives[pbg3FileIdx]->FindEntry(verPath);
-            if (res < 0)
-            {
-                GameErrorContext::Fatal(&g_GameErrorContext, "error : データのバージョンが違います\n");
-                return 1;
-            }
-        }
-        else
-        {
-            delete this->pbg3Archives[pbg3FileIdx];
-            // Let's really make sure this is null by nulling twice. I assume
-            // there's some kind of inline function here, like it's actually
-            // calling this->pbg3Archives.delete(pbg3FileIdx), followed by a
-            // manual nulling?
-            this->pbg3Archives[pbg3FileIdx] = NULL;
-            this->pbg3Archives[pbg3FileIdx] = NULL;
-        }
-    }
-    return 0;
-}
+//             char verPath[128];
+//             std::sprintf(verPath, "ver%.4x.dat", GAME_VERSION);
+//             i32 res = this->pbg3Archives[pbg3FileIdx]->FindEntry(verPath);
+//             if (res < 0)
+//             {
+//                 GameErrorContext::Fatal(&g_GameErrorContext, "error : データのバージョンが違います\n");
+//                 return 1;
+//             }
+//         }
+//         else
+//         {
+//             delete this->pbg3Archives[pbg3FileIdx];
+//             // Let's really make sure this is null by nulling twice. I assume
+//             // there's some kind of inline function here, like it's actually
+//             // calling this->pbg3Archives.delete(pbg3FileIdx), followed by a
+//             // manual nulling?
+//             this->pbg3Archives[pbg3FileIdx] = NULL;
+//             this->pbg3Archives[pbg3FileIdx] = NULL;
+//         }
+//     }
+//     return 0;
+// }
+// i32 Supervisor::LoadPbg3(i32 pbg3FileIdx, const char *filename) {
+//     return 0;
+// }
 
-ZunResult Supervisor::LoadConfig(const char *path)
+bool Supervisor::LoadConfig(const char *path)
 {
     GameConfiguration *data;
     FILE *wavFile;
@@ -659,7 +656,7 @@ ZunResult Supervisor::LoadConfig(const char *path)
 
     std::memset(&g_Supervisor.cfg, 0, sizeof(GameConfiguration));
     g_Supervisor.cfg.opts = g_Supervisor.cfg.opts | (1 << GCOS_USE_D3D_HW_TEXTURE_BLENDING);
-    data = (GameConfiguration *)FileSystem::OpenPath(path, 1);
+    data = (GameConfiguration *)FileSystem::OpenPath(path);
     if (data == NULL)
     {
         g_Supervisor.cfg.lifeCount = 2;
@@ -777,13 +774,13 @@ ZunResult Supervisor::LoadConfig(const char *path)
     {
         GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_FILE_CANNOT_BE_EXPORTED, path);
         GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_FOLDER_HAS_WRITE_PROTECT_OR_DISK_FULL);
-        return ZUN_ERROR;
+        return false;
     }
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunBool Supervisor::ReadMidiFile(u32 midiFileIdx, char *path)
+bool Supervisor::ReadMidiFile(u32 midiFileIdx, char *path)
 {
     // Return conventions seem opposite of normal? But they're never used anyway
     if (g_Supervisor.cfg.musicMode == MIDI)
@@ -799,7 +796,7 @@ ZunBool Supervisor::ReadMidiFile(u32 midiFileIdx, char *path)
     return true;
 }
 
-ZunResult Supervisor::PlayMidiFile(i32 midiFileIdx)
+bool Supervisor::PlayMidiFile(i32 midiFileIdx)
 {
     if (g_Supervisor.cfg.musicMode == MIDI)
     {
@@ -813,7 +810,7 @@ ZunResult Supervisor::PlayMidiFile(i32 midiFileIdx)
         return ZUN_SUCCESS;
     }
 
-    return ZUN_ERROR;
+    return false;
 }
 
 ZunResult Supervisor::PlayAudio(char *path)
@@ -844,7 +841,7 @@ ZunResult Supervisor::PlayAudio(char *path)
         pathExtension[2] = 'o';
         pathExtension[3] = 's';
         g_SoundPlayer.LoadWav(wavName);
-        if (g_SoundPlayer.LoadPos(wavPos) < ZUN_SUCCESS)
+        if (!g_SoundPlayer.LoadPos(wavPos))
         {
             g_SoundPlayer.PlayBGM(false);
         }
@@ -855,12 +852,12 @@ ZunResult Supervisor::PlayAudio(char *path)
     }
     else
     {
-        return ZUN_ERROR;
+        return false;
     }
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult Supervisor::StopAudio()
+bool Supervisor::StopAudio()
 {
     if (g_Supervisor.cfg.musicMode == MIDI)
     {
@@ -877,14 +874,14 @@ ZunResult Supervisor::StopAudio()
         }
         else
         {
-            return ZUN_ERROR;
+            return false;
         }
     }
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult Supervisor::FadeOutMusic(f32 fadeOutSeconds)
+bool Supervisor::FadeOutMusic(f32 fadeOutSeconds)
 {
     if (g_Supervisor.cfg.musicMode == MIDI)
     {
@@ -915,11 +912,11 @@ ZunResult Supervisor::FadeOutMusic(f32 fadeOutSeconds)
         }
         else
         {
-            return ZUN_ERROR;
+            return false;
         }
     }
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
 }; // namespace th06

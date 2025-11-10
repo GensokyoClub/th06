@@ -38,7 +38,7 @@ struct GameWindow
     i32 powerOffActive;
 };
 
-DIFFABLE_EXTERN(GameWindow, g_GameWindow)
-DIFFABLE_EXTERN(i32, g_TickCountToEffectiveFramerate)
-DIFFABLE_EXTERN(double, g_LastFrameTime)
+extern GameWindow g_GameWindow;
+extern i32 g_TickCountToEffectiveFramerate;
+extern double g_LastFrameTime;
 }; // namespace th06

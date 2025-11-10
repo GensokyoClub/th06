@@ -1,12 +1,7 @@
 #pragma once
 
-// #include <Windows.h>
-// #include <d3d8.h>
-// #include <d3dx8math.h>
-
 #include "Chain.hpp"
 #include "ResultScreen.hpp"
-#include "ZunResult.hpp"
 #include "diffbuild.hpp"
 #include "inttypes.hpp"
 
@@ -51,16 +46,16 @@ enum StageNumber
 
 struct GameManager;
 
-DIFFABLE_EXTERN(GameManager, g_GameManager);
+extern GameManager g_GameManager;
 struct GameManager
 {
     GameManager();
-    static ZunResult RegisterChain();
+    static bool RegisterChain();
     static void CutChain();
     static ChainCallbackResult OnUpdate(GameManager *gameManager);
     static ChainCallbackResult OnDraw(GameManager *gameManager);
-    static ZunResult AddedCallback(GameManager *gameManager);
-    static ZunResult DeletedCallback(GameManager *gameManager);
+    static bool AddedCallback(GameManager *gameManager);
+    static bool DeletedCallback(GameManager *gameManager);
     static void SetupCamera(f32);
     static void SetupCameraStageBackground(f32);
 

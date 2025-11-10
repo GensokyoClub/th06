@@ -2,7 +2,6 @@
 
 #include "AnmVm.hpp"
 #include "ReplayData.hpp"
-#include "ZunResult.hpp"
 #include "inttypes.hpp"
 
 namespace th06
@@ -193,16 +192,16 @@ struct ResultScreen
         free(sd);
     };
 
-    static ZunResult RegisterChain(i32 unk);
+    static bool RegisterChain(i32 unk);
     static ChainCallbackResult OnUpdate(ResultScreen *r);
     static ChainCallbackResult OnDraw(ResultScreen *r);
-    static ZunResult AddedCallback(ResultScreen *r);
-    static ZunResult DeletedCallback(ResultScreen *r);
+    static bool AddedCallback(ResultScreen *r);
+    static bool DeletedCallback(ResultScreen *r);
 
-    static ScoreDat *OpenScore(char *path);
-    static ZunResult ParseCatk(ScoreDat *s, Catk *catk);
-    static ZunResult ParseClrd(ScoreDat *s, Clrd *out);
-    static ZunResult ParsePscr(ScoreDat *s, Pscr *out);
+    static ScoreDat *OpenScore(const char *path);
+    static bool ParseCatk(ScoreDat *s, Catk *catk);
+    static bool ParseClrd(ScoreDat *s, Clrd *out);
+    static bool ParsePscr(ScoreDat *s, Pscr *out);
 
     static void WriteScore(ResultScreen *r);
     void FreeScore(i32 difficulty, i32 character);
@@ -210,13 +209,13 @@ struct ResultScreen
     static void ReleaseScoreDat(ScoreDat *s);
 
     static void MoveCursor(ResultScreen *r, i32 len);
-    static ZunBool MoveCursorHorizontally(ResultScreen *r, i32 len);
+    static bool MoveCursorHorizontally(ResultScreen *r, i32 len);
 
     static void FreeAllScores(ScoreListNode *scores);
 
     i32 HandleResultKeyboard();
     i32 HandleReplaySaveKeyboard();
-    ZunResult CheckConfirmButton();
+    bool CheckConfirmButton();
 
     static i32 LinkScore(ScoreListNode *, Hscr *);
     i32 LinkScoreEx(Hscr *out, i32 difficulty, i32 character);

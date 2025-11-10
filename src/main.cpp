@@ -10,7 +10,6 @@
 #include "SoundPlayer.hpp"
 #include "Stage.hpp"
 #include "Supervisor.hpp"
-#include "ZunResult.hpp"
 #include "i18n.hpp"
 #include "utils.hpp"
 
@@ -39,7 +38,7 @@ int main(int argc, char *argv[])
 
     //    g_Supervisor.hInstance = hInstance;
 
-    if (g_Supervisor.LoadConfig(TH_CONFIG_FILE) != ZUN_SUCCESS)
+    if (!g_Supervisor.LoadConfig(TH_CONFIG_FILE))
     {
         g_GameErrorContext.Flush();
         return -1;
@@ -73,7 +72,7 @@ restart:
 
     g_AnmManager = new AnmManager();
 
-    if (Supervisor::RegisterChain() != ZUN_SUCCESS)
+    if (!Supervisor::RegisterChain())
     {
         goto stop;
     }

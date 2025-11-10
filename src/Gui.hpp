@@ -6,7 +6,6 @@
 #include "ZunTimer.hpp"
 #include "diffbuild.hpp"
 #include "inttypes.hpp"
-// #include <Windows.h>
 
 namespace th06
 {
@@ -98,8 +97,8 @@ ZUN_ASSERT_SIZE(GuiFormattedText, 0x20);
 struct GuiImpl
 {
     GuiImpl();
-    ZunResult RunMsg();
-    ZunResult DrawDialogue();
+    bool RunMsg();
+    bool DrawDialogue();
     void MsgRead(i32 msgIdx);
 
     AnmVm vms[26];
@@ -132,35 +131,35 @@ struct GuiFlags
 
 struct Gui
 {
-    static ZunResult RegisterChain();
+    static bool RegisterChain();
     static void CutChain();
-    static ZunResult AddedCallback(Gui *);
-    static ZunResult DeletedCallback(Gui *);
+    static bool AddedCallback(Gui *);
+    static bool DeletedCallback(Gui *);
     static ChainCallbackResult OnUpdate(Gui *);
     static ChainCallbackResult OnDraw(Gui *);
 
-    ZunResult ActualAddedCallback();
-    ZunResult LoadMsg(char *path);
+    bool ActualAddedCallback();
+    bool LoadMsg(const char *path);
     void FreeMsgFile();
 
-    ZunBool IsStageFinished();
+    bool IsStageFinished();
 
     void UpdateStageElements();
-    ZunBool HasCurrentMsgIdx();
+    bool HasCurrentMsgIdx();
 
     void DrawStageElements();
     void DrawGameScene();
 
     void MsgRead(i32 msgIdx);
-    ZunBool MsgWait();
+    bool MsgWait();
 
     void ShowSpellcard(i32 spellcardSprite, char *spellcardName);
     void ShowSpellcardBonus(u32 spellcardScore);
-    void ShowBombNamePortrait(u32 sprite, char *bombName);
+    void ShowBombNamePortrait(u32 sprite, const char *bombName);
     void ShowBonusScore(u32 bonusScore);
     void EndEnemySpellcard();
     void EndPlayerSpellcard();
-    ZunBool IsDialogueSkippable();
+    bool IsDialogueSkippable();
 
     void ShowFullPowerMode(i32 fmtArg);
 
@@ -203,5 +202,5 @@ struct Gui
 };
 ZUN_ASSERT_SIZE(Gui, 0x2c);
 
-DIFFABLE_EXTERN(Gui, g_Gui);
+extern Gui g_Gui;
 }; // namespace th06

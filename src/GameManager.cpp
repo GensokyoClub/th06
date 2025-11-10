@@ -24,7 +24,7 @@ namespace th06
 
 DIFFABLE_STATIC_ARRAY_ASSIGN(u32, 5, g_ExtraLivesScores) = {10000000, 20000000, 40000000, 60000000, 1900000000};
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(char *, 9, g_EclFiles) = {"dummy",
+DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 9, g_EclFiles) = {"dummy",
                                                        "data/ecldata1.ecl",
                                                        "data/ecldata2.ecl",
                                                        "data/ecldata3.ecl",
@@ -36,8 +36,8 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(char *, 9, g_EclFiles) = {"dummy",
 
 struct AnmStageFiles
 {
-    char *file1;
-    char *file2;
+    const char *file1;
+    const char *file2;
 };
 
 DIFFABLE_STATIC_ARRAY_ASSIGN(AnmStageFiles, 8, g_AnmStageFiles) = {
@@ -77,10 +77,10 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(DifficultyInfo, 5, g_DifficultyInfo) = {
 };
 
 // These are either on Supervisor.cpp or somewhere else
-DIFFABLE_STATIC(GameManager, g_GameManager);
+GameManager g_GameManager;
 
-DIFFABLE_STATIC(ChainElem, g_GameManagerCalcChain);
-DIFFABLE_STATIC(ChainElem, g_GameManagerDrawChain);
+ChainElem g_GameManagerCalcChain;
+ChainElem g_GameManagerDrawChain;
 
 #define MAX_SCORE 999999999
 #define MAX_CLEARS 99
@@ -245,7 +245,7 @@ ChainCallbackResult GameManager::OnDraw(GameManager *gameManager)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-ZunResult GameManager::RegisterChain()
+bool GameManager::RegisterChain()
 {
     GameManager *mgr = &g_GameManager;
 
@@ -258,30 +258,28 @@ ZunResult GameManager::RegisterChain()
 
     mgr->gameFrames = 0;
 
-    if (g_Chain.AddToCalcChain(&g_GameManagerCalcChain, TH_CHAIN_PRIO_CALC_GAMEMANAGER))
+    if (!g_Chain.AddToCalcChain(&g_GameManagerCalcChain, TH_CHAIN_PRIO_CALC_GAMEMANAGER))
     {
-        return ZUN_ERROR;
+        return false;
     }
     g_GameManagerDrawChain.callback = (ChainCallback)GameManager::OnDraw;
     g_GameManagerDrawChain.addedCallback = NULL;
     g_GameManagerDrawChain.deletedCallback = NULL;
     g_GameManagerDrawChain.arg = mgr;
     g_Chain.AddToDrawChain(&g_GameManagerDrawChain, TH_CHAIN_PRIO_DRAW_GAMEMANAGER);
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult GameManager::AddedCallback(GameManager *mgr)
+bool GameManager::AddedCallback(GameManager *mgr)
 {
     ScoreDat *scoredat;
     u32 clrdIdx;
     u32 catkCursor;
     i32 i;
     Catk *catk;
-    ZunBool failedToLoadReplay;
-    i32 padding[3];
+    bool failedToLoadReplay;
 
     failedToLoadReplay = false;
-    //    g_Supervisor.d3dDevice->ResourceManagerDiscardBytes(0);
     if (g_Supervisor.curState != SUPERVISOR_STATE_GAMEMANAGER_REINIT)
     {
         g_Supervisor.defaultConfig.bombCount = g_GameManager.bombsRemaining;
@@ -333,8 +331,7 @@ ZunResult GameManager::AddedCallback(GameManager *mgr)
             catk->numSuccess = 0;
         }
         scoredat = ResultScreen::OpenScore("score.dat");
-        g_GameManager.highScore =
-            ResultScreen::GetHighScore(scoredat, NULL, g_GameManager.CharacterShotType(), g_GameManager.difficulty);
+        g_GameManager.highScore = ResultScreen::GetHighScore(scoredat, NULL, g_GameManager.CharacterShotType(), g_GameManager.difficulty);
         ResultScreen::ParseCatk(scoredat, mgr->catk);
         ResultScreen::ParseClrd(scoredat, mgr->clrd);
         ResultScreen::ParsePscr(scoredat, (Pscr *)mgr->pscr);
@@ -388,11 +385,9 @@ ZunResult GameManager::AddedCallback(GameManager *mgr)
             mgr->currentPower = 128;
         }
     }
-    g_Supervisor.LoadPbg3(CM_PBG3_INDEX, TH_CM_DAT_FILE);
-    g_Supervisor.LoadPbg3(ST_PBG3_INDEX, TH_ST_DAT_FILE);
     if (g_GameManager.isInReplay == 1)
     {
-        if (ReplayManager::RegisterChain(1, (char *)g_GameManager.replayFile) != ZUN_SUCCESS)
+        if (!ReplayManager::RegisterChain(1, (char *)g_GameManager.replayFile))
         {
             failedToLoadReplay = true;
         }
@@ -405,42 +400,42 @@ ZunResult GameManager::AddedCallback(GameManager *mgr)
     }
     g_Rng.generationCount = 0;
     mgr->randomSeed = g_Rng.seed;
-    if (Stage::RegisterChain(mgr->currentStage) != ZUN_SUCCESS)
+    if (!Stage::RegisterChain(mgr->currentStage))
     {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_STAGE);
-        return ZUN_ERROR;
+        return false;
     }
 
-    if (Player::RegisterChain(0) != ZUN_SUCCESS)
+    if (!Player::RegisterChain(0))
     {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_PLAYER);
-        return ZUN_ERROR;
+        return false;
     }
-    if (BulletManager::RegisterChain("data/etama.anm") != ZUN_SUCCESS)
+    if (!BulletManager::RegisterChain("data/etama.anm"))
     {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_BULLETMANAGER);
-        return ZUN_ERROR;
+        return false;
     }
-    if (EnemyManager::RegisterChain(g_AnmStageFiles[mgr->currentStage].file1,
-                                    g_AnmStageFiles[mgr->currentStage].file2) != ZUN_SUCCESS)
+    if (!EnemyManager::RegisterChain(g_AnmStageFiles[mgr->currentStage].file1,
+                                    g_AnmStageFiles[mgr->currentStage].file2))
     {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_ENEMYMANAGER);
-        return ZUN_ERROR;
+        return false;
     }
-    if (g_EclManager.Load(g_EclFiles[mgr->currentStage]) != ZUN_SUCCESS)
+    if (!g_EclManager.Load(g_EclFiles[mgr->currentStage]))
     {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_ECLMANAGER);
-        return ZUN_ERROR;
+        return false;
     }
-    if (EffectManager::RegisterChain() != ZUN_SUCCESS)
+    if (!EffectManager::RegisterChain())
     {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_EFFECTMANAGER);
-        return ZUN_ERROR;
+        return false;
     }
-    if (Gui::RegisterChain() != ZUN_SUCCESS)
+    if (!Gui::RegisterChain())
     {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_GUI);
-        return ZUN_ERROR;
+        return false;
     }
     if (g_GameManager.isInReplay == 0)
     {
@@ -469,14 +464,11 @@ ZunResult GameManager::AddedCallback(GameManager *mgr)
         g_Supervisor.curState = SUPERVISOR_STATE_MAINMENU;
     }
     g_Supervisor.unk198 = 3;
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult GameManager::DeletedCallback(GameManager *mgr)
+bool GameManager::DeletedCallback(GameManager *mgr)
 {
-    i32 padding1, padding2, padding3;
-
-    //    g_Supervisor.d3dDevice->ResourceManagerDiscardBytes(0);
     if (!g_GameManager.demoMode)
     {
         g_Supervisor.StopAudio();
@@ -491,7 +483,7 @@ ZunResult GameManager::DeletedCallback(GameManager *mgr)
     ReplayManager::StopRecording();
     mgr->isInMenu = 0;
     g_AsciiManager.InitializeVms();
-    return ZUN_SUCCESS;
+    return true;
 }
 
 void GameManager::CutChain()

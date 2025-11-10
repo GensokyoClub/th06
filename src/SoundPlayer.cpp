@@ -45,14 +45,14 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 26, g_SFXList) = {
     "data/wav/kira01.wav", "data/wav/kira02.wav",   "data/wav/extend.wav",   "data/wav/timeout.wav",
     "data/wav/graze.wav",  "data/wav/powerup.wav",
 };
-DIFFABLE_STATIC(SoundPlayer, g_SoundPlayer)
+SoundPlayer g_SoundPlayer;
 
 SoundPlayer::SoundPlayer()
 {
     std::memset(this, 0, sizeof(SoundPlayer));
 }
 
-ZunResult SoundPlayer::InitializeDSound()
+bool SoundPlayer::InitializeDSound()
 {
     SDL_AudioSpec desiredAudio;
     SDL_AudioSpec obtainedAudio;
@@ -79,14 +79,14 @@ ZunResult SoundPlayer::InitializeDSound()
     this->backgroundMusicThreadHandle = std::thread(&SoundPlayer::BackgroundMusicPlayerThread, this);
 
     GameErrorContext::Log(&g_GameErrorContext, TH_DBG_SOUNDPLAYER_INIT_SUCCESS);
-    return ZUN_SUCCESS;
+    return true;
 
 fail:
     GameErrorContext::Log(&g_GameErrorContext, TH_ERR_SOUNDPLAYER_FAILED_TO_INITIALIZE_OBJECT);
-    return ZUN_ERROR;
+    return false;
 }
 
-ZunResult SoundPlayer::Release(void)
+bool SoundPlayer::Release(void)
 {
     this->terminateFlag = true;
     this->backgroundMusicThreadHandle.join();
@@ -110,7 +110,7 @@ ZunResult SoundPlayer::Release(void)
         this->audioDev = 0;
     }
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
 void SoundPlayer::StopBGM()
@@ -135,7 +135,7 @@ void SoundPlayer::FadeOut(f32 seconds)
     }
 }
 
-ZunResult SoundPlayer::LoadWav(char *path)
+bool SoundPlayer::LoadWav(char *path)
 {
     SDL_RWops *fileStream;
     char idBuf[4];
@@ -144,12 +144,12 @@ ZunResult SoundPlayer::LoadWav(char *path)
 
     if (this->audioDev == 0)
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     if (g_Supervisor.cfg.playSounds == 0)
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     this->StopBGM();
@@ -161,7 +161,7 @@ ZunResult SoundPlayer::LoadWav(char *path)
     if (fileStream == NULL)
     {
         utils::DebugPrint2("error : wav file load error %s\n", path);
-        return ZUN_ERROR;
+        return false;
     }
 
     // Minimum size of RIFF header and chunk info preceeding the sample data
@@ -266,27 +266,27 @@ ZunResult SoundPlayer::LoadWav(char *path)
     this->backgroundMusic.fadeoutProgress = 0;
     this->backgroundMusic.pos = 0;
 
-    return ZUN_SUCCESS;
+    return true;
 
 fail:
     SDL_RWclose(fileStream);
-    return ZUN_ERROR;
+    return false;
 }
 
-ZunResult SoundPlayer::LoadPos(char *path)
+bool SoundPlayer::LoadPos(char *path)
 {
     u8 *fileData;
 
     if (this->audioDev == 0 || g_Supervisor.cfg.playSounds == 0 || backgroundMusic.srcWav.fileStream == NULL)
     {
-        return ZUN_ERROR;
+        return false;
     }
 
-    fileData = FileSystem::OpenPath(path, 0);
+    fileData = FileSystem::OpenPath(path);
 
     if (fileData == NULL)
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     this->backgroundMusic.loopStart = SDL_SwapLE32(*((u32 *)fileData));
@@ -300,38 +300,38 @@ ZunResult SoundPlayer::LoadPos(char *path)
         this->backgroundMusic.loopStart = 0;
         this->backgroundMusic.loopEnd = this->backgroundMusic.srcWav.samples;
 
-        return ZUN_ERROR;
+        return false;
     }
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult SoundPlayer::InitSoundBuffers()
+bool SoundPlayer::InitSoundBuffers()
 {
     if (this->audioDev == 0)
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     std::fill_n(this->soundBuffersToPlay, ARRAY_SIZE(this->soundBuffersToPlay), -1);
 
     for (int idx = 0; idx < ARRAY_SIZE_SIGNED(g_SoundBufferIdxVol); idx++)
     {
-        if (this->LoadSound(idx, g_SFXList[g_SoundBufferIdxVol[idx].bufferIdx],
-                            1.0f / ZUN_POWF(10.0f, (float)g_SoundBufferIdxVol[idx].volume / -2000)) != ZUN_SUCCESS)
+        if (!this->LoadSound(idx, g_SFXList[g_SoundBufferIdxVol[idx].bufferIdx],
+                            1.0f / std::powf(10.0f, (float)g_SoundBufferIdxVol[idx].volume / -2000)))
         {
             GameErrorContext::Log(&g_GameErrorContext, TH_ERR_SOUNDPLAYER_FAILED_TO_LOAD_SOUND_FILE, g_SFXList[idx]);
-            return ZUN_ERROR;
+            return false;
         }
 
         this->soundBuffers[idx].isPlaying = false;
         this->soundBuffers[idx].pos = 0;
     }
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult SoundPlayer::LoadSound(i32 idx, const char *path, f32 volumeMultiplier)
+bool SoundPlayer::LoadSound(i32 idx, const char *path, f32 volumeMultiplier)
 {
     SDL_AudioCVT sampleConversionDesc;
     SDL_AudioSpec wavFormat;
@@ -347,7 +347,7 @@ ZunResult SoundPlayer::LoadSound(i32 idx, const char *path, f32 volumeMultiplier
         this->soundBuffers[idx].samples = NULL;
     }
 
-    wavRawData = (u8 *)FileSystem::OpenPath(path, 0);
+    wavRawData = (u8 *)FileSystem::OpenPath(path);
 
     if (wavRawData == NULL)
     {
@@ -398,20 +398,20 @@ ZunResult SoundPlayer::LoadSound(i32 idx, const char *path, f32 volumeMultiplier
     this->soundBuffers[idx].isPlaying = false;
 
     soundBufMutex.unlock();
-    return ZUN_SUCCESS;
+    return true;
 
 fail:
     soundBufMutex.unlock();
-    return ZUN_ERROR;
+    return false;
 }
 
-ZunResult SoundPlayer::PlayBGM(bool isLooping)
+bool SoundPlayer::PlayBGM(bool isLooping)
 {
     utils::DebugPrint2("play BGM\n");
 
     if (this->backgroundMusic.srcWav.fileStream == NULL)
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     //    res = this->backgroundMusic->Reset();
@@ -433,7 +433,7 @@ ZunResult SoundPlayer::PlayBGM(bool isLooping)
     //    }
     utils::DebugPrint2("comp\n");
     this->isLooping = isLooping;
-    return ZUN_SUCCESS;
+    return true;
 }
 
 void SoundPlayer::PlaySounds()
@@ -551,9 +551,10 @@ void SoundPlayer::MixAudio(u32 samples)
 
             for (u32 j = 0; j < samplesToMix; j++)
             {
-                mixBuffer[samplesMixed + j * 2] += ((i16)SDL_ReadLE16(backgroundMusic.srcWav.fileStream)) * fadeoutMult;
-                mixBuffer[samplesMixed + j * 2 + 1] +=
-                    ((i16)SDL_ReadLE16(backgroundMusic.srcWav.fileStream)) * fadeoutMult;
+                u32 samplePair = SDL_ReadLE32(backgroundMusic.srcWav.fileStream);
+                // Splits a 32 bit read into two 16 bit samples for left and right.
+                mixBuffer[samplesMixed + j * 2] += (i16)(samplePair & 0xFFFF) * fadeoutMult;
+                mixBuffer[samplesMixed + j * 2 + 1] += (i16)(samplePair >> 16) * fadeoutMult;
             }
 
             backgroundMusic.pos += samplesToMix;

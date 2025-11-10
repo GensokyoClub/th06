@@ -1,7 +1,5 @@
 // #include <D3DX8.h>
 #include <cstdio>
-// #include <direct.h>
-// #include <windows.h>
 
 #include "MainMenu.hpp"
 
@@ -33,12 +31,12 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 5, g_DifficultyList) = {"Easy   ", "N
 DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 7, g_StageList) = {"Stage1", "Stage2", "Stage3", "Stage4",
                                                               "Stage5", "Stage6", "Extra "};
 
-DIFFABLE_STATIC(i16, g_LastJoystickInput)
+i16 g_LastJoystickInput;
 
 MainMenu::MainMenu()
 {
     // what?
-    int waste1, waste2, waste3, waste4;
+    // int waste1, waste2, waste3, waste4;
 }
 
 ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
@@ -50,7 +48,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
     f32 deltaTimeAsFrames;
     f32 deltaTimeAsMs;
     i16 mapping;
-    ZunResult startedUp;
+    bool startedUp;
     i16 sVar1;
     u8 *controllerData;
     ControllerMapping mappingData;
@@ -100,7 +98,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
     {
     case STATE_STARTUP:
         startedUp = menu->BeginStartup();
-        if (startedUp == ZUN_ERROR)
+        if (!startedUp)
         {
             return CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB;
         }
@@ -276,7 +274,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
     case STATE_DIFFICULTY_LOAD:
         if (menu->stateTimer == 60)
         {
-            if (LoadDiffCharSelect(menu) != ZUN_SUCCESS)
+            if (!LoadDiffCharSelect(menu))
             {
                 GameErrorContext::Log(&g_GameErrorContext, TH_ERR_MAINMENU_LOAD_SELECT_SCREEN_FAILED);
                 g_Supervisor.curState = SUPERVISOR_STATE_EXITSUCCESS;
@@ -884,7 +882,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-#pragma intrinsic(strcpy)
+// #pragma intrinsic(strcpy)
 
 CursorMovement MainMenu::MoveCursor(MainMenu *menu, i32 menuLength)
 {
@@ -921,7 +919,7 @@ CursorMovement MainMenu::MoveCursor(MainMenu *menu, i32 menuLength)
     return CURSOR_DONT_MOVE;
 }
 
-void MainMenu::SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, ZunBool unk)
+void MainMenu::SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, bool unk)
 {
     if (unk == 0 && menu->controlMapping[0] == btnPressed)
     {
@@ -1003,22 +1001,22 @@ void MainMenu::DrawMenuItem(AnmVm *vm, int itemNumber, int cursor, ZunColor curr
     }
 }
 
-ZunResult MainMenu::BeginStartup()
+bool MainMenu::BeginStartup()
 {
     ZunVec3 vector3Ptr;
     u32 time;
     int i;
 
-    if (LoadTitleAnm(this) != ZUN_SUCCESS)
+    if (!LoadTitleAnm(this))
     {
         g_Supervisor.curState = SUPERVISOR_STATE_EXITSUCCESS;
-        return ZUN_ERROR;
+        return false;
     }
     if (g_Supervisor.startupTimeBeforeMenuMusic > 0)
     {
         time = SDL_GetTicks();
         while ((time - g_Supervisor.startupTimeBeforeMenuMusic >= 0) &&
-               (3000 > time - g_Supervisor.startupTimeBeforeMenuMusic))
+               (500 > time - g_Supervisor.startupTimeBeforeMenuMusic))
         {
             time = SDL_GetTicks();
         }
@@ -1043,10 +1041,10 @@ ZunResult MainMenu::BeginStartup()
         this->vm[i].posOffset = vector3Ptr;
     }
     this->gameState = STATE_PRE_INPUT;
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunBool MainMenu::WeirdSecondInputCheck()
+bool MainMenu::WeirdSecondInputCheck()
 {
     i32 vm;
     ZunVec3 d3dVec;
@@ -1087,7 +1085,7 @@ ZunBool MainMenu::WeirdSecondInputCheck()
     return false;
 }
 
-ZunResult MainMenu::DrawStartMenu(void)
+bool MainMenu::DrawStartMenu(void)
 {
     i32 i;
     i = MoveCursor(this, 8);
@@ -1250,7 +1248,7 @@ ZunResult MainMenu::DrawStartMenu(void)
             g_SoundPlayer.PlaySoundByIdx(SOUND_BACK);
         }
     }
-    return ZUN_SUCCESS;
+    return true;
 }
 
 i32 MainMenu::ReplayHandling()
@@ -1262,18 +1260,18 @@ i32 MainMenu::ReplayHandling()
     ReplayHeader *replayData;
     char replayFilePath[32];
     //    WIN32_FIND_DATA replayFileInfo;
-    u8 padding[0x20]; // idk
+    // u8 padding[0x20]; // idk
 
     switch (this->gameState)
     {
     case STATE_REPLAY_LOAD:
         if (this->stateTimer == 60)
         {
-            if (LoadReplayMenu(this))
+            if (!LoadReplayMenu(this))
             {
                 GameErrorContext::Log(&g_GameErrorContext, "japanese");
                 g_Supervisor.curState = SUPERVISOR_STATE_EXITSUCCESS;
-                return ZUN_SUCCESS;
+                return true;
             }
             else
             {
@@ -1281,13 +1279,13 @@ i32 MainMenu::ReplayHandling()
                 for (cur = 0; cur < 15; cur++)
                 {
                     std::sprintf(replayFilePath, "./replay/th6_%.2d.rpy", cur + 1);
-                    replayData = (ReplayHeader *)FileSystem::OpenPath(replayFilePath, 1);
+                    replayData = (ReplayHeader *)FileSystem::OpenPath(replayFilePath);
                     if (replayData == NULL)
                     {
                         std::free(replayData);
                         continue;
                     }
-                    if (!ReplayManager::ValidateReplayData(replayData, g_LastFileSize))
+                    if (ReplayManager::ValidateReplayData(replayData, g_LastFileSize))
                     {
                         this->replayFileData[replayFileIdx].header = replayData;
                         std::strcpy(this->replayFilePaths[replayFileIdx], replayFilePath);
@@ -1348,7 +1346,8 @@ i32 MainMenu::ReplayHandling()
         {
             break;
         }
-        if (this->replayFilesNum != NULL)
+        // Originally NULL, but null is 0, and this makes the compiler happy.
+        if (this->replayFilesNum != 0)
         {
             MoveCursor(this, this->replayFilesNum);
             this->chosenReplay = this->cursor;
@@ -1367,7 +1366,7 @@ i32 MainMenu::ReplayHandling()
                 g_SoundPlayer.PlaySoundByIdx(SOUND_SELECT);
                 this->currentReplay = (ReplayData *)std::malloc(sizeof(ReplayData));
                 this->currentReplay->header =
-                    (ReplayHeader *)FileSystem::OpenPath(this->replayFilePaths[this->chosenReplay], 1);
+                    (ReplayHeader *)FileSystem::OpenPath(this->replayFilePaths[this->chosenReplay]);
                 ReplayManager::ValidateReplayData(this->currentReplay->header, g_LastFileSize);
                 for (cur = 0; cur < ARRAY_SIZE_SIGNED(this->currentReplay->stageReplayData); cur++)
                 {
@@ -1389,7 +1388,7 @@ i32 MainMenu::ReplayHandling()
 
                     if ((int)this->cursor >= ARRAY_SIZE_SIGNED(this->currentReplay->stageReplayData))
                     {
-                        return ZUN_SUCCESS;
+                        return true;
                     }
                 }
             }
@@ -1435,7 +1434,7 @@ i32 MainMenu::ReplayHandling()
                 }
             }
         }
-        if (WAS_PRESSED(TH_BUTTON_SELECTMENU) && this->currentReplay[this->cursor].header->stageReplayDataOffsets)
+        if (WAS_PRESSED(TH_BUTTON_SELECTMENU) /* && this->currentReplay[this->cursor].header->stageReplayDataOffsets */)
         {
             g_GameManager.isInReplay = 1;
             g_Supervisor.framerateMultiplier = 1.0;
@@ -1481,13 +1480,13 @@ i32 MainMenu::ReplayHandling()
     return 0;
 }
 
-ZunResult MainMenu::DrawReplayMenu()
+bool MainMenu::DrawReplayMenu()
 {
     i32 replayAmount;
     i32 i;
     AnmVm *vmRef;
-    ZunBool isSelected;
-    ZunBool isSelected2;
+    bool isSelected;
+    bool isSelected2;
 
     vmRef = &this->vm[98];
     g_AsciiManager.AddFormatText(&vmRef->pos, "No.   Name      Date     Player   Rank");
@@ -1581,7 +1580,7 @@ ZunResult MainMenu::DrawReplayMenu()
     }
     g_AsciiManager.color = COLOR_WHITE;
     g_AsciiManager.isSelected = false;
-    return ZUN_SUCCESS;
+    return true;
 }
 
 void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelected)
@@ -1891,7 +1890,7 @@ u32 MainMenu::OnUpdateOptionsMenu()
     return 0;
 }
 
-ZunResult MainMenu::ChoosePracticeLevel()
+bool MainMenu::ChoosePracticeLevel()
 {
     if (this->gameState == STATE_PRACTICE_LVL_SELECT)
     {
@@ -1925,7 +1924,7 @@ ZunResult MainMenu::ChoosePracticeLevel()
         }
         g_AsciiManager.color = 0xFFFFFFFF;
     }
-    return ZUN_SUCCESS;
+    return true;
 }
 
 ChainCallbackResult MainMenu::OnDraw(MainMenu *menu)
@@ -2014,38 +2013,38 @@ ChainCallbackResult MainMenu::OnDraw(MainMenu *menu)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-ZunResult MainMenu::LoadTitleAnm(MainMenu *menu)
+bool MainMenu::LoadTitleAnm(MainMenu *menu)
 {
     i32 i;
 
-    g_Supervisor.LoadPbg3(3, TH_TL_DAT_FILE);
+    // g_Supervisor.LoadPbg3(3, TH_TL_DAT_FILE);
     for (i = ANM_FILE_SELECT01; i <= ANM_FILE_REPLAY; i++)
     {
         g_AnmManager->ReleaseAnm(i);
     }
-    if (g_AnmManager->LoadAnm(ANM_FILE_TITLE01, "data/title01.anm", ANM_OFFSET_TITLE01))
+    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE01, "data/title01.anm", ANM_OFFSET_TITLE01))
     {
-        return ZUN_ERROR;
+        return false;
     }
-    if (g_AnmManager->LoadAnm(ANM_FILE_TITLE02, "data/title02.anm", ANM_OFFSET_TITLE02))
+    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE02, "data/title02.anm", ANM_OFFSET_TITLE02))
     {
-        return ZUN_ERROR;
+        return false;
     }
-    if (g_AnmManager->LoadAnm(ANM_FILE_TITLE03, "data/title03.anm", ANM_OFFSET_TITLE03))
+    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE03, "data/title03.anm", ANM_OFFSET_TITLE03))
     {
-        return ZUN_ERROR;
+        return false;
     }
-    if (g_AnmManager->LoadAnm(ANM_FILE_TITLE04, "data/title04.anm", ANM_OFFSET_TITLE04))
+    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE04, "data/title04.anm", ANM_OFFSET_TITLE04))
     {
-        return ZUN_ERROR;
+        return false;
     }
-    if (g_AnmManager->LoadAnm(ANM_FILE_TITLE01S, "data/title01s.anm", ANM_OFFSET_TITLE01S))
+    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE01S, "data/title01s.anm", ANM_OFFSET_TITLE01S))
     {
-        return ZUN_ERROR;
+        return false;
     }
-    if (g_AnmManager->LoadAnm(ANM_FILE_TITLE04S, "data/title04s.anm", ANM_OFFSET_TITLE04S))
+    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE04S, "data/title04s.anm", ANM_OFFSET_TITLE04S))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     for (i = 0; i < 80; i++)
@@ -2056,15 +2055,15 @@ ZunResult MainMenu::LoadTitleAnm(MainMenu *menu)
         menu->vm[i].flags.zWriteDisable = 1;
     }
 
-    if (g_AnmManager->LoadSurface(0, "data/title/title00.jpg"))
+    if (!g_AnmManager->LoadSurface(0, "data/title/title00.jpg"))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult MainMenu::LoadDiffCharSelect(MainMenu *menu)
+bool MainMenu::LoadDiffCharSelect(MainMenu *menu)
 {
     AnmVm *vm;
     i32 i;
@@ -2073,45 +2072,45 @@ ZunResult MainMenu::LoadDiffCharSelect(MainMenu *menu)
     {
         g_AnmManager->ReleaseAnm(i);
     }
-    if (g_AnmManager->LoadSurface(0, "data/title/select00.jpg") != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadSurface(0, "data/title/select00.jpg"))
     {
-        return ZUN_ERROR;
+        return false;
     }
-    if (g_AnmManager->LoadAnm(ANM_FILE_SELECT01, "data/select01.anm", ANM_OFFSET_SELECT01) != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SELECT01, "data/select01.anm", ANM_OFFSET_SELECT01))
     {
-        return ZUN_ERROR;
+        return false;
     }
-    if (g_AnmManager->LoadAnm(ANM_FILE_SELECT02, "data/select02.anm", ANM_OFFSET_SELECT02) != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SELECT02, "data/select02.anm", ANM_OFFSET_SELECT02))
     {
-        return ZUN_ERROR;
+        return false;
     }
-    if (g_AnmManager->LoadAnm(ANM_FILE_SELECT03, "data/select03.anm", ANM_OFFSET_SELECT03) != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SELECT03, "data/select03.anm", ANM_OFFSET_SELECT03))
     {
-        return ZUN_ERROR;
+        return false;
     }
-    if (g_AnmManager->LoadAnm(ANM_FILE_SELECT04, "data/select04.anm", ANM_OFFSET_SELECT04) != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SELECT04, "data/select04.anm", ANM_OFFSET_SELECT04))
     {
-        return ZUN_ERROR;
+        return false;
     }
-    if (g_AnmManager->LoadAnm(ANM_FILE_SELECT05, "data/select05.anm", ANM_OFFSET_SELECT05) != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SELECT05, "data/select05.anm", ANM_OFFSET_SELECT05))
     {
-        return ZUN_ERROR;
+        return false;
     }
-    if (g_AnmManager->LoadAnm(ANM_FILE_SLPL00A, "data/slpl00a.anm", ANM_OFFSET_SLPL00A) != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SLPL00A, "data/slpl00a.anm", ANM_OFFSET_SLPL00A))
     {
-        return ZUN_ERROR;
+        return false;
     }
-    if (g_AnmManager->LoadAnm(ANM_FILE_SLPL00B, "data/slpl00b.anm", ANM_OFFSET_SLPL00B) != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SLPL00B, "data/slpl00b.anm", ANM_OFFSET_SLPL00B))
     {
-        return ZUN_ERROR;
+        return false;
     }
-    if (g_AnmManager->LoadAnm(ANM_FILE_SLPL01A, "data/slpl01a.anm", ANM_OFFSET_SLPL01A) != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SLPL01A, "data/slpl01a.anm", ANM_OFFSET_SLPL01A))
     {
-        return ZUN_ERROR;
+        return false;
     }
-    if (g_AnmManager->LoadAnm(ANM_FILE_SLPL01B, "data/slpl01b.anm", ANM_OFFSET_SLPL01B) != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SLPL01B, "data/slpl01b.anm", ANM_OFFSET_SLPL01B))
     {
-        return ZUN_ERROR;
+        return false;
     }
     for (vm = &menu->vm[0x50], i = ANM_SCRIPT_SELECT01_START; i <= ANM_SCRIPT_SELECT01_END; i++, vm++)
     {
@@ -2130,10 +2129,10 @@ ZunResult MainMenu::LoadDiffCharSelect(MainMenu *menu)
         vm->baseSpriteIndex = vm->activeSpriteIndex;
         vm->flags.zWriteDisable = 1;
     }
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult MainMenu::LoadReplayMenu(MainMenu *menu)
+bool MainMenu::LoadReplayMenu(MainMenu *menu)
 {
     AnmVm *vm;
     i32 fileIdx;
@@ -2143,14 +2142,14 @@ ZunResult MainMenu::LoadReplayMenu(MainMenu *menu)
         g_AnmManager->ReleaseAnm(fileIdx);
     }
 
-    if (g_AnmManager->LoadSurface(0, "data/title/select00.jpg") != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadSurface(0, "data/title/select00.jpg"))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
-    if (g_AnmManager->LoadAnm(ANM_FILE_REPLAY, "data/replay00.anm", ANM_OFFSET_REPLAY) != ZUN_SUCCESS)
+    if (!g_AnmManager->LoadAnm(ANM_FILE_REPLAY, "data/replay00.anm", ANM_OFFSET_REPLAY))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     vm = &menu->vm[96];
@@ -2172,10 +2171,10 @@ ZunResult MainMenu::LoadReplayMenu(MainMenu *menu)
         vm->baseSpriteIndex = vm->activeSpriteIndex;
         vm->flags.zWriteDisable = 1;
     }
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult MainMenu::RegisterChain(u32 isDemo)
+bool MainMenu::RegisterChain(u32 isDemo)
 {
     MainMenu *menu = &g_MainMenu;
 
@@ -2188,9 +2187,9 @@ ZunResult MainMenu::RegisterChain(u32 isDemo)
     menu->chainCalc->addedCallback = (ChainAddedCallback)MainMenu::AddedCallback;
     menu->chainCalc->deletedCallback = (ChainDeletedCallback)MainMenu::DeletedCallback;
     menu->stateTimer = 0;
-    if (g_Chain.AddToCalcChain(menu->chainCalc, TH_CHAIN_PRIO_CALC_MAINMENU) != 0)
+    if (!g_Chain.AddToCalcChain(menu->chainCalc, TH_CHAIN_PRIO_CALC_MAINMENU))
     {
-        return ZUN_ERROR;
+        return false;
     }
     menu->chainDraw = g_Chain.CreateElem((ChainCallback)MainMenu::OnDraw);
     menu->chainDraw->arg = menu;
@@ -2198,10 +2197,10 @@ ZunResult MainMenu::RegisterChain(u32 isDemo)
     menu->lastFrameTime = 0;
     menu->stateTimer = 60;
     menu->frameCountForRefreshRateCalc = 0;
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult MainMenu::AddedCallback(MainMenu *m)
+bool MainMenu::AddedCallback(MainMenu *m)
 {
     i32 i;
     ScoreDat *scoredat;
@@ -2274,10 +2273,10 @@ ZunResult MainMenu::AddedCallback(MainMenu *m)
     }
     g_GameManager.demoMode = 0;
     g_GameManager.demoFrames = 0;
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult MainMenu::DeletedCallback(MainMenu *menu)
+bool MainMenu::DeletedCallback(MainMenu *menu)
 {
     AnmManager *mgr;
     void *replay;
@@ -2302,7 +2301,7 @@ ZunResult MainMenu::DeletedCallback(MainMenu *menu)
 
     replay = menu->currentReplay;
     free(replay);
-    return ZUN_SUCCESS;
+    return true;
 }
 
 void MainMenu::ReleaseTitleAnm()
@@ -2316,5 +2315,5 @@ void MainMenu::ReleaseTitleAnm()
     }
 }
 
-DIFFABLE_STATIC(MainMenu, g_MainMenu);
+MainMenu g_MainMenu;
 }; // namespace th06

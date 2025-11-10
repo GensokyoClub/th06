@@ -12,7 +12,7 @@
 namespace th06
 {
 
-DIFFABLE_STATIC(TTF_Font *, g_Font);
+TTF_Font *g_Font;
 DIFFABLE_STATIC_ASSIGN(iconv_t, g_Iconv) = (iconv_t)-1;
 
 TextHelper::TextHelper()
@@ -57,19 +57,19 @@ bool TextHelper::ReleaseBuffer()
 #define TEXT_BUFFER_HEIGHT 64
 
 // Extended to initialize all globals for text helper
-ZunResult TextHelper::CreateTextBuffer()
+bool TextHelper::CreateTextBuffer()
 {
     TTF_Init();
 
     // Primary font is MSゴシック, which is nonfree and has to be taken from a Windows install
     // Fallback is Noto Sans Regular (JP) which is redistributable
     if ((g_Font = TTF_OpenFont(TH_PRIMARY_FONT_FILENAME, 10), g_Font == NULL) &&
-        (std::printf("%s\n", TTF_GetError()), g_Font = TTF_OpenFont(TH_FALLBACK_FONT_FILENAME, 10), g_Font == NULL))
+        (printf("%s\n", TTF_GetError()), g_Font = TTF_OpenFont(TH_FALLBACK_FONT_FILENAME, 10), g_Font == NULL))
     {
-        std::printf("%s\n", TTF_GetError());
+        printf("%s\n", TTF_GetError());
 
         GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_FONTS_NOT_FOUND);
-        return ZUN_ERROR;
+        return false;
     }
 
     g_Iconv = iconv_open("UTF-8", "CP932");
@@ -77,7 +77,7 @@ ZunResult TextHelper::CreateTextBuffer()
     if (g_Iconv == (iconv_t)-1)
     {
         GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_ICONV_INIT_FAILED);
-        return ZUN_ERROR;
+        return false;
     }
 
     g_TextBufferSurface =
@@ -85,7 +85,7 @@ ZunResult TextHelper::CreateTextBuffer()
 
     SDL_SetSurfaceBlendMode(g_TextBufferSurface, SDL_BLENDMODE_NONE);
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
 bool TextHelper::InvertAlpha(i32 x, i32 y, i32 spriteWidth, i32 fontHeight)
@@ -121,7 +121,7 @@ bool TextHelper::InvertAlpha(i32 x, i32 y, i32 spriteWidth, i32 fontHeight)
 
 // Text strings in asset files are encoded using Shift_JIS. This allows RenderTextToTexture to handle both UTF-8 and
 // Shift_JIS. This also does not check for overlong encoding, but that shouldn't matter
-bool isUTF8Encoded(char *string)
+bool isUTF8Encoded(const char *string)
 {
 #define UTF8_1BYTE_MASK 0x80
 #define UTF8_2BYTE_MASK 0xE0
@@ -227,7 +227,7 @@ void SurfaceOverwriteBlend(SDL_Surface *srcSurface, SDL_Surface *dstSurface, u32
 }
 
 void TextHelper::RenderTextToTexture(i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontHeight,
-                                     i32 fontWidth, ZunColor textColor, ZunColor shadowColor, char *string,
+                                     i32 fontWidth, ZunColor textColor, ZunColor shadowColor, const char *string,
                                      TextureData *outTexture)
 {
     char convertedText[1024];

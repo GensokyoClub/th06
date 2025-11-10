@@ -3,87 +3,32 @@
 #include <cstring>
 
 #include "FileSystem.hpp"
-#include "pbg3/Pbg3Archive.hpp"
 #include "utils.hpp"
 
 namespace th06
 {
-DIFFABLE_STATIC(u32, g_LastFileSize)
+u32 g_LastFileSize;
 
-u8 *FileSystem::OpenPath(const char *filepath, int isExternalResource)
+u8 *FileSystem::OpenPath(const char *filepath)
 {
     u8 *data;
     FILE *file;
     size_t fsize;
-    i32 entryIdx;
-    const char *entryname;
-    i32 pbg3Idx;
 
-    entryIdx = -1;
-    if (isExternalResource == 0)
-    {
-        entryname = std::strrchr(filepath, '\\');
-        if (entryname == (char *)0x0)
-        {
-            entryname = filepath;
-        }
-        else
-        {
-            entryname = entryname + 1;
-        }
-        entryname = std::strrchr(entryname, '/');
-        if (entryname == (char *)0x0)
-        {
-            entryname = filepath;
-        }
-        else
-        {
-            entryname = entryname + 1;
-        }
-        if (g_Pbg3Archives != NULL)
-        {
-            for (pbg3Idx = 0; pbg3Idx < 0x10; pbg3Idx += 1)
-            {
-                if (g_Pbg3Archives[pbg3Idx] != NULL)
-                {
-                    entryIdx = g_Pbg3Archives[pbg3Idx]->FindEntry(entryname);
-                    if (entryIdx >= 0)
-                    {
-                        break;
-                    }
-                }
-            }
-        }
-        if (entryIdx < 0)
-        {
-            return NULL;
-        }
+    utils::DebugPrint2("%s Load ... \n", filepath);
+    file = std::fopen(filepath, "rb");
+    if (file == NULL) {
+        utils::DebugPrint2("error : %s is not found.\n", filepath);
+        return NULL;
     }
-    if (entryIdx >= 0)
-    {
-        utils::DebugPrint2("%s Decode ... \n", entryname);
-        data = g_Pbg3Archives[pbg3Idx]->ReadDecompressEntry(entryIdx, entryname);
-        g_LastFileSize = g_Pbg3Archives[pbg3Idx]->GetEntrySize(entryIdx);
-    }
-    else
-    {
-        utils::DebugPrint2("%s Load ... \n", filepath);
-        file = std::fopen(filepath, "rb");
-        if (file == NULL)
-        {
-            utils::DebugPrint2("error : %s is not found.\n", filepath);
-            return NULL;
-        }
-        else
-        {
-            std::fseek(file, 0, SEEK_END);
-            fsize = std::ftell(file);
-            g_LastFileSize = fsize;
-            std::fseek(file, 0, SEEK_SET);
-            data = (u8 *)std::malloc(fsize);
-            std::fread(data, 1, fsize, file);
-            std::fclose(file);
-        }
+    else {
+        std::fseek(file, 0, SEEK_END);
+        fsize = std::ftell(file);
+        g_LastFileSize = fsize;
+        std::fseek(file, 0, SEEK_SET);
+        data = (u8*)std::malloc(fsize);
+        std::fread(data, 1, fsize, file);
+        std::fclose(file);
     }
     return data;
 }

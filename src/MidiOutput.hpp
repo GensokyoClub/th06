@@ -108,14 +108,14 @@ struct MidiOutput : MidiTimer
     ZunResult StopPlayback();
     void LoadTracks();
     void ClearTracks();
-    ZunResult ReadFileData(u32 idx, char *path);
+    bool ReadFileData(u32 idx, char *path);
     void ReleaseFileData(u32 idx);
     void ParseFile(u32 idx);
     void ProcessMsg(MidiTrack *track);
 
-    ZunResult ParseFile(i32 idx);
-    ZunResult LoadFile(char *midiPath);
-    ZunResult Play();
+    bool ParseFile(i32 idx);
+    bool LoadFile(char *midiPath);
+    bool Play();
 
     u32 SetFadeOut(u32 ms);
     void FadeOutSetVolume(i32 volume);

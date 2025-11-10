@@ -5,9 +5,7 @@
 #include "BulletManager.hpp"
 #include "Chain.hpp"
 #include "GameManager.hpp"
-#include "ZunBool.hpp"
 #include "ZunMath.hpp"
-#include "ZunResult.hpp"
 #include "inttypes.hpp"
 
 namespace th06
@@ -167,13 +165,13 @@ struct Player
 {
     Player();
 
-    static ZunResult RegisterChain(u8 unk);
+    static bool RegisterChain(u8 unk);
     static void CutChain();
     static ChainCallbackResult OnUpdate(Player *p);
     static ChainCallbackResult OnDrawHighPrio(Player *p);
     static ChainCallbackResult OnDrawLowPrio(Player *p);
-    static ZunResult AddedCallback(Player *p);
-    static ZunResult DeletedCallback(Player *p);
+    static bool AddedCallback(Player *p);
+    static bool DeletedCallback(Player *p);
 
     static FireBulletResult FireSingleBullet(Player *, PlayerBullet *bullet, i32 bullet_idx, i32 framesSinceLastBullet,
                                              CharacterPowerData *powerData);
@@ -184,9 +182,9 @@ struct Player
     static FireBulletResult FireBulletMarisaB(Player *, PlayerBullet *, u32, u32);
 
     static void StartFireBulletTimer(Player *);
-    ZunResult HandlePlayerInputs();
+    bool HandlePlayerInputs();
     static void UpdatePlayerBullets(Player *);
-    static ZunResult UpdateFireBulletsTimer(Player *);
+    static bool UpdateFireBulletsTimer(Player *);
 
     static void SpawnBullets(Player *, u32 timer);
     static void DrawBullets(Player *p);
@@ -197,7 +195,7 @@ struct Player
     i32 CheckGraze(ZunVec3 *center, ZunVec3 *size);
     i32 CalcKillBoxCollision(ZunVec3 *bulletCenter, ZunVec3 *bulletSize);
     i32 CalcLaserHitbox(ZunVec3 *laserCenter, ZunVec3 *laserSize, ZunVec3 *rotation, f32 angle, i32 canGraze);
-    i32 CalcDamageToEnemy(ZunVec3 *enemyPos, ZunVec3 *enemySize, i32 *unk);
+    i32 CalcDamageToEnemy(ZunVec3 *enemyPos, ZunVec3 *enemySize, bool *hitWithLazerDuringBomb);
     i32 CalcItemBoxCollision(ZunVec3 *center, ZunVec3 *size);
     void ScoreGraze(ZunVec3 *center);
     void Die();
@@ -257,5 +255,5 @@ struct Player
 };
 ZUN_ASSERT_SIZE(Player, 0x98f0);
 
-DIFFABLE_EXTERN(Player, g_Player);
+extern Player g_Player;
 }; // namespace th06

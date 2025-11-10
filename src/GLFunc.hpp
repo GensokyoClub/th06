@@ -1,6 +1,5 @@
 #pragma once
 
-#include "diffbuild.hpp"
 #include <SDL2/SDL_opengl.h>
 
 namespace th06
@@ -77,5 +76,5 @@ struct GLFuncTable
     bool isGlesContext;
 };
 
-DIFFABLE_EXTERN(GLFuncTable, g_glFuncTable)
+extern GLFuncTable g_glFuncTable;
 }; // namespace th06

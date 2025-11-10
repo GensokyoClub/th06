@@ -3,19 +3,17 @@
 #include "Chain.hpp"
 #include "EclManager.hpp"
 #include "Enemy.hpp"
-#include "ZunResult.hpp"
 #include "inttypes.hpp"
-// #include <Windows.h>
 
 namespace th06
 {
 struct RunningSpellcardInfo
 {
-    ZunBool isCapturing;
-    ZunBool isActive;
+    bool isCapturing;
+    int isActive;
     i32 captureScore;
     u32 idx;
-    ZunBool usedBomb;
+    bool usedBomb;
 };
 ZUN_ASSERT_SIZE(RunningSpellcardInfo, 0x14);
 
@@ -23,18 +21,18 @@ struct EnemyManager
 {
     void Initialize();
     EnemyManager();
-    static ZunResult RegisterChain(char *stgEnm1, char *stgEnm2);
+    static bool RegisterChain(const char *stgEnm1, const char *stgEnm2);
     static void CutChain();
     static ChainCallbackResult OnUpdate(EnemyManager *enemyManager);
     static ChainCallbackResult OnDraw(EnemyManager *enemyManager);
-    static ZunResult AddedCallback(EnemyManager *enemyManager);
-    static ZunResult DeletedCallback(EnemyManager *enemyManager);
+    static bool AddedCallback(EnemyManager *enemyManager);
+    static bool DeletedCallback(EnemyManager *enemyManager);
 
     void RunEclTimeline();
     Enemy *SpawnEnemy(i32 eclSubId, ZunVec3 *pos, i16 life, i16 itemDrop, i32 score);
 
-    char *stgEnmAnmFilename;
-    char *stgEnm2AnmFilename;
+    const char *stgEnmAnmFilename;
+    const char *stgEnm2AnmFilename;
     Enemy enemyTemplate;
     Enemy enemies[257];
     Enemy *bosses[8];
@@ -49,5 +47,5 @@ struct EnemyManager
 };
 ZUN_ASSERT_SIZE(EnemyManager, 0xee5ec);
 
-DIFFABLE_EXTERN(EnemyManager, g_EnemyManager)
+extern EnemyManager g_EnemyManager;
 }; // namespace th06

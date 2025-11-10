@@ -17,16 +17,17 @@ namespace th06
 #define ITEM_SPAWNS 3
 #define ITEM_TABLES 8
 
-DIFFABLE_STATIC(EnemyManager, g_EnemyManager)
-DIFFABLE_STATIC(ChainElem, g_EnemyManagerCalcChain)
-DIFFABLE_STATIC(ChainElem, g_EnemyManagerDrawChain)
+EnemyManager g_EnemyManager;
+ChainElem g_EnemyManagerCalcChain;
+ChainElem g_EnemyManagerDrawChain;
 DIFFABLE_STATIC_ARRAY_ASSIGN(u8, 32, g_RandomItems) = {
     ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,
     ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POINT,       ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_SMALL,
     ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,
     ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,
     ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POINT,       ITEM_POINT,
-    ITEM_POWER_SMALL, ITEM_POWER_BIG};
+    ITEM_POWER_SMALL, ITEM_POWER_BIG
+};
 
 void EnemyManager::Initialize()
 {
@@ -127,7 +128,7 @@ void Enemy::ResetEffectArray(Enemy *enemy)
 {
     i32 idx;
 
-    for (idx = 0; idx < enemy->effectIdx; idx++)
+    for (idx = 0; idx < (i32)enemy->effectIdx; idx++)
     {
         if (!enemy->effectArray[idx])
         {
@@ -170,7 +171,7 @@ void EnemyManager::RunEclTimeline()
     }
     while (0 <= this->timelineInstr->time)
     {
-        if ((ZunBool)(this->timelineTime.current == this->timelineInstr->time))
+        if (this->timelineTime.current == this->timelineInstr->time)
         {
             switch (this->timelineInstr->opCode)
             {
@@ -321,7 +322,7 @@ void EnemyManager::RunEclTimeline()
                 }
             }
         }
-        else if ((ZunBool)(this->timelineTime.current < this->timelineInstr->time))
+        else if (this->timelineTime.current < this->timelineInstr->time)
         {
             break;
         }
@@ -335,7 +336,7 @@ void EnemyManager::RunEclTimeline()
     return;
 }
 
-ZunBool Enemy::HandleLifeCallback()
+bool Enemy::HandleLifeCallback()
 {
 
     i32 i;
@@ -380,7 +381,7 @@ ZunBool Enemy::HandleLifeCallback()
     return false;
 }
 
-ZunBool Enemy::HandleTimerCallback()
+bool Enemy::HandleTimerCallback()
 {
 
     Enemy *curEnemy;
@@ -487,7 +488,7 @@ void Enemy::ClampPos()
     }
 }
 
-ZunResult EnemyManager::RegisterChain(char *stgEnm1, char *stgEnm2)
+bool EnemyManager::RegisterChain(const char *stgEnm1, const char *stgEnm2)
 {
     EnemyManager *mgr = &g_EnemyManager;
     mgr->Initialize();
@@ -499,9 +500,9 @@ ZunResult EnemyManager::RegisterChain(char *stgEnm1, char *stgEnm2)
     g_EnemyManagerCalcChain.addedCallback = (ChainAddedCallback)mgr->AddedCallback;
     g_EnemyManagerCalcChain.deletedCallback = (ChainAddedCallback)mgr->DeletedCallback;
     g_EnemyManagerCalcChain.arg = mgr;
-    if (g_Chain.AddToCalcChain(&g_EnemyManagerCalcChain, TH_CHAIN_PRIO_CALC_ENEMYMANAGER))
+    if (!g_Chain.AddToCalcChain(&g_EnemyManagerCalcChain, TH_CHAIN_PRIO_CALC_ENEMYMANAGER))
     {
-        return ZUN_ERROR;
+        return false;
     }
     g_EnemyManagerDrawChain.callback = (ChainCallback)mgr->OnDraw;
     g_EnemyManagerDrawChain.addedCallback = NULL;
@@ -509,9 +510,9 @@ ZunResult EnemyManager::RegisterChain(char *stgEnm1, char *stgEnm2)
     g_EnemyManagerDrawChain.arg = mgr;
     if (g_Chain.AddToDrawChain(&g_EnemyManagerDrawChain, TH_CHAIN_PRIO_DRAW_ENEMYMANAGER))
     {
-        return ZUN_ERROR;
+        return false;
     }
-    return ZUN_SUCCESS;
+    return true;
 }
 
 ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
@@ -522,9 +523,9 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
     ZunVec3 enemyHitbox;
     i32 enemyIdx;
     i32 damage;
-    i32 local_8;
+    bool local_8;
 
-    local_8 = 0;
+    local_8 = false;
     mgr->RunEclTimeline();
     for (curEnemy = &mgr->enemies[0], mgr->enemyCount = 0, enemyIdx = 0; enemyIdx < ARRAY_SIZE_SIGNED(mgr->enemies) - 1;
          enemyIdx++, curEnemy++)
@@ -559,7 +560,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
         {
             curEnemy->HandleTimerCallback();
         }
-        if (g_EclManager.RunEcl(curEnemy) == ZUN_ERROR)
+        if (!g_EclManager.RunEcl(curEnemy))
         {
             curEnemy->flags.active = 0;
             curEnemy->Despawn();
@@ -744,7 +745,7 @@ void Enemy::UpdateEffects(Enemy *enemy)
     Effect *effect;
     i32 i;
 
-    for (i = 0; i < enemy->effectIdx; i++)
+    for (i = 0; i < (i32)enemy->effectIdx; i++)
     {
         effect = enemy->effectArray[i];
         if (!effect)
@@ -818,19 +819,19 @@ ChainCallbackResult EnemyManager::OnDraw(EnemyManager *mgr)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-ZunResult EnemyManager::AddedCallback(EnemyManager *enemyManager)
+bool EnemyManager::AddedCallback(EnemyManager *enemyManager)
 {
     Enemy *enemies = enemyManager->enemies;
 
     if (enemyManager->stgEnmAnmFilename &&
-        g_AnmManager->LoadAnm(ANM_FILE_ENEMY, enemyManager->stgEnmAnmFilename, ANM_OFFSET_ENEMY) != ZUN_SUCCESS)
+        !g_AnmManager->LoadAnm(ANM_FILE_ENEMY, enemyManager->stgEnmAnmFilename, ANM_OFFSET_ENEMY))
     {
-        return ZUN_ERROR;
+        return false;
     }
     if (enemyManager->stgEnm2AnmFilename &&
-        g_AnmManager->LoadAnm(ANM_FILE_ENEMY2, enemyManager->stgEnm2AnmFilename, ANM_OFFSET_ENEMY) != ZUN_SUCCESS)
+        !g_AnmManager->LoadAnm(ANM_FILE_ENEMY2, enemyManager->stgEnm2AnmFilename, ANM_OFFSET_ENEMY))
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     enemyManager->randomItemSpawnIndex = g_Rng.GetRandomU16InRange(ITEM_SPAWNS);
@@ -839,14 +840,14 @@ ZunResult EnemyManager::AddedCallback(EnemyManager *enemyManager)
     enemyManager->spellcardInfo.isActive = 0;
     enemyManager->timelineInstr = NULL;
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
-ZunResult EnemyManager::DeletedCallback(EnemyManager *mgr)
+bool EnemyManager::DeletedCallback(EnemyManager *mgr)
 {
     g_AnmManager->ReleaseAnm(ANM_FILE_ENEMY2);
     g_AnmManager->ReleaseAnm(ANM_FILE_ENEMY);
-    return ZUN_SUCCESS;
+    return true;
 }
 
 void EnemyManager::CutChain()

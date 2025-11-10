@@ -1,5 +1,6 @@
 #pragma once
 
+#include "diffbuild.hpp"
 #include "inttypes.hpp"
 
 namespace th06
@@ -21,7 +22,7 @@ struct StageReplayData
     i8 bombsRemaining;
     u8 rank;
     i8 powerItemCountForScore;
-    i8 padding[3];
+    // i8 padding[3];
     ReplayDataInput replayInputs[53998];
 };
 ZUN_ASSERT_SIZE(StageReplayData, 0x69780);

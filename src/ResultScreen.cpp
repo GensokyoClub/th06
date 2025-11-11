@@ -523,7 +523,11 @@ void ResultScreen::WriteScore(ResultScreen *resultScreen)
         bytes++;
         remainingSize--;
     }
+    #ifdef __EMSCRIPTEN__
+    FileSystem::WriteDataToFile("/persistent/score.dat", fileBuffer, sizeOfFile);
+    #else
     FileSystem::WriteDataToFile("score.dat", fileBuffer, sizeOfFile);
+    #endif
     std::free(fileBuffer);
 }
 
@@ -2118,7 +2122,11 @@ bool ResultScreen::AddedCallback(ResultScreen *resultScreen)
     }
 
     resultScreen->lastBestScoresCursor = 0;
+    #ifdef __EMSCRIPTEN__
+    resultScreen->scoreDat = ResultScreen::OpenScore("/persistent/score.dat");
+    #else
     resultScreen->scoreDat = ResultScreen::OpenScore("score.dat");
+    #endif
 
     for (i = 0; i < HSCR_NUM_DIFFICULTIES; i++)
     {

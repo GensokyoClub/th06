@@ -49,6 +49,7 @@
   <div id="loading-text">Loading...</div>
 
   <canvas id="canvas" width="640" height="480"></canvas>
+  <button id="fullscreen-button">Fullscreen</button>
 
   <script>
     if ('serviceWorker' in navigator) {
@@ -59,7 +60,14 @@
     const loadingText = document.getElementById('loading-text');
     const canvas = document.getElementById('canvas');
 
-    let safeToStopForcingSize = 0;
+    let fullscreenButton = document.getElementById('fullscreen-button');
+    fullscreenButton.addEventListener('click', () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        canvas.requestFullscreen();
+      }
+    });
 
     var Module = {
       canvas,
@@ -68,20 +76,51 @@
         loadingText.textContent = text;
       },
       onRuntimeInitialized() {
+        // Hide loading UI
         loadingContainer.remove();
         loadingText.remove();
 
+        // Force canvas to proper size (Emscripten sometimes overrides it)
         canvas.width = 640;
         canvas.height = 480;
-
         const iv = setInterval(() => {
           canvas.width = 640;
           canvas.height = 480;
-          safeToStopForcingSize++;
-          if (safeToStopForcingSize > 10) {
-            clearInterval(iv);
-          }
         }, 500);
+
+        try {
+          FS.mkdir('/persistent');
+        } catch (e) {
+          if (e.errno !== 20) console.warn('mkdir failed:', e);
+        }
+
+        FS.mount(IDBFS, {}, '/persistent');
+
+        console.log('[Emscripten] Mounting IDBFS...');
+        FS.syncfs(true, (err) => {
+          if (err) {
+            console.error('IDBFS initial sync failed:', err);
+            return;
+          }
+          console.log('[Emscripten] IDBFS ready.');
+
+          // Ensure files exist
+          if (!FS.analyzePath('/persistent/score.dat').exists)
+            FS.writeFile('/persistent/score.dat', '');
+          if (!FS.analyzePath('/persistent/東方紅魔郷.cfg').exists)
+            FS.writeFile('/persistent/東方紅魔郷.cfg', '');
+
+          console.log('[Emscripten] Sync complete, launching main()...');
+          if (Module.callMain) Module.callMain([]); // safer than Module._main()
+        });
+
+        // Save before leaving
+        window.addEventListener('beforeunload', () => {
+          FS.syncfs(false, (err) => {
+            if (err) console.error('Final save sync failed:', err);
+            else console.log('Final save sync complete.');
+          });
+        });
       }
     };
   </script>

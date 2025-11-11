@@ -331,7 +331,11 @@ bool GameManager::AddedCallback(GameManager *mgr)
             catk->numAttempts = 0;
             catk->numSuccess = 0;
         }
+        #ifdef __EMSCRIPTEN__
+        scoredat = ResultScreen::OpenScore("/persistent/score.dat");
+        #else
         scoredat = ResultScreen::OpenScore("score.dat");
+        #endif
         g_GameManager.highScore =
             ResultScreen::GetHighScore(scoredat, NULL, g_GameManager.CharacterShotType(), g_GameManager.difficulty);
         ResultScreen::ParseCatk(scoredat, mgr->catk);

@@ -32,13 +32,23 @@ static int renderResult = 0;
 // Initialization
 // ------------------------------------------------
 
+#ifdef __EMSCRIPTEN__
+#define EM_TH_CONFIG_FILE "/persistent/" TH_CONFIG_FILE
+#endif
+
 static bool initialize_game()
 {
 #ifdef _WIN32
     setlocale(LC_ALL, ".UTF8");
 #endif
 
-    if (!g_Supervisor.LoadConfig(TH_CONFIG_FILE))
+#ifdef __EMSCRIPTEN__
+    bool loadConfig = g_Supervisor.LoadConfig(EM_TH_CONFIG_FILE);
+#else
+    bool loadConfig = g_Supervisor.LoadConfig(TH_CONFIG_FILE);
+#endif
+
+    if (!loadConfig)
     {
         g_GameErrorContext.Flush();
         return false;
@@ -141,7 +151,12 @@ static void cleanup()
 
     SDL_Quit();
 
-    FileSystem::WriteDataToFile(TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
+    #ifdef __EMSCRIPTEN__
+        FileSystem::WriteDataToFile(EM_TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
+    #else
+        FileSystem::WriteDataToFile(TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
+    #endif
+
     SDL_ShowCursor(SDL_ENABLE);
     g_GameErrorContext.Flush();
 }

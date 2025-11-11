@@ -99,28 +99,28 @@ project "th06"
       "-sUSE_PTHREADS=1 -pthread"
     }
 
+    buildoptions { "-Wall", "-Wextra", "-Wpedantic", "-Wno-gnu-anonymous-struct", "-Wno-unused-parameter", "-Wno-unused-but-set-variable", "-Wno-unused-variable", "-Wno-nontrivial-memcall", "-Wno-c99-extensions", "-Wno-switch", "-Wno-c++11-narrowing" }
+
     linkoptions {
       "-I /home/wearr/Documents/Coding/gl4es/include/ /home/wearr/Documents/Coding/gl4es/lib/libGL.a -sUSE_PTHREADS=1 -pthread",
       "-gsource-map",
       "-O3",
       "-flto",
       "-sWASM_BIGINT=1",
-      "-sMALLOC=emmalloc",
       "-sASSERTIONS=0",
-      "-sSAFE_HEAP=0",
-      "-sDEMANGLE_SUPPORT=0",
-      "-sDISABLE_EXCEPTION_CATCHING=1",
-      "-sEVAL_CTORS=0",
       "-sGL_ASSERTIONS=0",
       "-sFULL_ES3=1",
+      "-sINVOKE_RUN=0",
       "-sUSE_SDL=2",
-      "-sUSE_SDL_IMAGE=2 --profiling-funcs",
+      "-sUSE_SDL_IMAGE=2",
       '-sSDL2_IMAGE_FORMATS=["png","jpg"]',
       "-sUSE_SDL_TTF=2",
+      "-sEXPORTED_RUNTIME_METHODS=['callMain']",
       "--preload-file ../data",
       "--preload-file ../bgm",
       "--preload-file ../msgothic.ttc@./",
-      "--shell-file ../resources/shell.html"
+      "--shell-file ../resources/shell.html",
+      "-lidbfs.js"
     }
 
     defines { "EMSCRIPTEN" }

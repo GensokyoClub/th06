@@ -43,11 +43,11 @@ bool MidiDevice::OpenDevice(u32 uDeviceId)
     return midiOutOpen(&this->handle, uDeviceId, (DWORD_PTR)NULL, (DWORD_PTR)NULL, CALLBACK_NULL) == MMSYSERR_NOERROR;
 }
 
-ZunResult MidiDevice::Close()
+bool MidiDevice::Close()
 {
     if (this->handle == 0)
     {
-        return ZUN_ERROR;
+        return false;
     }
 
     for (i32 i = 0; i < ARRAY_SIZE_SIGNED(this->midiHeaders); i++)
@@ -62,7 +62,7 @@ ZunResult MidiDevice::Close()
     midiOutClose(this->handle);
     this->handle = 0;
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
 union MidiShortMsg {
@@ -124,7 +124,7 @@ bool MidiDevice::SendShortMsg(u8 midiStatus, u8 firstByte, u8 secondByte)
     }
 }
 
-ZunResult MidiDevice::UnprepareHeader(LPMIDIHDR pmh)
+bool MidiDevice::UnprepareHeader(LPMIDIHDR pmh)
 {
     if (pmh == NULL)
     {
@@ -150,7 +150,7 @@ ZunResult MidiDevice::UnprepareHeader(LPMIDIHDR pmh)
         }
     }
 
-    return ZUN_ERROR;
+    return false;
 
 success:
     MMRESULT res = midiOutUnprepareHeader(this->handle, pmh, sizeof(*pmh));
@@ -162,7 +162,7 @@ success:
     std::free(pmh->lpData);
     std::free(pmh);
 
-    return ZUN_SUCCESS;
+    return true;
 }
 
 }; // namespace th06

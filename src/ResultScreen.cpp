@@ -868,12 +868,20 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
 
         if (this->frameTimer == 0)
         {
+#ifdef __EMSCRIPTEN__
+            dirPath = std::filesystem::path("/persistent/replay");
+#else
             dirPath = std::filesystem::path("./replay");
+#endif
             std::filesystem::create_directory(dirPath, fileError);
 
             for (idx = 0; idx < ARRAY_SIZE_SIGNED(this->replays); idx++)
             {
+#ifdef __EMSCRIPTEN__
+                std::sprintf(replayToReadPath, "/persistent/replay/th6_%.2d.rpy", idx + 1);
+#else
                 std::sprintf(replayToReadPath, "./replay/th6_%.2d.rpy", idx + 1);
+#endif
                 replayLoaded = (ReplayHeader *)FileSystem::OpenPath(replayToReadPath);
                 if (replayLoaded == NULL)
                 {
@@ -1039,7 +1047,11 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
             }
             else
             {
+#ifdef __EMSCRIPTEN__
+                std::sprintf(replayPath, "/persistent/replay/th6_%.2d.rpy", this->replayNumber + 1);
+#else
                 std::sprintf(replayPath, "./replay/th6_%.2d.rpy", this->replayNumber + 1);
+#endif
                 ReplayManager::SaveReplay(replayPath, this->replayName);
                 this->frameTimer = 0;
                 this->resultScreenState = RESULT_SCREEN_STATE_EXITING;

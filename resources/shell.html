@@ -57,6 +57,7 @@
     }
 
     const loadingContainer = document.getElementById('loading-container');
+    const loadingBar = document.getElementById('loading-bar');
     const loadingText = document.getElementById('loading-text');
     const canvas = document.getElementById('canvas');
 
@@ -73,7 +74,17 @@
       canvas,
       setStatus: function(text) {
         if (!text) return;
-        loadingText.textContent = text;
+        const match = text.match(/\((\d+)\/(\d+)\)/);
+        if (match) {
+          const loaded = parseInt(match[1]);
+          const total = parseInt(match[2]);
+          const progress = Math.min(100, (loaded / total) * 100);
+          loadingBar.style.width = progress + '%';
+          loadingText.textContent = `Loading... (${Math.round(progress)}%)`;
+        } else {
+          // Handle non-progress messages
+          loadingText.textContent = text;
+        }
       },
       onRuntimeInitialized() {
         // Hide loading UI
@@ -90,6 +101,7 @@
 
         try {
           FS.mkdir('/persistent');
+          FS.mkdir("/persistent/replay");
         } catch (e) {
           if (e.errno !== 20) console.warn('mkdir failed:', e);
         }
@@ -103,12 +115,6 @@
             return;
           }
           console.log('[Emscripten] IDBFS ready.');
-
-          // Ensure files exist
-          if (!FS.analyzePath('/persistent/score.dat').exists)
-            FS.writeFile('/persistent/score.dat', '');
-          if (!FS.analyzePath('/persistent/東方紅魔郷.cfg').exists)
-            FS.writeFile('/persistent/東方紅魔郷.cfg', '');
 
           console.log('[Emscripten] Sync complete, launching main()...');
           if (Module.callMain) Module.callMain([]); // safer than Module._main()

@@ -1282,7 +1282,12 @@ i32 MainMenu::ReplayHandling()
                 replayFileIdx = 0;
                 for (cur = 0; cur < 15; cur++)
                 {
+#ifdef __EMSCRIPTEN__
+                    std::sprintf(replayFilePath, "/persistent/replay/th6_%.2d.rpy", cur + 1);
+#else
                     std::sprintf(replayFilePath, "./replay/th6_%.2d.rpy", cur + 1);
+#endif
+
                     replayData = (ReplayHeader *)FileSystem::OpenPath(replayFilePath);
                     if (replayData == NULL)
                     {

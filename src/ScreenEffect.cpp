@@ -81,7 +81,7 @@ void ScreenEffect::DrawSquare(ZunRect *rect, ZunColor rectColor)
 
     vertices[0].diffuse = vertices[1].diffuse = vertices[2].diffuse = vertices[3].diffuse = ColorData(rectColor);
 
-    inverseViewportMatrix();
+    g_AnmManager->SetProjectionMode(PROJECTION_MODE_ORTHOGRAPHIC);
 
     g_glFuncTable.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     g_glFuncTable.glEnableClientState(GL_COLOR_ARRAY);
@@ -109,13 +109,6 @@ void ScreenEffect::DrawSquare(ZunRect *rect, ZunColor rectColor)
 
     g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-    g_glFuncTable.glMatrixMode(GL_TEXTURE);
-    g_glFuncTable.glPopMatrix();
-    g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-    g_glFuncTable.glPopMatrix();
-    g_glFuncTable.glMatrixMode(GL_PROJECTION);
-    g_glFuncTable.glPopMatrix();
 
     g_AnmManager->SetCurrentVertexShader(0xff);
     g_AnmManager->SetCurrentSprite(NULL);
@@ -230,6 +223,7 @@ ChainCallbackResult ScreenEffect::DrawFadeIn(ScreenEffect *effect)
     g_Supervisor.viewport.Y = 0;
     g_Supervisor.viewport.Width = 640;
     g_Supervisor.viewport.Height = 480;
+    g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
     g_Supervisor.viewport.Set();
     ScreenEffect::DrawSquare(&fadeRect, (effect->fadeAlpha << 24) | effect->genericParam);
     return CHAIN_CALLBACK_RESULT_CONTINUE;

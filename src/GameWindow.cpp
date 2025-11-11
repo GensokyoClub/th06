@@ -52,6 +52,7 @@ RenderResult GameWindow::Render()
                     ((g_Stage.skyFog.color >> 16) & 0xFF) / 255.0f, ((g_Stage.skyFog.color >> 8) & 0xFF) / 255.0f,
                     (g_Stage.skyFog.color & 0xFF) / 255.0f, (g_Stage.skyFog.color >> 24) / 255.0f);
                 g_glFuncTable.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
                 g_Supervisor.viewport.Set();
             }
 
@@ -63,6 +64,7 @@ RenderResult GameWindow::Render()
         g_Supervisor.viewport.Y = 0;
         g_Supervisor.viewport.Width = 640;
         g_Supervisor.viewport.Height = 480;
+        g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
         g_Supervisor.viewport.Set();
         res = g_Chain.RunCalcChain();
         g_SoundPlayer.PlaySounds();

@@ -1746,6 +1746,7 @@ ChainCallbackResult th06::ResultScreen::OnDraw(ResultScreen *resultScreen)
     g_Supervisor.viewport.Height = 480;
 
     //    g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
+    g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
     g_Supervisor.viewport.Set();
     g_AnmManager->CopySurfaceToBackBuffer(0, 0, 0, 0, 0);
 

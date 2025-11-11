@@ -801,7 +801,7 @@ ZunResult GuiImpl::DrawDialogue()
         g_AnmManager->SetCurrentTexture(g_AnmManager->dummyTextureHandle);
     }
 
-    inverseViewportMatrix();
+    g_AnmManager->SetProjectionMode(PROJECTION_MODE_ORTHOGRAPHIC);
 
     g_glFuncTable.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     g_glFuncTable.glEnableClientState(GL_COLOR_ARRAY);
@@ -809,13 +809,6 @@ ZunResult GuiImpl::DrawDialogue()
     g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*vertices), &vertices[0].diffuse);
 
     g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-    g_glFuncTable.glMatrixMode(GL_TEXTURE);
-    g_glFuncTable.glPopMatrix();
-    g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-    g_glFuncTable.glPopMatrix();
-    g_glFuncTable.glMatrixMode(GL_PROJECTION);
-    g_glFuncTable.glPopMatrix();
 
     //    g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_DIFFUSE | D3DFVF_XYZRHW);
     //    g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices, sizeof(vertices[0]));
@@ -1099,6 +1092,7 @@ void Gui::DrawGameScene()
     g_Supervisor.viewport.Y = 0;
     g_Supervisor.viewport.Width = 640;
     g_Supervisor.viewport.Height = 480;
+    g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
     g_Supervisor.viewport.Set();
     //    g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
 
@@ -1256,7 +1250,7 @@ void Gui::DrawGameScene()
                 g_AnmManager->SetCurrentTexture(g_AnmManager->dummyTextureHandle);
             }
 
-            inverseViewportMatrix();
+            g_AnmManager->SetProjectionMode(PROJECTION_MODE_ORTHOGRAPHIC);
 
             g_glFuncTable.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
             g_glFuncTable.glEnableClientState(GL_COLOR_ARRAY);
@@ -1264,13 +1258,6 @@ void Gui::DrawGameScene()
             g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*vertices), &vertices[0].diffuse);
 
             g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-            g_glFuncTable.glMatrixMode(GL_TEXTURE);
-            g_glFuncTable.glPopMatrix();
-            g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-            g_glFuncTable.glPopMatrix();
-            g_glFuncTable.glMatrixMode(GL_PROJECTION);
-            g_glFuncTable.glPopMatrix();
 
             //            g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_DIFFUSE | D3DFVF_XYZRHW);
             //            g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices,
@@ -1431,6 +1418,7 @@ void Gui::DrawStageElements()
         g_Supervisor.viewport.Width = g_GameManager.arcadeRegionSize.x;
         g_Supervisor.viewport.Height = g_GameManager.arcadeRegionSize.y;
 
+        g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
         g_Supervisor.viewport.Set();
         //        g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
         g_AnmManager->DrawNoRotation(&this->impl->loadingScreenSprite);

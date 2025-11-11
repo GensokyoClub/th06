@@ -99,6 +99,12 @@ struct VertexTex1Xy
     ZunVec2 textureUV;
 };
 
+enum ProjectionMode
+{
+    PROJECTION_MODE_PERSPECTIVE,
+    PROJECTION_MODE_ORTHOGRAPHIC
+};
+
 struct AnmRawSprite
 {
     u32 id;
@@ -202,6 +208,29 @@ struct AnmManager
         this->currentSprite = sprite;
     }
 
+    void SetProjectionMode(enum ProjectionMode projectionMode)
+    {
+        if (this->projectionMode == projectionMode)
+        {
+            return;
+        }
+
+        this->projectionMode = projectionMode;
+
+        if (projectionMode == PROJECTION_MODE_ORTHOGRAPHIC)
+        {
+            inverseViewportMatrix();
+            return;
+        }
+
+        g_glFuncTable.glMatrixMode(GL_TEXTURE);
+        g_glFuncTable.glPopMatrix();
+        g_glFuncTable.glMatrixMode(GL_MODELVIEW);
+        g_glFuncTable.glPopMatrix();
+        g_glFuncTable.glMatrixMode(GL_PROJECTION);
+        g_glFuncTable.glPopMatrix();
+    }
+
     i32 ExecuteScript(AnmVm *vm);
     ZunResult Draw(AnmVm *vm);
     void DrawTextToSprite(u32 spriteDstIndex, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontWidth,
@@ -280,6 +309,7 @@ struct AnmManager
     u8 currentColorOp;
     u8 currentVertexShader;
     u8 currentZWriteDisable;
+    enum ProjectionMode projectionMode;
     AnmLoadedSprite *currentSprite;
     //    IDirect3DVertexBuffer8 *vertexBuffer;
     RenderVertexInfo vertexBufferContents[4];

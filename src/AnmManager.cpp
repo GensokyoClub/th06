@@ -249,6 +249,7 @@ AnmManager::AnmManager()
     this->currentVertexShader = 0;
     this->currentZWriteDisable = 0;
     this->screenshotTextureId = -1;
+    this->projectionMode = PROJECTION_MODE_PERSPECTIVE;
 }
 
 void AnmManager::SetupVertexBuffer()
@@ -815,7 +816,7 @@ ZunResult AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)
 
     this->SetRenderStateForVm(vm);
 
-    inverseViewportMatrix();
+    this->SetProjectionMode(PROJECTION_MODE_ORTHOGRAPHIC);
 
     //    if (roundToPixel)
     //    {
@@ -864,13 +865,6 @@ ZunResult AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)
     }
 
     g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-    g_glFuncTable.glMatrixMode(GL_TEXTURE);
-    g_glFuncTable.glPopMatrix();
-    g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-    g_glFuncTable.glPopMatrix();
-    g_glFuncTable.glMatrixMode(GL_PROJECTION);
-    g_glFuncTable.glPopMatrix();
 
     return ZUN_SUCCESS;
 }
@@ -1052,6 +1046,8 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
         return ZUN_ERROR;
     }
 
+    SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
+
     g_glFuncTable.glMatrixMode(GL_MODELVIEW);
     g_glFuncTable.glPushMatrix();
 
@@ -1198,6 +1194,8 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
     {
         return ZUN_ERROR;
     }
+
+    SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
 
     worldTransformMatrix = vm->matrix;
     worldTransformMatrix.m[3][0] = rintf(vm->pos.x) - 0.5f;
@@ -2088,13 +2086,6 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
     g_AnmManager->SetCurrentColorOp(0xff);
     g_AnmManager->SetCurrentBlendMode(0xff);
     g_AnmManager->SetCurrentZWriteDisable(0xff);
-
-    g_glFuncTable.glMatrixMode(GL_TEXTURE);
-    g_glFuncTable.glPopMatrix();
-    g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-    g_glFuncTable.glPopMatrix();
-    g_glFuncTable.glMatrixMode(GL_PROJECTION);
-    g_glFuncTable.glPopMatrix();
 
     originalViewport.Set();
 }

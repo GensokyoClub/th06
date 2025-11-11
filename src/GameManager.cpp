@@ -511,6 +511,8 @@ void GameManager::SetupCameraStageBackground(f32 extraRenderDistance)
     f32 viewportMiddleHeight;
     f32 cameraDistance;
 
+    g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
+
     viewportMiddleWidth = g_Supervisor.viewport.Width / 2.0f;
     viewportMiddleHeight = g_Supervisor.viewport.Height / 2.0f;
     aspectRatio = (f32)g_Supervisor.viewport.Width / (f32)g_Supervisor.viewport.Height;
@@ -552,6 +554,8 @@ void GameManager::SetupCamera(f32 extraRenderDistance)
     f32 atVecY;
     f32 atVecX;
     f32 eyeVecZ;
+
+    g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
 
     viewportMiddleWidth = g_Supervisor.viewport.Width / 2.0f;
     viewportMiddleHeight = g_Supervisor.viewport.Height / 2.0f;

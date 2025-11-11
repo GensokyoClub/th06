@@ -114,7 +114,7 @@ struct Supervisor
 
     bool ReadMidiFile(u32 midiFileIdx, char *path);
     bool PlayMidiFile(i32 midiFileIdx);
-    bool PlayAudio(char *path);
+    bool PlayAudio(const char *path);
     bool StopAudio();
     bool FadeOutMusic(f32 fadeOutSeconds);
 

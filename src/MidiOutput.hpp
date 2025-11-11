@@ -107,13 +107,13 @@ struct MidiOutput : MidiTimer
     bool StopPlayback();
     void LoadTracks();
     void ClearTracks();
-    bool ReadFileData(u32 idx, char *path);
+    bool ReadFileData(u32 idx, const char *path);
     void ReleaseFileData(u32 idx);
     void ParseFile(u32 idx);
     void ProcessMsg(MidiTrack *track);
 
     bool ParseFile(i32 idx);
-    bool LoadFile(char *midiPath);
+    bool LoadFile(const char *midiPath);
     bool Play();
 
     u32 SetFadeOut(u32 ms);

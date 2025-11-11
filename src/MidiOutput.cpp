@@ -99,7 +99,7 @@ MidiOutput::~MidiOutput()
     }
 }
 
-bool MidiOutput::ReadFileData(u32 idx, char *path)
+bool MidiOutput::ReadFileData(u32 idx, const char *path)
 {
     if (g_Supervisor.cfg.musicMode != MIDI)
     {
@@ -208,7 +208,7 @@ bool MidiOutput::ParseFile(i32 fileIdx)
     return true;
 }
 
-bool MidiOutput::LoadFile(char *midiPath)
+bool MidiOutput::LoadFile(const char *midiPath)
 {
     if (!this->ReadFileData(0x1f, midiPath))
     {

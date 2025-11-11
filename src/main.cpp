@@ -13,58 +13,48 @@
 #include "i18n.hpp"
 #include "utils.hpp"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#endif
+
 using namespace th06;
 
-int main(int argc, char *argv[])
-{
-    (void)argc;
-    (void)argv;
+// Forward declarations
+static void main_loop();
+static void cleanup();
+static void restart_game();
 
-// TODO: Find a better solution for locales / encoding on Windows, because it's all a mess
+static bool running = false;
+static int renderResult = 0;
+
+// ------------------------------------------------
+// Initialization
+// ------------------------------------------------
+
+static bool initialize_game()
+{
 #ifdef _WIN32
     setlocale(LC_ALL, ".UTF8");
 #endif
 
-    i32 renderResult = 0;
-    //    MSG msg;
-    //    i32 waste1, waste2, waste3, waste4, waste5, waste6;
-
-    //    if (utils::CheckForRunningGameInstance())
-    //    {
-    //        g_GameErrorContext.Flush();
-    //
-    //        return 1;
-    //    }
-
-    //    g_Supervisor.hInstance = hInstance;
-
     if (!g_Supervisor.LoadConfig(TH_CONFIG_FILE))
     {
         g_GameErrorContext.Flush();
-        return -1;
+        return false;
     }
 
-    //    if (GameWindow::InitD3dInterface())
-    //    {
-    //        g_GameErrorContext.Flush();
-    //        return 1;
-    //    }
-
-    //    SystemParametersInfo(SPI_GETSCREENSAVEACTIVE, 0, &g_GameWindow.screenSaveActive, 0);
-    //    SystemParametersInfo(SPI_GETLOWPOWERACTIVE, 0, &g_GameWindow.lowPowerActive, 0);
-    //    SystemParametersInfo(SPI_GETPOWEROFFACTIVE, 0, &g_GameWindow.powerOffActive, 0);
-    //    SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 0, NULL, SPIF_SENDCHANGE);
-    //    SystemParametersInfo(SPI_SETLOWPOWERACTIVE, 0, NULL, SPIF_SENDCHANGE);
-    //    SystemParametersInfo(SPI_SETPOWEROFFACTIVE, 0, NULL, SPIF_SENDCHANGE);
-
-restart:
     GameWindow::CreateGameWindow();
 
     if (GameWindow::InitD3dRendering())
     {
         g_GameErrorContext.Flush();
-        return 1;
+        return false;
     }
+
+    #ifdef __EMSCRIPTEN__
+        emscripten_set_element_css_size("#canvas", 640, 480);
+    #endif
 
     g_SoundPlayer.InitializeDSound();
     Controller::GetJoystickCaps();
@@ -74,96 +64,126 @@ restart:
 
     if (!Supervisor::RegisterChain())
     {
-        goto stop;
+        return false;
     }
+
     if (!g_Supervisor.cfg.windowed)
-    {
         SDL_ShowCursor(SDL_DISABLE);
-    }
 
     g_GameWindow.curFrame = 0;
+    running = true;
 
-    while (true)
+    return true;
+}
+
+// ------------------------------------------------
+// Main loop (called each frame by Emscripten)
+// ------------------------------------------------
+
+static void main_loop()
+{
+    if (!running)
+        return;
+
+    SDL_Event e;
+    while (SDL_PollEvent(&e))
     {
-        SDL_Event e;
-
-        while (SDL_PollEvent(&e))
+        if (e.type == SDL_QUIT)
         {
-            if (e.type == SDL_QUIT)
-            {
-                goto stop;
-            }
+            running = false;
+#ifdef __EMSCRIPTEN__
+            emscripten_cancel_main_loop();
+#endif
+            cleanup();
+            return;
         }
-
-        renderResult = g_GameWindow.Render();
-        if (renderResult != 0)
-        {
-            break;
-        }
-
-        //        SDL_Delay(1000.0f / 60.0f);
-
-        //        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-        //        {
-        //            TranslateMessage(&msg);
-        //            DispatchMessage(&msg);
-        //        }
-        //        else
-        //        {
-        //            testCoopLevelRes = g_Supervisor.d3dDevice->TestCooperativeLevel();
-        //            if (testCoopLevelRes == D3D_OK)
-        //            {
-        //                renderResult = g_GameWindow.Render();
-        //                if (renderResult != 0)
-        //                {
-        //                    goto stop;
-        //                }
-        //            }
-        //            else if (testCoopLevelRes == D3DERR_DEVICENOTRESET)
-        //            {
-        //                g_AnmManager->ReleaseSurfaces();
-        //                testResetRes = g_Supervisor.d3dDevice->Reset(&g_Supervisor.presentParameters);
-        //                if (testResetRes != 0)
-        //                {
-        //                    goto stop;
-        //                }
-        //                GameWindow::InitD3dDevice();
-        //                g_Supervisor.unk198 = 3;
-        //            }
-        //        }
     }
 
-stop:
+    renderResult = g_GameWindow.Render();
+    if (renderResult != 0)
+    {
+        running = false;
+#ifdef __EMSCRIPTEN__
+        emscripten_cancel_main_loop();
+#endif
+        cleanup();
+
+        if (renderResult == 2)
+        {
+            restart_game();
+        }
+    }
+}
+
+// ------------------------------------------------
+// Cleanup & Restart
+// ------------------------------------------------
+
+static void cleanup()
+{
     g_Chain.Release();
     g_SoundPlayer.Release();
 
     delete g_AnmManager;
-    g_AnmManager = NULL;
+    g_AnmManager = nullptr;
 
-    SDL_DestroyWindow(g_GameWindow.window);
-    SDL_GL_DeleteContext(g_GameWindow.glContext);
-    SDL_Quit();
-
-    if (renderResult == 2)
+    if (g_GameWindow.window)
     {
-        g_GameErrorContext.ResetContext();
-
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_OPTION_CHANGED_RESTART);
-
-        if (!g_Supervisor.cfg.windowed)
-        {
-            SDL_ShowCursor(SDL_ENABLE);
-        }
-
-        goto restart;
+        SDL_DestroyWindow(g_GameWindow.window);
+        g_GameWindow.window = nullptr;
     }
 
-    FileSystem::WriteDataToFile(TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
-    //    SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, g_GameWindow.screenSaveActive, NULL, SPIF_SENDCHANGE);
-    //    SystemParametersInfo(SPI_SETLOWPOWERACTIVE, g_GameWindow.lowPowerActive, NULL, SPIF_SENDCHANGE);
-    //    SystemParametersInfo(SPI_SETPOWEROFFACTIVE, g_GameWindow.powerOffActive, NULL, SPIF_SENDCHANGE);
+    if (g_GameWindow.glContext)
+    {
+        SDL_GL_DeleteContext(g_GameWindow.glContext);
+        g_GameWindow.glContext = nullptr;
+    }
 
+    SDL_Quit();
+
+    FileSystem::WriteDataToFile(TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
     SDL_ShowCursor(SDL_ENABLE);
     g_GameErrorContext.Flush();
+}
+
+static void restart_game()
+{
+    g_GameErrorContext.ResetContext();
+    GameErrorContext::Log(&g_GameErrorContext, TH_ERR_OPTION_CHANGED_RESTART);
+
+    if (!g_Supervisor.cfg.windowed)
+        SDL_ShowCursor(SDL_ENABLE);
+
+    // Reinitialize game
+    if (initialize_game())
+    {
+#ifdef __EMSCRIPTEN__
+        emscripten_set_main_loop(main_loop, 0, 1);
+#else
+        while (running)
+            main_loop();
+#endif
+    }
+}
+
+// ------------------------------------------------
+// Entry point
+// ------------------------------------------------
+
+int main(int argc, char *argv[])
+{
+    if (!initialize_game())
+        return -1;
+
+#ifdef __EMSCRIPTEN__
+    // Non-blocking browser main loop
+    emscripten_set_main_loop(main_loop, 0, 1);
+#else
+    // Desktop blocking loop
+    while (running)
+        main_loop();
+#endif
+
+    cleanup();
     return 0;
 }

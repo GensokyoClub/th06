@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>東方紅魔郷　〜 the Embodiment of Scarlet Devil</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-family: sans-serif;
+    }
+
+    #loading-container {
+      width: 60%;
+      max-width: 400px;
+      height: 24px;
+      border: 1px solid #555;
+      background: #222;
+      margin-bottom: 1em;
+      position: relative;
+    }
+
+    #loading-bar {
+      width: 0%;
+      height: 100%;
+      background: #09f;
+      transition: width 0.2s ease-out;
+    }
+
+    canvas {
+      display: block;
+      margin: auto;
+      width: 640px;
+      height: 480px;
+    }
+  </style>
+</head>
+<body>
+  <div id="loading-container">
+    <div id="loading-bar"></div>
+  </div>
+  <div id="loading-text">Loading...</div>
+
+  <canvas id="canvas" width="640" height="480"></canvas>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(console.error);
+    }
+
+    const loadingContainer = document.getElementById('loading-container');
+    const loadingText = document.getElementById('loading-text');
+    const canvas = document.getElementById('canvas');
+
+    let safeToStopForcingSize = 0;
+
+    var Module = {
+      canvas,
+      setStatus: function(text) {
+        if (!text) return;
+        loadingText.textContent = text;
+      },
+      onRuntimeInitialized() {
+        loadingContainer.remove();
+        loadingText.remove();
+
+        canvas.width = 640;
+        canvas.height = 480;
+
+        const iv = setInterval(() => {
+          canvas.width = 640;
+          canvas.height = 480;
+          safeToStopForcingSize++;
+          if (safeToStopForcingSize > 10) {
+            clearInterval(iv);
+          }
+        }, 500);
+      }
+    };
+  </script>
+
+  {{{ SCRIPT }}}
+</body>
+</html>

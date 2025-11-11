@@ -813,7 +813,7 @@ bool Supervisor::PlayMidiFile(i32 midiFileIdx)
     return false;
 }
 
-bool Supervisor::PlayAudio(char *path)
+bool Supervisor::PlayAudio(const char *path)
 {
     char wavName[256];
     char wavPos[256];

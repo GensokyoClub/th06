@@ -1,16 +1,25 @@
 #include "GLFunc.hpp"
 
 #include <SDL2/SDL_video.h>
+#include "gl4esinit.h"
+#include "GL/gl.h"
 
 namespace th06
 {
 GLFuncTable g_glFuncTable;
 
+#ifdef __EMSCRIPTEN__
+#define TRY_RESOLVE_FUNCTION(func) this->func = (decltype(this->func))gl4es_GetProcAddress(#func);
+#define TRY_RESOLVE_FUNCTION_GLES(func) this->func##_ptr = (decltype(this->func##_ptr))gl4es_GetProcAddress(#func);
+#else
 #define TRY_RESOLVE_FUNCTION(func) this->func = (decltype(this->func))SDL_GL_GetProcAddress(#func);
 #define TRY_RESOLVE_FUNCTION_GLES(func) this->func##_ptr = (decltype(this->func##_ptr))SDL_GL_GetProcAddress(#func);
+#endif
+
 
 void GLFuncTable::ResolveFunctions(bool glesContext)
 {
+    initialize_gl4es();
     TRY_RESOLVE_FUNCTION(glAlphaFunc)
     TRY_RESOLVE_FUNCTION(glBindTexture)
     TRY_RESOLVE_FUNCTION(glBlendFunc)

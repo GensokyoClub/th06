@@ -75,6 +75,7 @@ SDL_Surface *AnmManager::LoadToSurfaceWithFormat(const char *filename, SDL_Pixel
 
     if (imageSrcSurface == NULL)
     {
+        utils::DebugPrint2("%s", SDL_GetError());
         std::free(data);
         return NULL;
     }

@@ -7,10 +7,13 @@
 #include "Supervisor.hpp"
 #include "ZunMath.hpp"
 #include "diffbuild.hpp"
+#include "utils.hpp"
 #include "i18n.hpp"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_render.h>
 #include <SDL2/SDL_timer.h>
+#include <SDL2/SDL_video.h>
 #include <cstring>
 
 namespace th06
@@ -176,19 +179,19 @@ void GameWindow::CreateGameWindow()
     u32 flags = SDL_WINDOW_OPENGL;
     i32 height = GAME_WINDOW_HEIGHT;
     i32 width = GAME_WINDOW_WIDTH;
-    i32 x = SDL_WINDOWPOS_UNDEFINED;
-    i32 y = SDL_WINDOWPOS_UNDEFINED;
+    i32 x = 0;
+    i32 y = 0;
 
     if (g_Supervisor.cfg.windowed == 0)
     {
         flags |= SDL_WINDOW_FULLSCREEN;
     }
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-    //    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-    //    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
     g_GameWindow.window = SDL_CreateWindow(TH_WINDOW_TITLE, x, y, width, height, flags);
 
@@ -432,6 +435,7 @@ i32 GameWindow::InitD3dRendering(void)
     eye.z = -camera_distance;
     //    D3DXMatrixLookAtLH(&g_Supervisor.viewMatrix, &eye, &at, &up);
 
+    utils::DebugPrint2("%p", g_GameWindow.glContext);
     createViewMatrix(eye, at, up);
     g_glFuncTable.glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat *)&g_Supervisor.viewMatrix.m);
 

@@ -26,9 +26,9 @@ bool MidiDevice::OpenDevice(u32 uDeviceId)
     return true;
 }
 
-ZunResult MidiDevice::Close()
+bool MidiDevice::Close()
 {
-    return ZUN_SUCCESS;
+    return true;
 }
 
 bool MidiDevice::SendLongMsg(u8 *buf, u32 len)

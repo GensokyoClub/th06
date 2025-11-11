@@ -54,7 +54,7 @@ project "th06"
     "src/utils.cpp",
     "src/ZunTimer.cpp",
     -- keep headers visible
-    "src/**.hpp"
+    "src/**.hpp",
   }
 
   includedirs { "src" }
@@ -91,24 +91,36 @@ project "th06"
     targetname "th06_web"
 
     buildoptions {
-      "-g",
       "-gsource-map",
       "-sUSE_SDL=2",
       "-sUSE_SDL_IMAGE=2",
       "-sUSE_SDL_TTF=2",
+      "-I /home/wearr/Documents/Coding/gl4es/include/",
+      "-sUSE_PTHREADS=1 -pthread"
     }
 
     linkoptions {
-      "-g",
+      "-I /home/wearr/Documents/Coding/gl4es/include/ /home/wearr/Documents/Coding/gl4es/lib/libGL.a -sUSE_PTHREADS=1 -pthread",
       "-gsource-map",
+      "-O3",
+      "-flto",
+      "-sWASM_BIGINT=1",
+      "-sMALLOC=emmalloc",
+      "-sASSERTIONS=0",
+      "-sSAFE_HEAP=0",
+      "-sDEMANGLE_SUPPORT=0",
+      "-sDISABLE_EXCEPTION_CATCHING=1",
+      "-sEVAL_CTORS=0",
+      "-sGL_ASSERTIONS=0",
+      "-sFULL_ES3=1",
       "-sUSE_SDL=2",
-      "-sUSE_SDL_IMAGE=2",
+      "-sUSE_SDL_IMAGE=2 --profiling-funcs",
+      '-sSDL2_IMAGE_FORMATS=["png","jpg"]',
       "-sUSE_SDL_TTF=2",
-      "-sALLOW_MEMORY_GROWTH=1",
-      "-sASSERTIONS=1",
-      "-sLEGACY_GL_EMULATION=1",
       "--preload-file ../data",
       "--preload-file ../bgm",
+      "--preload-file ../msgothic.ttc@./",
+      "--shell-file ../resources/shell.html"
     }
 
     defines { "EMSCRIPTEN" }

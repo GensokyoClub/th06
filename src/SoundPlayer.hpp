@@ -100,7 +100,7 @@ struct SoundPlayer
     void BackgroundMusicPlayerThread();
     void MixAudio(u32 samples);
 
-    SoundData soundBuffers[128];
+    SoundData soundBuffers[64];
     std::mutex soundBufMutex;
     SDL_AudioDeviceID audioDev;
     std::thread backgroundMusicThreadHandle;

@@ -33,3 +33,7 @@ if [ "$BUILD_TYPE" = "All" ]; then
 else
     ninja -j${NPROC} $BUILD_TYPE
 fi
+
+if [ "$OS" = "emscripten" ]; then
+    cp ../web/th06_${BUILD_TYPE,,}.html ../web/index.html
+fi;

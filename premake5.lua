@@ -115,6 +115,9 @@ project "th06"
       "-sUSE_SDL_IMAGE=2",
       '-sSDL2_IMAGE_FORMATS=["png","jpg"]',
       "-sUSE_SDL_TTF=2",
+      -- TODO: Emscripten dies on the credits without this! Aborted(OOM).
+      "-sALLOW_MEMORY_GROWTH=1",
+      --
       "-sEXPORTED_RUNTIME_METHODS=['callMain']",
       "--preload-file ../data",
       "--preload-file ../bgm",

@@ -50,6 +50,7 @@
 
   <canvas id="canvas" width="640" height="480"></canvas>
   <button id="fullscreen-button">Fullscreen</button>
+  <button id="clear-cache-button">Clear Game Cache</button>
 
   <script>
     if ('serviceWorker' in navigator) {
@@ -67,6 +68,19 @@
         document.exitFullscreen();
       } else {
         canvas.requestFullscreen();
+      }
+    });
+
+    let clearCacheButton = document.getElementById('clear-cache-button');
+    clearCacheButton.addEventListener('click', () => {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+          registrations.forEach(registration => {
+            registration.unregister();
+          });
+          window.location.reload();
+        });
+
       }
     });
 
@@ -108,16 +122,15 @@
 
         FS.mount(IDBFS, {}, '/persistent');
 
-        console.log('[Emscripten] Mounting IDBFS...');
+        console.log('Mounting IDBFS...');
         FS.syncfs(true, (err) => {
           if (err) {
             console.error('IDBFS initial sync failed:', err);
             return;
           }
-          console.log('[Emscripten] IDBFS ready.');
 
-          console.log('[Emscripten] Sync complete, launching main()...');
-          if (Module.callMain) Module.callMain([]); // safer than Module._main()
+          console.log('Sync complete, launching main()...');
+          if (Module.callMain) Module.callMain([]);
         });
 
         // Save before leaving

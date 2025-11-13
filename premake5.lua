@@ -95,14 +95,14 @@ project "th06"
       "-sUSE_SDL=2",
       "-sUSE_SDL_IMAGE=2",
       "-sUSE_SDL_TTF=2",
-      "-I /home/wearr/Documents/Coding/gl4es/include/",
+      "-I ../vendored/gl4es/include/",
       "-sUSE_PTHREADS=1 -pthread"
     }
 
     buildoptions { "-Wall", "-Wextra", "-Wpedantic", "-Wno-gnu-anonymous-struct", "-Wno-unused-parameter", "-Wno-unused-but-set-variable", "-Wno-unused-variable", "-Wno-nontrivial-memcall", "-Wno-c99-extensions", "-Wno-switch", "-Wno-c++11-narrowing" }
 
     linkoptions {
-      "-I /home/wearr/Documents/Coding/gl4es/include/ /home/wearr/Documents/Coding/gl4es/lib/libGL.a -sUSE_PTHREADS=1 -pthread",
+      "-I ../vendored/gl4es/include/ ../vendored/gl4es/lib/libGL.a -sUSE_PTHREADS=1 -pthread",
       "-gsource-map",
       "-O3",
       "-flto",

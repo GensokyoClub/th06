@@ -2016,10 +2016,6 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
 
     fullscreenViewport.Set();
 
-    //    g_glFuncTable.glMatrixMode(GL_TEXTURE);
-    //    g_glFuncTable.glPushMatrix();
-    //    g_glFuncTable.glLoadIdentity();
-
     inverseViewportMatrix();
 
     CreateTextureObject();

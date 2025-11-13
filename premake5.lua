@@ -35,7 +35,7 @@ project "th06"
     "src/GameErrorContext.cpp",
     "src/GameManager.cpp",
     "src/GameWindow.cpp",
-    "src/GLFunc.cpp",
+    "src/graphics/GLFunc.cpp",
     "src/Gui.cpp",
     "src/ItemManager.cpp",
     "src/main.cpp",

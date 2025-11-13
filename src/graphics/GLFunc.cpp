@@ -1,8 +1,11 @@
 #include "GLFunc.hpp"
 
 #include <SDL2/SDL_video.h>
+#ifdef __EMSCRIPTEN__
 #include "gl4esinit.h"
 #include "GL/gl.h"
+#endif
+
 
 namespace th06
 {
@@ -19,7 +22,9 @@ GLFuncTable g_glFuncTable;
 
 void GLFuncTable::ResolveFunctions(bool glesContext)
 {
+#ifdef __EMSCRIPTEN__
     initialize_gl4es();
+#endif
     TRY_RESOLVE_FUNCTION(glAlphaFunc)
     TRY_RESOLVE_FUNCTION(glBindTexture)
     TRY_RESOLVE_FUNCTION(glBlendFunc)

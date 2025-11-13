@@ -7,7 +7,7 @@
 
 #include "AnmIdx.hpp"
 #include "AnmVm.hpp"
-#include "GLFunc.hpp"
+#include "graphics/GLFunc.hpp"
 #include "GameManager.hpp"
 #include "diffbuild.hpp"
 #include "inttypes.hpp"

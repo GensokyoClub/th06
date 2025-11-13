@@ -1,6 +1,6 @@
 #include "AnmManager.hpp"
 #include "FileSystem.hpp"
-#include "GLFunc.hpp"
+#include "graphics/GLFunc.hpp"
 #include "GameErrorContext.hpp"
 #include "Rng.hpp"
 #include "Supervisor.hpp"

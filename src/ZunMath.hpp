@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GLFunc.hpp"
+#include "graphics/GLFunc.hpp"
 #include "GameWindow.hpp"
 #include "diffbuild.hpp"
 #include "inttypes.hpp"

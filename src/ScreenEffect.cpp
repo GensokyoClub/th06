@@ -1,7 +1,7 @@
 #include "ScreenEffect.hpp"
 #include "AnmManager.hpp"
 #include "ChainPriorities.hpp"
-#include "GLFunc.hpp"
+#include "graphics/GLFunc.hpp"
 #include "GameWindow.hpp"
 #include "Rng.hpp"
 #include "Supervisor.hpp"

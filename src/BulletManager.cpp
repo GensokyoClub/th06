@@ -4,7 +4,7 @@
 #include "Chain.hpp"
 #include "ChainPriorities.hpp"
 #include "Enemy.hpp"
-#include "GLFunc.hpp"
+#include "graphics/GLFunc.hpp"
 #include "GameManager.hpp"
 #include "Gui.hpp"
 #include "ItemManager.hpp"

@@ -2,7 +2,7 @@
 
 #include <SDL2/SDL_video.h>
 
-#include "GLFunc.hpp"
+#include "graphics/GLFunc.hpp"
 #include "diffbuild.hpp"
 #include "inttypes.hpp"
 

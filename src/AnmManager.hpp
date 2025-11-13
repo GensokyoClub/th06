@@ -207,7 +207,7 @@ struct AnmManager
         this->currentSprite = sprite;
     }
 
-    void SetProjectionMode(enum ProjectionMode projectionMode)
+    void SetProjectionMode(ProjectionMode projectionMode)
     {
         if (this->projectionMode == projectionMode)
         {
@@ -311,7 +311,7 @@ struct AnmManager
     u8 currentColorOp;
     u8 currentVertexShader;
     u8 currentZWriteDisable;
-    enum ProjectionMode projectionMode;
+    ProjectionMode projectionMode;
     AnmLoadedSprite *currentSprite;
     //    IDirect3DVertexBuffer8 *vertexBuffer;
     RenderVertexInfo vertexBufferContents[4];

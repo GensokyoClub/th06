@@ -436,7 +436,6 @@ inline void inverseViewportMatrix()
     viewport.Get();
 
     g_glFuncTable.glMatrixMode(GL_TEXTURE);
-    g_glFuncTable.glPushMatrix();
     g_glFuncTable.glLoadIdentity();
 
     g_glFuncTable.glMatrixMode(GL_MODELVIEW);

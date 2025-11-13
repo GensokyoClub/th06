@@ -451,7 +451,8 @@ inline void inverseViewportMatrix()
     // Mappings:
     //   X: [viewport x .. viewport width] -> [-1 .. 1]
     //   Y: [viewport y .. viewport height] -> [1 .. -1] (Axis inverted since NDCs are cartesian)
-    //   Z: [0 .. 1] -> [-1 .. 1]
+    //   Z: [0 .. 1] -> [-1 .. 1]. D3D does NOT interpolate this value using the viewport's depth range!
+    //                             Therefore we must change our depth range to [0.0 .. 1.0] as well
 
     // One difference between OpenGL and D3D is that in D3D, pixels are centered on integers, whereas
     //   in OpenGL, they're on half-integer coordinates. Originally, this function finished with a glTranslatef
@@ -466,6 +467,8 @@ inline void inverseViewportMatrix()
     g_glFuncTable.glTranslatef(-1.0f, 1.0f, -1.0f);
     g_glFuncTable.glScalef(1.0f / (viewport.Width / 2.0f), -1.0f / (viewport.Height / 2.0f), 2.0f);
     g_glFuncTable.glTranslatef(-viewport.X, -viewport.Y, 0.0f);
+
+    g_glFuncTable.glDepthRangef(0.0f, 1.0f);
 }
 
 // Reimplementation of D3DXVec3Project. TODO: Replace if possible once port is working

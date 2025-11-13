@@ -223,6 +223,8 @@ struct AnmManager
             return;
         }
 
+        g_Supervisor.viewport.Set();
+
         g_glFuncTable.glMatrixMode(GL_TEXTURE);
         g_glFuncTable.glPopMatrix();
         g_glFuncTable.glMatrixMode(GL_MODELVIEW);

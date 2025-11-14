@@ -19,6 +19,40 @@ function make_necessary_dirs {
     mkdir -p wav
 }
 
+merge_alpha() {
+    local dir="$1"
+    shopt -s nullglob
+
+    for alpha in "$dir"/*_a.png; do
+        [ -e "$alpha" ] || continue
+
+        # Strip trailing "_a.png" to get the logical base prefix
+        baseprefix="$(basename "$alpha" | sed 's/_a\.png$//')"
+
+        echo "Found alpha for: $baseprefix*"
+
+        # For each PNG starting with the base prefix
+        for color in "$dir"/"$baseprefix"*.png; do
+            # Skip the alpha file itself
+            if [[ "$color" == "$alpha" ]]; then
+                continue
+            fi
+
+            echo "  Merging $(basename "$color") with $(basename "$alpha")"
+
+            tmp="${color%.png}_tmp.png"
+
+            magick "$color" "$alpha" -compose CopyOpacity -composite "$tmp"
+            mv "$tmp" "$color"
+        done
+
+        # After applying the alpha to all variants, remove mask
+        rm "$alpha"
+    done
+
+    shopt -u nullglob
+}
+
 GAME_LOCATION=$1
 
 if [ -z "$GAME_LOCATION" ]; then
@@ -66,10 +100,13 @@ mv thdat_output/title*.png ./title
 mv thdat_output/*.wav ./wav
 
 mv thdat_output/*.pos ../bgm/
-# FIXME! Midi support currently doesn't exist in the portable build, and it probably won't in the remaster. I don't think we need these.
-rm thdat_output/*.mid
+mv thdat_output/*.mid ../bgm/
 
 mv thdat_output/*.* ./
 rm -rf thdat_output
+
+for d in ascii demo eff00 end etama face front image player00 result stg1bg stgenm title wav; do
+    merge_alpha "$GAME_LOCATION/data/$d"
+done
 
 echo "Done!"

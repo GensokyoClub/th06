@@ -380,8 +380,8 @@ bool AnmManager::LoadTexture(i32 textureIdx, char *textureName, i32 textureForma
     // of those should be globally disabled for the texture unit anyway This also drops colorKey (an equivalent doesn't
     // exist in OpenGL). I'm not sure its use ever matters anyway
 
-    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, g_TextureFormatGLFormatMapping[textureFormat], textureSurface->w,
-                               textureSurface->h, 0, g_TextureFormatGLFormatMapping[textureFormat],
+    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureSurface->w,
+                               textureSurface->h, 0, GL_RGBA,
                                g_TextureFormatGLTypeMapping[textureFormat], rawTextureData);
 
     SDL_FreeSurface(textureSurface);
@@ -543,11 +543,11 @@ bool AnmManager::LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset)
     if (anm->alphaNameOffset != 0)
     {
         anmName = (char *)((u8 *)anm + anm->alphaNameOffset);
-        if (!this->LoadTextureAlphaChannel(anm->textureIdx, anmName, anm->format, anm->colorKey))
-        {
-            GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, anmName);
-            return false;
-        }
+        // if (!this->LoadTextureAlphaChannel(anm->textureIdx, anmName, anm->format, anm->colorKey))
+        // {
+        //     GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, anmName);
+        //     return false;
+        // }
     }
 
     anm->spriteIdxOffset = spriteIdxOffset;

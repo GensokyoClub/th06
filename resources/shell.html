@@ -95,17 +95,12 @@
           const progress = Math.min(100, (loaded / total) * 100);
           loadingBar.style.width = progress + '%';
           loadingText.textContent = `Loading... (${Math.round(progress)}%)`;
-        } else {
-          // Handle non-progress messages
-          loadingText.textContent = text;
         }
       },
       onRuntimeInitialized() {
-        // Hide loading UI
         loadingContainer.remove();
         loadingText.remove();
 
-        // Force canvas to proper size (Emscripten sometimes overrides it)
         canvas.width = 640;
         canvas.height = 480;
         const iv = setInterval(() => {
@@ -133,7 +128,6 @@
           if (Module.callMain) Module.callMain([]);
         });
 
-        // Save before leaving
         window.addEventListener('beforeunload', () => {
           FS.syncfs(false, (err) => {
             if (err) console.error('Final save sync failed:', err);

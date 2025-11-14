@@ -4,7 +4,6 @@
 #include "Chain.hpp"
 #include "ChainPriorities.hpp"
 #include "Enemy.hpp"
-#include "graphics/GLFunc.hpp"
 #include "GameManager.hpp"
 #include "Gui.hpp"
 #include "ItemManager.hpp"
@@ -12,6 +11,7 @@
 #include "Rng.hpp"
 #include "ZunColor.hpp"
 #include "ZunMath.hpp"
+#include "graphics/GLFunc.hpp"
 #include "utils.hpp"
 
 namespace th06

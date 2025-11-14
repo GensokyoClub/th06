@@ -1873,11 +1873,11 @@ u32 MainMenu::OnUpdateOptionsMenu()
                 break;
 
             case CURSOR_OPTIONS_POS_EXIT:
-                #ifdef __EMSCRIPTEN__
-                    FileSystem::WriteDataToFile(EM_TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
-                #else
-                    FileSystem::WriteDataToFile(TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
-                #endif
+#ifdef __EMSCRIPTEN__
+                FileSystem::WriteDataToFile(EM_TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
+#else
+                FileSystem::WriteDataToFile(TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
+#endif
                 this->gameState = STATE_MAIN_MENU;
                 this->stateTimer = 0;
                 for (i = 0; i < ARRAY_SIZE_SIGNED(this->vm); i++)
@@ -2268,11 +2268,11 @@ bool MainMenu::AddedCallback(MainMenu *m)
     m->framesActive = 0;
     m->unk_10f28 = 0x10;
     m->currentReplay = NULL;
-    #ifdef __EMSCRIPTEN__
+#ifdef __EMSCRIPTEN__
     scoredat = ResultScreen::OpenScore("/persistent/score.dat");
-    #else
+#else
     scoredat = ResultScreen::OpenScore("score.dat");
-    #endif
+#endif
     ResultScreen::ParseClrd(scoredat, g_GameManager.clrd);
     ResultScreen::ParsePscr(scoredat, (Pscr *)g_GameManager.pscr);
     ResultScreen::ReleaseScoreDat(scoredat);

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "graphics/GLFunc.hpp"
 #include "GameWindow.hpp"
 #include "diffbuild.hpp"
+#include "graphics/GLFunc.hpp"
 #include "inttypes.hpp"
 #include <cmath>
 #include <cstring>

@@ -18,10 +18,8 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
 #ifndef GLU_MANGLE_H
 #define GLU_MANGLE_H
-
 
 #define gluLookAt mgluLookAt
 #define gluOrtho2D mgluOrtho2D

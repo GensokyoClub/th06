@@ -2,8 +2,8 @@
 
 #include <SDL2/SDL_video.h>
 
-#include "graphics/GLFunc.hpp"
 #include "diffbuild.hpp"
+#include "graphics/GLFunc.hpp"
 #include "inttypes.hpp"
 
 #define GAME_WINDOW_WIDTH 640

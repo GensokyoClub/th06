@@ -1,11 +1,11 @@
 #include "AnmManager.hpp"
 #include "FileSystem.hpp"
-#include "graphics/GLFunc.hpp"
 #include "GameErrorContext.hpp"
 #include "Rng.hpp"
 #include "Supervisor.hpp"
 #include "TextHelper.hpp"
 #include "ZunMath.hpp"
+#include "graphics/GLFunc.hpp"
 #include "i18n.hpp"
 #include "utils.hpp"
 

@@ -9,12 +9,12 @@
 #include "Chain.hpp"
 #include "ChainPriorities.hpp"
 #include "FileSystem.hpp"
-#include "graphics/GLFunc.hpp"
 #include "GameManager.hpp"
 #include "Player.hpp"
 #include "SoundPlayer.hpp"
 #include "Stage.hpp"
 #include "ZunColor.hpp"
+#include "graphics/GLFunc.hpp"
 #include "utils.hpp"
 
 namespace th06

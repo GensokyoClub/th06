@@ -89,7 +89,8 @@ fail:
 bool SoundPlayer::Release(void)
 {
     this->terminateFlag = true;
-    if (this->backgroundMusicThreadHandle.joinable()) {
+    if (this->backgroundMusicThreadHandle.joinable())
+    {
         this->backgroundMusicThreadHandle.join();
     }
     this->terminateFlag = false;

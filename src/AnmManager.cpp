@@ -376,9 +376,10 @@ bool AnmManager::LoadTexture(i32 textureIdx, char *textureName, i32 textureForma
     this->textures[textureIdx].format = textureFormat;
 
     // Note that the original D3DX call here used D3DX_FILTER_NONE | D3DX_FILTER_POINT for the filter args, which is
-    // illegal I'm not sure what filtering mode that ends up using in practice MIP filtering used D3DX_FILTER_BOX Both
-    // of those should be globally disabled for the texture unit anyway This also drops colorKey (an equivalent doesn't
-    // exist in OpenGL). I'm not sure its use ever matters anyway
+    // illegal, and I'm not sure what filtering mode that ends up using in practice. MIP filtering used D3DX_FILTER_BOX
+    // Both of those should be globally disabled for the texture unit anyway
+    // This also drops colorKey (an equivalent doesn't exist in OpenGL).
+    // But I'm not sure its use ever matters anyway
 
     g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, g_TextureFormatGLFormatMapping[textureFormat], textureSurface->w,
                                textureSurface->h, 0, g_TextureFormatGLFormatMapping[textureFormat],

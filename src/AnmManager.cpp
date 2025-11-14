@@ -380,8 +380,8 @@ bool AnmManager::LoadTexture(i32 textureIdx, char *textureName, i32 textureForma
     // of those should be globally disabled for the texture unit anyway This also drops colorKey (an equivalent doesn't
     // exist in OpenGL). I'm not sure its use ever matters anyway
 
-    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureSurface->w,
-                               textureSurface->h, 0, GL_RGBA,
+    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, g_TextureFormatGLFormatMapping[textureFormat], textureSurface->w,
+                               textureSurface->h, 0, g_TextureFormatGLFormatMapping[textureFormat],
                                g_TextureFormatGLTypeMapping[textureFormat], rawTextureData);
 
     SDL_FreeSurface(textureSurface);
@@ -396,98 +396,98 @@ bool AnmManager::LoadTexture(i32 textureIdx, char *textureName, i32 textureForma
     return true;
 }
 
-bool AnmManager::LoadTextureAlphaChannel(i32 textureIdx, char *textureName, i32 textureFormat, ZunColor colorKey)
-{
-    SDL_Surface *alphaSurface;
-    TextureData *textureDesc;
+// bool AnmManager::LoadTextureAlphaChannel(i32 textureIdx, char *textureName, i32 textureFormat, ZunColor colorKey)
+// {
+//     SDL_Surface *alphaSurface;
+//     TextureData *textureDesc;
 
-    u8 *dstData;
-    u8 *srcData;
-    u8 *dstData8;
-    u8 *srcData8;
-    u16 *dstData16;
-    u16 *srcData16;
-    u32 x;
-    u32 y;
+//     u8 *dstData;
+//     u8 *srcData;
+//     u8 *dstData8;
+//     u8 *srcData8;
+//     u16 *dstData16;
+//     u16 *srcData16;
+//     u32 x;
+//     u32 y;
 
-    textureDesc = this->textures + textureIdx;
+//     textureDesc = this->textures + textureIdx;
 
-    if (textureDesc->format != TEX_FMT_A8R8G8B8 && textureDesc->format != TEX_FMT_A4R4G4B4 &&
-        textureDesc->format != TEX_FMT_A1R5G5B5)
-    {
-        GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_ANMMANAGER_UNK_TEX_FORMAT);
-        return false;
-    }
+//     if (textureDesc->format != TEX_FMT_A8R8G8B8 && textureDesc->format != TEX_FMT_A4R4G4B4 &&
+//         textureDesc->format != TEX_FMT_A1R5G5B5)
+//     {
+//         GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_ANMMANAGER_UNK_TEX_FORMAT);
+//         return false;
+//     }
 
-    alphaSurface = LoadToSurfaceWithFormat(textureName, g_TextureFormatSDLMapping[textureFormat], NULL);
+//     alphaSurface = LoadToSurfaceWithFormat(textureName, g_TextureFormatSDLMapping[textureFormat], NULL);
 
-    if (alphaSurface == NULL)
-    {
-        return false;
-    }
+//     if (alphaSurface == NULL)
+//     {
+//         return false;
+//     }
 
-    SDL_LockSurface(alphaSurface);
+//     SDL_LockSurface(alphaSurface);
 
-    dstData = (u8 *)textureDesc->textureData;
-    srcData = (u8 *)alphaSurface->pixels;
+//     dstData = (u8 *)textureDesc->textureData;
+//     srcData = (u8 *)alphaSurface->pixels;
 
-    // Copy over the alpha channel from the source to the destination, taking
-    // into account the texture format.
-    switch (textureDesc->format)
-    {
-    case TEX_FMT_A8R8G8B8:
-        dstData8 = dstData;
-        for (y = 0; y < textureDesc->height; y++)
-        {
-            srcData8 = srcData + alphaSurface->pitch * y;
+//     // Copy over the alpha channel from the source to the destination, taking
+//     // into account the texture format.
+//     switch (textureDesc->format)
+//     {
+//     case TEX_FMT_A8R8G8B8:
+//         dstData8 = dstData;
+//         for (y = 0; y < textureDesc->height; y++)
+//         {
+//             srcData8 = srcData + alphaSurface->pitch * y;
 
-            for (x = 0; x < textureDesc->width; x++, srcData8 += 4, dstData8 += 4)
-            {
-                dstData8[3] = srcData8[0];
-            }
-        }
-        break;
+//             for (x = 0; x < textureDesc->width; x++, srcData8 += 4, dstData8 += 4)
+//             {
+//                 dstData8[3] = srcData8[0];
+//             }
+//         }
+//         break;
 
-        // The dereferences here make the assumption that rows are 16-bit aligned. With SDL, this is guaranteed
+//         // The dereferences here make the assumption that rows are 16-bit aligned. With SDL, this is guaranteed
 
-    case TEX_FMT_A1R5G5B5:
-        dstData16 = (u16 *)dstData;
-        for (y = 0; y < textureDesc->height; y++)
-        {
-            srcData16 = (u16 *)(srcData + alphaSurface->pitch * y);
+//     case TEX_FMT_A1R5G5B5:
+//         dstData16 = (u16 *)dstData;
+//         for (y = 0; y < textureDesc->height; y++)
+//         {
+//             srcData16 = (u16 *)(srcData + alphaSurface->pitch * y);
 
-            for (x = 0; x < textureDesc->width; x++, srcData16++, dstData16++)
-            {
-                *dstData16 &= 0xfffe;
-                *dstData16 |= (*srcData16 & 0x8000) >> 15;
-            }
-        }
-        break;
+//             for (x = 0; x < textureDesc->width; x++, srcData16++, dstData16++)
+//             {
+//                 *dstData16 &= 0xfffe;
+//                 *dstData16 |= (*srcData16 & 0x8000) >> 15;
+//             }
+//         }
+//         break;
 
-    case TEX_FMT_A4R4G4B4:
-        dstData16 = (u16 *)dstData;
-        for (y = 0; y < textureDesc->height; y++)
-        {
-            srcData16 = (u16 *)(srcData + alphaSurface->pitch * y);
+//     case TEX_FMT_A4R4G4B4:
+//         dstData16 = (u16 *)dstData;
+//         for (y = 0; y < textureDesc->height; y++)
+//         {
+//             srcData16 = (u16 *)(srcData + alphaSurface->pitch * y);
 
-            for (x = 0; x < textureDesc->width; x++, srcData16++, dstData16++)
-            {
-                *dstData16 &= 0xfff0;
-                *dstData16 |= (*srcData16 & 0xf000) >> 12;
-            }
-        }
-        break;
-    }
+//             for (x = 0; x < textureDesc->width; x++, srcData16++, dstData16++)
+//             {
+//                 *dstData16 &= 0xfff0;
+//                 *dstData16 |= (*srcData16 & 0xf000) >> 12;
+//             }
+//         }
+//         break;
+//     }
 
-    SDL_UnlockSurface(alphaSurface);
-    SDL_FreeSurface(alphaSurface);
+//     SDL_UnlockSurface(alphaSurface);
+//     SDL_FreeSurface(alphaSurface);
 
-    this->SetCurrentTexture(this->textures[textureIdx].handle);
-    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureDesc->width, textureDesc->height, 0, GL_RGBA,
-                               g_TextureFormatGLTypeMapping[textureFormat], textureDesc->textureData);
+//     this->SetCurrentTexture(this->textures[textureIdx].handle);
+//     g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureDesc->width, textureDesc->height, 0, GL_RGBA,
+//                                g_TextureFormatGLTypeMapping[textureFormat], textureDesc->textureData);
 
-    return true;
-}
+//     return true;
+// }
 
 bool AnmManager::CreateEmptyTexture(i32 textureIdx, u32 width, u32 height, i32 textureFormat)
 {

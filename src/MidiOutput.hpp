@@ -100,7 +100,7 @@ struct MidiChannel
 struct MidiOutput : MidiTimer
 {
     MidiOutput();
-    ~MidiOutput();
+    virtual ~MidiOutput();
 
     void OnTimerElapsed();
 

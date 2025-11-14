@@ -159,7 +159,7 @@ struct AnmManager
 
     bool CreateEmptyTexture(i32 textureIdx, u32 width, u32 height, i32 textureFormat);
     bool LoadTexture(i32 textureIdx, char *textureName, i32 textureFormat, ZunColor colorKey);
-    bool LoadTextureAlphaChannel(i32 textureIdx, char *textureName, i32 textureFormat, ZunColor colorKey);
+    // bool LoadTextureAlphaChannel(i32 textureIdx, char *textureName, i32 textureFormat, ZunColor colorKey);
 
     void ReleaseTexture(i32 textureIdx);
     void TakeScreenshotIfRequested();

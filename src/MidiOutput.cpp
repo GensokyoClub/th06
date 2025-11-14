@@ -89,8 +89,7 @@ MidiOutput::MidiOutput()
     }
 }
 
-MidiOutput::~MidiOutput()
-{
+MidiOutput::~MidiOutput() {
     this->StopPlayback();
     this->ClearTracks();
     for (i32 i = 0; i < 32; i++)

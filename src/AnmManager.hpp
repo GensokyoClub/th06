@@ -7,9 +7,9 @@
 
 #include "AnmIdx.hpp"
 #include "AnmVm.hpp"
-#include "graphics/GLFunc.hpp"
 #include "GameManager.hpp"
 #include "diffbuild.hpp"
+#include "graphics/GLFunc.hpp"
 #include "inttypes.hpp"
 
 #define TEX_FMT_UNKNOWN 0

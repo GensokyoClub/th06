@@ -20,7 +20,7 @@
 #include <KHR/khrplatform.h>
 
 #ifndef GL_API
-#define GL_API      KHRONOS_APICALL
+#define GL_API KHRONOS_APICALL
 #endif
 
 #ifndef GL_APIENTRY

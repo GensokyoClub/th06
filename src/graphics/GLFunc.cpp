@@ -2,10 +2,9 @@
 
 #include <SDL2/SDL_video.h>
 #ifdef __EMSCRIPTEN__
-#include "gl4esinit.h"
 #include "GL/gl.h"
+#include "gl4esinit.h"
 #endif
-
 
 namespace th06
 {
@@ -18,7 +17,6 @@ GLFuncTable g_glFuncTable;
 #define TRY_RESOLVE_FUNCTION(func) this->func = (decltype(this->func))SDL_GL_GetProcAddress(#func);
 #define TRY_RESOLVE_FUNCTION_GLES(func) this->func##_ptr = (decltype(this->func##_ptr))SDL_GL_GetProcAddress(#func);
 #endif
-
 
 void GLFuncTable::ResolveFunctions(bool glesContext)
 {

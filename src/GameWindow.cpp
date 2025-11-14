@@ -7,8 +7,8 @@
 #include "Supervisor.hpp"
 #include "ZunMath.hpp"
 #include "diffbuild.hpp"
-#include "utils.hpp"
 #include "i18n.hpp"
+#include "utils.hpp"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_render.h>
@@ -187,20 +187,20 @@ void GameWindow::CreateGameWindow()
         flags |= SDL_WINDOW_FULLSCREEN;
     }
 
-    /*
-     In Emscripten, we use gl4es for OpenGL 1.3 emulation
-     since emscripten doesn't properly handle the functions we use.
-     This means that we have to use OpenGL ES 2.0 instead of OpenGL 1.3, or else things die.
-    */
-    #ifdef __EMSCRIPTEN__
+/*
+ In Emscripten, we use gl4es for OpenGL 1.3 emulation
+ since emscripten doesn't properly handle the functions we use.
+ This means that we have to use OpenGL ES 2.0 instead of OpenGL 1.3, or else things die.
+*/
+#ifdef __EMSCRIPTEN__
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-    #else
+#else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
-    #endif
+#endif
 
     g_GameWindow.window = SDL_CreateWindow(TH_WINDOW_TITLE, x, y, width, height, flags);
 

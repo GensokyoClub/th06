@@ -62,9 +62,9 @@ static bool initialize_game()
         return false;
     }
 
-    #ifdef __EMSCRIPTEN__
-        emscripten_set_element_css_size("#canvas", 640, 480);
-    #endif
+#ifdef __EMSCRIPTEN__
+    emscripten_set_element_css_size("#canvas", 640, 480);
+#endif
 
     g_SoundPlayer.InitializeDSound();
     Controller::GetJoystickCaps();
@@ -151,11 +151,11 @@ static void cleanup()
 
     SDL_Quit();
 
-    #ifdef __EMSCRIPTEN__
-        FileSystem::WriteDataToFile(EM_TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
-    #else
-        FileSystem::WriteDataToFile(TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
-    #endif
+#ifdef __EMSCRIPTEN__
+    FileSystem::WriteDataToFile(EM_TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
+#else
+    FileSystem::WriteDataToFile(TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
+#endif
 
     SDL_ShowCursor(SDL_ENABLE);
     g_GameErrorContext.Flush();

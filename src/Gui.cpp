@@ -808,7 +808,7 @@ ZunResult GuiImpl::DrawDialogue()
     g_glFuncTable.glVertexPointer(4, GL_FLOAT, sizeof(*vertices), &vertices[0].position);
     g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*vertices), &vertices[0].diffuse);
 
-    g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    g_AnmManager->BackendDrawCall();
 
     //    g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_DIFFUSE | D3DFVF_XYZRHW);
     //    g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices, sizeof(vertices[0]));
@@ -1257,7 +1257,7 @@ void Gui::DrawGameScene()
             g_glFuncTable.glVertexPointer(4, GL_FLOAT, sizeof(*vertices), &vertices[0].position);
             g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*vertices), &vertices[0].diffuse);
 
-            g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+            g_AnmManager->BackendDrawCall();
 
             //            g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_DIFFUSE | D3DFVF_XYZRHW);
             //            g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices,

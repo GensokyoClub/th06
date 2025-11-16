@@ -61,6 +61,8 @@ int main(int argc, char *argv[])
 restart:
     GameWindow::CreateGameWindow();
 
+    g_AnmManager = new AnmManager();
+
     if (GameWindow::InitD3dRendering())
     {
         g_GameErrorContext.Flush();
@@ -70,8 +72,6 @@ restart:
     g_SoundPlayer.InitializeDSound();
     Controller::GetJoystickCaps();
     Controller::ResetKeyboard();
-
-    g_AnmManager = new AnmManager();
 
     if (Supervisor::RegisterChain() != ZUN_SUCCESS)
     {

@@ -179,6 +179,11 @@ struct AnmManager
         this->SetActiveSprite(vm, spriteIdx);
     }
 
+    void BackendDrawCall()
+    {
+        g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    }
+
     void SetCurrentVertexShader(u8 vertexShader)
     {
         this->currentVertexShader = vertexShader;
@@ -318,6 +323,9 @@ struct AnmManager
     i32 screenshotTop;
     i32 screenshotWidth;
     i32 screenshotHeight;
+
+private:
+    u32 dirtyFlags;
 };
 ZUN_ASSERT_SIZE(AnmManager, 0x2112c);
 

@@ -250,6 +250,8 @@ AnmManager::AnmManager()
     this->currentZWriteDisable = 0;
     this->screenshotTextureId = -1;
     this->projectionMode = PROJECTION_MODE_PERSPECTIVE;
+    
+    this->dirtyFlags = 0;
 }
 
 void AnmManager::SetupVertexBuffer()
@@ -864,7 +866,7 @@ ZunResult AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)
         //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, g_PrimitivesToDrawNoVertexBuf, 0x1c);
     }
 
-    g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    this->BackendDrawCall();
 
     return ZUN_SUCCESS;
 }
@@ -1162,7 +1164,7 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
                                      &g_PrimitivesToDrawUnknown[0].diffuse);
     }
 
-    g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    this->BackendDrawCall();
 
     g_glFuncTable.glMatrixMode(GL_MODELVIEW);
     g_glFuncTable.glPopMatrix();
@@ -1280,7 +1282,7 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
         //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, , 0x18);
     }
 
-    g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    this->BackendDrawCall();
 
     g_glFuncTable.glMatrixMode(GL_MODELVIEW);
     g_glFuncTable.glPopMatrix();
@@ -2064,7 +2066,7 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
         g_glFuncTable.glDepthMask(GL_FALSE);
     }
 
-    g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    this->BackendDrawCall();
 
     if (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 0x01) == 0)
     {

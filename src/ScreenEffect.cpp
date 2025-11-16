@@ -108,7 +108,7 @@ void ScreenEffect::DrawSquare(ZunRect *rect, ZunColor rectColor)
     }
 
     g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    g_AnmManager->BackendDrawCall();
 
     g_AnmManager->SetCurrentVertexShader(0xff);
     g_AnmManager->SetCurrentSprite(NULL);

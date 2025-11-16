@@ -884,8 +884,6 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-#pragma intrinsic(strcpy)
-
 CursorMovement MainMenu::MoveCursor(MainMenu *menu, i32 menuLength)
 {
     if (WAS_PRESSED_PERIODIC(TH_BUTTON_UP))

@@ -250,7 +250,7 @@ AnmManager::AnmManager()
     this->currentZWriteDisable = 0;
     this->screenshotTextureId = -1;
     this->projectionMode = PROJECTION_MODE_PERSPECTIVE;
-    
+
     this->dirtyFlags = 0;
 }
 
@@ -764,6 +764,44 @@ void AnmManager::SetRenderStateForVm(AnmVm *vm)
         }
     }
     return;
+}
+
+void AnmManager::UpdateDirtyStates()
+{
+    while (this->dirtyFlags != 0)
+    {
+        u32 currFlag = 1 << std::countr_zero(this->dirtyFlags);
+        this->dirtyFlags &= ~currFlag;
+
+        switch (currFlag)
+        {
+            case DIRTY_FOG:
+                if (this->dirtyFogNear != this->fogNear)
+                {
+                    this->fogNear = this->dirtyFogNear;
+                    g_glFuncTable.glFogf(GL_FOG_START, this->fogNear);
+                }
+
+                if (this->dirtyFogFar != this->fogFar)
+                {
+                    this->fogFar = this->dirtyFogFar;
+                    g_glFuncTable.glFogf(GL_FOG_END, this->fogFar);
+                }
+
+                if (this->dirtyFogColor != this->fogColor)
+                {
+                    this->fogColor = this->dirtyFogColor;
+
+                    GLfloat normalizedFogColor[4] = {
+                        ((this->fogColor >> 16) & 0xFF) / 255.0f, ((this->fogColor >> 8) & 0xFF) / 255.0f,
+                        (this->fogColor & 0xFF) / 255.0f, ((this->fogColor >> 24) & 0xFF) / 255.0f};
+
+                    g_glFuncTable.glFogfv(GL_FOG_COLOR, normalizedFogColor);
+                }
+
+            break;
+        }
+    }
 }
 
 ZunResult AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)

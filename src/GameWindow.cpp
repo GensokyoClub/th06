@@ -514,13 +514,10 @@ void GameWindow::InitD3dDevice(void)
         g_glFuncTable.glEnable(GL_FOG);
     }
 
-    f32 fogColors[] = {0xA0 / 255.0f, 0xA0 / 255.0f, 0xA0 / 255.0f, 0xFF / 255.0f};
-
     g_glFuncTable.glFogf(GL_FOG_DENSITY, 1.0f);
     g_glFuncTable.glFogf(GL_FOG_MODE, GL_LINEAR);
-    g_glFuncTable.glFogfv(GL_FOG_COLOR, fogColors);
-    g_glFuncTable.glFogf(GL_FOG_START, 1000.0f);
-    g_glFuncTable.glFogf(GL_FOG_END, 5000.0f);
+    g_AnmManager->SetFogColor(0xFF'A0'A0'A0);
+    g_AnmManager->SetFogRange(1'000.0f, 5'000.0f);
 
     g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 

@@ -105,6 +105,11 @@ enum ProjectionMode
     PROJECTION_MODE_ORTHOGRAPHIC
 };
 
+enum DirtyRenderStateBits
+{
+    DIRTY_FOG = 1
+};
+
 struct AnmRawSprite
 {
     u32 id;
@@ -181,6 +186,11 @@ struct AnmManager
 
     void BackendDrawCall()
     {
+        if (this->dirtyFlags != 0)
+        {
+            this->UpdateDirtyStates();
+        }
+
         g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
 
@@ -234,6 +244,19 @@ struct AnmManager
         g_glFuncTable.glPopMatrix();
         g_glFuncTable.glMatrixMode(GL_PROJECTION);
         g_glFuncTable.glPopMatrix();
+    }
+
+    void SetFogRange(f32 near, f32 far)
+    {
+        this->dirtyFogNear = near;
+        this->dirtyFogFar = far;
+        this->dirtyFlags |= DIRTY_FOG;
+    }
+
+    void SetFogColor(ZunColor color)
+    {
+        this->dirtyFogColor = color;
+        this->dirtyFlags |= DIRTY_FOG;
     }
 
     i32 ExecuteScript(AnmVm *vm);
@@ -293,6 +316,7 @@ struct AnmManager
     void ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &srcRect, const SDL_Rect &dstRect);
     // Creates, binds, and set parameters for a new texture
     void CreateTextureObject();
+    void UpdateDirtyStates();
 
     AnmLoadedSprite sprites[2048];
     AnmVm virtualMachine;
@@ -326,6 +350,13 @@ struct AnmManager
 
 private:
     u32 dirtyFlags;
+    f32 fogNear;
+    f32 fogFar;
+    ZunColor fogColor;
+
+    f32 dirtyFogNear;
+    f32 dirtyFogFar;
+    ZunColor dirtyFogColor;
 };
 ZUN_ASSERT_SIZE(AnmManager, 0x2112c);
 

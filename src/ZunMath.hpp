@@ -229,6 +229,32 @@ struct ZunMatrix
         m[0][0] = m[1][1] = m[2][2] = m[3][3] = 1.0f;
     }
 
+    void Translate(f32 x, f32 y, f32 z)
+    {
+        ZunMatrix translateMatrix;
+
+        translateMatrix.Identity();
+
+        translateMatrix.m[3][0] = x;
+        translateMatrix.m[3][1] = y;
+        translateMatrix.m[3][2] = z;
+
+        *this = *this * translateMatrix;
+    }
+
+    void Scale(f32 x, f32 y, f32 z)
+    {
+        ZunMatrix scaleMatrix;
+
+        scaleMatrix.Identity();
+
+        scaleMatrix.m[0][0] = x;
+        scaleMatrix.m[1][1] = y;
+        scaleMatrix.m[2][2] = z;
+
+        *this = *this * scaleMatrix;
+    }
+
     // Equivalent to glRotate, but left handed. Takes radians
     void Rotate(f32 angle, f32 x, f32 y, f32 z)
     {
@@ -255,6 +281,8 @@ struct ZunMatrix
         rotationMatrix.m[2][1] = (z * y) * negativeCos - x * angleSin;
         rotationMatrix.m[2][2] = (z * z) * negativeCos + angleCos;
 
+        // This seems incorrect. It probably is incorrect. But changing it messes things up
+        //   Rotation matrices are a mess and I probably messed something up while porting from D3D
         *this = rotationMatrix * *this;
     }
 
@@ -409,7 +437,6 @@ inline void createViewMatrix(ZunVec3 &camera, ZunVec3 &target, ZunVec3 &up)
 inline void perspectiveMatrixFromFOV(f32 verticalFOV, f32 aspectRatio, f32 nearPlane, f32 farPlane)
 {
     g_glFuncTable.glMatrixMode(GL_PROJECTION);
-    g_glFuncTable.glLoadIdentity();
 
     // D3D has pixels at integer locations, but OpenGL uses half integer pixels. This may need correction
     // https://www.slideshare.net/slideshow/opengl-32-and-more/2172343
@@ -420,11 +447,22 @@ inline void perspectiveMatrixFromFOV(f32 verticalFOV, f32 aspectRatio, f32 nearP
 
     f32 vertical = ZUN_TANF(verticalFOV / 2) * nearPlane;
     f32 horizontal = vertical * aspectRatio;
+    f32 zScale = (farPlane + nearPlane) / (farPlane - nearPlane);
 
-    g_glFuncTable.glFrustumf(-horizontal, horizontal, -vertical, vertical, nearPlane, farPlane);
+    ZunMatrix perspectiveMatrix;
+    
+    perspectiveMatrix.Identity();
 
-    // Change right handed matrix OpenGL generates to a left-handed one to match D3D coordinates
-    g_glFuncTable.glScalef(1.0f, 1.0f, -1.0f);
+    perspectiveMatrix.m[0][0] = nearPlane / horizontal;
+    perspectiveMatrix.m[1][1] = nearPlane / vertical;
+
+    perspectiveMatrix.m[2][2] = zScale;
+    perspectiveMatrix.m[3][2] = -nearPlane * zScale - nearPlane;
+
+    perspectiveMatrix.m[2][3] = 1.0f;
+    perspectiveMatrix.m[3][3] = 0.0f;
+
+    g_glFuncTable.glLoadMatrixf((GLfloat *) &perspectiveMatrix.m);
 }
 
 // Pushes an identity matrix to the modelview stack and pushes a matrix that maps screen coordinates to
@@ -432,6 +470,7 @@ inline void perspectiveMatrixFromFOV(f32 verticalFOV, f32 aspectRatio, f32 nearP
 //   been already transformed, but OpenGL has no option to prevent transformation
 inline void inverseViewportMatrix()
 {
+    ZunMatrix inverseMatrix;
     ZunViewport viewport;
 
     viewport.Get();
@@ -445,7 +484,8 @@ inline void inverseViewportMatrix()
 
     g_glFuncTable.glMatrixMode(GL_PROJECTION);
     g_glFuncTable.glPushMatrix();
-    g_glFuncTable.glLoadIdentity();
+
+    inverseMatrix.Identity();
 
     // Mappings:
     //   X: [viewport x .. viewport width] -> [-1 .. 1]
@@ -463,9 +503,11 @@ inline void inverseViewportMatrix()
     //   Graphical output should really be checked thoroughly to make sure nothing (especially in the 3D draw functions)
     //   ends up a half pixel off.
 
-    g_glFuncTable.glTranslatef(-1.0f, 1.0f, -1.0f);
-    g_glFuncTable.glScalef(1.0f / (viewport.Width / 2.0f), -1.0f / (viewport.Height / 2.0f), 2.0f);
-    g_glFuncTable.glTranslatef(-viewport.X, -viewport.Y, 0.0f);
+    inverseMatrix.Translate(-1.0f, 1.0f, -1.0f);
+    inverseMatrix.Scale(1.0f / (viewport.Width / 2.0f), -1.0f / (viewport.Height / 2.0f), 2.0f);
+    inverseMatrix.Translate(-viewport.X, -viewport.Y, 0.0f);
+
+    g_glFuncTable.glLoadMatrixf((GLfloat *) &inverseMatrix.m);
 
     g_glFuncTable.glDepthRangef(0.0f, 1.0f);
 }

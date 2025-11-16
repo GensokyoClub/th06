@@ -37,7 +37,6 @@ void GLFuncTable::ResolveFunctions(bool glesContext)
     TRY_RESOLVE_FUNCTION(glPopMatrix)
     TRY_RESOLVE_FUNCTION(glPushMatrix)
     TRY_RESOLVE_FUNCTION(glReadPixels)
-    TRY_RESOLVE_FUNCTION(glScalef)
     TRY_RESOLVE_FUNCTION(glShadeModel)
     TRY_RESOLVE_FUNCTION(glTexCoordPointer)
     TRY_RESOLVE_FUNCTION(glTexEnvfv)
@@ -45,7 +44,6 @@ void GLFuncTable::ResolveFunctions(bool glesContext)
     TRY_RESOLVE_FUNCTION(glTexImage2D)
     TRY_RESOLVE_FUNCTION(glTexParameteri)
     TRY_RESOLVE_FUNCTION(glTexSubImage2D)
-    TRY_RESOLVE_FUNCTION(glTranslatef)
     TRY_RESOLVE_FUNCTION(glVertexPointer)
     TRY_RESOLVE_FUNCTION(glViewport)
 
@@ -59,13 +57,11 @@ void GLFuncTable::ResolveFunctions(bool glesContext)
     {
         TRY_RESOLVE_FUNCTION_GLES(glClearDepthf)
         TRY_RESOLVE_FUNCTION_GLES(glDepthRangef)
-        TRY_RESOLVE_FUNCTION_GLES(glFrustumf)
     }
     else
     {
         TRY_RESOLVE_FUNCTION(glClearDepth)
         TRY_RESOLVE_FUNCTION(glDepthRange)
-        TRY_RESOLVE_FUNCTION(glFrustum)
     }
 
     this->isGlesContext = glesContext;
@@ -92,19 +88,6 @@ void GLFuncTable::glDepthRangef(GLclampf near_val, GLclampf far_val)
     else
     {
         this->glDepthRange(near_val, far_val);
-    }
-}
-
-void GLFuncTable::glFrustumf(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val,
-                             GLfloat far_val)
-{
-    if (this->isGlesContext)
-    {
-        this->glFrustumf_ptr(left, right, bottom, top, near_val, far_val);
-    }
-    else
-    {
-        this->glFrustum(left, right, bottom, top, near_val, far_val);
     }
 }
 

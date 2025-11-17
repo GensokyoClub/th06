@@ -248,6 +248,12 @@ AnmManager::AnmManager()
     this->projectionMode = PROJECTION_MODE_PERSPECTIVE;
 
     this->dirtyFlags = 0;
+
+    for (u32 i = 0; i < ARRAY_SIZE_SIGNED(this->transformMatrices); i++)
+    {
+        transformMatrices[i].Identity();
+        dirtyTransformMatrices[i].Identity();
+    }
 }
 
 void AnmManager::SetupVertexBuffer()
@@ -877,7 +883,7 @@ void AnmManager::UpdateDirtyStates()
             }
 
             break;
-        case DIRTY_TEXTURE_FACTOR:
+        case DIRTY_TEXTURE_FACTOR: {
             this->textureFactor = this->dirtytTextureFactor;
 
             GLfloat tfactorColor[4] = {
@@ -887,6 +893,18 @@ void AnmManager::UpdateDirtyStates()
             g_glFuncTable.glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, tfactorColor);
 
             break;
+        }
+        case DIRTY_MODEL_MATRIX:
+        case DIRTY_VIEW_MATRIX:
+        case DIRTY_PROJECTION_MATRIX:
+        case DIRTY_TEXTURE_MATRIX:
+            // This is not going to work for modelview
+            GLenum matrixEnum[4] = {GL_MODELVIEW, GL_MODELVIEW, GL_PROJECTION, GL_TEXTURE};
+
+            g_glFuncTable.glMatrixMode(matrixEnum[currFlagIndex - DIRTY_MODEL_MATRIX]);
+            std::memcpy(&this->transformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX],
+                        &this->dirtyTransformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX], sizeof(*this->transformMatrices));
+            g_glFuncTable.glLoadMatrixf((GLfloat *) &this->transformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX]);
         }
     }
 }
@@ -1168,8 +1186,7 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
 
     SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
 
-    g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-    g_glFuncTable.glPushMatrix();
+    ZunMatrix originalView = this->dirtyTransformMatrices[MATRIX_VIEW];
 
     worldTransformMatrix = vm->matrix;
     worldTransformMatrix.m[0][0] *= vm->scaleX;
@@ -1222,8 +1239,8 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
     worldTransformMatrix.m[3][2] = vm->pos.z;
 
     // Now, set transform matrix.
-    //    g_Supervisor.d3dDevice->SetTransform(D3DTS_WORLD, &worldTransformMatrix);
-    g_glFuncTable.glMultMatrixf((GLfloat *)&worldTransformMatrix.m);
+    ZunMatrix modelView = originalView * worldTransformMatrix;
+    this->SetTransformMatrix(MATRIX_VIEW, modelView);
 
     // Load sprite if vm->sprite is not the same as current sprite.
     if (this->currentSprite != vm->sprite)
@@ -1233,9 +1250,7 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
         textureMatrix.m[3][0] = vm->sprite->uvStart.x + vm->uvScrollPos.x;
         textureMatrix.m[3][1] = vm->sprite->uvStart.y + vm->uvScrollPos.y;
 
-        g_glFuncTable.glMatrixMode(GL_TEXTURE);
-        g_glFuncTable.glLoadMatrixf((GLfloat *)&textureMatrix.m);
-        //        g_Supervisor.d3dDevice->SetTransform(D3DTS_TEXTURE0, &textureMatrix);
+        this->SetTransformMatrix(MATRIX_TEXTURE, textureMatrix);
 
         SetCurrentTexture(this->textures[vm->sprite->sourceFileIndex].handle);
     }
@@ -1272,9 +1287,7 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
 
     this->BackendDrawCall();
 
-    g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-    g_glFuncTable.glPopMatrix();
-
+    this->SetTransformMatrix(MATRIX_VIEW, originalView);
     return ZUN_SUCCESS;
 }
 
@@ -1320,11 +1333,9 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
     worldTransformMatrix.m[0][0] *= vm->scaleX;
     worldTransformMatrix.m[1][1] *= -vm->scaleY;
 
-    g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-    g_glFuncTable.glPushMatrix();
-    g_glFuncTable.glMultMatrixf((GLfloat *)worldTransformMatrix.m);
-
-    //    g_Supervisor.d3dDevice->SetTransform(D3DTS_WORLD, &worldTransformMatrix);
+    ZunMatrix originalView = this->dirtyTransformMatrices[MATRIX_VIEW];
+    ZunMatrix modelView = originalView * worldTransformMatrix;
+    this->SetTransformMatrix(MATRIX_VIEW, modelView);
 
     if (this->currentSprite != vm->sprite)
     {
@@ -1332,9 +1343,8 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
         textureMatrix = vm->matrix;
         textureMatrix.m[3][0] = vm->sprite->uvStart.x + vm->uvScrollPos.x;
         textureMatrix.m[3][1] = vm->sprite->uvStart.y + vm->uvScrollPos.y;
-        //        g_Supervisor.d3dDevice->SetTransform(D3DTS_TEXTURE0, &textureMatrix);
-        g_glFuncTable.glMatrixMode(GL_TEXTURE);
-        g_glFuncTable.glLoadMatrixf((GLfloat *)textureMatrix.m);
+
+        this->SetTransformMatrix(MATRIX_TEXTURE, textureMatrix);
 
         //        if (this->currentTextureHandle != this->textures[vm->sprite->sourceFileIndex].handle)
         //        {
@@ -1379,8 +1389,7 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
 
     this->BackendDrawCall();
 
-    g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-    g_glFuncTable.glPopMatrix();
+    this->SetTransformMatrix(MATRIX_VIEW, originalView);
 
     return ZUN_SUCCESS;
 }
@@ -2115,7 +2124,7 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
 
     fullscreenViewport.Set();
 
-    inverseViewportMatrix();
+    this->SetProjectionMode(PROJECTION_MODE_ORTHOGRAPHIC);
 
     CreateTextureObject();
 

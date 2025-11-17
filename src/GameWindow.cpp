@@ -432,11 +432,13 @@ i32 GameWindow::InitD3dRendering(void)
     eye.z = -camera_distance;
     //    D3DXMatrixLookAtLH(&g_Supervisor.viewMatrix, &eye, &at, &up);
 
-    createViewMatrix(eye, at, up);
-    g_glFuncTable.glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat *)&g_Supervisor.viewMatrix.m);
+    ZunMatrix viewMatrix = createViewMatrix(eye, at, up);
+    g_AnmManager->SetTransformMatrix(MATRIX_VIEW, viewMatrix);
+    g_Supervisor.viewMatrix = viewMatrix;
 
-    perspectiveMatrixFromFOV(field_of_view_y, aspect_ratio, 100.0f, 10000.0f);
-    g_glFuncTable.glGetFloatv(GL_PROJECTION_MATRIX, (GLfloat *)&g_Supervisor.projectionMatrix.m);
+    ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(field_of_view_y, aspect_ratio, 100.0f, 10000.0f);
+    g_AnmManager->SetTransformMatrix(MATRIX_PROJECTION, perspectiveMatrix);
+    g_Supervisor.projectionMatrix = perspectiveMatrix;
 
     //    D3DXMatrixPerspectiveFovLH(&g_Supervisor.projectionMatrix, field_of_view_y, aspect_ratio, 100.0, 10000.0);
     //    g_Supervisor.d3dDevice->SetTransform(D3DTS_VIEW, &g_Supervisor.viewMatrix);

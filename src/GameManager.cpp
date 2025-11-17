@@ -527,16 +527,15 @@ void GameManager::SetupCameraStageBackground(f32 extraRenderDistance)
     eyeVec.x = viewportMiddleWidth;
     eyeVec.y = -viewportMiddleHeight;
     eyeVec.z = -cameraDistance;
-    createViewMatrix(eyeVec, atVec, upVec);
-    g_glFuncTable.glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat *)&g_Supervisor.viewMatrix.m);
-    //    D3DXMatrixLookAtLH(&g_Supervisor.viewMatrix, &eyeVec, &atVec, &upVec);
+    ZunMatrix viewMatrix = createViewMatrix(eyeVec, atVec, upVec);
+    g_AnmManager->SetTransformMatrix(MATRIX_VIEW, viewMatrix);
+    g_Supervisor.viewMatrix = viewMatrix;
+
     g_GameManager.cameraDistance = ZUN_FABSF(cameraDistance);
-    perspectiveMatrixFromFOV(fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
-    g_glFuncTable.glGetFloatv(GL_PROJECTION_MATRIX, (GLfloat *)&g_Supervisor.projectionMatrix.m);
-    //    D3DXMatrixPerspectiveFovLH(&g_Supervisor.projectionMatrix, fov, aspectRatio, 100.0f,
-    //                               10000.0f + extraRenderDistance);
-    //    g_Supervisor.d3dDevice->SetTransform(D3DTS_VIEW, &g_Supervisor.viewMatrix);
-    //    g_Supervisor.d3dDevice->SetTransform(D3DTS_PROJECTION, &g_Supervisor.projectionMatrix);
+
+    ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
+    g_AnmManager->SetTransformMatrix(MATRIX_PROJECTION, perspectiveMatrix);
+    g_Supervisor.projectionMatrix = perspectiveMatrix;
     return;
 }
 
@@ -574,16 +573,17 @@ void GameManager::SetupCamera(f32 extraRenderDistance)
     eyeVec.x = viewportMiddleWidth;
     eyeVec.y = -viewportMiddleHeight;
     eyeVec.z = eyeVecZ;
-    createViewMatrix(eyeVec, atVec, upVec);
-    g_glFuncTable.glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat *)&g_Supervisor.viewMatrix.m);
-    //    D3DXMatrixLookAtLH(&g_Supervisor.viewMatrix, &eyeVec, &atVec, &upVec);
+
+    ZunMatrix viewMatrix = createViewMatrix(eyeVec, atVec, upVec);
+    g_AnmManager->SetTransformMatrix(MATRIX_VIEW, viewMatrix);
+    g_Supervisor.viewMatrix = viewMatrix;
+
     g_GameManager.cameraDistance = ZUN_FABSF(cameraDistance);
-    perspectiveMatrixFromFOV(fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
-    g_glFuncTable.glGetFloatv(GL_PROJECTION_MATRIX, (GLfloat *)&g_Supervisor.projectionMatrix.m);
-    //    D3DXMatrixPerspectiveFovLH(&g_Supervisor.projectionMatrix, fov, aspectRatio, 100.0f,
-    //                               10000.0f + extraRenderDistance);
-    //    g_Supervisor.d3dDevice->SetTransform(D3DTS_VIEW, &g_Supervisor.viewMatrix);
-    //    g_Supervisor.d3dDevice->SetTransform(D3DTS_PROJECTION, &g_Supervisor.projectionMatrix);
+    
+    ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
+    g_AnmManager->SetTransformMatrix(MATRIX_PROJECTION, perspectiveMatrix);
+    g_Supervisor.projectionMatrix = perspectiveMatrix;
+
     return;
 }
 

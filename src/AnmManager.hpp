@@ -146,9 +146,13 @@ enum DirtyRenderStateBitShifts
     DIRTY_VERTEX_ATTRIBUTE_ARRAY = 3,
     DIRTY_COLOR_OP = 4,
     DIRTY_TEXTURE_FACTOR = 5,
+    DIRTY_MODEL_MATRIX = 6,
+    DIRTY_VIEW_MATRIX = 7,
+    DIRTY_PROJECTION_MATRIX = 8,
+    DIRTY_TEXTURE_MATRIX = 9,
 };
 
-enum TransformMatrixIndex
+enum TransformMatrix
 {
     MATRIX_MODEL,
     MATRIX_VIEW,
@@ -323,16 +327,26 @@ struct AnmManager
 
         if (projectionMode == PROJECTION_MODE_ORTHOGRAPHIC)
         {
-            inverseViewportMatrix();
+            ZunMatrix identityMatrix;
+
+            memcpy(this->perspectiveMatrixBackup, this->dirtyTransformMatrices, sizeof(this->perspectiveMatrixBackup));
+
+            identityMatrix.Identity();
+
+            this->SetTransformMatrix(MATRIX_VIEW, identityMatrix);
+            this->SetTransformMatrix(MATRIX_TEXTURE, identityMatrix);
+
+            ZunMatrix inverseMatrix = inverseViewportMatrix();
+
+            this->SetTransformMatrix(MATRIX_PROJECTION, inverseMatrix);
+
             return;
         }
 
         g_Supervisor.viewport.Set();
 
-        g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-        g_glFuncTable.glPopMatrix();
-        g_glFuncTable.glMatrixMode(GL_PROJECTION);
-        g_glFuncTable.glPopMatrix();
+        this->SetTransformMatrix(MATRIX_VIEW, this->perspectiveMatrixBackup[MATRIX_VIEW]);
+        this->SetTransformMatrix(MATRIX_PROJECTION, this->perspectiveMatrixBackup[MATRIX_PROJECTION]);
     }
 
     void SetFogRange(f32 near, f32 far)
@@ -372,6 +386,18 @@ struct AnmManager
         }
 
         this->dirtyFlags |= 1 << DIRTY_TEXTURE_FACTOR;
+    }
+
+    void SetTransformMatrix(TransformMatrix type, ZunMatrix &matrix)
+    {
+        std::memcpy(&this->dirtyTransformMatrices[type], &matrix, sizeof(matrix));
+
+        if (!std::memcmp(&this->transformMatrices[type], &matrix, sizeof(matrix)))
+        {
+            this->dirtyFlags &= ~(1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts) type));
+        }
+
+        this->dirtyFlags |= 1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts) type);
     }
 
     i32 ExecuteScript(AnmVm *vm);
@@ -469,6 +495,7 @@ struct AnmManager
     VertexAttribArrayState attribArrays[3];
     ColorOp colorOps[2];
     ZunColor textureFactor;
+    ZunMatrix transformMatrices[4];
 
     f32 dirtyFogNear;
     f32 dirtyFogFar;
@@ -479,6 +506,10 @@ struct AnmManager
     VertexAttribArrayState dirtyAttribArrays[3];
     ColorOp dirtyColorOps[2];
     ZunColor dirtytTextureFactor;
+    ZunMatrix dirtyTransformMatrices[4];
+
+
+    ZunMatrix perspectiveMatrixBackup[4]; // Replaces matrix stack use for orthographic mode
 };
 ZUN_ASSERT_SIZE(AnmManager, 0x2112c);
 

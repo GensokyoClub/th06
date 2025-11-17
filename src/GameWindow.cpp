@@ -1,6 +1,7 @@
 #include "GameWindow.hpp"
 #include "AnmManager.hpp"
 #include "GameErrorContext.hpp"
+#include "graphics/FixedFunctionGL.hpp"
 #include "ScreenEffect.hpp"
 #include "SoundPlayer.hpp"
 #include "Stage.hpp"
@@ -265,6 +266,8 @@ i32 GameWindow::InitD3dRendering(void)
     f32 aspect_ratio;
     f32 field_of_view_y;
     f32 camera_distance;
+
+    g_AnmManager->gfxBackend = new FixedFunctionGL();
 
     //    using_d3d_hal = 1;
     //    std::memset(&present_params, 0, sizeof(D3DPRESENT_PARAMETERS));

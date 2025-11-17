@@ -49,6 +49,7 @@ project "th06"
     "src/TextHelper.cpp",
     "src/utils.cpp",
     "src/ZunTimer.cpp",
+    "src/graphics/FixedFunctionGL.cpp",
     "src/pbg3/FileAbstraction.cpp",
     "src/pbg3/IPbg3Parser.cpp",
     "src/pbg3/Pbg3Archive.cpp",

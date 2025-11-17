@@ -7,8 +7,9 @@
 
 #include "AnmIdx.hpp"
 #include "AnmVm.hpp"
-#include "GLFunc.hpp"
 #include "GameManager.hpp"
+#include "graphics/GfxInterface.hpp"
+#include "GLFunc.hpp"
 #include "ZunResult.hpp"
 #include "ZunTimer.hpp"
 #include "diffbuild.hpp"
@@ -99,39 +100,6 @@ enum ProjectionMode
     PROJECTION_MODE_ORTHOGRAPHIC
 };
 
-enum DepthFunc
-{
-    DEPTH_FUNC_LEQUAL,
-    DEPTH_FUNC_ALWAYS
-};
-
-// Position is implied, since everything uses is anyway
-enum VertexAttributeFlags
-{
-    VERTEX_ATTR_TEX_COORD = (1 << 0),
-    VERTEX_ATTR_DIFFUSE = (1 << 1),
-};
-
-enum VertexAttributeArrays
-{
-    VERTEX_ARRAY_POSITION,
-    VERTEX_ARRAY_TEX_COORD,
-    VERTEX_ARRAY_DIFFUSE
-};
-
-enum ColorOp
-{
-    COLOR_OP_MODULATE,
-    COLOR_OP_ADD,
-    COLOR_OP_REPLACE
-};
-
-enum TextureOpComponent
-{
-    COMPONENT_RGB,
-    COMPONENT_ALPHA
-};
-
 struct VertexAttribArrayState
 {
     void *ptr;
@@ -150,14 +118,6 @@ enum DirtyRenderStateBitShifts
     DIRTY_VIEW_MATRIX = 7,
     DIRTY_PROJECTION_MATRIX = 8,
     DIRTY_TEXTURE_MATRIX = 9,
-};
-
-enum TransformMatrix
-{
-    MATRIX_MODEL,
-    MATRIX_VIEW,
-    MATRIX_PROJECTION,
-    MATRIX_TEXTURE
 };
 
 struct AnmRawSprite
@@ -483,6 +443,8 @@ struct AnmManager
     i32 screenshotTop;
     i32 screenshotWidth;
     i32 screenshotHeight;
+    
+    GfxInterface *gfxBackend;
 
   private:
     u32 dirtyFlags;

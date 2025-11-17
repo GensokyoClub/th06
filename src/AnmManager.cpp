@@ -244,8 +244,6 @@ AnmManager::AnmManager()
 
     //    this->vertexBuffer = NULL;
     this->currentBlendMode = 0;
-    this->currentColorOp = 0;
-    this->currentTextureFactor = 1;
     this->screenshotTextureId = -1;
     this->projectionMode = PROJECTION_MODE_PERSPECTIVE;
 
@@ -605,7 +603,6 @@ void AnmManager::ReleaseAnm(i32 anmIdx)
         free(anmFilePtr);
         this->anmFiles[anmIdx] = 0;
         this->currentBlendMode = 0xff;
-        this->currentColorOp = 0xff;
         this->currentTextureHandle = 0;
     }
 }
@@ -704,26 +701,15 @@ void AnmManager::SetRenderStateForVm(AnmVm *vm)
             //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
         }
     }
-    
+
     if (((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING) & 1) == 0)
     {
-        this->SetColorOp(COMPONENT_RGB, (ColorOp) vm->flags.colorOp);
+        this->SetColorOp(COMPONENT_RGB, (ColorOp)vm->flags.colorOp);
     }
 
     if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
     {
-        if (this->currentTextureFactor != vm->color)
-        {
-            this->currentTextureFactor = vm->color;
-
-            // For God knows what reason, integer arguments for GL_TEXTURE_ENV_COLOR are mapped to -1.0::1.0,
-            //   but then clamped to 0.0::1.0. Let's just use floats from the start to avoid that mess
-
-            GLfloat tfactorColor[4] = {((vm->color >> 16) & 0xFF) / 255.0f, ((vm->color >> 8) & 0xFF) / 255.0f,
-                                       ((vm->color) & 0xFF) / 255.0f, ((vm->color >> 24) & 0xFF) / 255.0f};
-
-            g_glFuncTable.glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, tfactorColor);
-        }
+        this->SetTextureFactor(vm->color);
     }
     else
     {
@@ -889,7 +875,17 @@ void AnmManager::UpdateDirtyStates()
                     break;
                 }
             }
-            
+
+            break;
+        case DIRTY_TEXTURE_FACTOR:
+            this->textureFactor = this->dirtytTextureFactor;
+
+            GLfloat tfactorColor[4] = {
+                ((this->textureFactor >> 16) & 0xFF) / 255.0f, ((this->textureFactor >> 8) & 0xFF) / 255.0f,
+                (this->textureFactor & 0xFF) / 255.0f, ((this->textureFactor >> 24) & 0xFF) / 255.0f};
+
+            g_glFuncTable.glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, tfactorColor);
+
             break;
         }
     }

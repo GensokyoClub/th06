@@ -145,6 +145,7 @@ enum DirtyRenderStateBitShifts
     DIRTY_VERTEX_ATTRIBUTE_ENABLE = 2,
     DIRTY_VERTEX_ATTRIBUTE_ARRAY = 3,
     DIRTY_COLOR_OP = 4,
+    DIRTY_TEXTURE_FACTOR = 5,
 };
 
 enum TransformMatrixIndex
@@ -260,7 +261,8 @@ struct AnmManager
     {
         this->dirtyColorOps[component] = op;
 
-        if ((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 1 || this->dirtyColorOps[component] == this->colorOps[component])
+        if ((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 1 ||
+            this->dirtyColorOps[component] == this->colorOps[component])
         {
             dirtyFlags &= ~(1 << DIRTY_COLOR_OP);
             return;
@@ -359,6 +361,19 @@ struct AnmManager
         this->dirtyFlags |= (1 << DIRTY_VERTEX_ATTRIBUTE_ARRAY);
     }
 
+    void SetTextureFactor(ZunColor factor)
+    {
+        this->dirtytTextureFactor = factor;
+
+        if (this->dirtytTextureFactor == this->textureFactor)
+        {
+            this->dirtyFlags &= ~(1 << DIRTY_TEXTURE_FACTOR);
+            return;
+        }
+
+        this->dirtyFlags |= 1 << DIRTY_TEXTURE_FACTOR;
+    }
+
     i32 ExecuteScript(AnmVm *vm);
     ZunResult Draw(AnmVm *vm);
     void DrawTextToSprite(u32 spriteDstIndex, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontWidth,
@@ -430,11 +445,9 @@ struct AnmManager
     SDL_Surface *surfaces[32];
     //    SDL_Surface *surfacesBis[32];
     //    D3DXIMAGE_INFO surfaceSourceInfo[32];
-    ZunColor currentTextureFactor;
     GLuint currentTextureHandle;
     GLuint dummyTextureHandle;
     u8 currentBlendMode;
-    u8 currentColorOp;
     ProjectionMode projectionMode;
     AnmLoadedSprite *currentSprite;
     //    IDirect3DVertexBuffer8 *vertexBuffer;
@@ -455,6 +468,7 @@ struct AnmManager
     u8 enabledVertexAttributes;
     VertexAttribArrayState attribArrays[3];
     ColorOp colorOps[2];
+    ZunColor textureFactor;
 
     f32 dirtyFogNear;
     f32 dirtyFogFar;
@@ -464,6 +478,7 @@ struct AnmManager
     u8 dirtyEnabledVertexAttributes;
     VertexAttribArrayState dirtyAttribArrays[3];
     ColorOp dirtyColorOps[2];
+    ZunColor dirtytTextureFactor;
 };
 ZUN_ASSERT_SIZE(AnmManager, 0x2112c);
 

@@ -240,9 +240,6 @@ ChainCallbackResult Supervisor::OnDraw(Supervisor *s)
     AnmManager *anmm2 = g_AnmManager;
     anmm2->currentTextureHandle = 0;
 
-    AnmManager *anmm3 = g_AnmManager;
-    anmm3->currentColorOp = 0xff;
-
     AnmManager *anmm4 = g_AnmManager;
     anmm4->currentBlendMode = 0xff;
 

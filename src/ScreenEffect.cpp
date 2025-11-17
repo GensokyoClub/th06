@@ -88,16 +88,8 @@ void ScreenEffect::DrawSquare(ZunRect *rect, ZunColor rectColor)
     g_AnmManager->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*vertices), &vertices[0].position);
     g_AnmManager->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*vertices), &vertices[0].diffuse);
 
-    if (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 0x01) == 0)
-    {
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE);
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_REPLACE);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
-    }
-
-    //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
-    //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
+    g_AnmManager->SetColorOp(COMPONENT_ALPHA, COLOR_OP_REPLACE);
+    g_AnmManager->SetColorOp(COMPONENT_RGB, COLOR_OP_REPLACE);
 
     g_AnmManager->SetDepthMask(false);
     g_AnmManager->SetDepthFunc(DEPTH_FUNC_ALWAYS);
@@ -107,21 +99,12 @@ void ScreenEffect::DrawSquare(ZunRect *rect, ZunColor rectColor)
 
     g_AnmManager->SetCurrentSprite(NULL);
     g_AnmManager->SetCurrentTexture(0);
-    g_AnmManager->SetCurrentColorOp(0xff);
     g_AnmManager->SetCurrentBlendMode(0xff);
 
-    if (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 0x01) == 0)
-    {
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-    }
+    g_AnmManager->SetColorOp(COMPONENT_ALPHA, COLOR_OP_MODULATE);
+    g_AnmManager->SetColorOp(COMPONENT_RGB, COLOR_OP_MODULATE);
 
     g_AnmManager->SetDepthFunc(DEPTH_FUNC_LEQUAL);
-
-    //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-    //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 }
 
 ChainCallbackResult ScreenEffect::CalcFadeOut(ScreenEffect *effect)

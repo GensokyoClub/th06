@@ -119,6 +119,19 @@ enum VertexAttributeArrays
     VERTEX_ARRAY_DIFFUSE
 };
 
+enum ColorOp
+{
+    COLOR_OP_MODULATE,
+    COLOR_OP_ADD,
+    COLOR_OP_REPLACE
+};
+
+enum TextureOpComponent
+{
+    COMPONENT_RGB,
+    COMPONENT_ALPHA
+};
+
 struct VertexAttribArrayState
 {
     void *ptr;
@@ -131,6 +144,7 @@ enum DirtyRenderStateBitShifts
     DIRTY_DEPTH_CONFIG = 1,
     DIRTY_VERTEX_ATTRIBUTE_ENABLE = 2,
     DIRTY_VERTEX_ATTRIBUTE_ARRAY = 3,
+    DIRTY_COLOR_OP = 4,
 };
 
 enum TransformMatrixIndex
@@ -242,10 +256,19 @@ struct AnmManager
         this->dirtyFlags |= (1 << DIRTY_VERTEX_ATTRIBUTE_ENABLE);
     }
 
-    void SetCurrentColorOp(u8 colorOp)
+    void SetColorOp(TextureOpComponent component, ColorOp op)
     {
-        this->currentColorOp = colorOp;
+        this->dirtyColorOps[component] = op;
+
+        if ((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 1 || this->dirtyColorOps[component] == this->colorOps[component])
+        {
+            dirtyFlags &= ~(1 << DIRTY_COLOR_OP);
+            return;
+        }
+
+        dirtyFlags |= (1 << DIRTY_COLOR_OP);
     }
+
     void SetCurrentBlendMode(u8 blendMode)
     {
         this->currentBlendMode = blendMode;
@@ -431,6 +454,7 @@ struct AnmManager
     DepthFunc depthFunc;
     u8 enabledVertexAttributes;
     VertexAttribArrayState attribArrays[3];
+    ColorOp colorOps[2];
 
     f32 dirtyFogNear;
     f32 dirtyFogFar;
@@ -439,6 +463,7 @@ struct AnmManager
     DepthFunc dirtyDepthFunc;
     u8 dirtyEnabledVertexAttributes;
     VertexAttribArrayState dirtyAttribArrays[3];
+    ColorOp dirtyColorOps[2];
 };
 ZUN_ASSERT_SIZE(AnmManager, 0x2112c);
 

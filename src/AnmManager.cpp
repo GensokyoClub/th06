@@ -704,21 +704,12 @@ void AnmManager::SetRenderStateForVm(AnmVm *vm)
             //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
         }
     }
-    if ((((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING) & 1) == 0) &&
-        (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 1) == 0) && (this->currentColorOp != vm->flags.colorOp))
+    
+    if (((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING) & 1) == 0)
     {
-        this->currentColorOp = vm->flags.colorOp;
-        if (this->currentColorOp == AnmVmColorOp_Modulate)
-        {
-            g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
-            //            g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-        }
-        else
-        {
-            g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_ADD);
-            //            g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_ADD);
-        }
+        this->SetColorOp(COMPONENT_RGB, (ColorOp) vm->flags.colorOp);
     }
+
     if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
     {
         if (this->currentTextureFactor != vm->color)
@@ -871,6 +862,35 @@ void AnmManager::UpdateDirtyStates()
                     break;
                 }
             }
+
+            break;
+        case DIRTY_COLOR_OP:
+            for (int i = 0; i < 2; i++)
+            {
+                if (this->colorOps[i] == this->dirtyColorOps[i])
+                {
+                    continue;
+                }
+
+                this->colorOps[i] = this->dirtyColorOps[i];
+
+                GLenum componentEnum = i == COMPONENT_ALPHA ? GL_COMBINE_ALPHA : GL_COMBINE_RGB;
+
+                switch (this->colorOps[i])
+                {
+                case COLOR_OP_MODULATE:
+                    g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, componentEnum, GL_MODULATE);
+                    break;
+                case COLOR_OP_ADD:
+                    g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, componentEnum, GL_ADD);
+                    break;
+                case COLOR_OP_REPLACE:
+                    g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, componentEnum, GL_REPLACE);
+                    break;
+                }
+            }
+            
+            break;
         }
     }
 }
@@ -2132,29 +2152,22 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
     this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*verts), &verts[0].position);
     this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*verts), &verts[0].textureUV);
 
-    if (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 0x01) == 0)
-    {
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE);
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_REPLACE);
-    }
+    this->SetColorOp(COMPONENT_ALPHA, COLOR_OP_REPLACE);
+    this->SetColorOp(COMPONENT_RGB, COLOR_OP_REPLACE);
 
     this->SetDepthMask(false);
     this->SetDepthFunc(DEPTH_FUNC_ALWAYS);
 
     this->BackendDrawCall();
 
-    if (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 0x01) == 0)
-    {
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
-    }
+    this->SetColorOp(COMPONENT_ALPHA, COLOR_OP_MODULATE);
+    this->SetColorOp(COMPONENT_RGB, COLOR_OP_MODULATE);
 
     g_glFuncTable.glDeleteTextures(1, &this->currentTextureHandle);
 
-    g_AnmManager->SetCurrentSprite(NULL);
-    g_AnmManager->SetCurrentTexture(0);
-    g_AnmManager->SetCurrentColorOp(0xff);
-    g_AnmManager->SetCurrentBlendMode(0xff);
+    this->SetCurrentSprite(NULL);
+    this->SetCurrentTexture(0);
+    this->SetCurrentBlendMode(0xff);
 
     originalViewport.Set();
 }

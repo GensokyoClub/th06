@@ -817,12 +817,17 @@ void AnmManager::UpdateDirtyStates()
             // Again, temporary. This'll get less awful
             if (changedAttributes & VERTEX_ATTR_TEX_COORD)
             {
+                // Arg 0 will be the texture is it's used, and diffuse otherwise. Arg 1 will always be diffuse
                 if (this->enabledVertexAttributes & VERTEX_ATTR_TEX_COORD)
                 {
+                    g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_TEXTURE);
+                    g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE);
                     g_glFuncTable.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
                 }
                 else
                 {
+                    g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_PRIMARY_COLOR);
+                    g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_PRIMARY_COLOR);
                     g_glFuncTable.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
                 }
             }

@@ -247,7 +247,6 @@ AnmManager::AnmManager()
     this->currentColorOp = 0;
     this->currentTextureFactor = 1;
     this->currentVertexShader = 0;
-    this->currentZWriteDisable = 0;
     this->screenshotTextureId = -1;
     this->projectionMode = PROJECTION_MODE_PERSPECTIVE;
 
@@ -748,21 +747,9 @@ void AnmManager::SetRenderStateForVm(AnmVm *vm)
         g_PrimitivesToDrawUnknown[2].diffuse = vm->color;
         g_PrimitivesToDrawUnknown[3].diffuse = vm->color;
     }
-    if ((((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1) == 0) &&
-        (this->currentZWriteDisable != vm->flags.zWriteDisable))
-    {
-        this->currentZWriteDisable = vm->flags.zWriteDisable;
-        if (this->currentZWriteDisable == 0)
-        {
-            g_glFuncTable.glDepthMask(GL_TRUE);
-            //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_ZWRITEENABLE, 1);
-        }
-        else
-        {
-            g_glFuncTable.glDepthMask(GL_FALSE);
-            //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_ZWRITEENABLE, 0);
-        }
-    }
+
+    g_AnmManager->SetDepthMask(!vm->flags.zWriteDisable);
+
     return;
 }
 
@@ -770,34 +757,59 @@ void AnmManager::UpdateDirtyStates()
 {
     while (this->dirtyFlags != 0)
     {
-        u32 currFlag = 1 << std::countr_zero(this->dirtyFlags);
-        this->dirtyFlags &= ~currFlag;
+        u32 currFlagIndex = std::countr_zero(this->dirtyFlags);
+        this->dirtyFlags &= ~(1 << currFlagIndex);
 
-        switch (currFlag)
+        // This would all be nicer if the enum was flag values rather than indices,
+        //   but compilers just aren't able to deal with that in the switch statement :/
+        switch (currFlagIndex)
         {
-            case DIRTY_FOG:
-                if (this->dirtyFogNear != this->fogNear)
+        case DIRTY_FOG:
+            if (this->dirtyFogNear != this->fogNear)
+            {
+                this->fogNear = this->dirtyFogNear;
+                g_glFuncTable.glFogf(GL_FOG_START, this->fogNear);
+            }
+
+            if (this->dirtyFogFar != this->fogFar)
+            {
+                this->fogFar = this->dirtyFogFar;
+                g_glFuncTable.glFogf(GL_FOG_END, this->fogFar);
+            }
+
+            if (this->dirtyFogColor != this->fogColor)
+            {
+                this->fogColor = this->dirtyFogColor;
+
+                GLfloat normalizedFogColor[4] = {
+                    ((this->fogColor >> 16) & 0xFF) / 255.0f, ((this->fogColor >> 8) & 0xFF) / 255.0f,
+                    (this->fogColor & 0xFF) / 255.0f, ((this->fogColor >> 24) & 0xFF) / 255.0f};
+
+                g_glFuncTable.glFogfv(GL_FOG_COLOR, normalizedFogColor);
+            }
+
+            break;
+        case DIRTY_DEPTH_CONFIG:
+            if (this->dirtyDepthMask != this->depthMask)
+            {
+                this->depthMask = this->dirtyDepthMask;
+                g_glFuncTable.glDepthMask(this->depthMask);
+            }
+
+            if (this->dirtyDepthFunc != this->depthFunc)
+            {
+                this->depthFunc = this->dirtyDepthFunc;
+
+                // This'll end up less awkward once there's a render backend abstraction layer I swear
+                if (this->depthFunc == DEPTH_FUNC_ALWAYS)
                 {
-                    this->fogNear = this->dirtyFogNear;
-                    g_glFuncTable.glFogf(GL_FOG_START, this->fogNear);
+                    g_glFuncTable.glDepthFunc(GL_ALWAYS);
                 }
-
-                if (this->dirtyFogFar != this->fogFar)
+                else
                 {
-                    this->fogFar = this->dirtyFogFar;
-                    g_glFuncTable.glFogf(GL_FOG_END, this->fogFar);
+                    g_glFuncTable.glDepthFunc(GL_LEQUAL);
                 }
-
-                if (this->dirtyFogColor != this->fogColor)
-                {
-                    this->fogColor = this->dirtyFogColor;
-
-                    GLfloat normalizedFogColor[4] = {
-                        ((this->fogColor >> 16) & 0xFF) / 255.0f, ((this->fogColor >> 8) & 0xFF) / 255.0f,
-                        (this->fogColor & 0xFF) / 255.0f, ((this->fogColor >> 24) & 0xFF) / 255.0f};
-
-                    g_glFuncTable.glFogfv(GL_FOG_COLOR, normalizedFogColor);
-                }
+            }
 
             break;
         }
@@ -2094,15 +2106,10 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
     {
         g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE);
         g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_REPLACE);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
     }
 
-    if (((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 0x01) == 0)
-    {
-        g_glFuncTable.glDepthFunc(GL_ALWAYS);
-        g_glFuncTable.glDepthMask(GL_FALSE);
-    }
+    this->SetDepthMask(false);
+    this->SetDepthFunc(DEPTH_FUNC_ALWAYS);
 
     this->BackendDrawCall();
 
@@ -2110,8 +2117,6 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
     {
         g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
         g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
     }
 
     g_glFuncTable.glDeleteTextures(1, &this->currentTextureHandle);
@@ -2121,7 +2126,6 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
     g_AnmManager->SetCurrentTexture(0);
     g_AnmManager->SetCurrentColorOp(0xff);
     g_AnmManager->SetCurrentBlendMode(0xff);
-    g_AnmManager->SetCurrentZWriteDisable(0xff);
 
     originalViewport.Set();
 }

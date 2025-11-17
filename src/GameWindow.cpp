@@ -499,11 +499,8 @@ void GameWindow::InitD3dDevice(void)
     if (((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1) == 0)
     {
         g_glFuncTable.glEnable(GL_DEPTH_TEST);
-        g_glFuncTable.glDepthFunc(GL_LEQUAL);
-    }
-    else
-    {
-        g_glFuncTable.glDepthFunc(GL_ALWAYS);
+        g_AnmManager->SetDepthMask(true);
+        g_AnmManager->SetDepthFunc(DEPTH_FUNC_LEQUAL);
     }
 
     g_glFuncTable.glEnable(GL_ALPHA_TEST);

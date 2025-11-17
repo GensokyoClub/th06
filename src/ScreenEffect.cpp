@@ -101,11 +101,8 @@ void ScreenEffect::DrawSquare(ZunRect *rect, ZunColor rectColor)
     //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
     //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
 
-    if (((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 0x01) == 0)
-    {
-        g_glFuncTable.glDepthFunc(GL_ALWAYS);
-        g_glFuncTable.glDepthMask(GL_FALSE);
-    }
+    g_AnmManager->SetDepthMask(false);
+    g_AnmManager->SetDepthFunc(DEPTH_FUNC_ALWAYS);
 
     g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     g_AnmManager->BackendDrawCall();
@@ -115,7 +112,6 @@ void ScreenEffect::DrawSquare(ZunRect *rect, ZunColor rectColor)
     g_AnmManager->SetCurrentTexture(0);
     g_AnmManager->SetCurrentColorOp(0xff);
     g_AnmManager->SetCurrentBlendMode(0xff);
-    g_AnmManager->SetCurrentZWriteDisable(0xff);
 
     if (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 0x01) == 0)
     {
@@ -127,7 +123,7 @@ void ScreenEffect::DrawSquare(ZunRect *rect, ZunColor rectColor)
 
     g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_TEXTURE);
     g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE);
-    g_glFuncTable.glDepthFunc(GL_LEQUAL);
+    g_AnmManager->SetDepthFunc(DEPTH_FUNC_LEQUAL);
 
     //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
     //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);

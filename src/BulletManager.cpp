@@ -1102,7 +1102,7 @@ ChainCallbackResult BulletManager::OnDraw(BulletManager *mgr)
     Bullet *curBullet1;
     Bullet *curBullet2;
 
-    g_glFuncTable.glDepthFunc(GL_ALWAYS);
+    g_AnmManager->SetDepthFunc(DEPTH_FUNC_ALWAYS);
 
     for (curLaser = &mgr->lasers[0], idx = 0; idx < ARRAY_SIZE_SIGNED(mgr->lasers); idx++, curLaser++)
     {
@@ -1258,7 +1258,7 @@ ChainCallbackResult BulletManager::OnDraw(BulletManager *mgr)
         }
     }
 
-    g_glFuncTable.glDepthFunc(GL_LEQUAL);
+    g_AnmManager->SetDepthFunc(DEPTH_FUNC_LEQUAL);
 
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }

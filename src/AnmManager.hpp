@@ -105,9 +105,24 @@ enum ProjectionMode
     PROJECTION_MODE_ORTHOGRAPHIC
 };
 
-enum DirtyRenderStateBits
+enum DepthFunc
 {
-    DIRTY_FOG = 1
+    DEPTH_FUNC_LEQUAL,
+    DEPTH_FUNC_ALWAYS
+};
+
+enum DirtyRenderStateBitShifts
+{
+    DIRTY_FOG = 0,
+    DIRTY_DEPTH_CONFIG = 1,
+};
+
+enum TransformMatrixIndex
+{
+    MATRIX_MODEL,
+    MATRIX_VIEW,
+    MATRIX_PROJECTION,
+    MATRIX_TEXTURE
 };
 
 struct AnmRawSprite
@@ -206,10 +221,31 @@ struct AnmManager
     {
         this->currentBlendMode = blendMode;
     }
-    void SetCurrentZWriteDisable(u8 zwriteDisable)
+
+    void SetDepthMask(bool depthEnable)
     {
-        this->currentZWriteDisable = zwriteDisable;
+        this->dirtyDepthMask = depthEnable;
+
+        // Extra check neccessary because otherwise the dirty bit would get set for every draw call due to SetRenderStateForVm
+        if ((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1 || this->dirtyDepthMask == this->depthMask)
+        {
+            return;
+        }
+
+        this->dirtyFlags |= (1 << DIRTY_DEPTH_CONFIG);
     }
+
+    void SetDepthFunc(DepthFunc func)
+    {
+        if ((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1)
+        {
+            return;
+        }
+
+        this->dirtyDepthFunc = func;
+        this->dirtyFlags |= (1 << DIRTY_DEPTH_CONFIG);
+    }
+
     void SetCurrentTexture(GLuint textureHandle)
     {
         if (this->currentTextureHandle != textureHandle)
@@ -250,13 +286,13 @@ struct AnmManager
     {
         this->dirtyFogNear = near;
         this->dirtyFogFar = far;
-        this->dirtyFlags |= DIRTY_FOG;
+        this->dirtyFlags |= (1 << DIRTY_FOG);
     }
 
     void SetFogColor(ZunColor color)
     {
         this->dirtyFogColor = color;
-        this->dirtyFlags |= DIRTY_FOG;
+        this->dirtyFlags |= (1 << DIRTY_FOG);
     }
 
     i32 ExecuteScript(AnmVm *vm);
@@ -292,7 +328,6 @@ struct AnmManager
         vm->anmFileIndex = anmFileIdx;
         vm->pos = ZunVec3(0, 0, 0);
         vm->posOffset = ZunVec3(0, 0, 0);
-        ;
         vm->fontHeight = 15;
         vm->fontWidth = 15;
 
@@ -337,7 +372,6 @@ struct AnmManager
     u8 currentBlendMode;
     u8 currentColorOp;
     u8 currentVertexShader;
-    u8 currentZWriteDisable;
     ProjectionMode projectionMode;
     AnmLoadedSprite *currentSprite;
     //    IDirect3DVertexBuffer8 *vertexBuffer;
@@ -353,10 +387,14 @@ private:
     f32 fogNear;
     f32 fogFar;
     ZunColor fogColor;
+    bool depthMask;
+    DepthFunc depthFunc;
 
     f32 dirtyFogNear;
     f32 dirtyFogFar;
     ZunColor dirtyFogColor;
+    bool dirtyDepthMask;
+    DepthFunc dirtyDepthFunc;
 };
 ZUN_ASSERT_SIZE(AnmManager, 0x2112c);
 

@@ -249,9 +249,6 @@ ChainCallbackResult Supervisor::OnDraw(Supervisor *s)
     AnmManager *anmm4 = g_AnmManager;
     anmm4->currentBlendMode = 0xff;
 
-    AnmManager *anmm5 = g_AnmManager;
-    anmm5->currentZWriteDisable = 0xff;
-
     Supervisor::DrawFpsCounter();
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }

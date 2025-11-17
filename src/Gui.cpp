@@ -87,7 +87,7 @@ ChainCallbackResult Gui::OnDraw(Gui *gui)
     char spellCardBonusStr[32];
     ZunVec3 stringPos;
 
-    g_glFuncTable.glDepthFunc(GL_ALWAYS);
+    g_AnmManager->SetDepthFunc(DEPTH_FUNC_ALWAYS);
     //    g_Supervisor.d3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
     if (gui->impl->finishedStage)
     {
@@ -216,7 +216,7 @@ ChainCallbackResult Gui::OnDraw(Gui *gui)
         g_AsciiManager.color = COLOR_WHITE;
     }
     g_AsciiManager.isGui = 0;
-    g_glFuncTable.glDepthFunc(GL_LEQUAL);
+    g_AnmManager->SetDepthFunc(DEPTH_FUNC_LEQUAL);
     //    g_Supervisor.d3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
@@ -790,11 +790,8 @@ ZunResult GuiImpl::DrawDialogue()
     g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_PRIMARY_COLOR);
     //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
     //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
-    if (((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1) == 0)
-    {
-        g_glFuncTable.glDepthMask(GL_FALSE);
-        //        g_Supervisor.d3dDevice->SetRenderState(D3DRS_ZWRITEENABLE, 0);
-    }
+
+    g_AnmManager->SetDepthMask(false);
 
     if (g_AnmManager->currentTextureHandle == 0)
     {
@@ -815,7 +812,7 @@ ZunResult GuiImpl::DrawDialogue()
     g_AnmManager->SetCurrentVertexShader(0xff);
     g_AnmManager->SetCurrentColorOp(0xff);
     g_AnmManager->SetCurrentBlendMode(0xff);
-    g_AnmManager->SetCurrentZWriteDisable(0xff);
+    
     if (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 1) == 0)
     {
         g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
@@ -1237,13 +1234,9 @@ void Gui::DrawGameScene()
             g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_PRIMARY_COLOR);
             //            g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_DIFFUSE);
             //            g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_DIFFUSE);
-            if ((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST & 1) == 0)
-            {
-                g_glFuncTable.glDepthFunc(GL_ALWAYS);
-                g_glFuncTable.glDepthMask(GL_FALSE);
-                //                g_Supervisor.d3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
-                //                g_Supervisor.d3dDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-            }
+
+            g_AnmManager->SetDepthMask(false);
+            g_AnmManager->SetDepthFunc(DEPTH_FUNC_ALWAYS);
 
             if (g_AnmManager->currentTextureHandle == 0)
             {
@@ -1265,7 +1258,6 @@ void Gui::DrawGameScene()
             g_AnmManager->SetCurrentVertexShader(0xff);
             g_AnmManager->SetCurrentColorOp(0xff);
             g_AnmManager->SetCurrentBlendMode(0xff);
-            g_AnmManager->SetCurrentZWriteDisable(0xff);
             if ((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP & 1) == 0)
             {
                 g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);

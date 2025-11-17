@@ -234,9 +234,6 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
 
 ChainCallbackResult Supervisor::OnDraw(Supervisor *s)
 {
-    AnmManager *anmm0 = g_AnmManager;
-    anmm0->currentVertexShader = 0xff;
-
     AnmManager *anmm1 = g_AnmManager;
     anmm1->currentSprite = NULL;
 

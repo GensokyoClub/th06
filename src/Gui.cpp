@@ -800,16 +800,14 @@ ZunResult GuiImpl::DrawDialogue()
 
     g_AnmManager->SetProjectionMode(PROJECTION_MODE_ORTHOGRAPHIC);
 
-    g_glFuncTable.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    g_glFuncTable.glEnableClientState(GL_COLOR_ARRAY);
-    g_glFuncTable.glVertexPointer(4, GL_FLOAT, sizeof(*vertices), &vertices[0].position);
+    g_AnmManager->SetVertexAttributes(VERTEX_ATTR_DIFFUSE);
+    g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*vertices), &vertices[0].position);
     g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*vertices), &vertices[0].diffuse);
 
     g_AnmManager->BackendDrawCall();
 
     //    g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_DIFFUSE | D3DFVF_XYZRHW);
     //    g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices, sizeof(vertices[0]));
-    g_AnmManager->SetCurrentVertexShader(0xff);
     g_AnmManager->SetCurrentColorOp(0xff);
     g_AnmManager->SetCurrentBlendMode(0xff);
     
@@ -1245,9 +1243,8 @@ void Gui::DrawGameScene()
 
             g_AnmManager->SetProjectionMode(PROJECTION_MODE_ORTHOGRAPHIC);
 
-            g_glFuncTable.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-            g_glFuncTable.glEnableClientState(GL_COLOR_ARRAY);
-            g_glFuncTable.glVertexPointer(4, GL_FLOAT, sizeof(*vertices), &vertices[0].position);
+            g_AnmManager->SetVertexAttributes(VERTEX_ATTR_DIFFUSE);
+            g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*vertices), &vertices[0].position);
             g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*vertices), &vertices[0].diffuse);
 
             g_AnmManager->BackendDrawCall();
@@ -1255,7 +1252,6 @@ void Gui::DrawGameScene()
             //            g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_DIFFUSE | D3DFVF_XYZRHW);
             //            g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices,
             //            sizeof(VertexDiffuseXyzrhw));
-            g_AnmManager->SetCurrentVertexShader(0xff);
             g_AnmManager->SetCurrentColorOp(0xff);
             g_AnmManager->SetCurrentBlendMode(0xff);
             if ((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP & 1) == 0)

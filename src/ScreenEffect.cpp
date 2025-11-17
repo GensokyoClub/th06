@@ -83,9 +83,9 @@ void ScreenEffect::DrawSquare(ZunRect *rect, ZunColor rectColor)
 
     g_AnmManager->SetProjectionMode(PROJECTION_MODE_ORTHOGRAPHIC);
 
-    g_glFuncTable.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    g_glFuncTable.glEnableClientState(GL_COLOR_ARRAY);
-    g_glFuncTable.glVertexPointer(4, GL_FLOAT, sizeof(*vertices), &vertices[0].position);
+    g_AnmManager->SetVertexAttributes(VERTEX_ATTR_DIFFUSE);
+
+    g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*vertices), &vertices[0].position);
     g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*vertices), &vertices[0].diffuse);
 
     if (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 0x01) == 0)
@@ -107,7 +107,6 @@ void ScreenEffect::DrawSquare(ZunRect *rect, ZunColor rectColor)
     g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     g_AnmManager->BackendDrawCall();
 
-    g_AnmManager->SetCurrentVertexShader(0xff);
     g_AnmManager->SetCurrentSprite(NULL);
     g_AnmManager->SetCurrentTexture(0);
     g_AnmManager->SetCurrentColorOp(0xff);

@@ -93,12 +93,6 @@ struct VertexTex1DiffuseXyz
     ZunVec2 textureUV;
 };
 
-struct VertexTex1Xy
-{
-    ZunVec2 position;
-    ZunVec2 textureUV;
-};
-
 enum ProjectionMode
 {
     PROJECTION_MODE_PERSPECTIVE,
@@ -111,10 +105,18 @@ enum DepthFunc
     DEPTH_FUNC_ALWAYS
 };
 
+// Position is implied, since everything uses is anyway
+enum VertexAttributeFlags
+{
+    VERTEX_ATTR_TEX_COORD = (1 << 0),
+    VERTEX_ATTR_DIFFUSE = (1 << 1),
+};
+
 enum DirtyRenderStateBitShifts
 {
     DIRTY_FOG = 0,
     DIRTY_DEPTH_CONFIG = 1,
+    DIRTY_VERTEX_ATTRIBUTE_ENABLE = 2,
 };
 
 enum TransformMatrixIndex
@@ -209,10 +211,23 @@ struct AnmManager
         g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
 
-    void SetCurrentVertexShader(u8 vertexShader)
+    // We need to do checks in these because they're called nearly every ANM draw call and otherwise
+    //   we'd be constantly setting the dirty flag. The other global state sets are done less often
+    //   and so they don't need the checks until UpdateDirtyStates.
+
+    void SetVertexAttributes(u8 vertexShader)
     {
-        this->currentVertexShader = vertexShader;
+        this->dirtyEnabledVertexAttributes = vertexShader;
+
+        if (this->dirtyEnabledVertexAttributes == this->enabledVertexAttributes)
+        {
+            this->dirtyFlags &= ~(1 << DIRTY_VERTEX_ATTRIBUTE_ENABLE);
+            return;
+        }
+
+        this->dirtyFlags |= (1 << DIRTY_VERTEX_ATTRIBUTE_ENABLE);
     }
+
     void SetCurrentColorOp(u8 colorOp)
     {
         this->currentColorOp = colorOp;
@@ -226,7 +241,6 @@ struct AnmManager
     {
         this->dirtyDepthMask = depthEnable;
 
-        // Extra check neccessary because otherwise the dirty bit would get set for every draw call due to SetRenderStateForVm
         if ((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1 || this->dirtyDepthMask == this->depthMask)
         {
             return;
@@ -371,7 +385,6 @@ struct AnmManager
     GLuint dummyTextureHandle;
     u8 currentBlendMode;
     u8 currentColorOp;
-    u8 currentVertexShader;
     ProjectionMode projectionMode;
     AnmLoadedSprite *currentSprite;
     //    IDirect3DVertexBuffer8 *vertexBuffer;
@@ -389,12 +402,14 @@ private:
     ZunColor fogColor;
     bool depthMask;
     DepthFunc depthFunc;
+    u8 enabledVertexAttributes;
 
     f32 dirtyFogNear;
     f32 dirtyFogFar;
     ZunColor dirtyFogColor;
     bool dirtyDepthMask;
     DepthFunc dirtyDepthFunc;
+    u8 dirtyEnabledVertexAttributes;
 };
 ZUN_ASSERT_SIZE(AnmManager, 0x2112c);
 

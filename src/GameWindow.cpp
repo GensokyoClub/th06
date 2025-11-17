@@ -588,8 +588,6 @@ void GameWindow::InitD3dDevice(void)
         anm1->currentBlendMode = 0xff;
         anm2 = g_AnmManager;
         anm2->currentColorOp = 0xff;
-        anm3 = g_AnmManager;
-        anm3->currentVertexShader = 0xff;
         anm4 = g_AnmManager;
         anm4->currentTextureHandle = 0;
     }

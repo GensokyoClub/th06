@@ -246,7 +246,6 @@ AnmManager::AnmManager()
     this->currentBlendMode = 0;
     this->currentColorOp = 0;
     this->currentTextureFactor = 1;
-    this->currentVertexShader = 0;
     this->screenshotTextureId = -1;
     this->projectionMode = PROJECTION_MODE_PERSPECTIVE;
 
@@ -607,7 +606,6 @@ void AnmManager::ReleaseAnm(i32 anmIdx)
         this->anmFiles[anmIdx] = 0;
         this->currentBlendMode = 0xff;
         this->currentColorOp = 0xff;
-        this->currentVertexShader = 0xff;
         this->currentTextureHandle = 0;
     }
 }
@@ -812,6 +810,36 @@ void AnmManager::UpdateDirtyStates()
             }
 
             break;
+        case DIRTY_VERTEX_ATTRIBUTE_ENABLE:
+            u8 changedAttributes = this->dirtyEnabledVertexAttributes ^ this->enabledVertexAttributes;
+            this->enabledVertexAttributes = this->dirtyEnabledVertexAttributes;
+
+            // Again, temporary. This'll get less awful
+            if (changedAttributes & VERTEX_ATTR_TEX_COORD)
+            {
+                if (this->enabledVertexAttributes & VERTEX_ATTR_TEX_COORD)
+                {
+                    g_glFuncTable.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                }
+                else
+                {
+                    g_glFuncTable.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+                }
+            }
+
+            if (changedAttributes & VERTEX_ATTR_DIFFUSE)
+            {
+                if (this->enabledVertexAttributes & VERTEX_ATTR_DIFFUSE)
+                {
+                    g_glFuncTable.glEnableClientState(GL_COLOR_ARRAY);
+                }
+                else
+                {
+                    g_glFuncTable.glDisableClientState(GL_COLOR_ARRAY);
+                }
+            }
+
+            break;
         }
     }
 }
@@ -849,21 +877,14 @@ ZunResult AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)
 
         this->SetCurrentTexture(this->textures[vm->sprite->sourceFileIndex].handle);
     }
-    if (this->currentVertexShader != 2)
+    
+    if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
     {
-        g_glFuncTable.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-        if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
-        {
-            g_glFuncTable.glDisableClientState(GL_COLOR_ARRAY);
-            //            g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_XYZRHW);
-        }
-        else
-        {
-            g_glFuncTable.glEnableClientState(GL_COLOR_ARRAY);
-            //            g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZRHW);
-        }
-        this->currentVertexShader = 2;
+        this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD);
+    }
+    else
+    {
+        this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD | VERTEX_ATTR_DIFFUSE);
     }
 
     this->SetRenderStateForVm(vm);
@@ -878,7 +899,7 @@ ZunResult AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)
 
     if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
     {
-        g_glFuncTable.glVertexPointer(4, GL_FLOAT, sizeof(*g_PrimitivesToDrawVertexBuf),
+        g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*g_PrimitivesToDrawVertexBuf),
                                       &g_PrimitivesToDrawVertexBuf[0].position);
         g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawVertexBuf),
                                         &g_PrimitivesToDrawVertexBuf[0].textureUV);
@@ -907,11 +928,11 @@ ZunResult AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)
         g_PrimitivesToDrawNoVertexBuf[2].textureUV.y = g_PrimitivesToDrawNoVertexBuf[3].textureUV.y =
             vm->sprite->uvEnd.y + vm->uvScrollPos.y;
 
-        g_glFuncTable.glVertexPointer(4, GL_FLOAT, sizeof(*g_PrimitivesToDrawNoVertexBuf),
+        g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*g_PrimitivesToDrawNoVertexBuf),
                                       &g_PrimitivesToDrawNoVertexBuf[0].position);
         g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawNoVertexBuf),
                                         &g_PrimitivesToDrawNoVertexBuf[0].textureUV);
-        g_glFuncTable.glColorPointer(4, GL_FLOAT, sizeof(*g_PrimitivesToDrawNoVertexBuf),
+        g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*g_PrimitivesToDrawNoVertexBuf),
                                      &g_PrimitivesToDrawNoVertexBuf[0].diffuse);
         //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, g_PrimitivesToDrawNoVertexBuf, 0x1c);
     }
@@ -1172,25 +1193,13 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
         SetCurrentTexture(this->textures[vm->sprite->sourceFileIndex].handle);
     }
 
-    // Set vertex shader to TEX1 | XYZ
-    if (this->currentVertexShader != 3)
+    if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
     {
-        g_glFuncTable.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-        if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) == 0)
-        {
-            g_glFuncTable.glDisableClientState(GL_COLOR_ARRAY);
-
-            //            g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_XYZ);
-            //            g_Supervisor.d3dDevice->SetStreamSource(0, this->vertexBuffer, 0x14);
-        }
-        else
-        {
-            g_glFuncTable.glEnableClientState(GL_COLOR_ARRAY);
-
-            //            g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZ);
-        }
-        this->currentVertexShader = 3;
+        this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD);
+    }
+    else
+    {
+        this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD | VERTEX_ATTR_DIFFUSE);
     }
 
     // Reset the render state based on the settings fo the given VM.
@@ -1210,7 +1219,7 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
                                       &g_PrimitivesToDrawUnknown[0].position);
         g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
                                         &g_PrimitivesToDrawUnknown[0].textureUV);
-        g_glFuncTable.glColorPointer(4, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
+        g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*g_PrimitivesToDrawUnknown),
                                      &g_PrimitivesToDrawUnknown[0].diffuse);
     }
 
@@ -1288,24 +1297,13 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
 
         SetCurrentTexture(this->textures[vm->sprite->sourceFileIndex].handle);
 
-        if (this->currentVertexShader != 3)
+        if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
         {
-            g_glFuncTable.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-            if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) == 0)
-            {
-                g_glFuncTable.glDisableClientState(GL_COLOR_ARRAY);
-
-                //                g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_XYZ);
-                //                g_Supervisor.d3dDevice->SetStreamSource(0, this->vertexBuffer, 0x14);
-            }
-            else
-            {
-                g_glFuncTable.glEnableClientState(GL_COLOR_ARRAY);
-
-                //                g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZ);
-            }
-            this->currentVertexShader = 3;
+            this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD);
+        }
+        else
+        {
+            this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD | VERTEX_ATTR_DIFFUSE);
         }
     }
 
@@ -1326,7 +1324,7 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
                                       &g_PrimitivesToDrawUnknown[0].position);
         g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
                                         &g_PrimitivesToDrawUnknown[0].textureUV);
-        g_glFuncTable.glColorPointer(4, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
+        g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*g_PrimitivesToDrawUnknown),
                                      &g_PrimitivesToDrawUnknown[0].diffuse);
 
         //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, , 0x18);
@@ -2096,8 +2094,7 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
     verts[2].textureUV = ZunVec2(0.0f, ((f32)src->h) / textureHeight);
     verts[3].textureUV = ZunVec2(((f32)src->w) / textureWidth, ((f32)src->h) / textureHeight);
 
-    g_glFuncTable.glDisableClientState(GL_COLOR_ARRAY);
-    g_glFuncTable.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    g_AnmManager->SetVertexAttributes(VERTEX_ATTR_TEX_COORD);
 
     g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*verts), &verts[0].position);
     g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*verts), &verts[0].textureUV);
@@ -2121,7 +2118,6 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
 
     g_glFuncTable.glDeleteTextures(1, &this->currentTextureHandle);
 
-    g_AnmManager->SetCurrentVertexShader(0xff);
     g_AnmManager->SetCurrentSprite(NULL);
     g_AnmManager->SetCurrentTexture(0);
     g_AnmManager->SetCurrentColorOp(0xff);

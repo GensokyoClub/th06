@@ -105,7 +105,7 @@ u8 *AnmManager::ExtractSurfacePixels(SDL_Surface *src, u8 pixelDepth)
     u8 *pixelData = new u8[dstPitch * src->h];
     u8 *dstPtr = pixelData;
     u8 *srcPtr = (u8 *)src->pixels;
-    
+
     for (int i = 0; i < src->h; i++)
     {
         std::memcpy(dstPtr, srcPtr, dstPitch);
@@ -305,10 +305,10 @@ void AnmManager::SetupVertexBuffer()
         //        this->vertexBuffer->Unlock();
         //
         //        g_Supervisor.d3dDevice->SetStreamSource(0, g_AnmManager->vertexBuffer, sizeof(RenderVertexInfo));
-        g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*vertexBufferContents),
-                                      &this->vertexBufferContents[0].position);
-        g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*vertexBufferContents),
-                                        &this->vertexBufferContents[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*vertexBufferContents),
+                                  &this->vertexBufferContents[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*vertexBufferContents),
+                                  &this->vertexBufferContents[0].textureUV);
     }
 }
 
@@ -746,7 +746,7 @@ void AnmManager::SetRenderStateForVm(AnmVm *vm)
         g_PrimitivesToDrawUnknown[3].diffuse = vm->color;
     }
 
-    g_AnmManager->SetDepthMask(!vm->flags.zWriteDisable);
+    this->SetDepthMask(!vm->flags.zWriteDisable);
 
     return;
 }
@@ -810,7 +810,7 @@ void AnmManager::UpdateDirtyStates()
             }
 
             break;
-        case DIRTY_VERTEX_ATTRIBUTE_ENABLE:
+        case DIRTY_VERTEX_ATTRIBUTE_ENABLE: {
             u8 changedAttributes = this->dirtyEnabledVertexAttributes ^ this->enabledVertexAttributes;
             this->enabledVertexAttributes = this->dirtyEnabledVertexAttributes;
 
@@ -840,6 +840,32 @@ void AnmManager::UpdateDirtyStates()
             }
 
             break;
+        }
+        case DIRTY_VERTEX_ATTRIBUTE_ARRAY:
+            for (int i = 0; i < 3; i++)
+            {
+                if (!std::memcmp(&this->attribArrays[i], &this->dirtyAttribArrays[i], sizeof(*this->attribArrays)))
+                {
+                    continue;
+                }
+
+                this->attribArrays[i] = this->dirtyAttribArrays[i];
+
+                switch (i)
+                {
+                case VERTEX_ARRAY_POSITION:
+                    g_glFuncTable.glVertexPointer(3, GL_FLOAT, this->attribArrays[i].stride, this->attribArrays[i].ptr);
+                    break;
+                case VERTEX_ARRAY_TEX_COORD:
+                    g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, this->attribArrays[i].stride,
+                                                    this->attribArrays[i].ptr);
+                    break;
+                case VERTEX_ARRAY_DIFFUSE:
+                    g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, this->attribArrays[i].stride,
+                                                 this->attribArrays[i].ptr);
+                    break;
+                }
+            }
         }
     }
 }
@@ -877,7 +903,7 @@ ZunResult AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)
 
         this->SetCurrentTexture(this->textures[vm->sprite->sourceFileIndex].handle);
     }
-    
+
     if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
     {
         this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD);
@@ -899,10 +925,10 @@ ZunResult AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)
 
     if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
     {
-        g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*g_PrimitivesToDrawVertexBuf),
-                                      &g_PrimitivesToDrawVertexBuf[0].position);
-        g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawVertexBuf),
-                                        &g_PrimitivesToDrawVertexBuf[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawVertexBuf),
+                                  &g_PrimitivesToDrawVertexBuf[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawVertexBuf),
+                                  &g_PrimitivesToDrawVertexBuf[0].textureUV);
         //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, g_PrimitivesToDrawVertexBuf, 0x18);
     }
     else
@@ -928,12 +954,12 @@ ZunResult AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)
         g_PrimitivesToDrawNoVertexBuf[2].textureUV.y = g_PrimitivesToDrawNoVertexBuf[3].textureUV.y =
             vm->sprite->uvEnd.y + vm->uvScrollPos.y;
 
-        g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*g_PrimitivesToDrawNoVertexBuf),
-                                      &g_PrimitivesToDrawNoVertexBuf[0].position);
-        g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawNoVertexBuf),
-                                        &g_PrimitivesToDrawNoVertexBuf[0].textureUV);
-        g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*g_PrimitivesToDrawNoVertexBuf),
-                                     &g_PrimitivesToDrawNoVertexBuf[0].diffuse);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawNoVertexBuf),
+                                  &g_PrimitivesToDrawNoVertexBuf[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawNoVertexBuf),
+                                  &g_PrimitivesToDrawNoVertexBuf[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*g_PrimitivesToDrawNoVertexBuf),
+                                  &g_PrimitivesToDrawNoVertexBuf[0].diffuse);
         //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, g_PrimitivesToDrawNoVertexBuf, 0x1c);
     }
 
@@ -1208,19 +1234,19 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
     // Draw the VM.
     if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) == 0)
     {
-        g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                      &g_PrimitivesToDrawUnknown[0].position);
-        g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                        &g_PrimitivesToDrawUnknown[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].textureUV);
     }
     else
     {
-        g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                      &g_PrimitivesToDrawUnknown[0].position);
-        g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                        &g_PrimitivesToDrawUnknown[0].textureUV);
-        g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*g_PrimitivesToDrawUnknown),
-                                     &g_PrimitivesToDrawUnknown[0].diffuse);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].diffuse);
     }
 
     this->BackendDrawCall();
@@ -1311,21 +1337,21 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
 
     if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) == 0)
     {
-        g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                      &g_PrimitivesToDrawUnknown[0].position);
-        g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                        &g_PrimitivesToDrawUnknown[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].textureUV);
 
         //        g_Supervisor.d3dDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
     }
     else
     {
-        g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                      &g_PrimitivesToDrawUnknown[0].position);
-        g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                        &g_PrimitivesToDrawUnknown[0].textureUV);
-        g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*g_PrimitivesToDrawUnknown),
-                                     &g_PrimitivesToDrawUnknown[0].diffuse);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].diffuse);
 
         //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, , 0x18);
     }
@@ -1465,12 +1491,14 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
         PosTimeDoStuff:
             if (vm->flags.flag5 == 0)
             {
-                // This was supposedly originally a memcpy, but any sane compiler should compile a struct assignment to a memcpy
+                // This was supposedly originally a memcpy, but any sane compiler should compile a struct assignment to
+                // a memcpy
                 vm->posInterpInitial = vm->pos;
             }
             else
             {
-                // This was supposedly originally a memcpy, but any sane compiler should compile a struct assignment to a memcpy
+                // This was supposedly originally a memcpy, but any sane compiler should compile a struct assignment to
+                // a memcpy
                 vm->posInterpInitial = vm->posOffset;
             }
             vm->posInterpFinal = ZunVec3(AnmF32Arg(0), AnmF32Arg(1), AnmF32Arg(2));
@@ -2094,10 +2122,10 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
     verts[2].textureUV = ZunVec2(0.0f, ((f32)src->h) / textureHeight);
     verts[3].textureUV = ZunVec2(((f32)src->w) / textureWidth, ((f32)src->h) / textureHeight);
 
-    g_AnmManager->SetVertexAttributes(VERTEX_ATTR_TEX_COORD);
+    this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD);
 
-    g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*verts), &verts[0].position);
-    g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*verts), &verts[0].textureUV);
+    this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*verts), &verts[0].position);
+    this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*verts), &verts[0].textureUV);
 
     if (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 0x01) == 0)
     {

@@ -11,16 +11,15 @@
 //   These were mostly added to C++ with C++17, but GNU bikeshedded so hard, they didn't add
 //   them to their headers until 2023. To allow compilation where the older headers are
 //   still used, these macros force the overloaded float version of the base math function.
-#define ZUN_SINF(angle)  (std::sin((f32)(angle)))
-#define ZUN_COSF(angle)  (std::cos((f32)(angle)))
-#define ZUN_TANF(angle)  (std::tan((f32)(angle)))
-#define ZUN_SQRTF(n)     (std::sqrt((f32)(n)))
-#define ZUN_FABSF(n)     (std::fabs((f32)(n)))
-#define ZUN_FMODF(x, y)  (std::fmod((f32)(x), (f32)(y)))
+#define ZUN_SINF(angle) (std::sin((f32)(angle)))
+#define ZUN_COSF(angle) (std::cos((f32)(angle)))
+#define ZUN_TANF(angle) (std::tan((f32)(angle)))
+#define ZUN_SQRTF(n) (std::sqrt((f32)(n)))
+#define ZUN_FABSF(n) (std::fabs((f32)(n)))
+#define ZUN_FMODF(x, y) (std::fmod((f32)(x), (f32)(y)))
 #define ZUN_ATAN2F(x, y) (std::atan2((f32)(x), (f32)(y)))
-#define ZUN_POWF(x, y)   (std::pow((f32)(x), (f32)(y)))
-#define ZUN_RINTF(n)     (std::rintf((f32)(x)))
-
+#define ZUN_POWF(x, y) (std::pow((f32)(x), (f32)(y)))
+#define ZUN_RINTF(n) (std::rintf((f32)(x)))
 
 namespace th06
 {
@@ -45,7 +44,7 @@ struct ZunVec2
 
     f32 VectorLength()
     {
-        return std::sqrt((f64) (this->x * this->x + this->y * this->y));
+        return std::sqrt((f64)(this->x * this->x + this->y * this->y));
     }
 
     f64 VectorLengthF64()
@@ -450,7 +449,7 @@ inline void perspectiveMatrixFromFOV(f32 verticalFOV, f32 aspectRatio, f32 nearP
     f32 zScale = (farPlane + nearPlane) / (farPlane - nearPlane);
 
     ZunMatrix perspectiveMatrix;
-    
+
     perspectiveMatrix.Identity();
 
     perspectiveMatrix.m[0][0] = nearPlane / horizontal;
@@ -462,7 +461,7 @@ inline void perspectiveMatrixFromFOV(f32 verticalFOV, f32 aspectRatio, f32 nearP
     perspectiveMatrix.m[2][3] = 1.0f;
     perspectiveMatrix.m[3][3] = 0.0f;
 
-    g_glFuncTable.glLoadMatrixf((GLfloat *) &perspectiveMatrix.m);
+    g_glFuncTable.glLoadMatrixf((GLfloat *)&perspectiveMatrix.m);
 }
 
 // Pushes an identity matrix to the modelview stack and pushes a matrix that maps screen coordinates to
@@ -507,7 +506,7 @@ inline void inverseViewportMatrix()
     inverseMatrix.Scale(1.0f / (viewport.Width / 2.0f), -1.0f / (viewport.Height / 2.0f), 2.0f);
     inverseMatrix.Translate(-viewport.X, -viewport.Y, 0.0f);
 
-    g_glFuncTable.glLoadMatrixf((GLfloat *) &inverseMatrix.m);
+    g_glFuncTable.glLoadMatrixf((GLfloat *)&inverseMatrix.m);
 
     g_glFuncTable.glDepthRangef(0.0f, 1.0f);
 }

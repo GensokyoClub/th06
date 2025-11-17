@@ -112,11 +112,25 @@ enum VertexAttributeFlags
     VERTEX_ATTR_DIFFUSE = (1 << 1),
 };
 
+enum VertexAttributeArrays
+{
+    VERTEX_ARRAY_POSITION,
+    VERTEX_ARRAY_TEX_COORD,
+    VERTEX_ARRAY_DIFFUSE
+};
+
+struct VertexAttribArrayState
+{
+    void *ptr;
+    std::size_t stride;
+};
+
 enum DirtyRenderStateBitShifts
 {
     DIRTY_FOG = 0,
     DIRTY_DEPTH_CONFIG = 1,
     DIRTY_VERTEX_ATTRIBUTE_ENABLE = 2,
+    DIRTY_VERTEX_ATTRIBUTE_ARRAY = 3,
 };
 
 enum TransformMatrixIndex
@@ -309,6 +323,19 @@ struct AnmManager
         this->dirtyFlags |= (1 << DIRTY_FOG);
     }
 
+    void SetAttributePointer(VertexAttributeArrays attr, std::size_t stride, void *ptr)
+    {
+        this->dirtyAttribArrays[attr].ptr = ptr;
+        this->dirtyAttribArrays[attr].stride = stride;
+
+        if (!std::memcmp(&this->dirtyAttribArrays[attr], &this->attribArrays[attr], sizeof(*this->dirtyAttribArrays)))
+        {
+            return;
+        }
+
+        this->dirtyFlags |= (1 << DIRTY_VERTEX_ATTRIBUTE_ARRAY);
+    }
+
     i32 ExecuteScript(AnmVm *vm);
     ZunResult Draw(AnmVm *vm);
     void DrawTextToSprite(u32 spriteDstIndex, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontWidth,
@@ -395,7 +422,7 @@ struct AnmManager
     i32 screenshotWidth;
     i32 screenshotHeight;
 
-private:
+  private:
     u32 dirtyFlags;
     f32 fogNear;
     f32 fogFar;
@@ -403,6 +430,7 @@ private:
     bool depthMask;
     DepthFunc depthFunc;
     u8 enabledVertexAttributes;
+    VertexAttribArrayState attribArrays[3];
 
     f32 dirtyFogNear;
     f32 dirtyFogFar;
@@ -410,6 +438,7 @@ private:
     bool dirtyDepthMask;
     DepthFunc dirtyDepthFunc;
     u8 dirtyEnabledVertexAttributes;
+    VertexAttribArrayState dirtyAttribArrays[3];
 };
 ZUN_ASSERT_SIZE(AnmManager, 0x2112c);
 

@@ -801,8 +801,8 @@ ZunResult GuiImpl::DrawDialogue()
     g_AnmManager->SetProjectionMode(PROJECTION_MODE_ORTHOGRAPHIC);
 
     g_AnmManager->SetVertexAttributes(VERTEX_ATTR_DIFFUSE);
-    g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*vertices), &vertices[0].position);
-    g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*vertices), &vertices[0].diffuse);
+    g_AnmManager->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*vertices), &vertices[0].position);
+    g_AnmManager->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*vertices), &vertices[0].diffuse);
 
     g_AnmManager->BackendDrawCall();
 
@@ -810,7 +810,7 @@ ZunResult GuiImpl::DrawDialogue()
     //    g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertices, sizeof(vertices[0]));
     g_AnmManager->SetCurrentColorOp(0xff);
     g_AnmManager->SetCurrentBlendMode(0xff);
-    
+
     if (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 1) == 0)
     {
         g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
@@ -1244,8 +1244,8 @@ void Gui::DrawGameScene()
             g_AnmManager->SetProjectionMode(PROJECTION_MODE_ORTHOGRAPHIC);
 
             g_AnmManager->SetVertexAttributes(VERTEX_ATTR_DIFFUSE);
-            g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*vertices), &vertices[0].position);
-            g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*vertices), &vertices[0].diffuse);
+            g_AnmManager->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*vertices), &vertices[0].position);
+            g_AnmManager->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*vertices), &vertices[0].diffuse);
 
             g_AnmManager->BackendDrawCall();
 

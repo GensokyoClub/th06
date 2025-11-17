@@ -85,8 +85,8 @@ void ScreenEffect::DrawSquare(ZunRect *rect, ZunColor rectColor)
 
     g_AnmManager->SetVertexAttributes(VERTEX_ATTR_DIFFUSE);
 
-    g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*vertices), &vertices[0].position);
-    g_glFuncTable.glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(*vertices), &vertices[0].diffuse);
+    g_AnmManager->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*vertices), &vertices[0].position);
+    g_AnmManager->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*vertices), &vertices[0].diffuse);
 
     if (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 0x01) == 0)
     {

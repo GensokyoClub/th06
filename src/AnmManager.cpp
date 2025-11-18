@@ -740,7 +740,7 @@ void AnmManager::UpdateDirtyStates()
 {
     while (this->dirtyFlags != 0)
     {
-        u32 currFlagIndex = std::__countr_zero(this->dirtyFlags);
+        u32 currFlagIndex = std::countr_zero(this->dirtyFlags);
         this->dirtyFlags &= ~(1 << currFlagIndex);
 
         // This would all be nicer if the enum was flag values rather than indices,
@@ -791,7 +791,7 @@ void AnmManager::UpdateDirtyStates()
 
             while (changedAttributes != 0)
             {
-                u8 currBit = std::__countr_zero(changedAttributes);
+                u8 currBit = std::countr_zero(changedAttributes);
                 gfxBackend->ToggleVertexAttribute(changedAttributes & (1 << currBit), this->enabledVertexAttributes & (1 << currBit));
                 changedAttributes &= ~(1 << currBit);
             }

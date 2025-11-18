@@ -139,7 +139,7 @@ bool WebGL::Init()
     this->vertexShaderHandle = createShader(vertShaderBytes, GL_VERTEX_SHADER, "vertex");
     this->fragmentShaderHandle = createShader(fragShaderBytes, GL_FRAGMENT_SHADER, "fragment");
     this->programHandle = g_glFuncTable.glCreateProgram();
-
+    
     if (this->vertexShaderHandle == 0 || this->fragmentShaderHandle == 0 || this->programHandle == 0)
     {
         goto fail;
@@ -186,7 +186,7 @@ bool WebGL::Init()
     identityMatrix.Identity();
     g_glFuncTable.glUniformMatrix4fv(this->uniforms[UNIFORM_MODELVIEW], 1, false, (GLfloat *) &identityMatrix.m);
     g_glFuncTable.glUniformMatrix4fv(this->uniforms[UNIFORM_PROJECTION], 1, false, (GLfloat *) &identityMatrix.m);
-    g_glFuncTable.glUniformMatrix4fv(this->uniforms[UNIFORM_TEXTURE_SAMPLER], 1, false, (GLfloat *) &identityMatrix.m);
+    g_glFuncTable.glUniformMatrix4fv(this->uniforms[UNIFORM_TEXTURE_MATRIX], 1, false, (GLfloat *) &identityMatrix.m);
 
     g_glFuncTable.glUniform1f(this->uniforms[UNIFORM_FOG_FAR], 1.0f);
 
@@ -210,7 +210,7 @@ void WebGL::SetFogRange(f32 near, f32 far)
 
 void WebGL::SetFogColor(ZunColor color)
 {
-    g_glFuncTable.glUniform4f(this->uniforms[UNIFORM_FOG_COLOR], ((color >> 16) & 0xFF) / 255.0f,
+    g_glFuncTable.glUniform4f(this->uniforms[UNIFORM_FOG_COLOR], ((color >> 16) & 0xFF) / 255.0f, 
                                                             ((color >> 8) & 0xFF) / 255.0f,
                                                             (color & 0xFF) / 255.0f,
                                                             ((color >> 24) & 0xFF) / 255.0f);
@@ -275,7 +275,7 @@ void WebGL::SetColorOp(TextureOpComponent component, ColorOp op)
 
 void WebGL::SetTextureFactor(ZunColor factor)
 {
-    g_glFuncTable.glUniform4f(this->uniforms[UNIFORM_ENV_DIFFUSE], ((factor >> 16) & 0xFF) / 255.0f,
+    g_glFuncTable.glUniform4f(this->uniforms[UNIFORM_ENV_DIFFUSE], ((factor >> 16) & 0xFF) / 255.0f, 
                                                             ((factor >> 8) & 0xFF) / 255.0f,
                                                             (factor & 0xFF) / 255.0f,
                                                             ((factor >> 24) & 0xFF) / 255.0f);
@@ -286,7 +286,7 @@ void WebGL::SetTransformMatrix(TransformMatrix type, ZunMatrix &matrix)
     // I should probably just remove the model matrix from the range of possibilies
     u32 matrixUniformEnum[4] = {UNIFORM_MODELVIEW, UNIFORM_MODELVIEW, UNIFORM_PROJECTION, UNIFORM_TEXTURE_MATRIX};
 
-    g_glFuncTable.glUniformMatrix4fv(matrixUniformEnum[type], 1, false, (GLfloat *) &matrix.m);
+    g_glFuncTable.glUniformMatrix4fv(this->uniforms[matrixUniformEnum[type]], 1, false, (GLfloat *) &matrix.m);
 }
 
 void WebGL::Draw()

@@ -459,7 +459,7 @@ inline ZunMatrix perspectiveMatrixFromFOV(f32 verticalFOV, f32 aspectRatio, f32 
     return perspectiveMatrix;
 }
 
-// Returns a matrix that maps screen coordinates to NDCs. Used for drawing RHW positions,
+// Returns a matrix that maps screen coordinates to NDCs. Used for drawing RHW positions, 
 //   since D3D interprets them has having been already transformed, but OpenGL has no option
 //   to prevent transformation
 inline ZunMatrix inverseViewportMatrix()

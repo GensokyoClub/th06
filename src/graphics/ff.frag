@@ -13,6 +13,8 @@ varying vec2 interpTexCoords;
 varying vec4 interpDiffuse;
 varying float viewZ;
 
+const float alphaThreshold = 4.0 / 255.0;
+
 #define OP_MODULATE 0
 #define OP_ADD 1
 #define OP_REPLACE 2
@@ -60,6 +62,11 @@ void main()
 
     fragColor.rgb = mix(fogColor.rgb, fragColor.rgb, fogCoefficient);
 #endif
+
+    if (fragColor.a < alphaThreshold)
+    {
+        discard;
+    }
 
     gl_FragColor = fragColor;
 }

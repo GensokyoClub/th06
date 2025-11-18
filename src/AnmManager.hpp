@@ -9,6 +9,7 @@
 #include "AnmVm.hpp"
 #include "GameManager.hpp"
 #include "graphics/GfxInterface.hpp"
+
 #include "graphics/GLFunc.hpp"
 #include "ZunTimer.hpp"
 #include "diffbuild.hpp"

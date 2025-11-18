@@ -74,8 +74,6 @@ static bool initialize_game()
     Controller::GetJoystickCaps();
     Controller::ResetKeyboard();
 
-    g_AnmManager = new AnmManager();
-
     if (!Supervisor::RegisterChain())
     {
         return false;

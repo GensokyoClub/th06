@@ -228,6 +228,32 @@ struct ZunMatrix
         m[0][0] = m[1][1] = m[2][2] = m[3][3] = 1.0f;
     }
 
+    void Translate(f32 x, f32 y, f32 z)
+    {
+        ZunMatrix translateMatrix;
+
+        translateMatrix.Identity();
+
+        translateMatrix.m[3][0] = x;
+        translateMatrix.m[3][1] = y;
+        translateMatrix.m[3][2] = z;
+
+        *this = *this * translateMatrix;
+    }
+
+    void Scale(f32 x, f32 y, f32 z)
+    {
+        ZunMatrix scaleMatrix;
+
+        scaleMatrix.Identity();
+
+        scaleMatrix.m[0][0] = x;
+        scaleMatrix.m[1][1] = y;
+        scaleMatrix.m[2][2] = z;
+
+        *this = *this * scaleMatrix;
+    }
+
     // Equivalent to glRotate, but left handed. Takes radians
     void Rotate(f32 angle, f32 x, f32 y, f32 z)
     {
@@ -254,6 +280,8 @@ struct ZunMatrix
         rotationMatrix.m[2][1] = (z * y) * negativeCos - x * angleSin;
         rotationMatrix.m[2][2] = (z * z) * negativeCos + angleCos;
 
+        // This seems incorrect. It probably is incorrect. But changing it messes things up
+        //   Rotation matrices are a mess and I probably messed something up while porting from D3D
         *this = rotationMatrix * *this;
     }
 
@@ -362,12 +390,9 @@ inline f32 mapRange(f32 in, f32 domainLow, f32 domainHigh, f32 rangeLow, f32 ran
     return in;
 }
 
-// Sets matrix mode to modelview and clobbers current matrix
 // Creates a left handed matrix, using the method from Microsoft's docs
-inline void createViewMatrix(ZunVec3 &camera, ZunVec3 &target, ZunVec3 &up)
+inline ZunMatrix createViewMatrix(ZunVec3 &camera, ZunVec3 &target, ZunVec3 &up)
 {
-    g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-
     ZunMatrix lookMatrix;
 
     ZunVec3 xAxis;
@@ -401,15 +426,12 @@ inline void createViewMatrix(ZunVec3 &camera, ZunVec3 &target, ZunVec3 &up)
     lookMatrix.m[3][2] = -zAxis.calcDot(camera);
     lookMatrix.m[3][3] = 1.0f;
 
-    g_glFuncTable.glLoadMatrixf((GLfloat *)lookMatrix.m);
+    return lookMatrix;
 }
 
 // Sets matrix mode to projection and clobbers current matrix
-inline void perspectiveMatrixFromFOV(f32 verticalFOV, f32 aspectRatio, f32 nearPlane, f32 farPlane)
+inline ZunMatrix perspectiveMatrixFromFOV(f32 verticalFOV, f32 aspectRatio, f32 nearPlane, f32 farPlane)
 {
-    g_glFuncTable.glMatrixMode(GL_PROJECTION);
-    g_glFuncTable.glLoadIdentity();
-
     // D3D has pixels at integer locations, but OpenGL uses half integer pixels. This may need correction
     // https://www.slideshare.net/slideshow/opengl-32-and-more/2172343
     // There are some other clip space differences between D3D and OpenGL, but they shouldn't matter for EoSD
@@ -419,32 +441,35 @@ inline void perspectiveMatrixFromFOV(f32 verticalFOV, f32 aspectRatio, f32 nearP
 
     f32 vertical = ZUN_TANF(verticalFOV / 2) * nearPlane;
     f32 horizontal = vertical * aspectRatio;
+    f32 zScale = (farPlane + nearPlane) / (farPlane - nearPlane);
 
-    g_glFuncTable.glFrustumf(-horizontal, horizontal, -vertical, vertical, nearPlane, farPlane);
+    ZunMatrix perspectiveMatrix;
 
-    // Change right handed matrix OpenGL generates to a left-handed one to match D3D coordinates
-    g_glFuncTable.glScalef(1.0f, 1.0f, -1.0f);
+    std::memset(perspectiveMatrix.m, 0, sizeof(perspectiveMatrix.m));
+
+    perspectiveMatrix.m[0][0] = nearPlane / horizontal;
+    perspectiveMatrix.m[1][1] = nearPlane / vertical;
+
+    perspectiveMatrix.m[2][2] = zScale;
+    perspectiveMatrix.m[3][2] = -nearPlane * zScale - nearPlane;
+
+    perspectiveMatrix.m[2][3] = 1.0f;
+    perspectiveMatrix.m[3][3] = 0.0f;
+
+    return perspectiveMatrix;
 }
 
-// Pushes an identity matrix to the modelview stack and pushes a matrix that maps screen coordinates to
-//   NDCs to the projection stack. Used for drawing RHW positions, since D3D interprets them has having
-//   been already transformed, but OpenGL has no option to prevent transformation
-inline void inverseViewportMatrix()
+// Returns a matrix that maps screen coordinates to NDCs. Used for drawing RHW positions,
+//   since D3D interprets them has having been already transformed, but OpenGL has no option
+//   to prevent transformation
+inline ZunMatrix inverseViewportMatrix()
 {
+    ZunMatrix inverseMatrix;
     ZunViewport viewport;
 
     viewport.Get();
 
-    g_glFuncTable.glMatrixMode(GL_TEXTURE);
-    g_glFuncTable.glLoadIdentity();
-
-    g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-    g_glFuncTable.glPushMatrix();
-    g_glFuncTable.glLoadIdentity();
-
-    g_glFuncTable.glMatrixMode(GL_PROJECTION);
-    g_glFuncTable.glPushMatrix();
-    g_glFuncTable.glLoadIdentity();
+    inverseMatrix.Identity();
 
     // Mappings:
     //   X: [viewport x .. viewport width] -> [-1 .. 1]
@@ -462,11 +487,13 @@ inline void inverseViewportMatrix()
     //   Graphical output should really be checked thoroughly to make sure nothing (especially in the 3D draw functions)
     //   ends up a half pixel off.
 
-    g_glFuncTable.glTranslatef(-1.0f, 1.0f, -1.0f);
-    g_glFuncTable.glScalef(1.0f / (viewport.Width / 2.0f), -1.0f / (viewport.Height / 2.0f), 2.0f);
-    g_glFuncTable.glTranslatef(-viewport.X, -viewport.Y, 0.0f);
+    inverseMatrix.Translate(-1.0f, 1.0f, -1.0f);
+    inverseMatrix.Scale(1.0f / (viewport.Width / 2.0f), -1.0f / (viewport.Height / 2.0f), 2.0f);
+    inverseMatrix.Translate(-viewport.X, -viewport.Y, 0.0f);
 
     g_glFuncTable.glDepthRangef(0.0f, 1.0f);
+
+    return inverseMatrix;
 }
 
 // Reimplementation of D3DXVec3Project. TODO: Replace if possible once port is working

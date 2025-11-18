@@ -8,6 +8,9 @@
 #include "AnmIdx.hpp"
 #include "AnmVm.hpp"
 #include "GameManager.hpp"
+#include "graphics/GfxInterface.hpp"
+#include "graphics/GLFunc.hpp"
+#include "ZunTimer.hpp"
 #include "diffbuild.hpp"
 #include "graphics/GLFunc.hpp"
 #include "inttypes.hpp"
@@ -91,16 +94,30 @@ struct VertexTex1DiffuseXyz
     ZunVec2 textureUV;
 };
 
-struct VertexTex1Xy
-{
-    ZunVec2 position;
-    ZunVec2 textureUV;
-};
-
 enum ProjectionMode
 {
     PROJECTION_MODE_PERSPECTIVE,
     PROJECTION_MODE_ORTHOGRAPHIC
+};
+
+struct VertexAttribArrayState
+{
+    void *ptr;
+    std::size_t stride;
+};
+
+enum DirtyRenderStateBitShifts
+{
+    DIRTY_FOG = 0,
+    DIRTY_DEPTH_CONFIG = 1,
+    DIRTY_VERTEX_ATTRIBUTE_ENABLE = 2,
+    DIRTY_VERTEX_ATTRIBUTE_ARRAY = 3,
+    DIRTY_COLOR_OP = 4,
+    DIRTY_TEXTURE_FACTOR = 5,
+    DIRTY_MODEL_MATRIX = 6,
+    DIRTY_VIEW_MATRIX = 7,
+    DIRTY_PROJECTION_MATRIX = 8,
+    DIRTY_TEXTURE_MATRIX = 9,
 };
 
 struct AnmRawSprite
@@ -178,22 +195,75 @@ struct AnmManager
         this->SetActiveSprite(vm, spriteIdx);
     }
 
-    void SetCurrentVertexShader(u8 vertexShader)
+    void BackendDrawCall()
     {
-        this->currentVertexShader = vertexShader;
+        if (this->dirtyFlags != 0)
+        {
+            this->UpdateDirtyStates();
+        }
+
+        g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
-    void SetCurrentColorOp(u8 colorOp)
+
+    // We need to do checks in these because they're called nearly every ANM draw call and otherwise
+    //   we'd be constantly setting the dirty flag. The other global state sets are done less often
+    //   and so they don't need the checks until UpdateDirtyStates.
+
+    void SetVertexAttributes(u8 vertexShader)
     {
-        this->currentColorOp = colorOp;
+        this->dirtyEnabledVertexAttributes = vertexShader;
+
+        if (this->dirtyEnabledVertexAttributes == this->enabledVertexAttributes)
+        {
+            this->dirtyFlags &= ~(1 << DIRTY_VERTEX_ATTRIBUTE_ENABLE);
+            return;
+        }
+
+        this->dirtyFlags |= (1 << DIRTY_VERTEX_ATTRIBUTE_ENABLE);
     }
+
+    void SetColorOp(TextureOpComponent component, ColorOp op)
+    {
+        this->dirtyColorOps[component] = op;
+
+        if ((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 1 ||
+            this->dirtyColorOps[component] == this->colorOps[component])
+        {
+            dirtyFlags &= ~(1 << DIRTY_COLOR_OP);
+            return;
+        }
+
+        dirtyFlags |= (1 << DIRTY_COLOR_OP);
+    }
+
     void SetCurrentBlendMode(u8 blendMode)
     {
         this->currentBlendMode = blendMode;
     }
-    void SetCurrentZWriteDisable(u8 zwriteDisable)
+
+    void SetDepthMask(bool depthEnable)
     {
-        this->currentZWriteDisable = zwriteDisable;
+        this->dirtyDepthMask = depthEnable;
+
+        if ((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1 || this->dirtyDepthMask == this->depthMask)
+        {
+            return;
+        }
+
+        this->dirtyFlags |= (1 << DIRTY_DEPTH_CONFIG);
     }
+
+    void SetDepthFunc(DepthFunc func)
+    {
+        if ((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1)
+        {
+            return;
+        }
+
+        this->dirtyDepthFunc = func;
+        this->dirtyFlags |= (1 << DIRTY_DEPTH_CONFIG);
+    }
+
     void SetCurrentTexture(GLuint textureHandle)
     {
         if (this->currentTextureHandle != textureHandle)
@@ -218,16 +288,77 @@ struct AnmManager
 
         if (projectionMode == PROJECTION_MODE_ORTHOGRAPHIC)
         {
-            inverseViewportMatrix();
+            ZunMatrix identityMatrix;
+
+            memcpy(this->perspectiveMatrixBackup, this->dirtyTransformMatrices, sizeof(this->perspectiveMatrixBackup));
+
+            identityMatrix.Identity();
+
+            this->SetTransformMatrix(MATRIX_VIEW, identityMatrix);
+            this->SetTransformMatrix(MATRIX_TEXTURE, identityMatrix);
+
+            ZunMatrix inverseMatrix = inverseViewportMatrix();
+
+            this->SetTransformMatrix(MATRIX_PROJECTION, inverseMatrix);
+
             return;
         }
 
         g_Supervisor.viewport.Set();
 
-        g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-        g_glFuncTable.glPopMatrix();
-        g_glFuncTable.glMatrixMode(GL_PROJECTION);
-        g_glFuncTable.glPopMatrix();
+        this->SetTransformMatrix(MATRIX_VIEW, this->perspectiveMatrixBackup[MATRIX_VIEW]);
+        this->SetTransformMatrix(MATRIX_PROJECTION, this->perspectiveMatrixBackup[MATRIX_PROJECTION]);
+    }
+
+    void SetFogRange(f32 near, f32 far)
+    {
+        this->dirtyFogNear = near;
+        this->dirtyFogFar = far;
+        this->dirtyFlags |= (1 << DIRTY_FOG);
+    }
+
+    void SetFogColor(ZunColor color)
+    {
+        this->dirtyFogColor = color;
+        this->dirtyFlags |= (1 << DIRTY_FOG);
+    }
+
+    void SetAttributePointer(VertexAttributeArrays attr, std::size_t stride, void *ptr)
+    {
+        this->dirtyAttribArrays[attr].ptr = ptr;
+        this->dirtyAttribArrays[attr].stride = stride;
+
+        if (!std::memcmp(&this->dirtyAttribArrays[attr], &this->attribArrays[attr], sizeof(*this->dirtyAttribArrays)))
+        {
+            return;
+        }
+
+        this->dirtyFlags |= (1 << DIRTY_VERTEX_ATTRIBUTE_ARRAY);
+    }
+
+    void SetTextureFactor(ZunColor factor)
+    {
+        this->dirtytTextureFactor = factor;
+
+        if (this->dirtytTextureFactor == this->textureFactor)
+        {
+            this->dirtyFlags &= ~(1 << DIRTY_TEXTURE_FACTOR);
+            return;
+        }
+
+        this->dirtyFlags |= 1 << DIRTY_TEXTURE_FACTOR;
+    }
+
+    void SetTransformMatrix(TransformMatrix type, ZunMatrix &matrix)
+    {
+        std::memcpy(&this->dirtyTransformMatrices[type], &matrix, sizeof(matrix));
+
+        if (!std::memcmp(&this->transformMatrices[type], &matrix, sizeof(matrix)))
+        {
+            this->dirtyFlags &= ~(1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts) type));
+        }
+
+        this->dirtyFlags |= 1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts) type);
     }
 
     i32 ExecuteScript(AnmVm *vm);
@@ -266,7 +397,6 @@ struct AnmManager
         vm->anmFileIndex = anmFileIdx;
         vm->pos = ZunVec3(0, 0, 0);
         vm->posOffset = ZunVec3(0, 0, 0);
-
         vm->fontHeight = 15;
         vm->fontWidth = 15;
 
@@ -290,6 +420,7 @@ struct AnmManager
     void ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &srcRect, const SDL_Rect &dstRect);
     // Creates, binds, and set parameters for a new texture
     void CreateTextureObject();
+    void UpdateDirtyStates();
 
     AnmLoadedSprite sprites[2048];
     AnmVm virtualMachine;
@@ -304,13 +435,9 @@ struct AnmManager
     SDL_Surface *surfaces[32];
     //    SDL_Surface *surfacesBis[32];
     //    D3DXIMAGE_INFO surfaceSourceInfo[32];
-    ZunColor currentTextureFactor;
     GLuint currentTextureHandle;
     GLuint dummyTextureHandle;
     u8 currentBlendMode;
-    u8 currentColorOp;
-    u8 currentVertexShader;
-    u8 currentZWriteDisable;
     ProjectionMode projectionMode;
     AnmLoadedSprite *currentSprite;
     //    IDirect3DVertexBuffer8 *vertexBuffer;
@@ -320,6 +447,35 @@ struct AnmManager
     i32 screenshotTop;
     i32 screenshotWidth;
     i32 screenshotHeight;
+
+    GfxInterface *gfxBackend;
+
+  private:
+    u32 dirtyFlags;
+    f32 fogNear;
+    f32 fogFar;
+    ZunColor fogColor;
+    bool depthMask;
+    DepthFunc depthFunc;
+    u8 enabledVertexAttributes;
+    VertexAttribArrayState attribArrays[3];
+    ColorOp colorOps[2];
+    ZunColor textureFactor;
+    ZunMatrix transformMatrices[4];
+
+    f32 dirtyFogNear;
+    f32 dirtyFogFar;
+    ZunColor dirtyFogColor;
+    bool dirtyDepthMask;
+    DepthFunc dirtyDepthFunc;
+    u8 dirtyEnabledVertexAttributes;
+    VertexAttribArrayState dirtyAttribArrays[3];
+    ColorOp dirtyColorOps[2];
+    ZunColor dirtytTextureFactor;
+    ZunMatrix dirtyTransformMatrices[4];
+
+
+    ZunMatrix perspectiveMatrixBackup[4]; // Replaces matrix stack use for orthographic mode
 };
 ZUN_ASSERT_SIZE(AnmManager, 0x2112c);
 

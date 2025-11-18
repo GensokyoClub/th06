@@ -1,10 +1,13 @@
 #include "GameWindow.hpp"
 #include "AnmManager.hpp"
 #include "GameErrorContext.hpp"
+#include "graphics/FixedFunctionGL.hpp"
+#include "graphics/WebGL.hpp"
 #include "ScreenEffect.hpp"
 #include "SoundPlayer.hpp"
 #include "Stage.hpp"
 #include "Supervisor.hpp"
+#include "utils.hpp"
 #include "ZunMath.hpp"
 #include "diffbuild.hpp"
 #include "i18n.hpp"
@@ -23,6 +26,17 @@ i32 g_TickCountToEffectiveFramerate;
 f64 g_LastFrameTime;
 
 #define FRAME_TIME (1000. / 60.)
+
+static struct
+{
+    const char *name;
+    bool isEsContext;
+    void (*setContextFlags)();
+    GfxInterface *(*init)();
+} s_RenderBackends[] = {
+    {"GL(ES) 2.0 / WebGL", true, WebGL::SetContextFlags, WebGL::Create},
+    {"Fixed function GL(ES)", false, FixedFunctionGL::SetContextFlags, FixedFunctionGL::Init}
+};
 
 RenderResult GameWindow::Render()
 {
@@ -182,33 +196,56 @@ void GameWindow::CreateGameWindow()
     i32 x = 0;
     i32 y = 0;
 
+    g_GameWindow.window = NULL;
+    g_GameWindow.glContext = NULL;
+
     if (g_Supervisor.cfg.windowed == 0)
     {
         flags |= SDL_WINDOW_FULLSCREEN;
     }
 
-/*
- In Emscripten, we use gl4es for OpenGL 1.3 emulation
- since emscripten doesn't properly handle the functions we use.
- This means that we have to use OpenGL ES 2.0 instead of OpenGL 1.3, or else things die.
-*/
-#ifdef __EMSCRIPTEN__
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-#else
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
-#endif
+    for (u32 i = 0; i < ARRAY_SIZE(s_RenderBackends); i++)
+    {
+        s_RenderBackends[i].setContextFlags();
 
-    g_GameWindow.window = SDL_CreateWindow(TH_WINDOW_TITLE, x, y, width, height, flags);
+        g_GameWindow.window = SDL_CreateWindow(TH_WINDOW_TITLE, x, y, width, height, flags);
 
-    g_GameWindow.glContext = SDL_GL_CreateContext(g_GameWindow.window);
+        if (g_GameWindow.window == NULL)
+        {
+            goto fail;
+        }
 
-    SDL_GL_MakeCurrent(g_GameWindow.window, g_GameWindow.glContext);
+        g_GameWindow.glContext = SDL_GL_CreateContext(g_GameWindow.window);
 
-    g_glFuncTable.ResolveFunctions(false);
+        if (g_GameWindow.glContext == NULL)
+        {
+            goto fail;
+        }
+
+        if (SDL_GL_MakeCurrent(g_GameWindow.window, g_GameWindow.glContext) != 0)
+        {
+            goto fail;
+        }
+
+        utils::DebugPrint2("Using renderer backend %s", s_RenderBackends[i].name);
+        g_glFuncTable.ResolveFunctions(s_RenderBackends[i].isEsContext);
+        g_GameWindow.renderBackendIndex = i;
+        break;
+fail:
+        if (g_GameWindow.glContext != NULL)
+        {
+            SDL_GL_DeleteContext(g_GameWindow.glContext);
+            g_GameWindow.glContext = NULL;
+        }
+
+        if (g_GameWindow.window != NULL)
+        {
+            SDL_DestroyWindow(g_GameWindow.window);
+            g_GameWindow.window = NULL;
+        }
+
+        utils::DebugPrint2("Renderer creation for backend %s failed", s_RenderBackends[i].name);
+    }
 
     g_Supervisor.gameWindow = g_GameWindow.window;
 
@@ -277,6 +314,8 @@ i32 GameWindow::InitD3dRendering(void)
     f32 aspect_ratio;
     f32 field_of_view_y;
     f32 camera_distance;
+
+    g_AnmManager->gfxBackend = s_RenderBackends[g_GameWindow.renderBackendIndex].init();
 
     //    using_d3d_hal = 1;
     //    std::memset(&present_params, 0, sizeof(D3DPRESENT_PARAMETERS));
@@ -444,12 +483,13 @@ i32 GameWindow::InitD3dRendering(void)
     eye.z = -camera_distance;
     //    D3DXMatrixLookAtLH(&g_Supervisor.viewMatrix, &eye, &at, &up);
 
-    utils::DebugPrint2("%p", g_GameWindow.glContext);
-    createViewMatrix(eye, at, up);
-    g_glFuncTable.glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat *)&g_Supervisor.viewMatrix.m);
+    ZunMatrix viewMatrix = createViewMatrix(eye, at, up);
+    g_AnmManager->SetTransformMatrix(MATRIX_VIEW, viewMatrix);
+    g_Supervisor.viewMatrix = viewMatrix;
 
-    perspectiveMatrixFromFOV(field_of_view_y, aspect_ratio, 100.0f, 10000.0f);
-    g_glFuncTable.glGetFloatv(GL_PROJECTION_MATRIX, (GLfloat *)&g_Supervisor.projectionMatrix.m);
+    ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(field_of_view_y, aspect_ratio, 100.0f, 10000.0f);
+    g_AnmManager->SetTransformMatrix(MATRIX_PROJECTION, perspectiveMatrix);
+    g_Supervisor.projectionMatrix = perspectiveMatrix;
 
     //    D3DXMatrixPerspectiveFovLH(&g_Supervisor.projectionMatrix, field_of_view_y, aspect_ratio, 100.0, 10000.0);
     //    g_Supervisor.d3dDevice->SetTransform(D3DTS_VIEW, &g_Supervisor.viewMatrix);
@@ -502,96 +542,23 @@ void GameWindow::InitD3dDevice(void)
     g_glFuncTable.glEnableClientState(GL_VERTEX_ARRAY);
     g_glFuncTable.glEnable(GL_BLEND);
 
-    if (((g_Supervisor.cfg.opts >> GCOS_SUPPRESS_USE_OF_GOROUD_SHADING) & 1) == 1)
-    {
-        g_glFuncTable.glShadeModel(GL_FLAT);
-    }
-
     g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     if (((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1) == 0)
     {
         g_glFuncTable.glEnable(GL_DEPTH_TEST);
-        g_glFuncTable.glDepthFunc(GL_LEQUAL);
-    }
-    else
-    {
-        g_glFuncTable.glDepthFunc(GL_ALWAYS);
+        g_AnmManager->SetDepthMask(true);
+        g_AnmManager->SetDepthFunc(DEPTH_FUNC_LEQUAL);
     }
 
     g_glFuncTable.glEnable(GL_ALPHA_TEST);
     g_glFuncTable.glAlphaFunc(GL_GEQUAL, 4 / 255.0f);
 
-    if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_FOG) & 1) == 0)
-    {
-        g_glFuncTable.glEnable(GL_FOG);
-    }
+    g_AnmManager->SetFogColor(0xFF'A0'A0'A0);
+    g_AnmManager->SetFogRange(1'000.0f, 5'000.0f);
 
-    f32 fogColors[] = {0xA0 / 255.0f, 0xA0 / 255.0f, 0xA0 / 255.0f, 0xFF / 255.0f};
 
-    g_glFuncTable.glFogf(GL_FOG_DENSITY, 1.0f);
-    g_glFuncTable.glFogf(GL_FOG_MODE, GL_LINEAR);
-    g_glFuncTable.glFogfv(GL_FOG_COLOR, fogColors);
-    g_glFuncTable.glFogf(GL_FOG_START, 1000.0f);
-    g_glFuncTable.glFogf(GL_FOG_END, 5000.0f);
-
-    g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
-
-    if (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 1) == 0)
-    {
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-    }
-    else
-    {
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
-    }
-
-    g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_TEXTURE);
-    g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
-
-    //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-    if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
-    {
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_CONSTANT);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_TFACTOR);
-    }
-    else
-    {
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_PRIMARY_COLOR);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-    }
-
-    g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
-
-    if (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 1) == 0)
-    {
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-    }
-    else
-    {
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_REPLACE);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
-    }
-    //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-
-    g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE);
-    g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
-
-    if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
-    {
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_CONSTANT);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_TFACTOR);
-    }
-    else
-    {
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_PRIMARY_COLOR);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-    }
-
-    g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
+//    g_AnmManager->gfxBackend->Init();
 
     // All of these are set per texture object in OpenGL (and also most are defaults)
     //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_NONE);
@@ -605,10 +572,6 @@ void GameWindow::InitD3dDevice(void)
     {
         anm1 = g_AnmManager;
         anm1->currentBlendMode = 0xff;
-        anm2 = g_AnmManager;
-        anm2->currentColorOp = 0xff;
-        anm3 = g_AnmManager;
-        anm3->currentVertexShader = 0xff;
         anm4 = g_AnmManager;
         anm4->currentTextureHandle = 0;
     }

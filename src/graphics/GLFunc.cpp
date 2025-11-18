@@ -49,7 +49,6 @@ void GLFuncTable::ResolveFunctions(bool glesContext)
     TRY_RESOLVE_FUNCTION(glPopMatrix)
     TRY_RESOLVE_FUNCTION(glPushMatrix)
     TRY_RESOLVE_FUNCTION(glReadPixels)
-    TRY_RESOLVE_FUNCTION(glScalef)
     TRY_RESOLVE_FUNCTION(glShadeModel)
     TRY_RESOLVE_FUNCTION(glTexCoordPointer)
     TRY_RESOLVE_FUNCTION(glTexEnvfv)
@@ -57,7 +56,6 @@ void GLFuncTable::ResolveFunctions(bool glesContext)
     TRY_RESOLVE_FUNCTION(glTexImage2D)
     TRY_RESOLVE_FUNCTION(glTexParameteri)
     TRY_RESOLVE_FUNCTION(glTexSubImage2D)
-    TRY_RESOLVE_FUNCTION(glTranslatef)
     TRY_RESOLVE_FUNCTION(glVertexPointer)
     TRY_RESOLVE_FUNCTION(glViewport)
 
@@ -71,14 +69,35 @@ void GLFuncTable::ResolveFunctions(bool glesContext)
     {
         TRY_RESOLVE_FUNCTION_GLES(glClearDepthf)
         TRY_RESOLVE_FUNCTION_GLES(glDepthRangef)
-        TRY_RESOLVE_FUNCTION_GLES(glFrustumf)
     }
     else
     {
         TRY_RESOLVE_FUNCTION(glClearDepth)
         TRY_RESOLVE_FUNCTION(glDepthRange)
-        TRY_RESOLVE_FUNCTION(glFrustum)
     }
+
+    TRY_RESOLVE_FUNCTION(glAttachShader)
+    TRY_RESOLVE_FUNCTION(glBindAttribLocation)
+    TRY_RESOLVE_FUNCTION(glCompileShader)
+    TRY_RESOLVE_FUNCTION(glCreateProgram)
+    TRY_RESOLVE_FUNCTION(glCreateShader)
+    TRY_RESOLVE_FUNCTION(glDeleteProgram)
+    TRY_RESOLVE_FUNCTION(glDeleteShader)
+    TRY_RESOLVE_FUNCTION(glDisableVertexAttribArray)
+    TRY_RESOLVE_FUNCTION(glEnableVertexAttribArray)
+    TRY_RESOLVE_FUNCTION(glGetProgramInfoLog)
+    TRY_RESOLVE_FUNCTION(glGetProgramiv)
+    TRY_RESOLVE_FUNCTION(glGetShaderInfoLog)
+    TRY_RESOLVE_FUNCTION(glGetShaderiv)
+    TRY_RESOLVE_FUNCTION(glGetUniformLocation)
+    TRY_RESOLVE_FUNCTION(glLinkProgram)
+    TRY_RESOLVE_FUNCTION(glShaderSource)
+    TRY_RESOLVE_FUNCTION(glUniform1f)
+    TRY_RESOLVE_FUNCTION(glUniform1i)
+    TRY_RESOLVE_FUNCTION(glUniform4f)
+    TRY_RESOLVE_FUNCTION(glUniformMatrix4fv)
+    TRY_RESOLVE_FUNCTION(glUseProgram)
+    TRY_RESOLVE_FUNCTION(glVertexAttribPointer)
 
     this->isGlesContext = glesContext;
 }
@@ -104,19 +123,6 @@ void GLFuncTable::glDepthRangef(GLclampf near_val, GLclampf far_val)
     else
     {
         this->glDepthRange(near_val, far_val);
-    }
-}
-
-void GLFuncTable::glFrustumf(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val,
-                             GLfloat far_val)
-{
-    if (this->isGlesContext)
-    {
-        this->glFrustumf_ptr(left, right, bottom, top, near_val, far_val);
-    }
-    else
-    {
-        this->glFrustum(left, right, bottom, top, near_val, far_val);
     }
 }
 

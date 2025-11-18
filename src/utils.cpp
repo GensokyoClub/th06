@@ -17,7 +17,7 @@ void DebugPrint(const char *fmt, ...)
     std::va_list args;
 
     va_start(args, fmt);
-    std::vsprintf(tmpBuffer, fmt, args);
+    std::vsnprintf(tmpBuffer, 511, fmt, args);
     va_end(args);
 
     std::printf("DEBUG2: %s\n", tmpBuffer);
@@ -63,7 +63,7 @@ void DebugPrint2(const char *fmt, ...)
     std::va_list args;
 
     va_start(args, fmt);
-    std::vsprintf(tmpBuffer, fmt, args);
+    std::vsnprintf(tmpBuffer, 511, fmt, args);
     va_end(args);
 
     std::printf("DEBUG2: %s\n", tmpBuffer);

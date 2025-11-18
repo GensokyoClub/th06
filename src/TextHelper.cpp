@@ -340,12 +340,10 @@ void TextHelper::RenderTextToTexture(i32 xPos, i32 yPos, i32 spriteWidth, i32 sp
         SDL_Log("SDL_BlitScaled failed! Error: %s", SDL_GetError());
     }
 
-    g_glFuncTable.glBindTexture(GL_TEXTURE_2D, outTexture->handle);
+    g_AnmManager->SetCurrentTexture(outTexture->handle);
 
     g_glFuncTable.glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, outTexture->width, outTexture->height, GL_RGBA,
                                   GL_UNSIGNED_BYTE, outTexture->textureData);
-
-    g_glFuncTable.glBindTexture(GL_TEXTURE_2D, 0);
 
     SDL_FreeSurface(textureSurface);
 

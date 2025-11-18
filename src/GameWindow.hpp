@@ -36,6 +36,7 @@ struct GameWindow
     i32 screenSaveActive;
     i32 lowPowerActive;
     i32 powerOffActive;
+    u32 renderBackendIndex;
 };
 
 extern GameWindow g_GameWindow;

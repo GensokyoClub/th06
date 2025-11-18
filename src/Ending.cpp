@@ -527,7 +527,6 @@ bool Ending::AddedCallback(Ending *ending)
     g_AnmManager->SetCurrentTexture(0);
     g_AnmManager->SetCurrentSprite(NULL);
     g_AnmManager->SetCurrentBlendMode(0xff);
-    g_AnmManager->SetCurrentVertexShader(0xff);
 
     shotTypeAndCharacter = g_GameManager.character * 2 + g_GameManager.shotType;
     ending->hasSeenEnding = false;

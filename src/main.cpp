@@ -39,6 +39,7 @@ static int renderResult = 0;
 static bool initialize_game()
 {
 #ifdef _WIN32
+    // TODO: Find a better solution for locales / encoding on Windows, because it's all a mess
     setlocale(LC_ALL, ".UTF8");
 #endif
 
@@ -46,6 +47,7 @@ static bool initialize_game()
     bool loadConfig = g_Supervisor.LoadConfig(EM_TH_CONFIG_FILE);
 #else
     bool loadConfig = g_Supervisor.LoadConfig(TH_CONFIG_FILE);
+
 #endif
 
     if (!loadConfig)
@@ -55,6 +57,8 @@ static bool initialize_game()
     }
 
     GameWindow::CreateGameWindow();
+
+    g_AnmManager = new AnmManager();
 
     if (GameWindow::InitD3dRendering())
     {
@@ -85,10 +89,6 @@ static bool initialize_game()
 
     return true;
 }
-
-// ------------------------------------------------
-// Main loop (called each frame by Emscripten)
-// ------------------------------------------------
 
 static void main_loop()
 {
@@ -181,10 +181,6 @@ static void restart_game()
     }
 }
 
-// ------------------------------------------------
-// Entry point
-// ------------------------------------------------
-
 int main(int argc, char *argv[])
 {
     if (!initialize_game())
@@ -194,7 +190,6 @@ int main(int argc, char *argv[])
     // Non-blocking browser main loop
     emscripten_set_main_loop(main_loop, 0, 1);
 #else
-    // Desktop blocking loop
     while (running)
         main_loop();
 #endif

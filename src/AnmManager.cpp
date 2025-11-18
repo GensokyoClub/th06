@@ -106,12 +106,7 @@ u8 *AnmManager::ExtractSurfacePixels(SDL_Surface *src, u8 pixelDepth)
     u8 *pixelData = new u8[dstPitch * src->h];
     u8 *dstPtr = pixelData;
     u8 *srcPtr = (u8 *)src->pixels;
-    //    u8 *srcPtr = ((u8 *) src->pixels) + (src->h - 1) * srcPitch;
 
-    // D3D textures use vertical coordinates starting from the top, whereas OpenGL textures start from the bottom
-    // Because of this, textures must be flipped when loaded
-
-    // Flipping disabled for now
     for (int i = 0; i < src->h; i++)
     {
         std::memcpy(dstPtr, srcPtr, dstPitch);
@@ -250,12 +245,16 @@ AnmManager::AnmManager()
 
     //    this->vertexBuffer = NULL;
     this->currentBlendMode = 0;
-    this->currentColorOp = 0;
-    this->currentTextureFactor = 1;
-    this->currentVertexShader = 0;
-    this->currentZWriteDisable = 0;
     this->screenshotTextureId = -1;
     this->projectionMode = PROJECTION_MODE_PERSPECTIVE;
+
+    this->dirtyFlags = 0;
+
+    for (u32 i = 0; i < ARRAY_SIZE_SIGNED(this->transformMatrices); i++)
+    {
+        transformMatrices[i].Identity();
+        dirtyTransformMatrices[i].Identity();
+    }
 }
 
 void AnmManager::SetupVertexBuffer()
@@ -311,10 +310,10 @@ void AnmManager::SetupVertexBuffer()
         //        this->vertexBuffer->Unlock();
         //
         //        g_Supervisor.d3dDevice->SetStreamSource(0, g_AnmManager->vertexBuffer, sizeof(RenderVertexInfo));
-        g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*vertexBufferContents),
-                                      &this->vertexBufferContents[0].position);
-        g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*vertexBufferContents),
-                                        &this->vertexBufferContents[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*vertexBufferContents),
+                                  &this->vertexBufferContents[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*vertexBufferContents),
+                                  &this->vertexBufferContents[0].textureUV);
     }
 }
 
@@ -612,8 +611,6 @@ void AnmManager::ReleaseAnm(i32 anmIdx)
         free(anmFilePtr);
         this->anmFiles[anmIdx] = 0;
         this->currentBlendMode = 0xff;
-        this->currentColorOp = 0xff;
-        this->currentVertexShader = 0xff;
         this->currentTextureHandle = 0;
     }
 }
@@ -712,35 +709,15 @@ void AnmManager::SetRenderStateForVm(AnmVm *vm)
             //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
         }
     }
-    if ((((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING) & 1) == 0) &&
-        (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 1) == 0) && (this->currentColorOp != vm->flags.colorOp))
+
+    if (((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING) & 1) == 0)
     {
-        this->currentColorOp = vm->flags.colorOp;
-        if (this->currentColorOp == AnmVmColorOp_Modulate)
-        {
-            g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
-            //            g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-        }
-        else
-        {
-            g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_ADD);
-            //            g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_ADD);
-        }
+        this->SetColorOp(COMPONENT_RGB, (ColorOp)vm->flags.colorOp);
     }
+
     if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
     {
-        if (this->currentTextureFactor != vm->color)
-        {
-            this->currentTextureFactor = vm->color;
-
-            // For God knows what reason, integer arguments for GL_TEXTURE_ENV_COLOR are mapped to -1.0::1.0,
-            //   but then clamped to 0.0::1.0. Let's just use floats from the start to avoid that mess
-
-            GLfloat tfactorColor[4] = {((vm->color >> 16) & 0xFF) / 255.0f, ((vm->color >> 8) & 0xFF) / 255.0f,
-                                       ((vm->color) & 0xFF) / 255.0f, ((vm->color >> 24) & 0xFF) / 255.0f};
-
-            g_glFuncTable.glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, tfactorColor);
-        }
+        this->SetTextureFactor(vm->color);
     }
     else
     {
@@ -753,22 +730,116 @@ void AnmManager::SetRenderStateForVm(AnmVm *vm)
         g_PrimitivesToDrawUnknown[2].diffuse = vm->color;
         g_PrimitivesToDrawUnknown[3].diffuse = vm->color;
     }
-    if ((((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1) == 0) &&
-        (this->currentZWriteDisable != vm->flags.zWriteDisable))
+
+    this->SetDepthMask(!vm->flags.zWriteDisable);
+
+    return;
+}
+
+void AnmManager::UpdateDirtyStates()
+{
+    while (this->dirtyFlags != 0)
     {
-        this->currentZWriteDisable = vm->flags.zWriteDisable;
-        if (this->currentZWriteDisable == 0)
+        u32 currFlagIndex = std::__countr_zero(this->dirtyFlags);
+        this->dirtyFlags &= ~(1 << currFlagIndex);
+
+        // This would all be nicer if the enum was flag values rather than indices,
+        //   but compilers just aren't able to deal with that in the switch statement :/
+        switch (currFlagIndex)
         {
-            g_glFuncTable.glDepthMask(GL_TRUE);
-            //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_ZWRITEENABLE, 1);
+        case DIRTY_FOG:
+            if (this->dirtyFogNear != this->fogNear || this->dirtyFogFar != this->fogFar)
+            {
+                this->fogNear = this->dirtyFogNear;
+                this->fogFar = this->dirtyFogFar;
+                gfxBackend->SetFogRange(this->fogNear, this->fogFar);
+            }
+
+            if (this->dirtyFogColor != this->fogColor)
+            {
+                this->fogColor = this->dirtyFogColor;
+                gfxBackend->SetFogColor(this->fogColor);
+            }
+
+            break;
+        case DIRTY_DEPTH_CONFIG:
+            if (this->dirtyDepthMask != this->depthMask)
+            {
+                this->depthMask = this->dirtyDepthMask;
+                g_glFuncTable.glDepthMask(this->depthMask);
+            }
+
+            if (this->dirtyDepthFunc != this->depthFunc)
+            {
+                this->depthFunc = this->dirtyDepthFunc;
+
+                // This'll end up less awkward once there's a render backend abstraction layer I swear
+                if (this->depthFunc == DEPTH_FUNC_ALWAYS)
+                {
+                    g_glFuncTable.glDepthFunc(GL_ALWAYS);
+                }
+                else
+                {
+                    g_glFuncTable.glDepthFunc(GL_LEQUAL);
+                }
+            }
+
+            break;
+        case DIRTY_VERTEX_ATTRIBUTE_ENABLE: {
+            u8 changedAttributes = this->dirtyEnabledVertexAttributes ^ this->enabledVertexAttributes;
+            this->enabledVertexAttributes = this->dirtyEnabledVertexAttributes;
+
+            while (changedAttributes != 0)
+            {
+                u8 currBit = std::__countr_zero(changedAttributes);
+                gfxBackend->ToggleVertexAttribute(changedAttributes & (1 << currBit), this->enabledVertexAttributes & (1 << currBit));
+                changedAttributes &= ~(1 << currBit);
+            }
+
+            break;
         }
-        else
-        {
-            g_glFuncTable.glDepthMask(GL_FALSE);
-            //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_ZWRITEENABLE, 0);
+        case DIRTY_VERTEX_ATTRIBUTE_ARRAY:
+            for (u32 i = 0; i < 3; i++)
+            {
+                if (!std::memcmp(&this->attribArrays[i], &this->dirtyAttribArrays[i], sizeof(*this->attribArrays)))
+                {
+                    continue;
+                }
+
+                this->attribArrays[i] = this->dirtyAttribArrays[i];
+
+                gfxBackend->SetAttributePointer((VertexAttributeArrays) i, this->attribArrays[i].stride, this->attribArrays[i].ptr);
+            }
+
+            break;
+        case DIRTY_COLOR_OP:
+            for (u32 i = 0; i < 2; i++)
+            {
+                if (this->colorOps[i] == this->dirtyColorOps[i])
+                {
+                    continue;
+                }
+
+                this->colorOps[i] = this->dirtyColorOps[i];
+
+                gfxBackend->SetColorOp((TextureOpComponent) i, this->colorOps[i]);
+            }
+
+            break;
+        case DIRTY_TEXTURE_FACTOR:
+            this->textureFactor = this->dirtytTextureFactor;
+            gfxBackend->SetTextureFactor(this->textureFactor);
+            break;
+        case DIRTY_MODEL_MATRIX:
+        case DIRTY_VIEW_MATRIX:
+        case DIRTY_PROJECTION_MATRIX:
+        case DIRTY_TEXTURE_MATRIX:
+            std::memcpy(&this->transformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX],
+                        &this->dirtyTransformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX], sizeof(*this->transformMatrices));
+            gfxBackend->SetTransformMatrix((TransformMatrix) (currFlagIndex - DIRTY_MODEL_MATRIX),
+                                           this->transformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX]);
         }
     }
-    return;
 }
 
 bool AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)
@@ -804,21 +875,14 @@ bool AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)
 
         this->SetCurrentTexture(this->textures[vm->sprite->sourceFileIndex].handle);
     }
-    if (this->currentVertexShader != 2)
-    {
-        g_glFuncTable.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-        if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
-        {
-            g_glFuncTable.glDisableClientState(GL_COLOR_ARRAY);
-            //            g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_XYZRHW);
-        }
-        else
-        {
-            g_glFuncTable.glEnableClientState(GL_COLOR_ARRAY);
-            //            g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZRHW);
-        }
-        this->currentVertexShader = 2;
+    if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
+    {
+        this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD);
+    }
+    else
+    {
+        this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD | VERTEX_ATTR_DIFFUSE);
     }
 
     this->SetRenderStateForVm(vm);
@@ -833,10 +897,10 @@ bool AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)
 
     if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
     {
-        g_glFuncTable.glVertexPointer(4, GL_FLOAT, sizeof(*g_PrimitivesToDrawVertexBuf),
-                                      &g_PrimitivesToDrawVertexBuf[0].position);
-        g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawVertexBuf),
-                                        &g_PrimitivesToDrawVertexBuf[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawVertexBuf),
+                                  &g_PrimitivesToDrawVertexBuf[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawVertexBuf),
+                                  &g_PrimitivesToDrawVertexBuf[0].textureUV);
         //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, g_PrimitivesToDrawVertexBuf, 0x18);
     }
     else
@@ -862,16 +926,16 @@ bool AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)
         g_PrimitivesToDrawNoVertexBuf[2].textureUV.y = g_PrimitivesToDrawNoVertexBuf[3].textureUV.y =
             vm->sprite->uvEnd.y + vm->uvScrollPos.y;
 
-        g_glFuncTable.glVertexPointer(4, GL_FLOAT, sizeof(*g_PrimitivesToDrawNoVertexBuf),
-                                      &g_PrimitivesToDrawNoVertexBuf[0].position);
-        g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawNoVertexBuf),
-                                        &g_PrimitivesToDrawNoVertexBuf[0].textureUV);
-        g_glFuncTable.glColorPointer(4, GL_FLOAT, sizeof(*g_PrimitivesToDrawNoVertexBuf),
-                                     &g_PrimitivesToDrawNoVertexBuf[0].diffuse);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawNoVertexBuf),
+                                  &g_PrimitivesToDrawNoVertexBuf[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawNoVertexBuf),
+                                  &g_PrimitivesToDrawNoVertexBuf[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*g_PrimitivesToDrawNoVertexBuf),
+                                  &g_PrimitivesToDrawNoVertexBuf[0].diffuse);
         //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, g_PrimitivesToDrawNoVertexBuf, 0x1c);
     }
 
-    g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    this->BackendDrawCall();
 
     return true;
 }
@@ -1055,8 +1119,7 @@ bool AnmManager::Draw3(AnmVm *vm)
 
     SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
 
-    g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-    g_glFuncTable.glPushMatrix();
+    ZunMatrix originalView = this->dirtyTransformMatrices[MATRIX_VIEW];
 
     worldTransformMatrix = vm->matrix;
     worldTransformMatrix.m[0][0] *= vm->scaleX;
@@ -1109,8 +1172,8 @@ bool AnmManager::Draw3(AnmVm *vm)
     worldTransformMatrix.m[3][2] = vm->pos.z;
 
     // Now, set transform matrix.
-    //    g_Supervisor.d3dDevice->SetTransform(D3DTS_WORLD, &worldTransformMatrix);
-    g_glFuncTable.glMultMatrixf((GLfloat *)&worldTransformMatrix.m);
+    ZunMatrix modelView = originalView * worldTransformMatrix;
+    this->SetTransformMatrix(MATRIX_VIEW, modelView);
 
     // Load sprite if vm->sprite is not the same as current sprite.
     if (this->currentSprite != vm->sprite)
@@ -1120,32 +1183,18 @@ bool AnmManager::Draw3(AnmVm *vm)
         textureMatrix.m[3][0] = vm->sprite->uvStart.x + vm->uvScrollPos.x;
         textureMatrix.m[3][1] = vm->sprite->uvStart.y + vm->uvScrollPos.y;
 
-        g_glFuncTable.glMatrixMode(GL_TEXTURE);
-        g_glFuncTable.glLoadMatrixf((GLfloat *)&textureMatrix.m);
-        //        g_Supervisor.d3dDevice->SetTransform(D3DTS_TEXTURE0, &textureMatrix);
+        this->SetTransformMatrix(MATRIX_TEXTURE, textureMatrix);
 
         SetCurrentTexture(this->textures[vm->sprite->sourceFileIndex].handle);
     }
 
-    // Set vertex shader to TEX1 | XYZ
-    if (this->currentVertexShader != 3)
+    if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
     {
-        g_glFuncTable.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-        if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) == 0)
-        {
-            g_glFuncTable.glDisableClientState(GL_COLOR_ARRAY);
-
-            //            g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_XYZ);
-            //            g_Supervisor.d3dDevice->SetStreamSource(0, this->vertexBuffer, 0x14);
-        }
-        else
-        {
-            g_glFuncTable.glEnableClientState(GL_COLOR_ARRAY);
-
-            //            g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZ);
-        }
-        this->currentVertexShader = 3;
+        this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD);
+    }
+    else
+    {
+        this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD | VERTEX_ATTR_DIFFUSE);
     }
 
     // Reset the render state based on the settings fo the given VM.
@@ -1154,26 +1203,24 @@ bool AnmManager::Draw3(AnmVm *vm)
     // Draw the VM.
     if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) == 0)
     {
-        g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                      &g_PrimitivesToDrawUnknown[0].position);
-        g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                        &g_PrimitivesToDrawUnknown[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].textureUV);
     }
     else
     {
-        g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                      &g_PrimitivesToDrawUnknown[0].position);
-        g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                        &g_PrimitivesToDrawUnknown[0].textureUV);
-        g_glFuncTable.glColorPointer(4, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                     &g_PrimitivesToDrawUnknown[0].diffuse);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].diffuse);
     }
 
-    g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    this->BackendDrawCall();
 
-    g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-    g_glFuncTable.glPopMatrix();
-
+    this->SetTransformMatrix(MATRIX_VIEW, originalView);
     return true;
 }
 
@@ -1219,11 +1266,9 @@ bool AnmManager::Draw2(AnmVm *vm)
     worldTransformMatrix.m[0][0] *= vm->scaleX;
     worldTransformMatrix.m[1][1] *= -vm->scaleY;
 
-    g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-    g_glFuncTable.glPushMatrix();
-    g_glFuncTable.glMultMatrixf((GLfloat *)worldTransformMatrix.m);
-
-    //    g_Supervisor.d3dDevice->SetTransform(D3DTS_WORLD, &worldTransformMatrix);
+    ZunMatrix originalView = this->dirtyTransformMatrices[MATRIX_VIEW];
+    ZunMatrix modelView = originalView * worldTransformMatrix;
+    this->SetTransformMatrix(MATRIX_VIEW, modelView);
 
     if (this->currentSprite != vm->sprite)
     {
@@ -1231,9 +1276,8 @@ bool AnmManager::Draw2(AnmVm *vm)
         textureMatrix = vm->matrix;
         textureMatrix.m[3][0] = vm->sprite->uvStart.x + vm->uvScrollPos.x;
         textureMatrix.m[3][1] = vm->sprite->uvStart.y + vm->uvScrollPos.y;
-        //        g_Supervisor.d3dDevice->SetTransform(D3DTS_TEXTURE0, &textureMatrix);
-        g_glFuncTable.glMatrixMode(GL_TEXTURE);
-        g_glFuncTable.glLoadMatrixf((GLfloat *)textureMatrix.m);
+
+        this->SetTransformMatrix(MATRIX_TEXTURE, textureMatrix);
 
         //        if (this->currentTextureHandle != this->textures[vm->sprite->sourceFileIndex].handle)
         //        {
@@ -1243,24 +1287,13 @@ bool AnmManager::Draw2(AnmVm *vm)
 
         SetCurrentTexture(this->textures[vm->sprite->sourceFileIndex].handle);
 
-        if (this->currentVertexShader != 3)
+        if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
         {
-            g_glFuncTable.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-            if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) == 0)
-            {
-                g_glFuncTable.glDisableClientState(GL_COLOR_ARRAY);
-
-                //                g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_XYZ);
-                //                g_Supervisor.d3dDevice->SetStreamSource(0, this->vertexBuffer, 0x14);
-            }
-            else
-            {
-                g_glFuncTable.glEnableClientState(GL_COLOR_ARRAY);
-
-                //                g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZ);
-            }
-            this->currentVertexShader = 3;
+            this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD);
+        }
+        else
+        {
+            this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD | VERTEX_ATTR_DIFFUSE);
         }
     }
 
@@ -1268,29 +1301,28 @@ bool AnmManager::Draw2(AnmVm *vm)
 
     if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) == 0)
     {
-        g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                      &g_PrimitivesToDrawUnknown[0].position);
-        g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                        &g_PrimitivesToDrawUnknown[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].textureUV);
 
         //        g_Supervisor.d3dDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
     }
     else
     {
-        g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                      &g_PrimitivesToDrawUnknown[0].position);
-        g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                        &g_PrimitivesToDrawUnknown[0].textureUV);
-        g_glFuncTable.glColorPointer(4, GL_FLOAT, sizeof(*g_PrimitivesToDrawUnknown),
-                                     &g_PrimitivesToDrawUnknown[0].diffuse);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*g_PrimitivesToDrawUnknown),
+                                  &g_PrimitivesToDrawUnknown[0].diffuse);
 
         //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, , 0x18);
     }
 
-    g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    this->BackendDrawCall();
 
-    g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-    g_glFuncTable.glPopMatrix();
+    this->SetTransformMatrix(MATRIX_VIEW, originalView);
 
     return true;
 }
@@ -1880,7 +1912,7 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
 
     fullscreenViewport.Set();
 
-    inverseViewportMatrix();
+    this->SetProjectionMode(PROJECTION_MODE_ORTHOGRAPHIC);
 
     CreateTextureObject();
 
@@ -1908,44 +1940,27 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
     verts[2].textureUV = ZunVec2(0.0f, ((f32)src->h) / textureHeight);
     verts[3].textureUV = ZunVec2(((f32)src->w) / textureWidth, ((f32)src->h) / textureHeight);
 
-    g_glFuncTable.glDisableClientState(GL_COLOR_ARRAY);
-    g_glFuncTable.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD);
 
-    g_glFuncTable.glVertexPointer(3, GL_FLOAT, sizeof(*verts), &verts[0].position);
-    g_glFuncTable.glTexCoordPointer(2, GL_FLOAT, sizeof(*verts), &verts[0].textureUV);
+    this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*verts), &verts[0].position);
+    this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*verts), &verts[0].textureUV);
 
-    if (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 0x01) == 0)
-    {
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE);
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_REPLACE);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
-    }
+    this->SetColorOp(COMPONENT_ALPHA, COLOR_OP_REPLACE);
+    this->SetColorOp(COMPONENT_RGB, COLOR_OP_REPLACE);
 
-    if (((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 0x01) == 0)
-    {
-        g_glFuncTable.glDepthFunc(GL_ALWAYS);
-        g_glFuncTable.glDepthMask(GL_FALSE);
-    }
+    this->SetDepthMask(false);
+    this->SetDepthFunc(DEPTH_FUNC_ALWAYS);
 
-    g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    this->BackendDrawCall();
 
-    if (((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 0x01) == 0)
-    {
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-        //        g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-    }
+    this->SetColorOp(COMPONENT_ALPHA, COLOR_OP_MODULATE);
+    this->SetColorOp(COMPONENT_RGB, COLOR_OP_MODULATE);
 
     g_glFuncTable.glDeleteTextures(1, &this->currentTextureHandle);
 
-    g_AnmManager->SetCurrentVertexShader(0xff);
-    g_AnmManager->SetCurrentSprite(NULL);
-    g_AnmManager->SetCurrentTexture(0);
-    g_AnmManager->SetCurrentColorOp(0xff);
-    g_AnmManager->SetCurrentBlendMode(0xff);
-    g_AnmManager->SetCurrentZWriteDisable(0xff);
+    this->SetCurrentSprite(NULL);
+    this->SetCurrentTexture(0);
+    this->SetCurrentBlendMode(0xff);
 
     originalViewport.Set();
 }

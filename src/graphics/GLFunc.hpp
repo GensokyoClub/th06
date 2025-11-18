@@ -16,7 +16,6 @@ struct GLFuncTable
     // Functions where arguments use doubles in OpenGL and floats in GLES and therefore need manual dispatch
     void glClearDepthf(GLclampf depth);
     void glDepthRangef(GLclampf near_val, GLclampf far_val);
-    void glFrustumf(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val, GLfloat far_val);
 
     // Function pointers for functions shared between GL and GLES
     void GLAPIENTRY (*glAlphaFunc)(GLenum func, GLclampf ref);
@@ -46,7 +45,6 @@ struct GLFuncTable
     void GLAPIENTRY (*glPushMatrix)(void);
     void GLAPIENTRY (*glReadPixels)(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type,
                                     GLvoid *pixels);
-    void GLAPIENTRY (*glScalef)(GLfloat x, GLfloat y, GLfloat z);
     void GLAPIENTRY (*glShadeModel)(GLenum mode);
     void GLAPIENTRY (*glTexCoordPointer)(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr);
     void GLAPIENTRY (*glTexEnvfv)(GLenum target, GLenum pname, const GLfloat *params);
@@ -56,22 +54,41 @@ struct GLFuncTable
     void GLAPIENTRY (*glTexParameteri)(GLenum target, GLenum pname, GLint param);
     void GLAPIENTRY (*glTexSubImage2D)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width,
                                        GLsizei height, GLenum format, GLenum type, const GLvoid *pixels);
-    void GLAPIENTRY (*glTranslatef)(GLfloat x, GLfloat y, GLfloat z);
     void GLAPIENTRY (*glVertexPointer)(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr);
     void GLAPIENTRY (*glViewport)(GLint x, GLint y, GLsizei width, GLsizei height);
+
+// GL(ES) 2.X / WebGL
+    PFNGLATTACHSHADERPROC glAttachShader;
+    PFNGLBINDATTRIBLOCATIONPROC glBindAttribLocation;
+    PFNGLCOMPILESHADERPROC glCompileShader;
+    PFNGLCREATEPROGRAMPROC glCreateProgram;
+    PFNGLCREATESHADERPROC glCreateShader;
+    PFNGLDELETEPROGRAMPROC glDeleteProgram;
+    PFNGLDELETESHADERPROC glDeleteShader;
+    PFNGLDISABLEVERTEXATTRIBARRAYPROC glDisableVertexAttribArray;
+    PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
+    PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
+    PFNGLGETPROGRAMIVPROC glGetProgramiv;
+    PFNGLGETSHADERINFOLOGPROC glGetShaderInfoLog;
+    PFNGLGETSHADERIVPROC glGetShaderiv;
+    PFNGLGETUNIFORMLOCATIONPROC glGetUniformLocation;
+    PFNGLLINKPROGRAMPROC glLinkProgram;
+    PFNGLSHADERSOURCEPROC glShaderSource;
+    PFNGLUNIFORM1FPROC glUniform1f;
+    PFNGLUNIFORM1IPROC glUniform1i;
+    PFNGLUNIFORM4FPROC glUniform4f;
+    PFNGLUNIFORMMATRIX4FVPROC glUniformMatrix4fv;
+    PFNGLUSEPROGRAMPROC glUseProgram;
+    PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
 
   private:
     // GLES forms for cases where they're different
     void GLAPIENTRY (*glClearDepthf_ptr)(GLclampf depth);
     void GLAPIENTRY (*glDepthRangef_ptr)(GLclampf near_val, GLclampf far_val);
-    void GLAPIENTRY (*glFrustumf_ptr)(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat near_val,
-                                      GLfloat far_val);
 
     // GL forms for cases where they're different
     void GLAPIENTRY (*glClearDepth)(GLclampd depth);
     void GLAPIENTRY (*glDepthRange)(GLclampd near_val, GLclampd far_val);
-    void GLAPIENTRY (*glFrustum)(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near_val,
-                                 GLdouble far_val);
 
     bool isGlesContext;
 };

@@ -131,21 +131,20 @@ project "th06"
       "-sUSE_SDL=2",
       "-sUSE_SDL_IMAGE=2",
       "-sUSE_SDL_TTF=2",
-      "-I ../vendored/gl4es/include/",
       "-sUSE_PTHREADS=1 -pthread"
     }
 
     buildoptions { "-Wall", "-Wextra", "-Wpedantic", "-Wno-gnu-anonymous-struct", "-Wno-unused-parameter", "-Wno-unused-but-set-variable", "-Wno-unused-variable", "-Wno-nontrivial-memcall", "-Wno-c99-extensions", "-Wno-switch", "-Wno-c++11-narrowing" }
 
     linkoptions {
-      "-I ../vendored/gl4es/include/ ../vendored/gl4es/lib/libGL.a -sUSE_PTHREADS=1 -pthread",
+      "-sUSE_PTHREADS=1 -pthread",
       "-gsource-map",
       "-O3",
       "-flto",
       "-sWASM_BIGINT=1",
       "-sASSERTIONS=0",
       "-sGL_ASSERTIONS=0",
-      "-sFULL_ES3=1",
+      "-sFULL_ES2=1",
       "-sINVOKE_RUN=0",
       "-sUSE_SDL=2",
       "-sUSE_SDL_IMAGE=2",

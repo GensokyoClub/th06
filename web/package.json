@@ -1,0 +1,18 @@
+{
+  "name": "balatro-wasm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "compression": "^1.8.0",
+    "express": "^4.21.2",
+    "express-static-gzip": "^2.2.0"
+  }
+}

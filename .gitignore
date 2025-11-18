@@ -10,7 +10,10 @@ build.ninja
 __pycache__
 data/
 bgm/
-web/
+web/*
+!web/index.js
+!web/package.json
+!web/sw.js
 msgothic.ttc
 
 obj/

@@ -186,7 +186,7 @@ bool WebGL::Init()
     identityMatrix.Identity();
     g_glFuncTable.glUniformMatrix4fv(this->uniforms[UNIFORM_MODELVIEW], 1, false, (GLfloat *) &identityMatrix.m);
     g_glFuncTable.glUniformMatrix4fv(this->uniforms[UNIFORM_PROJECTION], 1, false, (GLfloat *) &identityMatrix.m);
-    g_glFuncTable.glUniformMatrix4fv(this->uniforms[UNIFORM_TEXTURE_SAMPLER], 1, false, (GLfloat *) &identityMatrix.m);
+    g_glFuncTable.glUniformMatrix4fv(this->uniforms[UNIFORM_TEXTURE_MATRIX], 1, false, (GLfloat *) &identityMatrix.m);
 
     g_glFuncTable.glUniform1f(this->uniforms[UNIFORM_FOG_FAR], 1.0f);
 
@@ -286,7 +286,7 @@ void WebGL::SetTransformMatrix(TransformMatrix type, ZunMatrix &matrix)
     // I should probably just remove the model matrix from the range of possibilies
     u32 matrixUniformEnum[4] = {UNIFORM_MODELVIEW, UNIFORM_MODELVIEW, UNIFORM_PROJECTION, UNIFORM_TEXTURE_MATRIX};
 
-    g_glFuncTable.glUniformMatrix4fv(matrixUniformEnum[type], 1, false, (GLfloat *) &matrix.m);
+    g_glFuncTable.glUniformMatrix4fv(this->uniforms[matrixUniformEnum[type]], 1, false, (GLfloat *) &matrix.m);
 }
 
 void WebGL::Draw()

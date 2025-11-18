@@ -535,8 +535,6 @@ void GameWindow::InitD3dDevice(void)
     AnmManager *anm3;
     AnmManager *anm4;
 
-    g_glFuncTable.glEnable(GL_TEXTURE_2D);
-    g_glFuncTable.glEnableClientState(GL_VERTEX_ARRAY);
     g_glFuncTable.glEnable(GL_BLEND);
 
     g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -547,9 +545,6 @@ void GameWindow::InitD3dDevice(void)
         g_AnmManager->SetDepthMask(true);
         g_AnmManager->SetDepthFunc(DEPTH_FUNC_LEQUAL);
     }
-
-    g_glFuncTable.glEnable(GL_ALPHA_TEST);
-    g_glFuncTable.glAlphaFunc(GL_GEQUAL, 4 / 255.0f);
 
     g_AnmManager->SetFogColor(0xFF'A0'A0'A0);
     g_AnmManager->SetFogRange(1'000.0f, 5'000.0f);

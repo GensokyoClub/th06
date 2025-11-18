@@ -14,6 +14,12 @@ void FixedFunctionGL::SetContextFlags()
 
 GfxInterface *FixedFunctionGL::Init()
 {
+    g_glFuncTable.glEnable(GL_TEXTURE_2D);
+    g_glFuncTable.glEnableClientState(GL_VERTEX_ARRAY);
+
+    g_glFuncTable.glEnable(GL_ALPHA_TEST);
+    g_glFuncTable.glAlphaFunc(GL_GEQUAL, 4 / 255.0f);
+
     if (((g_Supervisor.cfg.opts >> GCOS_SUPPRESS_USE_OF_GOROUD_SHADING) & 1) == 1)
     {
         g_glFuncTable.glShadeModel(GL_FLAT);

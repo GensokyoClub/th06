@@ -202,10 +202,10 @@ fail:
     return false;
 }
 
-void WebGL::SetFogRange(f32 near, f32 far)
+void WebGL::SetFogRange(f32 nearPlane, f32 farPlane)
 {
-    g_glFuncTable.glUniform1f(this->uniforms[UNIFORM_FOG_NEAR], near);
-    g_glFuncTable.glUniform1f(this->uniforms[UNIFORM_FOG_FAR], far);
+    g_glFuncTable.glUniform1f(this->uniforms[UNIFORM_FOG_NEAR], nearPlane);
+    g_glFuncTable.glUniform1f(this->uniforms[UNIFORM_FOG_FAR], farPlane);
 }
 
 void WebGL::SetFogColor(ZunColor color)

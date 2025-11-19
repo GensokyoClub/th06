@@ -82,10 +82,10 @@ GfxInterface *FixedFunctionGL::Init()
     return new FixedFunctionGL();
 }
 
-void FixedFunctionGL::SetFogRange(f32 near, f32 far)
+void FixedFunctionGL::SetFogRange(f32 nearPlane, f32 farPlane)
 {
-    g_glFuncTable.glFogf(GL_FOG_START, near);
-    g_glFuncTable.glFogf(GL_FOG_END, far);
+    g_glFuncTable.glFogf(GL_FOG_START, nearPlane);
+    g_glFuncTable.glFogf(GL_FOG_END, farPlane);
 }
 
 void FixedFunctionGL::SetFogColor(ZunColor color)

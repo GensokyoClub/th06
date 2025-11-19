@@ -309,10 +309,10 @@ struct AnmManager
         this->SetTransformMatrix(MATRIX_PROJECTION, this->perspectiveMatrixBackup[MATRIX_PROJECTION]);
     }
 
-    void SetFogRange(f32 near, f32 far)
+    void SetFogRange(f32 nearPlane, f32 farPlane)
     {
-        this->dirtyFogNear = near;
-        this->dirtyFogFar = far;
+        this->dirtyFogNear = nearPlane;
+        this->dirtyFogFar = farPlane;
         this->dirtyFlags |= (1 << DIRTY_FOG);
     }
 

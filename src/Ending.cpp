@@ -434,7 +434,7 @@ ZunResult Ending::LoadEnding(char *endFilePath)
     this->endFileData = (char *)FileSystem::OpenPath(endFilePath, false);
     if (this->endFileData == NULL)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_ENDING_END_FILE_CORRUPTED);
+        g_GameErrorContext.Log(TH_ERR_ENDING_END_FILE_CORRUPTED);
         return ZUN_ERROR;
     }
     else

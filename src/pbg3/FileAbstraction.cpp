@@ -1,4 +1,5 @@
 #include "pbg3/FileAbstraction.hpp"
+#include <FileSystem.hpp>
 
 namespace th06
 {
@@ -41,7 +42,8 @@ i32 FileAbstraction::Open(char *filename, char *mode)
     {
         return 0;
     }
-    this->handle = std::fopen(filename, openMode);
+
+    this->handle = FileSystem::FopenUTF8(filename, openMode);
 
     if (this->handle == NULL)
         return 0;

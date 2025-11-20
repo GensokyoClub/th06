@@ -579,7 +579,7 @@ void GameManager::SetupCamera(f32 extraRenderDistance)
     g_Supervisor.viewMatrix = viewMatrix;
 
     g_GameManager.cameraDistance = ZUN_FABSF(cameraDistance);
-    
+
     ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
     g_AnmManager->SetTransformMatrix(MATRIX_PROJECTION, perspectiveMatrix);
     g_Supervisor.projectionMatrix = perspectiveMatrix;

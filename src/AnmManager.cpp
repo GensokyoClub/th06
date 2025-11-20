@@ -790,7 +790,8 @@ void AnmManager::UpdateDirtyStates()
             while (changedAttributes != 0)
             {
                 u8 currBit = std::countr_zero(changedAttributes);
-                gfxBackend->ToggleVertexAttribute(changedAttributes & (1 << currBit), this->enabledVertexAttributes & (1 << currBit));
+                gfxBackend->ToggleVertexAttribute(changedAttributes & (1 << currBit),
+                                                  this->enabledVertexAttributes & (1 << currBit));
                 changedAttributes &= ~(1 << currBit);
             }
 
@@ -806,7 +807,8 @@ void AnmManager::UpdateDirtyStates()
 
                 this->attribArrays[i] = this->dirtyAttribArrays[i];
 
-                gfxBackend->SetAttributePointer((VertexAttributeArrays) i, this->attribArrays[i].stride, this->attribArrays[i].ptr);
+                gfxBackend->SetAttributePointer((VertexAttributeArrays)i, this->attribArrays[i].stride,
+                                                this->attribArrays[i].ptr);
             }
 
             break;
@@ -820,7 +822,7 @@ void AnmManager::UpdateDirtyStates()
 
                 this->colorOps[i] = this->dirtyColorOps[i];
 
-                gfxBackend->SetColorOp((TextureOpComponent) i, this->colorOps[i]);
+                gfxBackend->SetColorOp((TextureOpComponent)i, this->colorOps[i]);
             }
 
             break;
@@ -833,8 +835,9 @@ void AnmManager::UpdateDirtyStates()
         case DIRTY_PROJECTION_MATRIX:
         case DIRTY_TEXTURE_MATRIX:
             std::memcpy(&this->transformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX],
-                        &this->dirtyTransformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX], sizeof(*this->transformMatrices));
-            gfxBackend->SetTransformMatrix((TransformMatrix) (currFlagIndex - DIRTY_MODEL_MATRIX), 
+                        &this->dirtyTransformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX],
+                        sizeof(*this->transformMatrices));
+            gfxBackend->SetTransformMatrix((TransformMatrix)(currFlagIndex - DIRTY_MODEL_MATRIX),
                                            this->transformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX]);
         }
     }

@@ -7,12 +7,12 @@
 
 #include "AnmIdx.hpp"
 #include "AnmVm.hpp"
-#include "GameManager.hpp"
-#include "graphics/GfxInterface.hpp"
 #include "GLFunc.hpp"
+#include "GameManager.hpp"
 #include "ZunResult.hpp"
 #include "ZunTimer.hpp"
 #include "diffbuild.hpp"
+#include "graphics/GfxInterface.hpp"
 #include "inttypes.hpp"
 
 #define TEX_FMT_UNKNOWN 0
@@ -354,10 +354,10 @@ struct AnmManager
 
         if (!std::memcmp(&this->transformMatrices[type], &matrix, sizeof(matrix)))
         {
-            this->dirtyFlags &= ~(1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts) type));
+            this->dirtyFlags &= ~(1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts)type));
         }
 
-        this->dirtyFlags |= 1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts) type);
+        this->dirtyFlags |= 1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts)type);
     }
 
     i32 ExecuteScript(AnmVm *vm);
@@ -443,7 +443,7 @@ struct AnmManager
     i32 screenshotTop;
     i32 screenshotWidth;
     i32 screenshotHeight;
-    
+
     GfxInterface *gfxBackend;
 
   private:
@@ -469,7 +469,6 @@ struct AnmManager
     ColorOp dirtyColorOps[2];
     ZunColor dirtytTextureFactor;
     ZunMatrix dirtyTransformMatrices[4];
-
 
     ZunMatrix perspectiveMatrixBackup[4]; // Replaces matrix stack use for orthographic mode
 };

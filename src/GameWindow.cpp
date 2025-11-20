@@ -1,16 +1,16 @@
 #include "GameWindow.hpp"
 #include "AnmManager.hpp"
 #include "GameErrorContext.hpp"
-#include "graphics/FixedFunctionGL.hpp"
-#include "graphics/WebGL.hpp"
 #include "ScreenEffect.hpp"
 #include "SoundPlayer.hpp"
 #include "Stage.hpp"
 #include "Supervisor.hpp"
-#include "utils.hpp"
 #include "ZunMath.hpp"
 #include "diffbuild.hpp"
+#include "graphics/FixedFunctionGL.hpp"
+#include "graphics/WebGL.hpp"
 #include "i18n.hpp"
+#include "utils.hpp"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_timer.h>
@@ -30,10 +30,8 @@ static struct
     bool isEsContext;
     void (*setContextFlags)();
     GfxInterface *(*init)();
-} s_RenderBackends[] = {
-    {"GL(ES) 2.0 / WebGL", true, WebGL::SetContextFlags, WebGL::Create},
-    {"Fixed function GL(ES)", false, FixedFunctionGL::SetContextFlags, FixedFunctionGL::Init}
-};
+} s_RenderBackends[] = {{"GL(ES) 2.0 / WebGL", true, WebGL::SetContextFlags, WebGL::Create},
+                        {"Fixed function GL(ES)", false, FixedFunctionGL::SetContextFlags, FixedFunctionGL::Init}};
 
 RenderResult GameWindow::Render()
 {
@@ -228,7 +226,7 @@ void GameWindow::CreateGameWindow()
         g_glFuncTable.ResolveFunctions(s_RenderBackends[i].isEsContext);
         g_GameWindow.renderBackendIndex = i;
         break;
-fail:
+    fail:
         if (g_GameWindow.glContext != NULL)
         {
             SDL_GL_DeleteContext(g_GameWindow.glContext);
@@ -238,7 +236,7 @@ fail:
         if (g_GameWindow.window != NULL)
         {
             SDL_DestroyWindow(g_GameWindow.window);
-            g_GameWindow.window = NULL;   
+            g_GameWindow.window = NULL;
         }
 
         utils::DebugPrint2("Renderer creation for backend %s failed", s_RenderBackends[i].name);
@@ -549,8 +547,7 @@ void GameWindow::InitD3dDevice(void)
     g_AnmManager->SetFogColor(0xFF'A0'A0'A0);
     g_AnmManager->SetFogRange(1'000.0f, 5'000.0f);
 
-
-//    g_AnmManager->gfxBackend->Init();
+    //    g_AnmManager->gfxBackend->Init();
 
     // All of these are set per texture object in OpenGL (and also most are defaults)
     //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_NONE);

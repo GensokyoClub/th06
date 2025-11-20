@@ -6,7 +6,7 @@
 
 namespace th06
 {
-DIFFABLE_STATIC(Pbg3Archive **, g_Pbg3Archives)
+Pbg3Archive **g_Pbg3Archives;
 
 Pbg3Archive::Pbg3Archive()
 {

@@ -12,8 +12,8 @@
 namespace th06
 {
 
-DIFFABLE_STATIC(TTF_Font *, g_Font);
-DIFFABLE_STATIC_ASSIGN(iconv_t, g_Iconv) = (iconv_t)-1;
+TTF_Font *g_Font;;
+iconv_t g_Iconv = (iconv_t)-1;
 
 TextHelper::TextHelper()
 {

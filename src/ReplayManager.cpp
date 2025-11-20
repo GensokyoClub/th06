@@ -15,7 +15,7 @@
 
 namespace th06
 {
-DIFFABLE_STATIC(ReplayManager *, g_ReplayManager)
+ReplayManager *g_ReplayManager;
 
 ZunResult ReplayManager::ValidateReplayData(ReplayHeader *data, i32 fileSize)
 {

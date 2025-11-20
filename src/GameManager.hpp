@@ -7,7 +7,6 @@
 #include "Chain.hpp"
 #include "ResultScreen.hpp"
 #include "ZunResult.hpp"
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 
 namespace th06
@@ -51,7 +50,7 @@ enum StageNumber
 
 struct GameManager;
 
-DIFFABLE_EXTERN(GameManager, g_GameManager);
+extern GameManager g_GameManager;
 struct GameManager
 {
     GameManager();
@@ -134,5 +133,4 @@ struct GameManager
     i32 minRank;
     i32 subRank;
 };
-ZUN_ASSERT_SIZE(GameManager, 0x1a80);
 }; // namespace th06

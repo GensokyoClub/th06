@@ -2,7 +2,6 @@
 
 #include "AnmVm.hpp"
 #include "ZunResult.hpp"
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 
 namespace th06
@@ -35,7 +34,6 @@ struct BulletTypeSprites
     u8 unk_55c;
     u8 bulletHeight;
 };
-ZUN_ASSERT_SIZE(BulletTypeSprites, 0x560);
 
 struct Bullet
 {
@@ -62,7 +60,6 @@ struct Bullet
     u8 unk_5c2;
     u8 isGrazed;
 };
-ZUN_ASSERT_SIZE(Bullet, 0x5c4);
 
 struct Laser
 {
@@ -86,7 +83,6 @@ struct Laser
     i16 color;
     u8 state;
 };
-ZUN_ASSERT_SIZE(Laser, 0x270);
 
 struct BulletManager
 {
@@ -118,8 +114,7 @@ struct BulletManager
     ZunTimer time;
     char *bulletAnmPath;
 };
-ZUN_ASSERT_SIZE(BulletManager, 0xf5c18);
 
-DIFFABLE_EXTERN(u32 *, g_EffectsColor);
-DIFFABLE_EXTERN(BulletManager, g_BulletManager);
+extern u32 *g_EffectsColor;
+extern BulletManager g_BulletManager;
 }; // namespace th06

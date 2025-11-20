@@ -14,10 +14,10 @@
 
 namespace th06
 {
-DIFFABLE_STATIC(AsciiManager, g_AsciiManager)
-DIFFABLE_STATIC(ChainElem, g_AsciiManagerCalcChain)
-DIFFABLE_STATIC(ChainElem, g_AsciiManagerOnDrawMenusChain)
-DIFFABLE_STATIC(ChainElem, g_AsciiManagerOnDrawPopupsChain)
+AsciiManager g_AsciiManager;
+ChainElem g_AsciiManagerCalcChain;
+ChainElem g_AsciiManagerOnDrawMenusChain;
+ChainElem g_AsciiManagerOnDrawPopupsChain;
 
 AsciiManager::AsciiManager()
 {

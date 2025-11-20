@@ -21,10 +21,10 @@
 
 namespace th06
 {
-DIFFABLE_STATIC(VertexTex1Xyzrhw, g_PrimitivesToDrawVertexBuf[4]);
-DIFFABLE_STATIC(VertexTex1DiffuseXyzrhw, g_PrimitivesToDrawNoVertexBuf[4]);
-DIFFABLE_STATIC(VertexTex1DiffuseXyz, g_PrimitivesToDrawUnknown[4]);
-DIFFABLE_STATIC(AnmManager *, g_AnmManager)
+VertexTex1Xyzrhw g_PrimitivesToDrawVertexBuf[4];
+VertexTex1DiffuseXyzrhw g_PrimitivesToDrawNoVertexBuf[4];
+VertexTex1DiffuseXyz g_PrimitivesToDrawUnknown[4];
+AnmManager *g_AnmManager;
 
 SDL_PixelFormatEnum g_TextureFormatSDLMapping[6] = {SDL_PIXELFORMAT_UNKNOWN,  SDL_PIXELFORMAT_RGBA32,
                                                     SDL_PIXELFORMAT_RGBA5551, SDL_PIXELFORMAT_RGB565,

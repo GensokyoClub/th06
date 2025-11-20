@@ -2,7 +2,6 @@
 
 #include "GLFunc.hpp"
 #include "GameWindow.hpp"
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 #include <cmath>
 #include <cstring>

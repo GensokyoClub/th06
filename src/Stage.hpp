@@ -3,7 +3,6 @@
 #include "AnmVm.hpp"
 #include "Chain.hpp"
 #include "ZunTimer.hpp"
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 // #include "zwave.hpp"
 // #include <d3d8.h>
@@ -22,7 +21,6 @@ struct RawStageHeader
     char songNames[4][128];
     char songPaths[4][128];
 };
-ZUN_ASSERT_SIZE(RawStageHeader, 0x490);
 
 struct RawStageQuadBasic
 {
@@ -33,7 +31,6 @@ struct RawStageQuadBasic
     ZunVec3 position;
     ZunVec2 size;
 };
-ZUN_ASSERT_SIZE(RawStageQuadBasic, 0x1c);
 
 struct RawStageObject
 {
@@ -44,7 +41,6 @@ struct RawStageObject
     ZunVec3 size;
     RawStageQuadBasic firstQuad;
 };
-ZUN_ASSERT_SIZE(RawStageObject, 0x38);
 
 struct RawStageObjectInstance
 {
@@ -52,7 +48,6 @@ struct RawStageObjectInstance
     i16 unk2;
     ZunVec3 position;
 };
-ZUN_ASSERT_SIZE(RawStageObjectInstance, 0x10);
 
 struct RawStageInstr
 {
@@ -61,7 +56,6 @@ struct RawStageInstr
     i16 size;
     i32 args[3];
 };
-ZUN_ASSERT_SIZE(RawStageInstr, 0x14);
 
 struct StageCameraSky
 {
@@ -69,7 +63,6 @@ struct StageCameraSky
     f32 farPlane;
     ZunColor color;
 };
-ZUN_ASSERT_SIZE(StageCameraSky, 0xc);
 
 enum SpellcardState
 {
@@ -83,7 +76,6 @@ struct StageFile
     char *anmFile;
     char *stdFile;
 };
-ZUN_ASSERT_SIZE(StageFile, 0x8);
 
 enum StageOpcode
 {
@@ -142,7 +134,6 @@ struct Stage
     ZunVec3 positionInterpInitial;
     i32 positionInterpStartTime;
 };
-ZUN_ASSERT_SIZE(Stage, 0x2f4);
 
-DIFFABLE_EXTERN(Stage, g_Stage)
+extern Stage g_Stage;
 }; // namespace th06

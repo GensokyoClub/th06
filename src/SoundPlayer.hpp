@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ZunResult.hpp"
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 #include <SDL2/SDL_audio.h>
 #include <SDL2/SDL_rwops.h>
@@ -53,7 +52,6 @@ struct SoundBufferIdxVolume
     i32 bufferIdx;
     i16 volume;
 };
-ZUN_ASSERT_SIZE(SoundBufferIdxVolume, 0x8);
 
 struct SoundData
 {
@@ -110,9 +108,8 @@ struct SoundPlayer
     MusicStream backgroundMusic;
     bool isLooping;
 };
-ZUN_ASSERT_SIZE(SoundPlayer, 0x638);
 
-DIFFABLE_EXTERN(SoundBufferIdxVolume, g_SoundBufferIdxVol[32]);
-DIFFABLE_EXTERN(const char *, g_SFXList[26]);
-DIFFABLE_EXTERN(SoundPlayer, g_SoundPlayer)
+extern SoundBufferIdxVolume g_SoundBufferIdxVol[32];
+extern const char *g_SFXList[26];
+extern SoundPlayer g_SoundPlayer;
 }; // namespace th06

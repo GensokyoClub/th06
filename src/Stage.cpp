@@ -14,11 +14,11 @@
 
 namespace th06
 {
-DIFFABLE_STATIC(ChainElem, g_StageCalcChain)
-DIFFABLE_STATIC(ChainElem, g_StageOnDrawHighPrioChain)
-DIFFABLE_STATIC(ChainElem, g_StageOnDrawLowPrioChain)
+ChainElem g_StageCalcChain;
+ChainElem g_StageOnDrawHighPrioChain;
+ChainElem g_StageOnDrawLowPrioChain;
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(StageFile, 8, g_StageFiles) = {
+StageFile g_StageFiles[8] = {
     {"dummy", "dummy"},
     {"data/stg1bg.anm", "data/stage1.std"},
     {"data/stg2bg.anm", "data/stage2.std"},
@@ -28,7 +28,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(StageFile, 8, g_StageFiles) = {
     {"data/stg6bg.anm", "data/stage6.std"},
     {"data/stg7bg.anm", "data/stage7.std"},
 };
-DIFFABLE_STATIC(Stage, g_Stage)
+Stage g_Stage;
 
 Stage::Stage()
 {

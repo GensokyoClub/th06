@@ -2,7 +2,6 @@
 
 #include "AnmVm.hpp"
 #include "ZunTimer.hpp"
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 
 // #include <d3dx8math.h>
@@ -33,7 +32,6 @@ struct Item
     i8 unk_142;
     i8 state;
 };
-ZUN_ASSERT_SIZE(Item, 0x144);
 
 struct ItemManager
 {
@@ -47,7 +45,6 @@ struct ItemManager
     i32 nextIndex;
     u32 itemCount;
 };
-ZUN_ASSERT_SIZE(ItemManager, 0x2894c);
 
-DIFFABLE_EXTERN(ItemManager, g_ItemManager);
+extern ItemManager g_ItemManager;
 }; // namespace th06

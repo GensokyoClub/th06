@@ -1,6 +1,5 @@
 #pragma once
 
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 #include "pbg3/Pbg3Parser.hpp"
 
@@ -39,5 +38,5 @@ class Pbg3Archive
     Pbg3Entry *entries;
 };
 
-DIFFABLE_EXTERN(Pbg3Archive **, g_Pbg3Archives)
+extern Pbg3Archive **g_Pbg3Archives;
 }; // namespace th06

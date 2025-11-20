@@ -5,7 +5,7 @@
 
 namespace th06
 {
-DIFFABLE_STATIC(Chain, g_Chain)
+Chain g_Chain;
 
 Chain::~Chain()
 {

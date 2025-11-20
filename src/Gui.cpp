@@ -19,9 +19,9 @@
 
 namespace th06
 {
-DIFFABLE_STATIC(Gui, g_Gui);
-DIFFABLE_STATIC(ChainElem, g_GuiCalcChain);
-DIFFABLE_STATIC(ChainElem, g_GuiDrawChain);
+Gui g_Gui;
+ChainElem g_GuiCalcChain;
+ChainElem g_GuiDrawChain;
 
 bool Gui::IsStageFinished()
 {

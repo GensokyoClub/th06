@@ -1,6 +1,5 @@
 #pragma once
 
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 
 namespace th06
@@ -41,5 +40,5 @@ struct Rng
     }
 };
 
-DIFFABLE_EXTERN(Rng, g_Rng);
+extern Rng g_Rng;
 }; // namespace th06

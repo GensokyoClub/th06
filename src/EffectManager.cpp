@@ -12,12 +12,12 @@
 
 namespace th06
 {
-DIFFABLE_STATIC(EffectManager, g_EffectManager);
+EffectManager g_EffectManager;
 
-DIFFABLE_STATIC(ChainElem, g_EffectManagerCalcChain);
-DIFFABLE_STATIC(ChainElem, g_EffectManagerDrawChain);
+ChainElem g_EffectManagerCalcChain;
+ChainElem g_EffectManagerDrawChain;
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(EffectInfo, 20, g_Effects) = {
+EffectInfo g_Effects[20] = {
     {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_SMALL, NULL},
     {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_SPIRAL, NULL},
     {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_NORMAL, NULL},

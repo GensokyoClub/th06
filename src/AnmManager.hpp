@@ -11,7 +11,6 @@
 #include "GameManager.hpp"
 #include "ZunResult.hpp"
 #include "ZunTimer.hpp"
-#include "diffbuild.hpp"
 #include "graphics/GfxInterface.hpp"
 #include "inttypes.hpp"
 
@@ -157,14 +156,12 @@ struct AnmRawEntry
     u32 spriteOffsets[10];
     AnmRawScript scripts[10];
 };
-ZUN_ASSERT_SIZE(AnmRawEntry, 0xb8);
 
 struct RenderVertexInfo
 {
     ZunVec3 position;
     ZunVec2 textureUV;
 };
-ZUN_ASSERT_SIZE(RenderVertexInfo, 0x14);
 
 struct AnmManager
 {
@@ -472,7 +469,6 @@ struct AnmManager
 
     ZunMatrix perspectiveMatrixBackup[4]; // Replaces matrix stack use for orthographic mode
 };
-ZUN_ASSERT_SIZE(AnmManager, 0x2112c);
 
-DIFFABLE_EXTERN(AnmManager *, g_AnmManager);
+extern AnmManager *g_AnmManager;
 }; // namespace th06

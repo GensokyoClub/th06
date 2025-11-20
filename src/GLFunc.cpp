@@ -4,7 +4,7 @@
 
 namespace th06
 {
-DIFFABLE_STATIC(GLFuncTable, g_glFuncTable)
+GLFuncTable g_glFuncTable;
 
 #define TRY_RESOLVE_FUNCTION(func) this->func = (decltype(this->func))SDL_GL_GetProcAddress(#func);
 #define TRY_RESOLVE_FUNCTION_GLES(func) this->func##_ptr = (decltype(this->func##_ptr))SDL_GL_GetProcAddress(#func);

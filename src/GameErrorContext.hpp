@@ -1,6 +1,5 @@
 #pragma once
 
-#include "diffbuild.hpp"
 #include "i18n.hpp"
 #include "inttypes.hpp"
 
@@ -41,5 +40,5 @@ class GameErrorContext
     static const char *Log(GameErrorContext *ctx, const char *fmt, ...);
 };
 
-DIFFABLE_EXTERN(GameErrorContext, g_GameErrorContext)
+extern GameErrorContext g_GameErrorContext;
 }; // namespace th06

@@ -27,13 +27,13 @@
 
 namespace th06
 {
-DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 4, g_ShortCharacterList) = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
-DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 5, g_DifficultyList) = {"Easy   ", "Normal ", "Hard   ", "Lunatic",
+const char * g_ShortCharacterList[4] = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
+const char * g_DifficultyList[5] = {"Easy   ", "Normal ", "Hard   ", "Lunatic",
                                                                    "Extra  "};
-DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 7, g_StageList) = {"Stage1", "Stage2", "Stage3", "Stage4",
+const char * g_StageList[7] = {"Stage1", "Stage2", "Stage3", "Stage4",
                                                               "Stage5", "Stage6", "Extra "};
 
-DIFFABLE_STATIC(i16, g_LastJoystickInput)
+i16 g_LastJoystickInput;
 
 MainMenu::MainMenu()
 {
@@ -2314,5 +2314,5 @@ void MainMenu::ReleaseTitleAnm()
     }
 }
 
-DIFFABLE_STATIC(MainMenu, g_MainMenu);
+MainMenu g_MainMenu;
 }; // namespace th06

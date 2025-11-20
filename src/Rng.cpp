@@ -2,7 +2,7 @@
 
 namespace th06
 {
-DIFFABLE_STATIC(Rng, g_Rng);
+Rng g_Rng;
 
 u16 Rng::GetRandomU16(void)
 {

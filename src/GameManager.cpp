@@ -22,9 +22,9 @@
 namespace th06
 {
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(u32, 5, g_ExtraLivesScores) = {10000000, 20000000, 40000000, 60000000, 1900000000};
+u32 g_ExtraLivesScores[5] = {10000000, 20000000, 40000000, 60000000, 1900000000};
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(char *, 9, g_EclFiles) = {"dummy",
+char  *g_EclFiles[9] = {"dummy",
                                                        "data/ecldata1.ecl",
                                                        "data/ecldata2.ecl",
                                                        "data/ecldata3.ecl",
@@ -40,7 +40,7 @@ struct AnmStageFiles
     char *file2;
 };
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(AnmStageFiles, 8, g_AnmStageFiles) = {
+AnmStageFiles g_AnmStageFiles[8] = {
     {"dummy", "dummy"},
     {"data/stg1enm.anm", "data/stg1enm2.anm"},
     {"data/stg2enm.anm", "data/stg2enm2.anm"},
@@ -56,9 +56,8 @@ struct DifficultyInfo
     u32 minRank;
     u32 maxRank;
 };
-ZUN_ASSERT_SIZE(DifficultyInfo, 0xc);
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(DifficultyInfo, 5, g_DifficultyInfoForReplay) = {
+DifficultyInfo g_DifficultyInfoForReplay[5] = {
     // rank, minRank, maxRank
     /* EASY    */ {16, 12, 20},
     /* NORMAL  */ {16, 10, 32},
@@ -67,7 +66,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(DifficultyInfo, 5, g_DifficultyInfoForReplay) = {
     /* EXTRA   */ {16, 14, 18},
 };
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(DifficultyInfo, 5, g_DifficultyInfo) = {
+DifficultyInfo g_DifficultyInfo[5] = {
     // rank, minRank, maxRank
     /* EASY    */ {16, 12, 20},
     /* NORMAL  */ {16, 10, 32},
@@ -77,10 +76,10 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(DifficultyInfo, 5, g_DifficultyInfo) = {
 };
 
 // These are either on Supervisor.cpp or somewhere else
-DIFFABLE_STATIC(GameManager, g_GameManager);
+GameManager g_GameManager;
 
-DIFFABLE_STATIC(ChainElem, g_GameManagerCalcChain);
-DIFFABLE_STATIC(ChainElem, g_GameManagerDrawChain);
+ChainElem g_GameManagerCalcChain;
+ChainElem g_GameManagerDrawChain;
 
 #define MAX_SCORE 999999999
 #define MAX_CLEARS 99

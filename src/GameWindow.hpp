@@ -3,7 +3,6 @@
 #include <SDL2/SDL_video.h>
 
 #include "GLFunc.hpp"
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 
 #define GAME_WINDOW_WIDTH 640
@@ -39,7 +38,7 @@ struct GameWindow
     u32 renderBackendIndex;
 };
 
-DIFFABLE_EXTERN(GameWindow, g_GameWindow)
-DIFFABLE_EXTERN(i32, g_TickCountToEffectiveFramerate)
-DIFFABLE_EXTERN(double, g_LastFrameTime)
+extern GameWindow g_GameWindow;
+extern i32 g_TickCountToEffectiveFramerate;
+extern double g_LastFrameTime;
 }; // namespace th06

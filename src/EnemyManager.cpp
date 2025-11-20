@@ -8,7 +8,6 @@
 #include "Gui.hpp"
 #include "Player.hpp"
 #include "Rng.hpp"
-#include "diffbuild.hpp"
 #include "utils.hpp"
 
 namespace th06
@@ -17,10 +16,10 @@ namespace th06
 #define ITEM_SPAWNS 3
 #define ITEM_TABLES 8
 
-DIFFABLE_STATIC(EnemyManager, g_EnemyManager)
-DIFFABLE_STATIC(ChainElem, g_EnemyManagerCalcChain)
-DIFFABLE_STATIC(ChainElem, g_EnemyManagerDrawChain)
-DIFFABLE_STATIC_ARRAY_ASSIGN(u8, 32, g_RandomItems) = {
+EnemyManager g_EnemyManager;
+ChainElem g_EnemyManagerCalcChain;
+ChainElem g_EnemyManagerDrawChain;
+u8 g_RandomItems[32] = {
     ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,
     ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POINT,       ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_SMALL,
     ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,

@@ -5,7 +5,6 @@
 #include "ZunColor.hpp"
 #include "ZunMath.hpp"
 #include "ZunResult.hpp"
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 // #include <Windows.h>
 // #include <d3dx8math.h>
@@ -256,7 +255,6 @@ struct EclRawInstrEnemyCreateArgs
     i16 itemDrop;
     i32 score;
 };
-ZUN_ASSERT_SIZE(EclRawInstrEnemyCreateArgs, 0x18);
 
 struct EclRawInstrAnmInterruptSlotArgs
 {
@@ -343,7 +341,6 @@ struct EclRawHeader
     u32 timelineOffsets[3];
     u32 subOffsets[0];
 };
-ZUN_ASSERT_SIZE(EclRawHeader, 0x10);
 
 enum EclRawInstrOpcode
 {
@@ -497,7 +494,6 @@ struct EclManager
     EclRawInstr **subTable;
     EclTimelineInstr *timeline;
 };
-ZUN_ASSERT_SIZE(EclManager, 0xc);
 
-DIFFABLE_EXTERN(EclManager, g_EclManager);
+extern EclManager g_EclManager;
 }; // namespace th06

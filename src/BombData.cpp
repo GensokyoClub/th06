@@ -11,7 +11,7 @@
 
 namespace th06
 {
-DIFFABLE_STATIC_ARRAY_ASSIGN(BombData, 4, g_BombData) = {
+BombData g_BombData[4] = {
     /* ReimuA  */ {BombData::BombReimuACalc, BombData::BombReimuADraw},
     /* ReimuB  */ {BombData::BombReimuBCalc, BombData::BombReimuBDraw},
     /* MarisaA */ {BombData::BombMarisaACalc, BombData::BombMarisaADraw},

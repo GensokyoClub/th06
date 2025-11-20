@@ -17,7 +17,6 @@ struct RunningSpellcardInfo
     u32 idx;
     bool usedBomb;
 };
-ZUN_ASSERT_SIZE(RunningSpellcardInfo, 0x14);
 
 struct EnemyManager
 {
@@ -47,7 +46,6 @@ struct EnemyManager
     EclTimelineInstr *timelineInstr;
     ZunTimer timelineTime;
 };
-ZUN_ASSERT_SIZE(EnemyManager, 0xee5ec);
 
-DIFFABLE_EXTERN(EnemyManager, g_EnemyManager)
+extern EnemyManager g_EnemyManager;
 }; // namespace th06

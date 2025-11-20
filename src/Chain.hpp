@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ZunResult.hpp"
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 
 namespace th06
@@ -62,5 +61,5 @@ class Chain
     ChainElem *CreateElem(ChainCallback callback);
 };
 
-DIFFABLE_EXTERN(Chain, g_Chain)
+extern Chain g_Chain;
 }; // namespace th06

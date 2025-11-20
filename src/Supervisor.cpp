@@ -774,7 +774,7 @@ ZunResult Supervisor::LoadConfig(const char *path)
     return ZUN_SUCCESS;
 }
 
-ZunBool Supervisor::ReadMidiFile(u32 midiFileIdx, char *path)
+bool Supervisor::ReadMidiFile(u32 midiFileIdx, char *path)
 {
     // Return conventions seem opposite of normal? But they're never used anyway
     if (g_Supervisor.cfg.musicMode == MIDI)

@@ -277,7 +277,7 @@ ZunResult GameManager::AddedCallback(GameManager *mgr)
     u32 catkCursor;
     i32 i;
     Catk *catk;
-    ZunBool failedToLoadReplay;
+    bool failedToLoadReplay;
     i32 padding[3];
 
     failedToLoadReplay = false;

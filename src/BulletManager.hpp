@@ -1,7 +1,6 @@
 #pragma once
 
 #include "AnmVm.hpp"
-#include "ZunBool.hpp"
 #include "ZunResult.hpp"
 #include "diffbuild.hpp"
 #include "inttypes.hpp"
@@ -102,12 +101,12 @@ struct BulletManager
     static void DrawBulletNoHwVertex(Bullet *bullet);
     static void DrawBullet(Bullet *bullet);
 
-    void RemoveAllBullets(ZunBool turnIntoItem);
+    void RemoveAllBullets(bool turnIntoItem);
     void InitializeToZero();
 
     void TurnAllBulletsIntoPoints();
 
-    i32 DespawnBullets(i32 maxBonusScore, ZunBool awardPoints);
+    i32 DespawnBullets(i32 maxBonusScore, bool awardPoints);
     ZunResult SpawnBulletPattern(EnemyBulletShooter *bulletProps);
     Laser *SpawnLaserPattern(EnemyLaserShooter *bulletProps);
     u32 SpawnSingleBullet(EnemyBulletShooter *bulletProps, i32 bulletIdx1, i32 bulletIdx2, f32 angle);

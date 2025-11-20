@@ -20,8 +20,6 @@ struct TrackDescriptor
 };
 ZUN_ASSERT_SIZE(TrackDescriptor, 0x272);
 
-// Force constructor to generate size optimized code when it's placed in the binary
-
 struct MusicRoom
 {
     MusicRoom()
@@ -31,7 +29,7 @@ struct MusicRoom
 
     static ZunResult AddedCallback(MusicRoom *musicRoom);
     static ZunResult DeletedCallback(MusicRoom *musicRoom);
-    ZunBool ProcessInput();
+    bool ProcessInput();
     ZunResult CheckInputEnable();
     static ChainCallbackResult OnDraw(MusicRoom *musicRoom);
     static ChainCallbackResult OnUpdate(MusicRoom *musicRoom);

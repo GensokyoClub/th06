@@ -11,11 +11,11 @@ namespace th06
 {
 struct RunningSpellcardInfo
 {
-    ZunBool isCapturing;
-    ZunBool isActive;
+    bool isCapturing;
+    u32 isActive;
     i32 captureScore;
     u32 idx;
-    ZunBool usedBomb;
+    bool usedBomb;
 };
 ZUN_ASSERT_SIZE(RunningSpellcardInfo, 0x14);
 

@@ -119,7 +119,7 @@ ZunResult Ending::ParseEndFile()
     i32 diffIdx;
     i32 characterIdx;
     i32 charactersReaded;
-    ZunBool lineDisplayed;
+    bool lineDisplayed;
     i32 fill[6];
 
     char textBuffer[39];

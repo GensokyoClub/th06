@@ -71,7 +71,7 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage)
                 stage->position.y = stage->positionInterpInitial.y;
                 stage->position.z = stage->positionInterpInitial.z;
             }
-            else if ((ZunBool)(stage->scriptTime.current >= curInsn->frame))
+            else if (stage->scriptTime.current >= curInsn->frame)
             {
                 pos = *(ZunVec3 *)curInsn->args;
                 stage->position.x = pos.x;
@@ -90,7 +90,7 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage)
             }
             break;
         case STDOP_FOG:
-            if ((ZunBool)(stage->scriptTime.current >= curInsn->frame))
+            if (stage->scriptTime.current >= curInsn->frame)
             {
                 stage->skyFog.color = curInsn->args[0];
                 stage->skyFog.nearPlane = ((f32 *)curInsn->args)[1];
@@ -112,7 +112,7 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage)
             }
             break;
         case STDOP_FOG_INTERP:
-            if ((ZunBool)(stage->scriptTime.current >= curInsn->frame))
+            if (stage->scriptTime.current >= curInsn->frame)
             {
                 stage->skyFogInterpInitial = stage->skyFog;
                 stage->skyFogInterpDuration = curInsn->args[0];
@@ -122,7 +122,7 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage)
             }
             break;
         case STDOP_CAMERA_FACING:
-            if ((ZunBool)(stage->scriptTime.current >= curInsn->frame))
+            if (stage->scriptTime.current >= curInsn->frame)
             {
                 stage->facingDirInterpInitial = stage->facingDirInterpFinal;
                 stage->facingDirInterpFinal = *(ZunVec3 *)curInsn->args;
@@ -131,7 +131,7 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage)
             }
             break;
         case STDOP_CAMERA_FACING_INTERP_LINEAR:
-            if ((ZunBool)(stage->scriptTime.current >= curInsn->frame))
+            if (stage->scriptTime.current >= curInsn->frame)
             {
                 stage->facingDirInterpDuration = curInsn->args[0];
                 stage->facingDirInterpTimer.InitializeForPopup();
@@ -162,7 +162,7 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage)
         }
         if (stage->facingDirInterpDuration != 0)
         {
-            if ((ZunBool)(stage->facingDirInterpTimer.current < stage->facingDirInterpDuration))
+            if (stage->facingDirInterpTimer.current < stage->facingDirInterpDuration)
             {
                 stage->facingDirInterpTimer.Tick();
             }
@@ -205,7 +205,7 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage)
             //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGCOLOR, stage->skyFog.color);
             //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGSTART, *(u32 *)&stage->skyFog.nearPlane);
             //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGEND, *(u32 *)&stage->skyFog.farPlane);
-            if ((ZunBool)(stage->skyFogInterpTimer.current >= stage->skyFogInterpDuration))
+            if (stage->skyFogInterpTimer.current >= stage->skyFogInterpDuration)
             {
                 stage->skyFogInterpDuration = 0;
             }
@@ -511,7 +511,7 @@ ZunResult Stage::RenderObjects(i32 zLevel)
 {
     f32 quadWidth;
     ZunVec3 projectSrc;
-    ZunBool didDraw;
+    bool didDraw;
     RawStageQuadBasic *curQuad;
     ZunVec3 quadPos;
     ZunVec3 quadScaledPos;
@@ -524,7 +524,7 @@ ZunResult Stage::RenderObjects(i32 zLevel)
 
     instance = &this->objectInstances[0];
     instancesDrawn = 0;
-    didDraw = 0;
+    didDraw = false;
     projectSrc.x = 0.0;
     projectSrc.y = 0.0;
     projectSrc.z = 0.0;
@@ -648,7 +648,7 @@ ZunResult Stage::RenderObjects(i32 zLevel)
             goto skip;
 
         render:
-            didDraw = 1;
+            didDraw = true;
             while (0 <= curQuad->type)
             {
                 curQuadVm = this->quadVms + curQuad->vmIdx;

@@ -6,7 +6,6 @@
 #include "Effect.hpp"
 #include "ItemManager.hpp"
 #include "SoundPlayer.hpp"
-#include "ZunBool.hpp"
 #include "ZunMath.hpp"
 #include "ZunResult.hpp"
 #include "ZunTimer.hpp"
@@ -139,8 +138,8 @@ struct Enemy
 
     void Move();
     void ClampPos();
-    ZunBool HandleLifeCallback();
-    ZunBool HandleTimerCallback();
+    bool HandleLifeCallback();
+    bool HandleTimerCallback();
     void Despawn();
 
     static void ResetEffectArray(Enemy *enemy);
@@ -156,7 +155,7 @@ struct Enemy
         return this->hitboxDimensions * (1.0f / shrinkFactor);
     }
 
-    ZunBool HasBossTimerFinished()
+    bool HasBossTimerFinished()
     {
         return this->bossTimer.current >= this->timerCallbackThreshold;
     }

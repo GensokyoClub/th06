@@ -2,7 +2,6 @@
 
 #include "ItemManager.hpp"
 #include "SoundPlayer.hpp"
-#include "ZunBool.hpp"
 #include "ZunColor.hpp"
 #include "ZunMath.hpp"
 #include "ZunResult.hpp"

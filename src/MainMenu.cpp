@@ -919,7 +919,7 @@ CursorMovement MainMenu::MoveCursor(MainMenu *menu, i32 menuLength)
     return CURSOR_DONT_MOVE;
 }
 
-void MainMenu::SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, ZunBool unk)
+void MainMenu::SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, bool unk)
 {
     if (unk == 0 && menu->controlMapping[0] == btnPressed)
     {
@@ -1044,7 +1044,7 @@ ZunResult MainMenu::BeginStartup()
     return ZUN_SUCCESS;
 }
 
-ZunBool MainMenu::WeirdSecondInputCheck()
+bool MainMenu::WeirdSecondInputCheck()
 {
     i32 vm;
     ZunVec3 d3dVec;
@@ -1484,8 +1484,8 @@ ZunResult MainMenu::DrawReplayMenu()
     i32 replayAmount;
     i32 i;
     AnmVm *vmRef;
-    ZunBool isSelected;
-    ZunBool isSelected2;
+    bool isSelected;
+    bool isSelected2;
 
     vmRef = &this->vm[98];
     g_AsciiManager.AddFormatText(&vmRef->pos, "No.   Name      Date     Player   Rank");

@@ -72,7 +72,7 @@ struct Ending
     f32 backgroundScrollSpeed;
     AnmVm sprites[16];
     char *endFileData;
-    ZunBool hasSeenEnding;
+    bool hasSeenEnding;
     ZunTimer timer1;
     ZunTimer timer2;
     ZunTimer timer3;

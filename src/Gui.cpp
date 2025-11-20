@@ -23,7 +23,7 @@ DIFFABLE_STATIC(Gui, g_Gui);
 DIFFABLE_STATIC(ChainElem, g_GuiCalcChain);
 DIFFABLE_STATIC(ChainElem, g_GuiDrawChain);
 
-ZunBool Gui::IsStageFinished()
+bool Gui::IsStageFinished()
 {
     return this->impl->loadingScreenSprite.activeSpriteIndex >= 0 && this->impl->loadingScreenSprite.flags.flag13;
 }
@@ -39,7 +39,7 @@ void Gui::EndEnemySpellcard()
     return;
 }
 
-ZunBool Gui::IsDialogueSkippable()
+bool Gui::IsDialogueSkippable()
 {
     return (this->impl->msg).dialogueSkippable;
 }
@@ -809,7 +809,7 @@ ZunResult GuiImpl::DrawDialogue()
     return ZUN_SUCCESS;
 }
 
-ZunBool Gui::MsgWait()
+bool Gui::MsgWait()
 {
     if (this->impl->msg.ignoreWaitCounter > 0)
     {
@@ -818,7 +818,7 @@ ZunBool Gui::MsgWait()
     return 0 <= this->impl->msg.currentMsgIdx;
 }
 
-ZunBool Gui::HasCurrentMsgIdx()
+bool Gui::HasCurrentMsgIdx()
 {
     return 0 <= this->impl->msg.currentMsgIdx;
 }

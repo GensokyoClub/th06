@@ -5,7 +5,6 @@
 #include "AnmVm.hpp"
 #include "Chain.hpp"
 #include "ReplayData.hpp"
-#include "ZunBool.hpp"
 #include "ZunColor.hpp"
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
@@ -62,14 +61,14 @@ struct MainMenu
     u32 OnUpdateOptionsMenu();
     ZunResult DrawReplayMenu();
     ZunResult ChoosePracticeLevel();
-    ZunBool WeirdSecondInputCheck();
+    bool WeirdSecondInputCheck();
     void ColorMenuItem(AnmVm *, i32, i32, i32);
 
     static ZunResult LoadTitleAnm(MainMenu *menu);
     static CursorMovement MoveCursor(MainMenu *menu, i32 menuLength);
     static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor, ZunColor activeItemColor,
                              ZunColor inactiveItemColor, i32 spriteIdx /* I think*/);
-    static void SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, ZunBool unk);
+    static void SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, bool unk);
 
     i32 ReplayHandling();
     static ZunResult LoadReplayMenu(MainMenu *menu);

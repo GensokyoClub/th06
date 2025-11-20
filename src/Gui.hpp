@@ -143,16 +143,16 @@ struct Gui
     ZunResult LoadMsg(char *path);
     void FreeMsgFile();
 
-    ZunBool IsStageFinished();
+    bool IsStageFinished();
 
     void UpdateStageElements();
-    ZunBool HasCurrentMsgIdx();
+    bool HasCurrentMsgIdx();
 
     void DrawStageElements();
     void DrawGameScene();
 
     void MsgRead(i32 msgIdx);
-    ZunBool MsgWait();
+    bool MsgWait();
 
     void ShowSpellcard(i32 spellcardSprite, char *spellcardName);
     void ShowSpellcardBonus(u32 spellcardScore);
@@ -160,7 +160,7 @@ struct Gui
     void ShowBonusScore(u32 bonusScore);
     void EndEnemySpellcard();
     void EndPlayerSpellcard();
-    ZunBool IsDialogueSkippable();
+    bool IsDialogueSkippable();
 
     void ShowFullPowerMode(i32 fmtArg);
 

@@ -10,7 +10,6 @@
 #include "Chain.hpp"
 #include "Controller.hpp"
 #include "MidiOutput.hpp"
-#include "ZunBool.hpp"
 #include "ZunMath.hpp"
 #include "ZunResult.hpp"
 #include "diffbuild.hpp"
@@ -115,7 +114,7 @@ struct Supervisor
     static ZunResult DeletedCallback(Supervisor *s);
     static void DrawFpsCounter();
 
-    ZunBool ReadMidiFile(u32 midiFileIdx, char *path);
+    bool ReadMidiFile(u32 midiFileIdx, char *path);
     ZunResult PlayMidiFile(i32 midiFileIdx);
     ZunResult PlayAudio(char *path);
     ZunResult StopAudio();
@@ -171,7 +170,7 @@ struct Supervisor
 
     i32 unk194;
     i32 unk198;
-    ZunBool isInEnding;
+    bool isInEnding;
 
     i32 vsyncEnabled;
     u32 lastFrameTime;

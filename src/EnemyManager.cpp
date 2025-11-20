@@ -170,7 +170,7 @@ void EnemyManager::RunEclTimeline()
     }
     while (0 <= this->timelineInstr->time)
     {
-        if ((ZunBool)(this->timelineTime.current == this->timelineInstr->time))
+        if (this->timelineTime.current == this->timelineInstr->time)
         {
             switch (this->timelineInstr->opCode)
             {
@@ -321,7 +321,7 @@ void EnemyManager::RunEclTimeline()
                 }
             }
         }
-        else if ((ZunBool)(this->timelineTime.current < this->timelineInstr->time))
+        else if (this->timelineTime.current < this->timelineInstr->time)
         {
             break;
         }
@@ -335,7 +335,7 @@ void EnemyManager::RunEclTimeline()
     return;
 }
 
-ZunBool Enemy::HandleLifeCallback()
+bool Enemy::HandleLifeCallback()
 {
 
     i32 i;
@@ -380,7 +380,7 @@ ZunBool Enemy::HandleLifeCallback()
     return false;
 }
 
-ZunBool Enemy::HandleTimerCallback()
+bool Enemy::HandleTimerCallback()
 {
 
     Enemy *curEnemy;
@@ -405,7 +405,7 @@ ZunBool Enemy::HandleTimerCallback()
         if (!this->flags.unk16)
         {
             g_EnemyManager.spellcardInfo.isCapturing = false;
-            if (g_EnemyManager.spellcardInfo.isActive)
+            if (g_EnemyManager.spellcardInfo.isActive != 0)
             {
                 g_EnemyManager.spellcardInfo.isActive++;
             }
@@ -522,9 +522,9 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
     ZunVec3 enemyHitbox;
     i32 enemyIdx;
     i32 damage;
-    i32 local_8;
+    bool local_8;
 
-    local_8 = 0;
+    local_8 = false;
     mgr->RunEclTimeline();
     for (curEnemy = &mgr->enemies[0], mgr->enemyCount = 0, enemyIdx = 0; enemyIdx < ARRAY_SIZE_SIGNED(mgr->enemies) - 1;
          enemyIdx++, curEnemy++)
@@ -576,7 +576,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
                 curEnemy->vms[enemyVmIdx].anmFileIndex = -1;
             }
         }
-        local_8 = 0;
+        local_8 = false;
         if (curEnemy->flags.unk8 != 0 && !curEnemy->flags.unk15)
         {
             enemyLifeBeforeDmg = curEnemy->life;
@@ -600,7 +600,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
                 g_GameManager.score = (damage / 5) * 10 + g_GameManager.score;
                 if (mgr->spellcardInfo.isActive != 0)
                 {
-                    if (local_8 == 0)
+                    if (!local_8)
                     {
                         if (damage > 7)
                         {
@@ -686,7 +686,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
                         }
                         mgr->randomItemSpawnIndex++;
                     }
-                    if (curEnemy->flags.isBoss && !g_EnemyManager.spellcardInfo.isActive)
+                    if (curEnemy->flags.isBoss && !g_EnemyManager.spellcardInfo.isActive != 0)
                     {
                         g_BulletManager.DespawnBullets(12800, false);
                     }

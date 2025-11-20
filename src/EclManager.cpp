@@ -108,7 +108,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
         }
 
     YOLO:
-        if ((ZunBool)(enemy->currentContext.time.current == instruction->time))
+        if (enemy->currentContext.time.current == instruction->time)
         {
             if (!(instruction->skipForDifficulty & (1 << g_GameManager.difficulty)))
             {
@@ -740,7 +740,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                 }
                 break;
             case ECL_OPCODE_SPELLCARDEND:
-                if (g_EnemyManager.spellcardInfo.isActive)
+                if (g_EnemyManager.spellcardInfo.isActive != 0)
                 {
                     g_Gui.EndEnemySpellcard();
                     if (g_EnemyManager.spellcardInfo.isActive == 1)
@@ -960,7 +960,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                 }
                 enemy->axisSpeed = enemy->moveInterp * local_bc + enemy->moveInterpStartPos - enemy->position;
                 enemy->angle = ZUN_ATAN2F(enemy->axisSpeed.y, enemy->axisSpeed.x);
-                if ((ZunBool)(enemy->moveInterpTimer.current <= 0))
+                if (enemy->moveInterpTimer.current <= 0)
                 {
                     enemy->flags.unk1 = 0;
                     enemy->position = enemy->moveInterpStartPos + enemy->moveInterp;
@@ -973,7 +973,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                 if (0 < enemy->shootInterval)
                 {
                     enemy->shootIntervalTimer.Tick();
-                    if ((ZunBool)(enemy->shootIntervalTimer.current >= enemy->shootInterval))
+                    if (enemy->shootIntervalTimer.current >= enemy->shootInterval)
                     {
                         enemy->bulletProps.position = enemy->position + enemy->shootOffset;
                         g_BulletManager.SpawnBulletPattern(&enemy->bulletProps);

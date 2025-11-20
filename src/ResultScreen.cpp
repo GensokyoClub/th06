@@ -1141,7 +1141,7 @@ void ResultScreen::MoveCursor(ResultScreen *resultScreen, i32 length)
     }
 }
 
-ZunBool ResultScreen::MoveCursorHorizontally(ResultScreen *resultScreen, i32 length)
+bool ResultScreen::MoveCursorHorizontally(ResultScreen *resultScreen, i32 length)
 {
     if (WAS_PRESSED_PERIODIC(TH_BUTTON_LEFT))
     {

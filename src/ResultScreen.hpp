@@ -210,7 +210,7 @@ struct ResultScreen
     static void ReleaseScoreDat(ScoreDat *s);
 
     static void MoveCursor(ResultScreen *r, i32 len);
-    static ZunBool MoveCursorHorizontally(ResultScreen *r, i32 len);
+    static bool MoveCursorHorizontally(ResultScreen *r, i32 len);
 
     static void FreeAllScores(ScoreListNode *scores);
 

@@ -22,7 +22,7 @@ ZunResult MusicRoom::CheckInputEnable()
     return ZUN_SUCCESS;
 }
 
-ZunBool MusicRoom::ProcessInput()
+bool MusicRoom::ProcessInput()
 {
     i32 i;
     char lineCharBuffer[64];

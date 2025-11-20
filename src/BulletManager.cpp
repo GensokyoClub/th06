@@ -377,7 +377,7 @@ u32 BulletManager::SpawnSingleBullet(EnemyBulletShooter *bulletProps, i32 bullet
     return 0;
 }
 
-void BulletManager::RemoveAllBullets(ZunBool turnIntoItem)
+void BulletManager::RemoveAllBullets(bool turnIntoItem)
 {
     f32 cosine;
     f32 sine;
@@ -442,7 +442,7 @@ void BulletManager::TurnAllBulletsIntoPoints()
     this->RemoveAllBullets(true);
 }
 
-i32 BulletManager::DespawnBullets(i32 maxBonusScore, ZunBool awardPoints)
+i32 BulletManager::DespawnBullets(i32 maxBonusScore, bool awardPoints)
 {
     i32 bulletScore;
     i32 totalBonusScore;
@@ -499,7 +499,7 @@ i32 BulletManager::DespawnBullets(i32 maxBonusScore, ZunBool awardPoints)
             laser->state = 2;
             laser->timer.InitializeForPopup();
 
-            if (awardPoints != 0)
+            if (!awardPoints)
             {
                 g_ItemManager.SpawnItem(&laser->pos, ITEM_POINT_BULLET, 1);
                 offset = laser->startOffset;
@@ -707,7 +707,7 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
             {
                 if (curBullet->exFlags & 1)
                 {
-                    if ((ZunBool)(curBullet->timer.current <= 16))
+                    if (curBullet->timer.current <= 16)
                     {
                         bulletSpeed = 5.0f - curBullet->timer.AsFramesFloat() * 5.0f / 16.0f;
                         sincosmul(&curBullet->velocity, curBullet->angle, bulletSpeed + curBullet->speed);
@@ -719,7 +719,7 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                 }
                 else if (curBullet->exFlags & 0x10)
                 {
-                    if ((ZunBool)(curBullet->timer.current >= curBullet->ex5Int0))
+                    if (curBullet->timer.current >= curBullet->ex5Int0)
                     {
                         curBullet->exFlags &= ~0x10;
                     }
@@ -731,7 +731,7 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                 }
                 else if (curBullet->exFlags & 0x20)
                 {
-                    if ((ZunBool)(curBullet->timer.current >= curBullet->ex5Int0))
+                    if (curBullet->timer.current >= curBullet->ex5Int0)
                     {
                         curBullet->exFlags &= ~0x20;
                     }
@@ -746,8 +746,8 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                 }
                 if (curBullet->exFlags & 0x40)
                 {
-                    if ((ZunBool)(curBullet->timer.current >=
-                                  curBullet->dirChangeInterval * (curBullet->dirChangeNumTimes + 1)))
+                    if (curBullet->timer.current >=
+                                  curBullet->dirChangeInterval * (curBullet->dirChangeNumTimes + 1))
                     {
                         curBullet->dirChangeNumTimes++;
 
@@ -773,8 +773,8 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                 }
                 else if (curBullet->exFlags & 0x100)
                 {
-                    if ((ZunBool)(curBullet->timer.current >=
-                                  curBullet->dirChangeInterval * (curBullet->dirChangeNumTimes + 1)))
+                    if (curBullet->timer.current >=
+                                  curBullet->dirChangeInterval * (curBullet->dirChangeNumTimes + 1))
                     {
                         curBullet->dirChangeNumTimes++;
 
@@ -800,8 +800,8 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                 }
                 else if (curBullet->exFlags & 0x80)
                 {
-                    if ((ZunBool)(curBullet->timer.current >=
-                                  curBullet->dirChangeInterval * (curBullet->dirChangeNumTimes + 1)))
+                    if (curBullet->timer.current >=
+                                  curBullet->dirChangeInterval * (curBullet->dirChangeNumTimes + 1))
                     {
                         curBullet->dirChangeNumTimes++;
 
@@ -1011,13 +1011,13 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                 laserSize.x = local_14 / 2.0f;
             }
 
-            if ((ZunBool)(curLaser->timer.current >= curLaser->grazeDelay))
+            if (curLaser->timer.current >= curLaser->grazeDelay)
             {
                 g_Player.CalcLaserHitbox(&laserCenter, &laserSize, &curLaser->pos, curLaser->angle,
                                          curLaser->timer.AsFrames() % 12 == 0);
             }
 
-            if ((ZunBool)(curLaser->timer.current < curLaser->startTime))
+            if (curLaser->timer.current < curLaser->startTime)
             {
                 break;
             }
@@ -1028,7 +1028,7 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
             g_Player.CalcLaserHitbox(&laserCenter, &laserSize, &curLaser->pos, curLaser->angle,
                                      curLaser->timer.AsFrames() % 12 == 0);
 
-            if ((ZunBool)(curLaser->timer.current < curLaser->duration))
+            if (curLaser->timer.current < curLaser->duration)
             {
                 break;
             }
@@ -1064,13 +1064,13 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                 }
             }
 
-            if ((ZunBool)(curLaser->timer.current < curLaser->grazeInterval))
+            if (curLaser->timer.current < curLaser->grazeInterval)
             {
                 g_Player.CalcLaserHitbox(&laserCenter, &laserSize, &curLaser->pos, curLaser->angle,
                                          curLaser->timer.AsFrames() % 12 == 0);
             }
 
-            if ((ZunBool)(curLaser->timer.current < curLaser->endTime))
+            if (curLaser->timer.current < curLaser->endTime)
             {
                 break;
             }
@@ -1339,7 +1339,7 @@ ZunResult BulletManager::AddedCallback(BulletManager *mgr)
 {
     u32 idx;
 
-    if ((ZunBool)(g_Supervisor.curState != SUPERVISOR_STATE_GAMEMANAGER_REINIT))
+    if (g_Supervisor.curState != SUPERVISOR_STATE_GAMEMANAGER_REINIT)
     {
         if (g_AnmManager->LoadAnm(ANM_FILE_BULLET3, "data/etama3.anm", ANM_OFFSET_BULLET3) != ZUN_SUCCESS)
         {

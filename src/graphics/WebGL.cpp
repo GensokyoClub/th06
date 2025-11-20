@@ -26,7 +26,7 @@
 namespace th06
 {
 
-GLuint createShader(const char *source, GLenum type, char *descString)
+GLuint createShader(const char *source, GLenum type, const char *descString)
 {
     const char *fullShaderSource[32];
     GLint getRet = 0;

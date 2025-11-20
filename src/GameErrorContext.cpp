@@ -3,6 +3,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
+#include "FileSystem.hpp"
 
 namespace th06
 {

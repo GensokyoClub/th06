@@ -639,14 +639,21 @@ void AnmManager::LoadSprite(u32 spriteIdx, AnmLoadedSprite *sprite)
     this->sprites[spriteIdx] = *sprite;
     this->sprites[spriteIdx].spriteId = this->maybeLoadedSpriteCount++;
 
+    // OpenGL texel centers are located at half coordinates and EoSD uses whole number-aligned UVs
+    //   With linear filtering, a whole-numbered UV will pull equally from from the intended texel
+    //   and the next one, which can cause very obvious visual artifacts and gaps on the edges of sprites.
+    //   This prevents that, at the cost of flattening the sprite a tiny amount. If the option were added
+    //   to use nearest filtering for textures, this offsetting would be able to be disabled.
+    // Note that this is a quick and dirty fix and I have no idea if it breaks some assumption somewhere
+    //   else in the ANM code, but it causes orthographic draws to look visually correct, so ¯\_(ツ)_/¯
     this->sprites[spriteIdx].uvStart.x =
-        this->sprites[spriteIdx].startPixelInclusive.x / (this->sprites[spriteIdx].textureWidth);
+        (this->sprites[spriteIdx].startPixelInclusive.x + 0.5f) / this->sprites[spriteIdx].textureWidth;
     this->sprites[spriteIdx].uvEnd.x =
-        this->sprites[spriteIdx].endPixelInclusive.x / (this->sprites[spriteIdx].textureWidth);
+        (this->sprites[spriteIdx].endPixelInclusive.x - 0.5f) / this->sprites[spriteIdx].textureWidth;
     this->sprites[spriteIdx].uvStart.y =
-        this->sprites[spriteIdx].startPixelInclusive.y / (this->sprites[spriteIdx].textureHeight);
+        (this->sprites[spriteIdx].startPixelInclusive.y + 0.5f) / this->sprites[spriteIdx].textureHeight;
     this->sprites[spriteIdx].uvEnd.y =
-        this->sprites[spriteIdx].endPixelInclusive.y / (this->sprites[spriteIdx].textureHeight);
+        (this->sprites[spriteIdx].endPixelInclusive.y - 0.5f) / this->sprites[spriteIdx].textureHeight;
 
     this->sprites[spriteIdx].widthPx =
         this->sprites[spriteIdx].endPixelInclusive.x - this->sprites[spriteIdx].startPixelInclusive.x;

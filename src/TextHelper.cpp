@@ -12,7 +12,8 @@
 namespace th06
 {
 
-TTF_Font *g_Font;;
+TTF_Font *g_Font;
+;
 iconv_t g_Iconv = (iconv_t)-1;
 
 TextHelper::TextHelper()

@@ -27,11 +27,9 @@
 
 namespace th06
 {
-const char * g_ShortCharacterList[4] = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
-const char * g_DifficultyList[5] = {"Easy   ", "Normal ", "Hard   ", "Lunatic",
-                                                                   "Extra  "};
-const char * g_StageList[7] = {"Stage1", "Stage2", "Stage3", "Stage4",
-                                                              "Stage5", "Stage6", "Extra "};
+const char *g_ShortCharacterList[4] = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
+const char *g_DifficultyList[5] = {"Easy   ", "Normal ", "Hard   ", "Lunatic", "Extra  "};
+const char *g_StageList[7] = {"Stage1", "Stage2", "Stage3", "Stage4", "Stage5", "Stage6", "Extra "};
 
 i16 g_LastJoystickInput;
 

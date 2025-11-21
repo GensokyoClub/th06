@@ -24,15 +24,15 @@ namespace th06
 
 u32 g_ExtraLivesScores[5] = {10000000, 20000000, 40000000, 60000000, 1900000000};
 
-char  *g_EclFiles[9] = {"dummy",
-                                                       "data/ecldata1.ecl",
-                                                       "data/ecldata2.ecl",
-                                                       "data/ecldata3.ecl",
-                                                       "data/ecldata4.ecl",
-                                                       "data/ecldata5.ecl",
-                                                       "data/ecldata6.ecl",
-                                                       "data/ecldata7.ecl",
-                                                       NULL};
+char *g_EclFiles[9] = {"dummy",
+                       "data/ecldata1.ecl",
+                       "data/ecldata2.ecl",
+                       "data/ecldata3.ecl",
+                       "data/ecldata4.ecl",
+                       "data/ecldata5.ecl",
+                       "data/ecldata6.ecl",
+                       "data/ecldata7.ecl",
+                       NULL};
 
 struct AnmStageFiles
 {

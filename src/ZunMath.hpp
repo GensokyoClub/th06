@@ -324,9 +324,9 @@ struct ZunViewport
     void Set()
     {
         g_glFuncTable.glViewport(this->x * WIDTH_RESOLUTION_SCALE + VIEWPORT_OFF_X,
-                                (GAME_WINDOW_HEIGHT_REAL - ((this->y + this->height) * HEIGHT_RESOLUTION_SCALE)) - VIEWPORT_OFF_Y, 
-                                this->width * WIDTH_RESOLUTION_SCALE,
-                                this->height * HEIGHT_RESOLUTION_SCALE);
+                                 (GAME_WINDOW_HEIGHT_REAL - ((this->y + this->height) * HEIGHT_RESOLUTION_SCALE)) -
+                                     VIEWPORT_OFF_Y,
+                                 this->width * WIDTH_RESOLUTION_SCALE, this->height * HEIGHT_RESOLUTION_SCALE);
         g_glFuncTable.glDepthRangef(this->minZ, this->maxZ);
     }
 

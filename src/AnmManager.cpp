@@ -1985,18 +1985,17 @@ void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width, i32
 
     this->SetCurrentTexture(this->textures[textureId].handle);
 
-    backBufferPixels = new u8[((u32) (width * WIDTH_RESOLUTION_SCALE + 1)) * 
-                              ((u32) (height * HEIGHT_RESOLUTION_SCALE + 1)) * 4];
+    backBufferPixels =
+        new u8[((u32)(width * WIDTH_RESOLUTION_SCALE + 1)) * ((u32)(height * HEIGHT_RESOLUTION_SCALE + 1)) * 4];
 
     g_glFuncTable.glReadPixels(left * WIDTH_RESOLUTION_SCALE + VIEWPORT_OFF_X,
                                GAME_WINDOW_HEIGHT_REAL - ((top + height) * HEIGHT_RESOLUTION_SCALE) - VIEWPORT_OFF_Y,
-                               width * WIDTH_RESOLUTION_SCALE, height * HEIGHT_RESOLUTION_SCALE, 
-                               GL_RGBA, GL_UNSIGNED_BYTE, backBufferPixels);
+                               width * WIDTH_RESOLUTION_SCALE, height * HEIGHT_RESOLUTION_SCALE, GL_RGBA,
+                               GL_UNSIGNED_BYTE, backBufferPixels);
 
-    unstretchedSurface =
-        SDL_CreateRGBSurfaceWithFormatFrom(backBufferPixels, width * WIDTH_RESOLUTION_SCALE, 
-                                           height * HEIGHT_RESOLUTION_SCALE, 32, width * WIDTH_RESOLUTION_SCALE * 4,
-                                           SDL_PIXELFORMAT_RGBA32);
+    unstretchedSurface = SDL_CreateRGBSurfaceWithFormatFrom(backBufferPixels, width * WIDTH_RESOLUTION_SCALE,
+                                                            height * HEIGHT_RESOLUTION_SCALE, 32,
+                                                            width * WIDTH_RESOLUTION_SCALE * 4, SDL_PIXELFORMAT_RGBA32);
     stretchedSurface = SDL_CreateRGBSurfaceWithFormat(0, this->textures[textureId].width,
                                                       this->textures[textureId].height, 32, SDL_PIXELFORMAT_RGBA32);
 

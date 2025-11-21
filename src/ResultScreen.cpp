@@ -34,16 +34,14 @@ u32 g_DefaultMagic = 'DMYS';
 char *g_AlphabetList =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ.,:;\xA5@abcdefghijklmnopqrstuvwxyz+-/*=%0123456789(){}[]<>#!?'\"$      --";
 
-char  *g_CharacterList[6] = {TH_HAKUREI_REIMU_SPIRIT,  TH_HAKUREI_REIMU_DREAM,
-                                                            TH_KIRISAME_MARISA_DEVIL, TH_KIRISAME_MARISA_LOVE,
-                                                            TH_SATSUKI_RIN_FLOWER,    TH_SATSUKI_RIN_WIND};
+char *g_CharacterList[6] = {TH_HAKUREI_REIMU_SPIRIT, TH_HAKUREI_REIMU_DREAM, TH_KIRISAME_MARISA_DEVIL,
+                            TH_KIRISAME_MARISA_LOVE, TH_SATSUKI_RIN_FLOWER,  TH_SATSUKI_RIN_WIND};
 
 f32 g_SpellcardsWeightsList[5] = {1.0f, 1.5f, 1.5f, 2.0f, 2.5f};
 
-char  *g_RightAlignedDifficultyList[5] = {"     Easy", "   Normal", "     Hard",
-                                                                         "  Lunatic", "    Extra"};
+char *g_RightAlignedDifficultyList[5] = {"     Easy", "   Normal", "     Hard", "  Lunatic", "    Extra"};
 
-char  *g_ShortCharacterList2[4] = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
+char *g_ShortCharacterList2[4] = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
 
 #define DEFAULT_HIGH_SCORE_NAME "Nanashi "
 

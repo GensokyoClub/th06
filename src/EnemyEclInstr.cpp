@@ -26,8 +26,7 @@ struct PatchouliShottypeVars
     } shotVars[2];
 };
 
-PatchouliShottypeVars g_PatchouliShottypeVars[2] = {{{{0, 3, 1}, {2, 3, 4}}},
-                                                                                   {{{1, 4, 0}, {4, 2, 3}}}};
+PatchouliShottypeVars g_PatchouliShottypeVars[2] = {{{{0, 3, 1}, {2, 3, 4}}}, {{{1, 4, 0}, {4, 2, 3}}}};
 i32 g_PlayerShot;
 f32 g_PlayerDistance;
 f32 g_PlayerAngle;

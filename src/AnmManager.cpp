@@ -1985,13 +1985,18 @@ void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width, i32
 
     this->SetCurrentTexture(this->textures[textureId].handle);
 
-    backBufferPixels = new u8[width * height * 4];
+    backBufferPixels = new u8[((u32) (width * WIDTH_RESOLUTION_SCALE + 1)) * 
+                              ((u32) (height * HEIGHT_RESOLUTION_SCALE + 1)) * 4];
 
-    g_glFuncTable.glReadPixels(left, GAME_WINDOW_HEIGHT - (top + height), width, height, GL_RGBA, GL_UNSIGNED_BYTE,
-                               backBufferPixels);
+    g_glFuncTable.glReadPixels(left * WIDTH_RESOLUTION_SCALE,
+                               GAME_WINDOW_HEIGHT_REAL - ((top + height) * HEIGHT_RESOLUTION_SCALE), 
+                               width * WIDTH_RESOLUTION_SCALE, height * HEIGHT_RESOLUTION_SCALE, 
+                               GL_RGBA, GL_UNSIGNED_BYTE, backBufferPixels);
 
     unstretchedSurface =
-        SDL_CreateRGBSurfaceWithFormatFrom(backBufferPixels, width, height, 32, width * 4, SDL_PIXELFORMAT_RGBA32);
+        SDL_CreateRGBSurfaceWithFormatFrom(backBufferPixels, width * WIDTH_RESOLUTION_SCALE, 
+                                           height * HEIGHT_RESOLUTION_SCALE, 32, width * WIDTH_RESOLUTION_SCALE * 4,
+                                           SDL_PIXELFORMAT_RGBA32);
     stretchedSurface = SDL_CreateRGBSurfaceWithFormat(0, this->textures[textureId].width,
                                                       this->textures[textureId].height, 32, SDL_PIXELFORMAT_RGBA32);
 
@@ -2006,8 +2011,8 @@ void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width, i32
 
     stretchSrcRect.x = 0;
     stretchSrcRect.y = 0;
-    stretchSrcRect.h = height;
-    stretchSrcRect.w = width;
+    stretchSrcRect.h = height * HEIGHT_RESOLUTION_SCALE;
+    stretchSrcRect.w = width * WIDTH_RESOLUTION_SCALE;
 
     stretchDstRect.x = 0;
     stretchDstRect.y = 0;
@@ -2056,12 +2061,12 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
 
     originalViewport.Get();
 
-    fullscreenViewport.X = 0;
-    fullscreenViewport.Y = 0;
-    fullscreenViewport.Height = GAME_WINDOW_HEIGHT;
-    fullscreenViewport.Width = GAME_WINDOW_WIDTH;
-    fullscreenViewport.MinZ = 0.0f;
-    fullscreenViewport.MaxZ = 1.0f;
+    fullscreenViewport.x = 0;
+    fullscreenViewport.y = 0;
+    fullscreenViewport.height = GAME_WINDOW_HEIGHT;
+    fullscreenViewport.width = GAME_WINDOW_WIDTH;
+    fullscreenViewport.minZ = 0.0f;
+    fullscreenViewport.maxZ = 1.0f;
 
     fullscreenViewport.Set();
 

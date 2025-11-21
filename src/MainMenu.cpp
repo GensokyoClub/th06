@@ -1941,8 +1941,8 @@ ChainCallbackResult MainMenu::OnDraw(MainMenu *menu)
     curVm = menu->vm;
     window.left = 0.0;
     window.top = 0.0;
-    window.right = 640.0;
-    window.bottom = 480.0;
+    window.right = GAME_WINDOW_WIDTH;
+    window.bottom = GAME_WINDOW_HEIGHT;
     if (menu->gameState == STATE_STARTUP)
     {
         return CHAIN_CALLBACK_RESULT_CONTINUE;

@@ -38,8 +38,8 @@ void Ending::FadingEffect()
 
     endingRect.left = 0.0;
     endingRect.top = 0.0;
-    endingRect.right = 640.0;
-    endingRect.bottom = 480.0;
+    endingRect.right = GAME_WINDOW_WIDTH;
+    endingRect.bottom = GAME_WINDOW_HEIGHT;
 
     switch (this->fadeType)
     {
@@ -502,7 +502,8 @@ ChainCallbackResult Ending::OnDraw(Ending *ending)
 {
     i32 idx;
 
-    g_AnmManager->CopySurfaceRectToBackBuffer(0, 0, 0, ending->backgroundPos.x, ending->backgroundPos.y, 640, 480);
+    g_AnmManager->CopySurfaceRectToBackBuffer(0, 0, 0, ending->backgroundPos.x, ending->backgroundPos.y,
+                                              GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT);
     for (idx = 0; idx < ARRAY_SIZE_SIGNED(ending->sprites); idx++)
     {
         if (ending->sprites[idx].anmFileIndex != 0)

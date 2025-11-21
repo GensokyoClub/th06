@@ -1740,10 +1740,10 @@ ChainCallbackResult th06::ResultScreen::OnDraw(ResultScreen *resultScreen)
     ZunVec3 strPos;
 
     sprite = &resultScreen->unk_40[0];
-    g_Supervisor.viewport.X = 0;
-    g_Supervisor.viewport.Y = 0;
-    g_Supervisor.viewport.Width = 640;
-    g_Supervisor.viewport.Height = 480;
+    g_Supervisor.viewport.x = 0;
+    g_Supervisor.viewport.y = 0;
+    g_Supervisor.viewport.width = GAME_WINDOW_WIDTH;
+    g_Supervisor.viewport.height = GAME_WINDOW_HEIGHT;
 
     //    g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
     g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);

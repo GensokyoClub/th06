@@ -52,12 +52,12 @@ RenderResult GameWindow::Render()
         {
             if (g_Supervisor.RedrawWholeFrame())
             {
-                viewport.X = 0;
-                viewport.Y = 0;
-                viewport.Width = 640;
-                viewport.Height = 480;
-                viewport.MinZ = 0.0;
-                viewport.MaxZ = 1.0;
+                viewport.x = 0;
+                viewport.y = 0;
+                viewport.width = GAME_WINDOW_WIDTH;
+                viewport.height = GAME_WINDOW_HEIGHT;
+                viewport.minZ = 0.0;
+                viewport.maxZ = 1.0;
                 viewport.Set();
                 g_glFuncTable.glClearColor(
                     ((g_Stage.skyFog.color >> 16) & 0xFF) / 255.0f, ((g_Stage.skyFog.color >> 8) & 0xFF) / 255.0f,
@@ -71,10 +71,10 @@ RenderResult GameWindow::Render()
             g_AnmManager->SetCurrentTexture(0);
         }
 
-        g_Supervisor.viewport.X = 0;
-        g_Supervisor.viewport.Y = 0;
-        g_Supervisor.viewport.Width = 640;
-        g_Supervisor.viewport.Height = 480;
+        g_Supervisor.viewport.x = 0;
+        g_Supervisor.viewport.y = 0;
+        g_Supervisor.viewport.width = GAME_WINDOW_WIDTH;
+        g_Supervisor.viewport.height = GAME_WINDOW_HEIGHT;
         g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
         g_Supervisor.viewport.Set();
         res = g_Chain.RunCalcChain();
@@ -185,8 +185,8 @@ void GameWindow::CreateGameWindow()
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);
 
     u32 flags = SDL_WINDOW_OPENGL;
-    i32 height = GAME_WINDOW_HEIGHT;
-    i32 width = GAME_WINDOW_WIDTH;
+    i32 height = GAME_WINDOW_HEIGHT_REAL;
+    i32 width = GAME_WINDOW_WIDTH_REAL;
     i32 x = SDL_WINDOWPOS_UNDEFINED;
     i32 y = SDL_WINDOWPOS_UNDEFINED;
 

@@ -236,17 +236,17 @@ void AsciiManager::DrawStrings(void)
             guiString = string->isGui;
             if (guiString)
             {
-                g_Supervisor.viewport.X = g_GameManager.arcadeRegionTopLeftPos.x;
-                g_Supervisor.viewport.Y = g_GameManager.arcadeRegionTopLeftPos.y;
-                g_Supervisor.viewport.Width = g_GameManager.arcadeRegionSize.x;
-                g_Supervisor.viewport.Height = g_GameManager.arcadeRegionSize.y;
+                g_Supervisor.viewport.x = g_GameManager.arcadeRegionTopLeftPos.x;
+                g_Supervisor.viewport.y = g_GameManager.arcadeRegionTopLeftPos.y;
+                g_Supervisor.viewport.width = g_GameManager.arcadeRegionSize.x;
+                g_Supervisor.viewport.height = g_GameManager.arcadeRegionSize.y;
             }
             else
             {
-                g_Supervisor.viewport.X = 0;
-                g_Supervisor.viewport.Y = 0;
-                g_Supervisor.viewport.Width = 640;
-                g_Supervisor.viewport.Height = 480;
+                g_Supervisor.viewport.x = 0;
+                g_Supervisor.viewport.y = 0;
+                g_Supervisor.viewport.width = GAME_WINDOW_WIDTH;
+                g_Supervisor.viewport.height = GAME_WINDOW_HEIGHT;
             }
 
             g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
@@ -595,10 +595,10 @@ void StageMenu::OnDrawGameMenu()
 
     if (g_GameManager.isInGameMenu)
     {
-        g_Supervisor.viewport.X = g_GameManager.arcadeRegionTopLeftPos.x;
-        g_Supervisor.viewport.Y = g_GameManager.arcadeRegionTopLeftPos.y;
-        g_Supervisor.viewport.Width = g_GameManager.arcadeRegionSize.x;
-        g_Supervisor.viewport.Height = g_GameManager.arcadeRegionSize.y;
+        g_Supervisor.viewport.x = g_GameManager.arcadeRegionTopLeftPos.x;
+        g_Supervisor.viewport.y = g_GameManager.arcadeRegionTopLeftPos.y;
+        g_Supervisor.viewport.width = g_GameManager.arcadeRegionSize.x;
+        g_Supervisor.viewport.height = g_GameManager.arcadeRegionSize.y;
         g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
         g_Supervisor.viewport.Set();
         if (g_Supervisor.lockableBackbuffer && this->curState != GAME_MENU_PAUSE_OPENING)
@@ -807,10 +807,10 @@ void StageMenu::OnDrawRetryMenu()
 
     if (g_GameManager.isInRetryMenu)
     {
-        g_Supervisor.viewport.X = g_GameManager.arcadeRegionTopLeftPos.x;
-        g_Supervisor.viewport.Y = g_GameManager.arcadeRegionTopLeftPos.y;
-        g_Supervisor.viewport.Width = g_GameManager.arcadeRegionSize.x;
-        g_Supervisor.viewport.Height = g_GameManager.arcadeRegionSize.y;
+        g_Supervisor.viewport.x = g_GameManager.arcadeRegionTopLeftPos.x;
+        g_Supervisor.viewport.y = g_GameManager.arcadeRegionTopLeftPos.y;
+        g_Supervisor.viewport.width = g_GameManager.arcadeRegionSize.x;
+        g_Supervisor.viewport.height = g_GameManager.arcadeRegionSize.y;
         g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
         g_Supervisor.viewport.Set();
         //        g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
@@ -846,10 +846,10 @@ void AsciiManager::DrawPopupsWithHwVertexProcessing()
     i32 j;
 
     currentPopup = this->popups;
-    g_Supervisor.viewport.X = g_GameManager.arcadeRegionTopLeftPos.x;
-    g_Supervisor.viewport.Y = g_GameManager.arcadeRegionTopLeftPos.y;
-    g_Supervisor.viewport.Width = g_GameManager.arcadeRegionSize.x;
-    g_Supervisor.viewport.Height = g_GameManager.arcadeRegionSize.y;
+    g_Supervisor.viewport.x = g_GameManager.arcadeRegionTopLeftPos.x;
+    g_Supervisor.viewport.y = g_GameManager.arcadeRegionTopLeftPos.y;
+    g_Supervisor.viewport.width = g_GameManager.arcadeRegionSize.x;
+    g_Supervisor.viewport.height = g_GameManager.arcadeRegionSize.y;
     g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
     g_Supervisor.viewport.Set();
 
@@ -897,10 +897,10 @@ void AsciiManager::DrawPopupsWithoutHwVertexProcessing()
     i32 j;
 
     currentPopup = this->popups;
-    g_Supervisor.viewport.X = g_GameManager.arcadeRegionTopLeftPos.x;
-    g_Supervisor.viewport.Y = g_GameManager.arcadeRegionTopLeftPos.y;
-    g_Supervisor.viewport.Width = g_GameManager.arcadeRegionSize.x;
-    g_Supervisor.viewport.Height = g_GameManager.arcadeRegionSize.y;
+    g_Supervisor.viewport.x = g_GameManager.arcadeRegionTopLeftPos.x;
+    g_Supervisor.viewport.y = g_GameManager.arcadeRegionTopLeftPos.y;
+    g_Supervisor.viewport.width = g_GameManager.arcadeRegionSize.x;
+    g_Supervisor.viewport.height = g_GameManager.arcadeRegionSize.y;
     g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
     g_Supervisor.viewport.Set();
 

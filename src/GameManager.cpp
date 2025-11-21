@@ -156,12 +156,12 @@ ChainCallbackResult GameManager::OnUpdate(GameManager *gameManager)
 
     gameManager->isInMenu = isInMenu;
 
-    g_Supervisor.viewport.X = gameManager->arcadeRegionTopLeftPos.x;
-    g_Supervisor.viewport.Y = gameManager->arcadeRegionTopLeftPos.y;
-    g_Supervisor.viewport.Width = gameManager->arcadeRegionSize.x;
-    g_Supervisor.viewport.Height = gameManager->arcadeRegionSize.y;
-    g_Supervisor.viewport.MinZ = 0.5;
-    g_Supervisor.viewport.MaxZ = 1.0;
+    g_Supervisor.viewport.x = gameManager->arcadeRegionTopLeftPos.x;
+    g_Supervisor.viewport.y = gameManager->arcadeRegionTopLeftPos.y;
+    g_Supervisor.viewport.width = gameManager->arcadeRegionSize.x;
+    g_Supervisor.viewport.height = gameManager->arcadeRegionSize.y;
+    g_Supervisor.viewport.minZ = 0.5;
+    g_Supervisor.viewport.maxZ = 1.0;
 
     SetupCamera(0);
 
@@ -512,9 +512,9 @@ void GameManager::SetupCameraStageBackground(f32 extraRenderDistance)
 
     g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
 
-    viewportMiddleWidth = g_Supervisor.viewport.Width / 2.0f;
-    viewportMiddleHeight = g_Supervisor.viewport.Height / 2.0f;
-    aspectRatio = (f32)g_Supervisor.viewport.Width / (f32)g_Supervisor.viewport.Height;
+    viewportMiddleWidth = g_Supervisor.viewport.width / 2.0f;
+    viewportMiddleHeight = g_Supervisor.viewport.height / 2.0f;
+    aspectRatio = (f32)g_Supervisor.viewport.width / (f32)g_Supervisor.viewport.height;
     fov = ZUN_PI * (30.0f / 180.0f);
     cameraDistance = viewportMiddleHeight / ZUN_TANF(fov / 2);
     upVec.x = 0.0f;
@@ -555,9 +555,9 @@ void GameManager::SetupCamera(f32 extraRenderDistance)
 
     g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
 
-    viewportMiddleWidth = g_Supervisor.viewport.Width / 2.0f;
-    viewportMiddleHeight = g_Supervisor.viewport.Height / 2.0f;
-    aspectRatio = (f32)g_Supervisor.viewport.Width / (f32)g_Supervisor.viewport.Height;
+    viewportMiddleWidth = g_Supervisor.viewport.width / 2.0f;
+    viewportMiddleHeight = g_Supervisor.viewport.height / 2.0f;
+    aspectRatio = (f32)g_Supervisor.viewport.width / (f32)g_Supervisor.viewport.height;
     fov = ZUN_PI * (30.0f / 180.0f);
     cameraDistance = viewportMiddleHeight / ZUN_TANF(fov / 2);
     upVec.x = 0.0f;

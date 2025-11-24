@@ -40,6 +40,13 @@
       width: 640px;
       height: 480px;
     }
+
+    .button-container {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        justify-content: center;
+    }
   </style>
 </head>
 <body>
@@ -49,8 +56,13 @@
   <div id="loading-text">Loading...</div>
 
   <canvas id="canvas" width="640" height="480"></canvas>
-  <button id="fullscreen-button">Fullscreen</button>
-  <button id="clear-cache-button">Clear Game Cache</button>
+
+  <div class="button-container">
+      <button id="fullscreen-button">Fullscreen</button>
+      <button id="clear-cache-button">Clear Game Cache</button>
+      <button id="upload-replay-button">Upload Replay</button>
+  </div>
+  <input type="file" id="replay-file-input" style="display:none">
 
   <script>
     if ('serviceWorker' in navigator) {
@@ -80,9 +92,42 @@
           });
           window.location.reload();
         });
-
       }
     });
+
+    const uploadReplayBtn = document.getElementById("upload-replay-button");
+     const replayFileInput = document.getElementById("replay-file-input");
+
+     uploadReplayBtn.addEventListener("click", () => {
+       replayFileInput.click();
+     });
+
+     replayFileInput.addEventListener("change", async (event) => {
+       const file = event.target.files[0];
+       if (!file) return;
+
+       const arrayBuffer = await file.arrayBuffer();
+       const byteArray = new Uint8Array(arrayBuffer);
+
+       const path = `/persistent/replay/${file.name}`;
+       console.log("Uploading replay:", path);
+
+       try {
+         FS.writeFile(path, byteArray);
+         console.log("File written, syncing...");
+
+         FS.syncfs(false, (err) => {
+           if (err) {
+             console.error("IDBFS sync failed:", err);
+           } else {
+             console.log("Replay uploaded successfully.");
+           }
+         });
+
+       } catch (err) {
+         console.error("Error writing replay:", err);
+       }
+     });
 
     var Module = {
       canvas,

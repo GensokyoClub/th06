@@ -251,8 +251,7 @@ u16 Controller::GetControllerInput(u16 buttons)
     return buttons;
 }
 
-u32 Controller::SetButtonFromDirectInputJoystate(u16 *outButtons, i16 controllerButtonToTest,
-                                                 enum TouhouButton touhouButton, u8 *inputButtons)
+u32 Controller::SetButtonFromDirectInputJoystate(u16 *outButtons, i16 controllerButtonToTest, TouhouButton touhouButton, u8 *inputButtons)
 {
     if (controllerButtonToTest < 0)
     {
@@ -264,8 +263,7 @@ u32 Controller::SetButtonFromDirectInputJoystate(u16 *outButtons, i16 controller
     return inputButtons[controllerButtonToTest] & 0x80 ? touhouButton & 0xFFFF : 0;
 }
 
-u32 Controller::SetButtonFromControllerInputs(u16 *outButtons, i16 controllerButtonToTest,
-                                              enum TouhouButton touhouButton, SDL_GameController *controller)
+u32 Controller::SetButtonFromControllerInputs(u16 *outButtons, i16 controllerButtonToTest, TouhouButton touhouButton, SDL_GameController *controller)
 {
     u8 pressed;
 

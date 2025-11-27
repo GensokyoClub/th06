@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mouse.h>
+#include <SDL2/SDL_main.h>
 #include <cstdio>
 
 #include "AnmManager.hpp"
@@ -16,6 +17,10 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #include <emscripten/html5.h>
+#endif
+
+#ifdef __3DS__
+#include <3ds.h>
 #endif
 
 using namespace th06;
@@ -179,8 +184,12 @@ static void restart_game()
     }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
+    #ifdef __3DS__
+        gfxInitDefault();
+    #endif
+
     if (!initialize_game())
         return -1;
 

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <cstddef>
-#include "inttypes.hpp"
-#include "ZunColor.hpp"
-#include "ZunMath.hpp"
+#include "../inttypes.hpp"
+#include "../ZunColor.hpp"
+#include "../ZunMath.hpp"
 
 namespace th06
 {
@@ -48,7 +48,7 @@ enum TransformMatrix
     MATRIX_TEXTURE
 };
 
-struct GfxInterface 
+struct GfxInterface
 {
     virtual void SetFogRange(f32 near, f32 far) = 0;
     virtual void SetFogColor(ZunColor color) = 0;

@@ -37,12 +37,13 @@ include $(DEVKITPRO)/libnx/switch_rules
 #   of a homebrew executable (.nro). This is intended to be used for sysmodules.
 #   NACP building is skipped as well.
 #---------------------------------------------------------------------------------
-TARGET		:=	Touhou-6-NX
+TARGET		:=	th06_nx
 BUILD		:=	build
 SOURCES		:=	src src/graphics/
 # DATA		:=	data
 INCLUDES	:=	src
 # ROMFS		:=	romfs
+ICON		:=	resources/placeholder.jpg
 
 APP_TITLE   := Touhou 6 NX
 APP_AUTHOR  := Gensokyou Club

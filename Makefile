@@ -45,7 +45,7 @@ INCLUDES	:=	src
 # ROMFS		:=	romfs
 ICON		:=	resources/placeholder.jpg
 
-APP_TITLE   := Touhou 6 NX
+APP_TITLE   := Touhou 6 NX Port
 APP_AUTHOR  := Gensokyou Club
 
 #---------------------------------------------------------------------------------

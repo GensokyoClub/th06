@@ -19,8 +19,8 @@
 #include <emscripten/html5.h>
 #endif
 
-#ifdef __3DS__
-#include <3ds.h>
+#ifdef __SWITCH__
+#include <switch.h>
 #endif
 
 using namespace th06;
@@ -41,6 +41,10 @@ static int renderResult = 0;
 #define EM_TH_CONFIG_FILE "/persistent/" TH_CONFIG_FILE
 #endif
 
+#ifdef __SWITCH__
+#define SWITCH_TH_CONFIG_FILE TH_EN_CONFIG_FILE
+#endif
+
 static bool initialize_game()
 {
 #ifdef _WIN32
@@ -51,7 +55,11 @@ static bool initialize_game()
 #ifdef __EMSCRIPTEN__
     bool loadConfig = g_Supervisor.LoadConfig(EM_TH_CONFIG_FILE);
 #else
+#ifdef __SWITCH__
+    bool loadConfig = g_Supervisor.LoadConfig(SWITCH_TH_CONFIG_FILE);
+#else
     bool loadConfig = g_Supervisor.LoadConfig(TH_CONFIG_FILE);
+#endif
 
 #endif
 
@@ -186,10 +194,6 @@ static void restart_game()
 
 int main(int argc, char **argv)
 {
-    #ifdef __3DS__
-        gfxInitDefault();
-    #endif
-
     if (!initialize_game())
         return -1;
 

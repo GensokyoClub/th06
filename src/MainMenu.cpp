@@ -27,6 +27,12 @@
 #define EM_TH_CONFIG_FILE "/persistent/" TH_CONFIG_FILE
 #endif
 
+// For some reason, the switch freaks out on real hardware if I try to add a file named 東方紅魔郷.cfg
+// so i'm forced to use the English name here.
+#ifdef __SWITCH__
+#define SWITCH_TH_CONFIG_FILE TH_EN_CONFIG_FILE
+#endif
+
 namespace th06
 {
 DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 4, g_ShortCharacterList) = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
@@ -1874,7 +1880,11 @@ u32 MainMenu::OnUpdateOptionsMenu()
 #ifdef __EMSCRIPTEN__
                 FileSystem::WriteDataToFile(EM_TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
 #else
+#ifdef __SWITCH__
+                FileSystem::WriteDataToFile(SWITCH_TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
+#else
                 FileSystem::WriteDataToFile(TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
+#endif
 #endif
                 this->gameState = STATE_MAIN_MENU;
                 this->stateTimer = 0;

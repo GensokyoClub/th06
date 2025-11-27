@@ -1,6 +1,6 @@
 #include "FixedFunctionGL.hpp"
 #include "GLFunc.hpp"
-#include "Supervisor.hpp"
+#include "../Supervisor.hpp"
 #include <SDL2/SDL.h>
 
 namespace th06
@@ -148,14 +148,14 @@ void FixedFunctionGL::SetAttributePointer(VertexAttributeArrays attr, std::size_
 void FixedFunctionGL::SetColorOp(TextureOpComponent component, ColorOp op)
 {
     const GLenum opEnums[3] = {GL_MODULATE, GL_ADD, GL_REPLACE};
-    
+
     if (component > COMPONENT_ALPHA || op > COLOR_OP_REPLACE)
     {
         return;
     }
 
     GLenum componentEnum = component == COMPONENT_ALPHA ? GL_COMBINE_ALPHA : GL_COMBINE_RGB;
-    
+
     g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, componentEnum, opEnums[op]);
 }
 

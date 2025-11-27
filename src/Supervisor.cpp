@@ -326,7 +326,9 @@ bool Supervisor::AddedCallback(Supervisor *s)
     s->startupTimeBeforeMenuMusic = SDL_GetTicks();
     Supervisor::SetupDInput(s);
 
+#ifndef __SWITCH__
     s->midiOutput = new MidiOutput();
+#endif
 
     // Replacing a seeding method that used win32 timeGetTime
     g_Rng.Initialize((u16)std::time(NULL));
@@ -484,12 +486,15 @@ bool Supervisor::DeletedCallback(Supervisor *s)
     // g_AnmManager->ReleaseAnm(0);
     AsciiManager::CutChain();
     g_SoundPlayer.StopBGM();
+
+#ifndef __SWITCH__
     if (s->midiOutput != NULL)
     {
         s->midiOutput->StopPlayback();
         delete s->midiOutput;
         s->midiOutput = NULL;
     }
+#endif
     ReplayManager::SaveReplay(NULL, NULL);
     TextHelper::ReleaseTextBuffer();
     //    if (s->keyboard != NULL)
@@ -776,11 +781,12 @@ bool Supervisor::ReadMidiFile(u32 midiFileIdx, char *path)
     // Return conventions seem opposite of normal? But they're never used anyway
     if (g_Supervisor.cfg.musicMode == MIDI)
     {
+#ifndef __SWITCH__
         if (g_Supervisor.midiOutput != NULL)
         {
             g_Supervisor.midiOutput->ReadFileData(midiFileIdx, path);
         }
-
+#endif
         return false;
     }
 
@@ -789,17 +795,19 @@ bool Supervisor::ReadMidiFile(u32 midiFileIdx, char *path)
 
 bool Supervisor::PlayMidiFile(i32 midiFileIdx)
 {
+#ifndef __SWITCH__
     if (g_Supervisor.cfg.musicMode == MIDI)
     {
+
         if (g_Supervisor.midiOutput != NULL)
         {
             g_Supervisor.midiOutput->StopPlayback();
             g_Supervisor.midiOutput->ParseFile(midiFileIdx);
             g_Supervisor.midiOutput->Play();
         }
-
         return true;
     }
+#endif
 
     return false;
 }
@@ -812,12 +820,14 @@ bool Supervisor::PlayAudio(const char *path)
 
     if (g_Supervisor.cfg.musicMode == MIDI)
     {
+#ifndef __SWITCH__
         if (g_Supervisor.midiOutput != NULL)
         {
             g_Supervisor.midiOutput->StopPlayback();
             g_Supervisor.midiOutput->LoadFile(path);
             g_Supervisor.midiOutput->Play();
         }
+#endif
     }
     else if (g_Supervisor.cfg.musicMode == WAV)
     {
@@ -852,10 +862,12 @@ bool Supervisor::StopAudio()
 {
     if (g_Supervisor.cfg.musicMode == MIDI)
     {
+#ifndef __SWITCH__
         if (g_Supervisor.midiOutput != NULL)
         {
             g_Supervisor.midiOutput->StopPlayback();
         }
+#endif
     }
     else
     {
@@ -876,10 +888,12 @@ bool Supervisor::FadeOutMusic(f32 fadeOutSeconds)
 {
     if (g_Supervisor.cfg.musicMode == MIDI)
     {
+#ifndef __SWITCH__
         if (g_Supervisor.midiOutput != NULL)
         {
             g_Supervisor.midiOutput->SetFadeOut(1000.0f * fadeOutSeconds);
         }
+#endif
     }
     else
     {

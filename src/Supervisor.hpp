@@ -167,7 +167,9 @@ struct Supervisor
     f32 effectiveFramerateMultiplier;
     f32 framerateMultiplier;
 
+#ifndef __SWITCH__
     MidiOutput *midiOutput;
+#endif
 
     f32 unk1b4;
     f32 unk1b8;

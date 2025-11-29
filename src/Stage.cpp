@@ -17,7 +17,7 @@ ChainElem g_StageCalcChain;
 ChainElem g_StageOnDrawHighPrioChain;
 ChainElem g_StageOnDrawLowPrioChain;
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(StageFile, 8, g_StageFiles) = {
+StageFile g_StageFiles[8] = {
     {"dummy", "dummy"},
     {"data/stg1bg.anm", "data/stage1.std"},
     {"data/stg2bg.anm", "data/stage2.std"},
@@ -283,8 +283,8 @@ ChainCallbackResult Stage::OnDrawLowPrio(Stage *stage)
         }
         g_AnmManager->Draw(&stage->spellcardBackground);
     }
-    g_Supervisor.viewport.MinZ = 0.0;
-    g_Supervisor.viewport.MaxZ = 0.5;
+    g_Supervisor.viewport.minZ = 0.0;
+    g_Supervisor.viewport.maxZ = 0.5;
     GameManager::SetupCameraStageBackground(0);
     g_Supervisor.viewport.Set();
     g_AnmManager->SetFogRange(1'000.0f, 2'000.0f);
@@ -521,7 +521,7 @@ bool Stage::RenderObjects(i32 zLevel)
 
     instance = &this->objectInstances[0];
     instancesDrawn = 0;
-    didDraw = 0;
+    didDraw = false;
     projectSrc.x = 0.0;
     projectSrc.y = 0.0;
     projectSrc.z = 0.0;
@@ -562,8 +562,8 @@ bool Stage::RenderObjects(i32 zLevel)
             projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
                         g_Supervisor.viewMatrix, worldMatrix);
 
-            if (quadPos.y >= g_Supervisor.viewport.Y &&
-                quadPos.y <= g_Supervisor.viewport.Y + g_Supervisor.viewport.Height)
+            if (quadPos.y >= g_Supervisor.viewport.y &&
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
             {
                 goto render;
             }
@@ -572,8 +572,8 @@ bool Stage::RenderObjects(i32 zLevel)
             worldMatrix.m[3][1] = worldMatrix.m[3][1] - obj->size.y;
             projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
                         g_Supervisor.viewMatrix, worldMatrix);
-            if (quadPos.y >= g_Supervisor.viewport.Y &&
-                quadPos.y <= g_Supervisor.viewport.Y + g_Supervisor.viewport.Height)
+            if (quadPos.y >= g_Supervisor.viewport.y &&
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
             {
                 goto render;
             }
@@ -582,8 +582,8 @@ bool Stage::RenderObjects(i32 zLevel)
             worldMatrix.m[3][2] = worldMatrix.m[3][2] - obj->size.z;
             projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
                         g_Supervisor.viewMatrix, worldMatrix);
-            if (quadPos.y >= g_Supervisor.viewport.Y &&
-                quadPos.y <= g_Supervisor.viewport.Y + g_Supervisor.viewport.Height)
+            if (quadPos.y >= g_Supervisor.viewport.y &&
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
             {
                 goto render;
             }
@@ -592,8 +592,8 @@ bool Stage::RenderObjects(i32 zLevel)
             worldMatrix.m[3][1] = worldMatrix.m[3][1] + obj->size.y;
             projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
                         g_Supervisor.viewMatrix, worldMatrix);
-            if (quadPos.y >= g_Supervisor.viewport.Y &&
-                quadPos.y <= g_Supervisor.viewport.Y + g_Supervisor.viewport.Height)
+            if (quadPos.y >= g_Supervisor.viewport.y &&
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
             {
                 goto render;
             }
@@ -604,8 +604,8 @@ bool Stage::RenderObjects(i32 zLevel)
             worldMatrix.m[3][2] = obj->position.z + instance->position.z - this->position.z + obj->size.z;
             projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
                         g_Supervisor.viewMatrix, worldMatrix);
-            if (quadPos.y >= g_Supervisor.viewport.Y &&
-                quadPos.y <= g_Supervisor.viewport.Y + g_Supervisor.viewport.Height)
+            if (quadPos.y >= g_Supervisor.viewport.y &&
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
             {
                 goto render;
             }
@@ -614,8 +614,8 @@ bool Stage::RenderObjects(i32 zLevel)
             worldMatrix.m[3][1] = worldMatrix.m[3][1] - obj->size.y;
             projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
                         g_Supervisor.viewMatrix, worldMatrix);
-            if (quadPos.y >= g_Supervisor.viewport.Y &&
-                quadPos.y <= g_Supervisor.viewport.Y + g_Supervisor.viewport.Height)
+            if (quadPos.y >= g_Supervisor.viewport.y &&
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
             {
                 goto render;
             }
@@ -624,8 +624,8 @@ bool Stage::RenderObjects(i32 zLevel)
             worldMatrix.m[3][2] = worldMatrix.m[3][2] - (obj->size).z;
             projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
                         g_Supervisor.viewMatrix, worldMatrix);
-            if (quadPos.y >= g_Supervisor.viewport.Y &&
-                quadPos.y <= g_Supervisor.viewport.Y + g_Supervisor.viewport.Height)
+            if (quadPos.y >= g_Supervisor.viewport.y &&
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
             {
                 goto render;
             }
@@ -634,8 +634,8 @@ bool Stage::RenderObjects(i32 zLevel)
             worldMatrix.m[3][1] = worldMatrix.m[3][1] + (obj->size).y;
             projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
                         g_Supervisor.viewMatrix, worldMatrix);
-            if (quadPos.y >= g_Supervisor.viewport.Y &&
-                quadPos.y <= g_Supervisor.viewport.Y + g_Supervisor.viewport.Height)
+            if (quadPos.y >= g_Supervisor.viewport.y &&
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
             {
                 goto render;
             }
@@ -645,7 +645,7 @@ bool Stage::RenderObjects(i32 zLevel)
             goto skip;
 
         render:
-            didDraw = 1;
+            didDraw = true;
             while (0 <= curQuad->type)
             {
                 curQuadVm = this->quadVms + curQuad->vmIdx;

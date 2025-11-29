@@ -2,7 +2,6 @@
 
 #include "Chain.hpp"
 #include "ResultScreen.hpp"
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 
 namespace th06
@@ -129,5 +128,4 @@ struct GameManager
     i32 minRank;
     i32 subRank;
 };
-ZUN_ASSERT_SIZE(GameManager, 0x1a80);
 }; // namespace th06

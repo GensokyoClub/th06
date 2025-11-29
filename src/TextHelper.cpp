@@ -13,7 +13,8 @@ namespace th06
 {
 
 TTF_Font *g_Font;
-DIFFABLE_STATIC_ASSIGN(iconv_t, g_Iconv) = (iconv_t)-1;
+
+iconv_t g_Iconv = (iconv_t)-1;
 
 TextHelper::TextHelper()
 {

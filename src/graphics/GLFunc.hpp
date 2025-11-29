@@ -57,7 +57,7 @@ struct GLFuncTable
     void GLAPIENTRY (*glVertexPointer)(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr);
     void GLAPIENTRY (*glViewport)(GLint x, GLint y, GLsizei width, GLsizei height);
 
-// GL(ES) 2.X / WebGL
+    // GL(ES) 2.X / WebGL
     PFNGLATTACHSHADERPROC glAttachShader;
     PFNGLBINDATTRIBLOCATIONPROC glBindAttribLocation;
     PFNGLCOMPILESHADERPROC glCompileShader;

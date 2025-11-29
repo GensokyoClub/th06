@@ -23,17 +23,19 @@
 namespace th06
 {
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(u32, 5, g_ExtraLivesScores) = {10000000, 20000000, 40000000, 60000000, 1900000000};
+u32 g_ExtraLivesScores[5] = {10000000, 20000000, 40000000, 60000000, 1900000000};
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 9, g_EclFiles) = {"dummy",
-                                                             "data/ecldata1.ecl",
-                                                             "data/ecldata2.ecl",
-                                                             "data/ecldata3.ecl",
-                                                             "data/ecldata4.ecl",
-                                                             "data/ecldata5.ecl",
-                                                             "data/ecldata6.ecl",
-                                                             "data/ecldata7.ecl",
-                                                             NULL};
+const char *g_EclFiles[9] = {
+    "dummy",
+    "data/ecldata1.ecl",
+    "data/ecldata2.ecl",
+    "data/ecldata3.ecl",
+    "data/ecldata4.ecl",
+    "data/ecldata5.ecl",
+    "data/ecldata6.ecl",
+    "data/ecldata7.ecl",
+    NULL
+};
 
 struct AnmStageFiles
 {
@@ -41,7 +43,7 @@ struct AnmStageFiles
     const char *file2;
 };
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(AnmStageFiles, 8, g_AnmStageFiles) = {
+AnmStageFiles g_AnmStageFiles[8] = {
     {"dummy", "dummy"},
     {"data/stg1enm.anm", "data/stg1enm2.anm"},
     {"data/stg2enm.anm", "data/stg2enm2.anm"},
@@ -57,9 +59,8 @@ struct DifficultyInfo
     u32 minRank;
     u32 maxRank;
 };
-ZUN_ASSERT_SIZE(DifficultyInfo, 0xc);
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(DifficultyInfo, 5, g_DifficultyInfoForReplay) = {
+DifficultyInfo g_DifficultyInfoForReplay[5] = {
     // rank, minRank, maxRank
     /* EASY    */ {16, 12, 20},
     /* NORMAL  */ {16, 10, 32},
@@ -68,7 +69,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(DifficultyInfo, 5, g_DifficultyInfoForReplay) = {
     /* EXTRA   */ {16, 14, 18},
 };
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(DifficultyInfo, 5, g_DifficultyInfo) = {
+DifficultyInfo g_DifficultyInfo[5] = {
     // rank, minRank, maxRank
     /* EASY    */ {16, 12, 20},
     /* NORMAL  */ {16, 10, 32},
@@ -158,12 +159,12 @@ ChainCallbackResult GameManager::OnUpdate(GameManager *gameManager)
 
     gameManager->isInMenu = isInMenu;
 
-    g_Supervisor.viewport.X = gameManager->arcadeRegionTopLeftPos.x;
-    g_Supervisor.viewport.Y = gameManager->arcadeRegionTopLeftPos.y;
-    g_Supervisor.viewport.Width = gameManager->arcadeRegionSize.x;
-    g_Supervisor.viewport.Height = gameManager->arcadeRegionSize.y;
-    g_Supervisor.viewport.MinZ = 0.5;
-    g_Supervisor.viewport.MaxZ = 1.0;
+    g_Supervisor.viewport.x = gameManager->arcadeRegionTopLeftPos.x;
+    g_Supervisor.viewport.y = gameManager->arcadeRegionTopLeftPos.y;
+    g_Supervisor.viewport.width = gameManager->arcadeRegionSize.x;
+    g_Supervisor.viewport.height = gameManager->arcadeRegionSize.y;
+    g_Supervisor.viewport.minZ = 0.5;
+    g_Supervisor.viewport.maxZ = 1.0;
 
     SetupCamera(0);
 
@@ -511,9 +512,9 @@ void GameManager::SetupCameraStageBackground(f32 extraRenderDistance)
 
     g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
 
-    viewportMiddleWidth = g_Supervisor.viewport.Width / 2.0f;
-    viewportMiddleHeight = g_Supervisor.viewport.Height / 2.0f;
-    aspectRatio = (f32)g_Supervisor.viewport.Width / (f32)g_Supervisor.viewport.Height;
+    viewportMiddleWidth = g_Supervisor.viewport.width / 2.0f;
+    viewportMiddleHeight = g_Supervisor.viewport.height / 2.0f;
+    aspectRatio = (f32)g_Supervisor.viewport.width / (f32)g_Supervisor.viewport.height;
     fov = ZUN_PI * (30.0f / 180.0f);
     cameraDistance = viewportMiddleHeight / ZUN_TANF(fov / 2);
     upVec.x = 0.0f;
@@ -554,9 +555,9 @@ void GameManager::SetupCamera(f32 extraRenderDistance)
 
     g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
 
-    viewportMiddleWidth = g_Supervisor.viewport.Width / 2.0f;
-    viewportMiddleHeight = g_Supervisor.viewport.Height / 2.0f;
-    aspectRatio = (f32)g_Supervisor.viewport.Width / (f32)g_Supervisor.viewport.Height;
+    viewportMiddleWidth = g_Supervisor.viewport.width / 2.0f;
+    viewportMiddleHeight = g_Supervisor.viewport.height / 2.0f;
+    aspectRatio = (f32)g_Supervisor.viewport.width / (f32)g_Supervisor.viewport.height;
     fov = ZUN_PI * (30.0f / 180.0f);
     cameraDistance = viewportMiddleHeight / ZUN_TANF(fov / 2);
     upVec.x = 0.0f;
@@ -577,7 +578,7 @@ void GameManager::SetupCamera(f32 extraRenderDistance)
     g_Supervisor.viewMatrix = viewMatrix;
 
     g_GameManager.cameraDistance = ZUN_FABSF(cameraDistance);
-    
+
     ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
     g_AnmManager->SetTransformMatrix(MATRIX_PROJECTION, perspectiveMatrix);
     g_Supervisor.projectionMatrix = perspectiveMatrix;

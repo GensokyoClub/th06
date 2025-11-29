@@ -279,7 +279,7 @@ u32 Controller::SetButtonFromControllerInputs(u16 *outButtons, i16 controllerBut
     return pressed ? touhouButton & 0xFFFF : 0;
 }
 
-DIFFABLE_STATIC_ARRAY(u8, SDL_CONTROLLER_BUTTON_MAX, g_ControllerData);
+u8 g_ControllerData[SDL_CONTROLLER_BUTTON_MAX];
 
 // This is for rebinding keys
 u8 *th06::Controller::GetControllerState()

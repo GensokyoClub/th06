@@ -25,25 +25,23 @@
 namespace th06
 {
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(f32, 5, g_DifficultyWeightsList) = {-30.0f, -10.0f, 20.0f, 30.0f, 30.0f};
+f32 g_DifficultyWeightsList[5] = {-30.0f, -10.0f, 20.0f, 30.0f, 30.0f};
 
-DIFFABLE_STATIC_ASSIGN(u32, g_DefaultMagic) = 'DMYS';
+u32 g_DefaultMagic = 'DMYS';
 
 // EoSD assumes every character in this array is a single byte, which is a safe assumption in SJIS, but not
 //   in UTF-8, so we have to encode '･' with an escape sequence
-DIFFABLE_STATIC_ASSIGN(const char *, g_AlphabetList) =
+const char *g_AlphabetList =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ.,:;\xA5@abcdefghijklmnopqrstuvwxyz+-/*=%0123456789(){}[]<>#!?'\"$      --";
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 6, g_CharacterList) = {TH_HAKUREI_REIMU_SPIRIT,  TH_HAKUREI_REIMU_DREAM,
-                                                                  TH_KIRISAME_MARISA_DEVIL, TH_KIRISAME_MARISA_LOVE,
-                                                                  TH_SATSUKI_RIN_FLOWER,    TH_SATSUKI_RIN_WIND};
+const char *g_CharacterList[6] = {TH_HAKUREI_REIMU_SPIRIT, TH_HAKUREI_REIMU_DREAM, TH_KIRISAME_MARISA_DEVIL,
+                            TH_KIRISAME_MARISA_LOVE, TH_SATSUKI_RIN_FLOWER,  TH_SATSUKI_RIN_WIND};
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(f32, 5, g_SpellcardsWeightsList) = {1.0f, 1.5f, 1.5f, 2.0f, 2.5f};
+f32 g_SpellcardsWeightsList[5] = {1.0f, 1.5f, 1.5f, 2.0f, 2.5f};
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 5, g_RightAlignedDifficultyList) = {"     Easy", "   Normal", "     Hard",
-                                                                               "  Lunatic", "    Extra"};
+const char *g_RightAlignedDifficultyList[5] = {"     Easy", "   Normal", "     Hard", "  Lunatic", "    Extra"};
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 4, g_ShortCharacterList2) = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
+const char *g_ShortCharacterList2[4] = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
 
 #define DEFAULT_HIGH_SCORE_NAME "Nanashi "
 
@@ -1753,10 +1751,10 @@ ChainCallbackResult th06::ResultScreen::OnDraw(ResultScreen *resultScreen)
     ZunVec3 strPos;
 
     sprite = &resultScreen->unk_40[0];
-    g_Supervisor.viewport.X = 0;
-    g_Supervisor.viewport.Y = 0;
-    g_Supervisor.viewport.Width = 640;
-    g_Supervisor.viewport.Height = 480;
+    g_Supervisor.viewport.x = 0;
+    g_Supervisor.viewport.y = 0;
+    g_Supervisor.viewport.width = GAME_WINDOW_WIDTH;
+    g_Supervisor.viewport.height = GAME_WINDOW_HEIGHT;
 
     //    g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
     g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);

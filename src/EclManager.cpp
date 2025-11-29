@@ -15,15 +15,17 @@
 
 namespace th06
 {
-DIFFABLE_STATIC_ARRAY_ASSIGN(i32, 64, g_SpellcardScore) = {
-    200000, 200000, 200000, 200000, 200000, 200000, 200000, 250000, 250000, 250000, 250000, 250000, 250000,
-    250000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000,
-    300000, 300000, 300000, 300000, 300000, 300000, 400000, 400000, 400000, 400000, 400000, 400000, 400000,
-    400000, 500000, 500000, 500000, 500000, 500000, 500000, 600000, 600000, 600000, 600000, 600000, 700000,
-    700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000};
+i32 g_SpellcardScore[64] = {
+    200000, 200000, 200000, 200000, 200000, 200000, 200000, 250000, 250000, 250000, 250000,
+    250000, 250000, 250000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000,
+    300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 400000,
+    400000, 400000, 400000, 400000, 400000, 400000, 400000, 500000, 500000, 500000, 500000,
+    500000, 500000, 600000, 600000, 600000, 600000, 600000, 700000, 700000, 700000, 700000,
+    700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000
+};
 EclManager g_EclManager;
 typedef void (*ExInsn)(Enemy *, EclRawInstr *);
-DIFFABLE_STATIC_ARRAY_ASSIGN(ExInsn, 17, g_EclExInsn) = {
+ExInsn g_EclExInsn[17] = {
     EnemyEclInstr::ExInsCirnoRainbowBallJank, EnemyEclInstr::ExInsShootAtRandomArea,
     EnemyEclInstr::ExInsShootStarPattern,     EnemyEclInstr::ExInsPatchouliShottypeSetVars,
     EnemyEclInstr::ExInsStage56Func4,         EnemyEclInstr::ExInsStage5Func5,
@@ -32,7 +34,8 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(ExInsn, 17, g_EclExInsn) = {
     EnemyEclInstr::ExInsStage6XFunc10,        EnemyEclInstr::ExInsStage6Func11,
     EnemyEclInstr::ExInsStage4Func12,         EnemyEclInstr::ExInsStageXFunc13,
     EnemyEclInstr::ExInsStageXFunc14,         EnemyEclInstr::ExInsStageXFunc15,
-    EnemyEclInstr::ExInsStageXFunc16};
+    EnemyEclInstr::ExInsStageXFunc16
+};
 
 bool EclManager::Load(const char *eclPath)
 {
@@ -740,7 +743,7 @@ bool EclManager::RunEcl(Enemy *enemy)
                 }
                 break;
             case ECL_OPCODE_SPELLCARDEND:
-                if (g_EnemyManager.spellcardInfo.isActive)
+                if (g_EnemyManager.spellcardInfo.isActive != 0)
                 {
                     g_Gui.EndEnemySpellcard();
                     if (g_EnemyManager.spellcardInfo.isActive == 1)
@@ -960,7 +963,7 @@ bool EclManager::RunEcl(Enemy *enemy)
                 }
                 enemy->axisSpeed = enemy->moveInterp * local_bc + enemy->moveInterpStartPos - enemy->position;
                 enemy->angle = ZUN_ATAN2F(enemy->axisSpeed.y, enemy->axisSpeed.x);
-                if ((enemy->moveInterpTimer.current <= 0))
+                if (enemy->moveInterpTimer.current <= 0)
                 {
                     enemy->flags.unk1 = 0;
                     enemy->position = enemy->moveInterpStartPos + enemy->moveInterp;

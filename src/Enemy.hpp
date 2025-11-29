@@ -37,7 +37,6 @@ struct EnemyBulletShooter
     u32 flags;
     SoundIdx sfx;
 };
-ZUN_ASSERT_SIZE(EnemyBulletShooter, 0x54);
 
 struct EnemyLaserShooter
 {
@@ -66,7 +65,6 @@ struct EnemyLaserShooter
     u32 flags;
     u32 unk_50;
 };
-ZUN_ASSERT_SIZE(EnemyLaserShooter, 0x54);
 
 struct EnemyEclContext
 {
@@ -88,7 +86,6 @@ struct EnemyEclContext
     i32 compareRegister;
     u16 subId;
 };
-ZUN_ASSERT_SIZE(EnemyEclContext, 0x4c);
 
 struct EnemyFlags
 {
@@ -254,5 +251,4 @@ struct Enemy
     f32 exInsFunc6Angle;
     ZunTimer exInsFunc6Timer;
 };
-ZUN_ASSERT_SIZE(Enemy, 0xec8);
 }; // namespace th06

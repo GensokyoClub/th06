@@ -8,7 +8,6 @@
 #include "Gui.hpp"
 #include "Player.hpp"
 #include "Rng.hpp"
-#include "diffbuild.hpp"
 #include "utils.hpp"
 
 namespace th06
@@ -20,13 +19,16 @@ namespace th06
 EnemyManager g_EnemyManager;
 ChainElem g_EnemyManagerCalcChain;
 ChainElem g_EnemyManagerDrawChain;
-DIFFABLE_STATIC_ARRAY_ASSIGN(u8, 32, g_RandomItems) = {
-    ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,
-    ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POINT,       ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_SMALL,
-    ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,
-    ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,
-    ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POINT,       ITEM_POINT,
-    ITEM_POWER_SMALL, ITEM_POWER_BIG};
+
+u8 g_RandomItems[32] = {
+    ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,
+    ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POINT,       ITEM_POINT,
+    ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POINT,
+    ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,
+    ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,
+    ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POINT,       ITEM_POINT,
+    ITEM_POWER_SMALL, ITEM_POWER_BIG
+};
 
 void EnemyManager::Initialize()
 {
@@ -405,7 +407,7 @@ bool Enemy::HandleTimerCallback()
         if (!this->flags.unk16)
         {
             g_EnemyManager.spellcardInfo.isCapturing = false;
-            if (g_EnemyManager.spellcardInfo.isActive)
+            if (g_EnemyManager.spellcardInfo.isActive != 0)
             {
                 g_EnemyManager.spellcardInfo.isActive++;
             }
@@ -576,7 +578,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
                 curEnemy->vms[enemyVmIdx].anmFileIndex = -1;
             }
         }
-        local_8 = 0;
+        local_8 = false;
         if (curEnemy->flags.unk8 != 0 && !curEnemy->flags.unk15)
         {
             enemyLifeBeforeDmg = curEnemy->life;
@@ -600,7 +602,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
                 g_GameManager.score = (damage / 5) * 10 + g_GameManager.score;
                 if (mgr->spellcardInfo.isActive != 0)
                 {
-                    if (local_8 == 0)
+                    if (!local_8)
                     {
                         if (damage > 7)
                         {
@@ -686,7 +688,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
                         }
                         mgr->randomItemSpawnIndex++;
                     }
-                    if (curEnemy->flags.isBoss && !g_EnemyManager.spellcardInfo.isActive)
+                    if (curEnemy->flags.isBoss && !g_EnemyManager.spellcardInfo.isActive != 0)
                     {
                         g_BulletManager.DespawnBullets(12800, false);
                     }

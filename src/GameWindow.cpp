@@ -1,15 +1,13 @@
 #include "GameWindow.hpp"
 #include "AnmManager.hpp"
 #include "GameErrorContext.hpp"
-#include "graphics/FixedFunctionGL.hpp"
-#include "graphics/WebGL.hpp"
 #include "ScreenEffect.hpp"
 #include "SoundPlayer.hpp"
 #include "Stage.hpp"
 #include "Supervisor.hpp"
-#include "utils.hpp"
 #include "ZunMath.hpp"
-#include "diffbuild.hpp"
+#include "graphics/FixedFunctionGL.hpp"
+#include "graphics/WebGL.hpp"
 #include "i18n.hpp"
 #include "utils.hpp"
 
@@ -33,10 +31,8 @@ static struct
     bool isEsContext;
     void (*setContextFlags)();
     GfxInterface *(*init)();
-} s_RenderBackends[] = {
-    {"GL(ES) 2.0 / WebGL", true, WebGL::SetContextFlags, WebGL::Create},
-    {"Fixed function GL(ES)", false, FixedFunctionGL::SetContextFlags, FixedFunctionGL::Init}
-};
+} s_RenderBackends[] = {{"GL(ES) 2.0 / WebGL", true, WebGL::SetContextFlags, WebGL::Create},
+                        {"Fixed function GL(ES)", false, FixedFunctionGL::SetContextFlags, FixedFunctionGL::Init}};
 
 RenderResult GameWindow::Render()
 {
@@ -58,12 +54,12 @@ RenderResult GameWindow::Render()
         {
             if (g_Supervisor.RedrawWholeFrame())
             {
-                viewport.X = 0;
-                viewport.Y = 0;
-                viewport.Width = 640;
-                viewport.Height = 480;
-                viewport.MinZ = 0.0;
-                viewport.MaxZ = 1.0;
+                viewport.x = 0;
+                viewport.y = 0;
+                viewport.width = GAME_WINDOW_WIDTH;
+                viewport.height = GAME_WINDOW_HEIGHT;
+                viewport.minZ = 0.0;
+                viewport.maxZ = 1.0;
                 viewport.Set();
                 g_glFuncTable.glClearColor(
                     ((g_Stage.skyFog.color >> 16) & 0xFF) / 255.0f, ((g_Stage.skyFog.color >> 8) & 0xFF) / 255.0f,
@@ -77,10 +73,10 @@ RenderResult GameWindow::Render()
             g_AnmManager->SetCurrentTexture(0);
         }
 
-        g_Supervisor.viewport.X = 0;
-        g_Supervisor.viewport.Y = 0;
-        g_Supervisor.viewport.Width = 640;
-        g_Supervisor.viewport.Height = 480;
+        g_Supervisor.viewport.x = 0;
+        g_Supervisor.viewport.y = 0;
+        g_Supervisor.viewport.width = GAME_WINDOW_WIDTH;
+        g_Supervisor.viewport.height = GAME_WINDOW_HEIGHT;
         g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
         g_Supervisor.viewport.Set();
         res = g_Chain.RunCalcChain();
@@ -191,13 +187,10 @@ void GameWindow::CreateGameWindow()
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);
 
     u32 flags = SDL_WINDOW_OPENGL;
-    i32 height = GAME_WINDOW_HEIGHT;
-    i32 width = GAME_WINDOW_WIDTH;
-    i32 x = 0;
-    i32 y = 0;
-
-    g_GameWindow.window = NULL;
-    g_GameWindow.glContext = NULL;
+    i32 height = GAME_WINDOW_HEIGHT_REAL;
+    i32 width = GAME_WINDOW_WIDTH_REAL;
+    i32 x = SDL_WINDOWPOS_UNDEFINED;
+    i32 y = SDL_WINDOWPOS_UNDEFINED;
 
     g_GameWindow.window = NULL;
     g_GameWindow.glContext = NULL;
@@ -234,7 +227,7 @@ void GameWindow::CreateGameWindow()
         g_glFuncTable.ResolveFunctions(s_RenderBackends[i].isEsContext);
         g_GameWindow.renderBackendIndex = i;
         break;
-fail:
+    fail:
         if (g_GameWindow.glContext != NULL)
         {
             SDL_GL_DeleteContext(g_GameWindow.glContext);
@@ -555,8 +548,7 @@ void GameWindow::InitD3dDevice(void)
     g_AnmManager->SetFogColor(0xFF'A0'A0'A0);
     g_AnmManager->SetFogRange(1'000.0f, 5'000.0f);
 
-
-//    g_AnmManager->gfxBackend->Init();
+    //    g_AnmManager->gfxBackend->Init();
 
     // All of these are set per texture object in OpenGL (and also most are defaults)
     //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_NONE);

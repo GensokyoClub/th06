@@ -1,8 +1,6 @@
 #pragma once
 
 #include "GameWindow.hpp"
-#include "diffbuild.hpp"
-#include "graphics/GLFunc.hpp"
 #include "inttypes.hpp"
 #include <cmath>
 #include <cstring>
@@ -315,17 +313,20 @@ static_assert(sizeof(ZunMatrix) == 0x40, "ZunMatrix has additional padding betwe
 // A viewport using D3D conventions (x, y is the top left corner of the viewport)
 struct ZunViewport
 {
-    i32 X;
-    i32 Y;
-    i32 Width;
-    i32 Height;
-    f32 MinZ;
-    f32 MaxZ;
+    i32 x;
+    i32 y;
+    i32 width;
+    i32 height;
+    f32 minZ;
+    f32 maxZ;
 
     void Set()
     {
-        g_glFuncTable.glViewport(this->X, GAME_WINDOW_HEIGHT - (this->Y + this->Height), this->Width, this->Height);
-        g_glFuncTable.glDepthRangef(this->MinZ, this->MaxZ);
+        g_glFuncTable.glViewport(this->x * WIDTH_RESOLUTION_SCALE + VIEWPORT_OFF_X,
+                                 (GAME_WINDOW_HEIGHT_REAL - ((this->y + this->height) * HEIGHT_RESOLUTION_SCALE)) -
+                                     VIEWPORT_OFF_Y,
+                                 this->width * WIDTH_RESOLUTION_SCALE, this->height * HEIGHT_RESOLUTION_SCALE);
+        g_glFuncTable.glDepthRangef(this->minZ, this->maxZ);
     }
 
     void Get()
@@ -336,15 +337,15 @@ struct ZunViewport
         g_glFuncTable.glGetIntegerv(GL_VIEWPORT, viewPortGet);
         g_glFuncTable.glGetFloatv(GL_DEPTH_RANGE, depthRangeGet);
 
-        this->X = viewPortGet[0];
-        this->Y = viewPortGet[1];
-        this->Width = viewPortGet[2];
-        this->Height = viewPortGet[3];
-        this->MinZ = depthRangeGet[0];
-        this->MaxZ = depthRangeGet[1];
+        this->x = (viewPortGet[0] - VIEWPORT_OFF_X) / WIDTH_RESOLUTION_SCALE;
+        this->y = (viewPortGet[1] - VIEWPORT_OFF_Y) / HEIGHT_RESOLUTION_SCALE;
+        this->width = viewPortGet[2] / WIDTH_RESOLUTION_SCALE;
+        this->height = viewPortGet[3] / HEIGHT_RESOLUTION_SCALE;
+        this->minZ = depthRangeGet[0];
+        this->maxZ = depthRangeGet[1];
 
         // Convert from OpenGL to D3D conventions
-        this->Y = GAME_WINDOW_HEIGHT - (this->Y + this->Height);
+        this->y = GAME_WINDOW_HEIGHT - (this->y + this->height);
     }
 };
 
@@ -459,7 +460,7 @@ inline ZunMatrix perspectiveMatrixFromFOV(f32 verticalFOV, f32 aspectRatio, f32 
     return perspectiveMatrix;
 }
 
-// Returns a matrix that maps screen coordinates to NDCs. Used for drawing RHW positions, 
+// Returns a matrix that maps screen coordinates to NDCs. Used for drawing RHW positions,
 //   since D3D interprets them has having been already transformed, but OpenGL has no option
 //   to prevent transformation
 inline ZunMatrix inverseViewportMatrix()
@@ -488,8 +489,8 @@ inline ZunMatrix inverseViewportMatrix()
     //   ends up a half pixel off.
 
     inverseMatrix.Translate(-1.0f, 1.0f, -1.0f);
-    inverseMatrix.Scale(1.0f / (viewport.Width / 2.0f), -1.0f / (viewport.Height / 2.0f), 2.0f);
-    inverseMatrix.Translate(-viewport.X, -viewport.Y, 0.0f);
+    inverseMatrix.Scale(1.0f / (viewport.width / 2.0f), -1.0f / (viewport.height / 2.0f), 2.0f);
+    inverseMatrix.Translate(-viewport.x, -viewport.y, 0.0f);
 
     g_glFuncTable.glDepthRangef(0.0f, 1.0f);
 
@@ -510,9 +511,9 @@ inline void projectVec3(ZunVec3 &out, ZunVec3 &inVec, ZunViewport &viewport, Zun
     clipVector /= wVal;
 
     // OpenGL clip space and window coordinates differ from D3D's, so we have to invert Y here
-    out.x = mapRange(clipVector.x, -1.0f, 1.0f, viewport.X, viewport.X + viewport.Width);
-    out.y = mapRange(clipVector.y, -1.0f, 1.0f, viewport.Y + viewport.Height, viewport.Y);
-    out.z = mapRange(clipVector.z, -1.0f, 1.0f, viewport.MinZ, viewport.MaxZ);
+    out.x = mapRange(clipVector.x, -1.0f, 1.0f, viewport.x, viewport.x + viewport.width);
+    out.y = mapRange(clipVector.y, -1.0f, 1.0f, viewport.y + viewport.height, viewport.y);
+    out.z = mapRange(clipVector.z, -1.0f, 1.0f, viewport.minZ, viewport.maxZ);
 }
 
 }; // namespace th06

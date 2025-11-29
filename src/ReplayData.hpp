@@ -1,6 +1,5 @@
 #pragma once
 
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 
 namespace th06
@@ -25,7 +24,6 @@ struct StageReplayData
     // i8 padding[3];
     ReplayDataInput replayInputs[53998];
 };
-ZUN_ASSERT_SIZE(StageReplayData, 0x69780);
 
 struct ReplayHeader
 {
@@ -46,7 +44,6 @@ struct ReplayHeader
     f32 slowdownRate3;
     u32 stageReplayDataOffsets[7];
 };
-ZUN_ASSERT_SIZE(ReplayData, 0x50);
 
 struct ReplayData
 {

@@ -1,19 +1,18 @@
 #include "AnmIdx.hpp"
 #include "Player.hpp"
 #include "SoundPlayer.hpp"
-#include "diffbuild.hpp"
 
 namespace th06
 {
 /* ----------ReimuA---------- */
 
 /* ReimuA Rank 1 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 1, g_CharacterPowerBulletDataReimuARank1) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank1[1] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 48, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
 };
 
 /* ReimuA Rank 2 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 3, g_CharacterPowerBulletDataReimuARank2) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank2[3] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 48, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {30,
      0,
@@ -40,7 +39,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 3, g_CharacterPowerBullet
 };
 
 /* ReimuA Rank 3 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 4, g_CharacterPowerBulletDataReimuARank3) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank3[4] = {
     {5, 0, {-4.0, 0.0}, {12.0, 12.0}, RADIANS(-91.0), 12.0, 30, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {5, 0, {4.0, 0.0}, {12.0, 12.0}, RADIANS(-89.0), 12.0, 30, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {30,
@@ -68,7 +67,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 4, g_CharacterPowerBullet
 };
 
 /* ReimuA Rank 4 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBulletDataReimuARank4) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank4[5] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-96.0), 12.0, 24, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 30, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-84.0), 12.0, 24, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
@@ -97,7 +96,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBullet
 };
 
 /* ReimuA Rank 5 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBulletDataReimuARank5) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank5[5] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-97.0), 12.0, 24, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 30, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-83.0), 12.0, 24, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
@@ -126,7 +125,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBullet
 };
 
 /* ReimuA Rank 6 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 7, g_CharacterPowerBulletDataReimuARank6) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank6[7] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-97.0), 12.0, 24, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 29, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-83.0), 12.0, 24, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
@@ -177,7 +176,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 7, g_CharacterPowerBullet
 };
 
 /* ReimuA Rank 7 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 9, g_CharacterPowerBulletDataReimuARank7) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank7[9] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-97.0), 12.0, 24, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 28, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-83.0), 12.0, 24, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
@@ -250,7 +249,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 9, g_CharacterPowerBullet
 };
 
 /* ReimuA Rank 8 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 9, g_CharacterPowerBulletDataReimuARank8) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank8[9] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-97.0), 12.0, 24, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 28, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-83.0), 12.0, 24, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
@@ -323,7 +322,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 9, g_CharacterPowerBullet
 };
 
 /* ReimuA Rank 9 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 12, g_CharacterPowerBulletDataReimuARank9) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank9[12] = {
     {5,
      0,
      {-8.0, 0.0},
@@ -428,7 +427,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 12, g_CharacterPowerBulle
      NO_SOUND}, /*IEE-754 moment*/
 };
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerData, 9, g_CharacterPowerDataReimuA) = {
+CharacterPowerData g_CharacterPowerDataReimuA[9] = {
     /* Rank1   */ {1, 8, g_CharacterPowerBulletDataReimuARank1},
     /* Rank2   */ {3, 16, g_CharacterPowerBulletDataReimuARank2},
     /* Rank3   */ {4, 32, g_CharacterPowerBulletDataReimuARank3},
@@ -443,12 +442,12 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerData, 9, g_CharacterPowerDataReimuA) 
 /* ----------ReimuB---------- */
 
 /* ReimuB Rank 1 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 1, g_CharacterPowerBulletDataReimuBRank1) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank1[1] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 48, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
 };
 
 /* ReimuB Rank 2 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 3, g_CharacterPowerBulletDataReimuBRank2) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank2[3] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 48, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {15,
      0,
@@ -475,7 +474,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 3, g_CharacterPowerBullet
 };
 
 /* ReimuB Rank 3 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 4, g_CharacterPowerBulletDataReimuBRank3) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank3[4] = {
     {5,
      0,
      {-4.0, 0.0},
@@ -513,7 +512,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 4, g_CharacterPowerBullet
 };
 
 /* ReimuB Rank 4 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 4, g_CharacterPowerBulletDataReimuBRank4) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank4[4] = {
     {5,
      0,
      {-4.0, 0.0},
@@ -551,7 +550,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 4, g_CharacterPowerBullet
 };
 
 /* ReimuB Rank 5 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBulletDataReimuBRank5) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank5[5] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-97.0), 12.0, 20, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 28, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-83.0), 12.0, 20, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
@@ -580,7 +579,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBullet
 };
 
 /* ReimuB Rank 6 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 7, g_CharacterPowerBulletDataReimuBRank6) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank6[7] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-97.0), 12.0, 16, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 27, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-83.0), 12.0, 16, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
@@ -631,7 +630,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 7, g_CharacterPowerBullet
 };
 
 /* ReimuB Rank 7 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 7, g_CharacterPowerBulletDataReimuBRank7) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank7[7] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-98.0), 12.0, 16, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 22, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-82.0), 12.0, 16, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
@@ -682,7 +681,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 7, g_CharacterPowerBullet
 };
 
 /* ReimuB Rank 8 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 11, g_CharacterPowerBulletDataReimuBRank8) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank8[11] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-106.0), 12.0, 9, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-98.0), 12.0, 17, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 20, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
@@ -757,7 +756,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 11, g_CharacterPowerBulle
 };
 
 /* ReimuB Rank 9 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 11, g_CharacterPowerBulletDataReimuBRank9) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank9[11] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-106.0), 12.0, 9, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-98.0), 12.0, 17, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 20, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
@@ -831,7 +830,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 11, g_CharacterPowerBulle
      NO_SOUND},
 };
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerData, 9, g_CharacterPowerDataReimuB) = {
+CharacterPowerData g_CharacterPowerDataReimuB[9] = {
     /* Rank1   */ {1, 8, g_CharacterPowerBulletDataReimuBRank1},
     /* Rank2   */ {3, 16, g_CharacterPowerBulletDataReimuBRank2},
     /* Rank3   */ {4, 32, g_CharacterPowerBulletDataReimuBRank3},
@@ -846,7 +845,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerData, 9, g_CharacterPowerDataReimuB) 
 /* ----------MarisaA---------- */
 
 /* MarisaA Rank 1 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 1, g_CharacterPowerBulletDataMarisaARank1) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank1[1] = {
     {5,
      0,
      {0.0, -8.0},
@@ -861,7 +860,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 1, g_CharacterPowerBullet
 };
 
 /* MarisaA Rank 2 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 3, g_CharacterPowerBulletDataMarisaARank2) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank2[3] = {
     {5,
      0,
      {0.0, -8.0},
@@ -898,7 +897,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 3, g_CharacterPowerBullet
 };
 
 /* MarisaA Rank 3 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBulletDataMarisaARank3) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank3[5] = {
     {5,
      0,
      {0.0, -8.0},
@@ -957,7 +956,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBullet
 };
 
 /* MarisaA Rank 4 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBulletDataMarisaARank4) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank4[5] = {
     {5,
      0,
      {0.0, -8.0},
@@ -1016,7 +1015,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBullet
 };
 
 /* MarisaA Rank 5 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBulletDataMarisaARank5) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank5[5] = {
     {5,
      0,
      {0.0, -8.0},
@@ -1075,7 +1074,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBullet
 };
 
 /* MarisaA Rank 6 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 6, g_CharacterPowerBulletDataMarisaARank6) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank6[6] = {
     {5,
      0,
      {-8.0, -8.0},
@@ -1135,7 +1134,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 6, g_CharacterPowerBullet
 };
 
 /* MarisaA Rank 7 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 6, g_CharacterPowerBulletDataMarisaARank7) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank7[6] = {
     {5,
      0,
      {-8.0, -8.0},
@@ -1195,7 +1194,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 6, g_CharacterPowerBullet
 };
 
 /* MarisaA Rank 8 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 9, g_CharacterPowerBulletDataMarisaARank8) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank8[9] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-94.0), 12.0, 8, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 12, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-86.0), 12.0, 8, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
@@ -1268,7 +1267,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 9, g_CharacterPowerBullet
 };
 
 /* MarisaA Rank 9 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 9, g_CharacterPowerBulletDataMarisaARank9) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank9[9] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-94.0), 12.0, 8, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 12, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-86.0), 12.0, 8, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
@@ -1340,7 +1339,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 9, g_CharacterPowerBullet
      NO_SOUND},
 };
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerData, 9, g_CharacterPowerDataMarisaA) = {
+CharacterPowerData g_CharacterPowerDataMarisaA[9] = {
     /* Rank1   */ {1, 8, g_CharacterPowerBulletDataMarisaARank1},
     /* Rank2   */ {3, 16, g_CharacterPowerBulletDataMarisaARank2},
     /* Rank3   */ {5, 32, g_CharacterPowerBulletDataMarisaARank3},
@@ -1355,7 +1354,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerData, 9, g_CharacterPowerDataMarisaA)
 /* ----------MarisaB---------- */
 
 /* MarisaB Rank 1 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 1, g_CharacterPowerBulletDataMarisaBRank1) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank1[1] = {
     {5,
      0,
      {0.0, -8.0},
@@ -1370,7 +1369,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 1, g_CharacterPowerBullet
 };
 
 /* MarisaB Rank 2 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 3, g_CharacterPowerBulletDataMarisaBRank2) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank2[3] = {
     {5,
      0,
      {0.0, -8.0},
@@ -1407,7 +1406,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 3, g_CharacterPowerBullet
 };
 
 /* MarisaB Rank 3 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 3, g_CharacterPowerBulletDataMarisaBRank3) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank3[3] = {
     {5,
      0,
      {0.0, -8.0},
@@ -1444,7 +1443,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 3, g_CharacterPowerBullet
 };
 
 /* MarisaB Rank 4 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 4, g_CharacterPowerBulletDataMarisaBRank4) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank4[4] = {
     {5,
      0,
      {-8.0, -8.0},
@@ -1482,7 +1481,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 4, g_CharacterPowerBullet
 };
 
 /* MarisaB Rank 5 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 4, g_CharacterPowerBulletDataMarisaBRank5) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank5[4] = {
     {5,
      0,
      {-8.0, -8.0},
@@ -1520,7 +1519,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 4, g_CharacterPowerBullet
 };
 
 /* MarisaB Rank 6 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 4, g_CharacterPowerBulletDataMarisaBRank6) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank6[4] = {
     {5,
      0,
      {-8.0, -8.0},
@@ -1558,7 +1557,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 4, g_CharacterPowerBullet
 };
 
 /* MarisaB Rank 7 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBulletDataMarisaBRank7) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank7[5] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-95.0), 12.0, 15, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 20, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-85.0), 12.0, 15, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
@@ -1587,7 +1586,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBullet
 };
 
 /* MarisaB Rank 8 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBulletDataMarisaBRank8) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank8[5] = {
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-95.0), 12.0, 15, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-90.0), 12.0, 20, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
     {5, 0, {0.0, 0.0}, {12.0, 12.0}, RADIANS(-85.0), 12.0, 15, 0, BULLET_TYPE_0, ANM_SCRIPT_PLAYER_BULLET, NO_SOUND},
@@ -1616,7 +1615,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 5, g_CharacterPowerBullet
 };
 
 /* MarisaB Rank 9 */
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 7, g_CharacterPowerBulletDataMarisaBRank9) = {
+CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank9[7] = {
     {5,
      0,
      {0.0, 0.0},
@@ -1656,7 +1655,7 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerBulletData, 7, g_CharacterPowerBullet
      NO_SOUND},
 };
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterPowerData, 9, g_CharacterPowerDataMarisaB) = {
+CharacterPowerData g_CharacterPowerDataMarisaB[9] = {
     /* Rank1   */ {1, 8, g_CharacterPowerBulletDataMarisaBRank1},
     /* Rank2   */ {3, 16, g_CharacterPowerBulletDataMarisaBRank2},
     /* Rank3   */ {3, 32, g_CharacterPowerBulletDataMarisaBRank3},

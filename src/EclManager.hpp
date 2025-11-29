@@ -4,7 +4,6 @@
 #include "SoundPlayer.hpp"
 #include "ZunColor.hpp"
 #include "ZunMath.hpp"
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 
 namespace th06
@@ -253,7 +252,6 @@ struct EclRawInstrEnemyCreateArgs
     i16 itemDrop;
     i32 score;
 };
-ZUN_ASSERT_SIZE(EclRawInstrEnemyCreateArgs, 0x18);
 
 struct EclRawInstrAnmInterruptSlotArgs
 {
@@ -340,7 +338,6 @@ struct EclRawHeader
     u32 timelineOffsets[3];
     u32 subOffsets[];
 };
-ZUN_ASSERT_SIZE(EclRawHeader, 0x10);
 
 enum EclRawInstrOpcode
 {
@@ -494,7 +491,6 @@ struct EclManager
     EclRawInstr **subTable;
     EclTimelineInstr *timeline;
 };
-ZUN_ASSERT_SIZE(EclManager, 0xc);
 
 extern EclManager g_EclManager;
 }; // namespace th06

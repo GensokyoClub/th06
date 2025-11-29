@@ -1,6 +1,5 @@
 #pragma once
 
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 #include <SDL2/SDL_audio.h>
 #include <SDL2/SDL_rwops.h>
@@ -52,7 +51,6 @@ struct SoundBufferIdxVolume
     i32 bufferIdx;
     i16 volume;
 };
-ZUN_ASSERT_SIZE(SoundBufferIdxVolume, 0x8);
 
 struct SoundData
 {
@@ -109,7 +107,6 @@ struct SoundPlayer
     MusicStream backgroundMusic;
     bool isLooping;
 };
-ZUN_ASSERT_SIZE(SoundPlayer, 0x638);
 
 extern SoundBufferIdxVolume g_SoundBufferIdxVol[32];
 extern const char *g_SFXList[26];

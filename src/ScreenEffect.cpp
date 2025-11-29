@@ -35,12 +35,12 @@ void ScreenEffect::Clear(ZunColor color)
 // Why is this not in GameWindow.cpp? Don't ask me...
 void ScreenEffect::SetViewport(ZunColor color)
 {
-    g_Supervisor.viewport.X = 0;
-    g_Supervisor.viewport.Y = 0;
-    g_Supervisor.viewport.Width = GAME_WINDOW_WIDTH;
-    g_Supervisor.viewport.Height = GAME_WINDOW_HEIGHT;
-    g_Supervisor.viewport.MinZ = 0.0;
-    g_Supervisor.viewport.MaxZ = 1.0;
+    g_Supervisor.viewport.x = 0;
+    g_Supervisor.viewport.y = 0;
+    g_Supervisor.viewport.width = GAME_WINDOW_WIDTH;
+    g_Supervisor.viewport.height = GAME_WINDOW_HEIGHT;
+    g_Supervisor.viewport.minZ = 0.0;
+    g_Supervisor.viewport.maxZ = 1.0;
     g_Supervisor.viewport.Set();
     ScreenEffect::Clear(color);
 }
@@ -191,12 +191,12 @@ ChainCallbackResult ScreenEffect::DrawFadeIn(ScreenEffect *effect)
 
     fadeRect.left = 0.0f;
     fadeRect.top = 0.0f;
-    fadeRect.right = 640.0f;
-    fadeRect.bottom = 480.0f;
-    g_Supervisor.viewport.X = 0;
-    g_Supervisor.viewport.Y = 0;
-    g_Supervisor.viewport.Width = 640;
-    g_Supervisor.viewport.Height = 480;
+    fadeRect.right = GAME_WINDOW_WIDTH;
+    fadeRect.bottom = GAME_WINDOW_HEIGHT;
+    g_Supervisor.viewport.x = 0;
+    g_Supervisor.viewport.y = 0;
+    g_Supervisor.viewport.width = GAME_WINDOW_WIDTH;
+    g_Supervisor.viewport.height = GAME_WINDOW_HEIGHT;
     g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
     g_Supervisor.viewport.Set();
     ScreenEffect::DrawSquare(&fadeRect, (effect->fadeAlpha << 24) | effect->genericParam);

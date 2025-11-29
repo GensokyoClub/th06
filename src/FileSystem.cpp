@@ -2,12 +2,45 @@
 #include <cstdlib>
 #include <cstring>
 
+#ifdef _WIN32
+#include <new>
+#include <windows.h>
+#endif
+
 #include "FileSystem.hpp"
 #include "utils.hpp"
 
 namespace th06
 {
 u32 g_LastFileSize;
+
+FILE *FileSystem::FopenUTF8(const char *filepath, const char *mode)
+{
+#ifndef _WIN32
+    return std::fopen(filepath, mode);
+#else
+    u32 filepathWLen = MultiByteToWideChar(CP_UTF8, 0, filepath, -1, NULL, 0) * 2;
+    u32 modeWLen = MultiByteToWideChar(CP_UTF8, 0, mode, -1, NULL, 0) * 2;
+
+    if (filepathWLen == 0 || modeWLen == 0)
+    {
+        return NULL;
+    }
+
+    wchar_t *filepathW = new wchar_t[filepathWLen];
+    wchar_t *modeW = new wchar_t[modeWLen];
+
+    MultiByteToWideChar(CP_UTF8, 0, filepath, -1, filepathW, filepathWLen / 2);
+    MultiByteToWideChar(CP_UTF8, 0, mode, -1, modeW, modeWLen / 2);
+
+    FILE *f = _wfopen(filepathW, modeW);
+
+    delete[] filepathW;
+    delete[] modeW;
+
+    return f;
+#endif
+}
 
 u8 *FileSystem::OpenPath(const char *filepath)
 {
@@ -39,7 +72,7 @@ int FileSystem::WriteDataToFile(const char *path, void *data, size_t size)
 {
     FILE *f;
 
-    f = std::fopen(path, "wb");
+    f = FopenUTF8(path, "wb");
     if (f == NULL)
     {
         return -1;

@@ -4,7 +4,6 @@
 #include "Chain.hpp"
 #include "Enemy.hpp"
 #include "ZunTimer.hpp"
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 
 namespace th06
@@ -64,7 +63,6 @@ struct MsgRawHeader
     i32 numInstrs;
     u32 instrsOffsets[1];
 };
-ZUN_ASSERT_SIZE(MsgRawHeader, 0x8);
 
 struct GuiMsgVm
 {
@@ -83,7 +81,6 @@ struct GuiMsgVm
     u32 ignoreWaitCounter;
     u8 dialogueSkippable;
 };
-ZUN_ASSERT_SIZE(GuiMsgVm, 0x6a8);
 
 struct GuiFormattedText
 {
@@ -92,7 +89,6 @@ struct GuiFormattedText
     i32 isShown;
     ZunTimer timer;
 };
-ZUN_ASSERT_SIZE(GuiFormattedText, 0x20);
 
 struct GuiImpl
 {
@@ -119,7 +115,6 @@ struct GuiImpl
     GuiFormattedText fullPowerMode;
     GuiFormattedText spellCardBonus;
 };
-ZUN_ASSERT_SIZE(GuiImpl, 0x2c44);
 struct GuiFlags
 {
     u32 flag0 : 2;
@@ -200,7 +195,6 @@ struct Gui
     f32 bossHealthBar1;
     f32 bossHealthBar2;
 };
-ZUN_ASSERT_SIZE(Gui, 0x2c);
 
 extern Gui g_Gui;
 }; // namespace th06

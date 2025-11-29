@@ -35,11 +35,9 @@
 
 namespace th06
 {
-DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 4, g_ShortCharacterList) = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
-DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 5, g_DifficultyList) = {"Easy   ", "Normal ", "Hard   ", "Lunatic",
-                                                                   "Extra  "};
-DIFFABLE_STATIC_ARRAY_ASSIGN(const char *, 7, g_StageList) = {"Stage1", "Stage2", "Stage3", "Stage4",
-                                                              "Stage5", "Stage6", "Extra "};
+const char *g_ShortCharacterList[4] = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
+const char *g_DifficultyList[5] = {"Easy   ", "Normal ", "Hard   ", "Lunatic", "Extra  "};
+const char *g_StageList[7] = {"Stage1", "Stage2", "Stage3", "Stage4", "Stage5", "Stage6", "Extra "};
 
 i16 g_LastJoystickInput;
 
@@ -1963,8 +1961,8 @@ ChainCallbackResult MainMenu::OnDraw(MainMenu *menu)
     curVm = menu->vm;
     window.left = 0.0;
     window.top = 0.0;
-    window.right = 640.0;
-    window.bottom = 480.0;
+    window.right = GAME_WINDOW_WIDTH;
+    window.bottom = GAME_WINDOW_HEIGHT;
     if (menu->gameState == STATE_STARTUP)
     {
         return CHAIN_CALLBACK_RESULT_CONTINUE;

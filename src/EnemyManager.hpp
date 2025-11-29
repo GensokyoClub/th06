@@ -10,12 +10,11 @@ namespace th06
 struct RunningSpellcardInfo
 {
     bool isCapturing;
-    int isActive;
+    u32 isActive;
     i32 captureScore;
     u32 idx;
     bool usedBomb;
 };
-ZUN_ASSERT_SIZE(RunningSpellcardInfo, 0x14);
 
 struct EnemyManager
 {
@@ -45,7 +44,6 @@ struct EnemyManager
     EclTimelineInstr *timelineInstr;
     ZunTimer timelineTime;
 };
-ZUN_ASSERT_SIZE(EnemyManager, 0xee5ec);
 
 extern EnemyManager g_EnemyManager;
 }; // namespace th06

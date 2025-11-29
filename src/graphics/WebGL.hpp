@@ -28,7 +28,7 @@ struct WebGL : GfxInterface
     
     bool Init();
 
-    virtual void SetFogRange(f32 near, f32 far);
+    virtual void SetFogRange(f32 nearPlane, f32 farPlane);
     virtual void SetFogColor(ZunColor color);
     virtual void ToggleVertexAttribute(u8 attr, bool enable);
     virtual void SetAttributePointer(VertexAttributeArrays attr, std::size_t stride, void *ptr);

@@ -57,7 +57,6 @@ struct EffectManager
     void Reset();
     Effect *SpawnParticles(i32 effectIdx, ZunVec3 *pos, i32 count, ZunColor color);
 };
-ZUN_ASSERT_SIZE(EffectManager, 0x2f984);
 
 extern EffectManager g_EffectManager;
 }; // namespace th06

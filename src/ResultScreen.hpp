@@ -78,7 +78,6 @@ struct Th6k
     u8 version;
     u8 unk_9;
 };
-ZUN_ASSERT_SIZE(Th6k, 0xc);
 
 struct Catk
 {
@@ -93,7 +92,6 @@ struct Catk
     u16 numAttempts;
     u16 numSuccess;
 };
-ZUN_ASSERT_SIZE(Catk, 0x40);
 
 struct Clrd
 {
@@ -102,7 +100,6 @@ struct Clrd
     u8 difficultyClearedWithoutRetries[5];
     u8 characterShotType;
 };
-ZUN_ASSERT_SIZE(Clrd, 0x18);
 
 struct Pscr
 {
@@ -122,7 +119,6 @@ struct Pscr
     u8 difficulty;
     u8 stage;
 };
-ZUN_ASSERT_SIZE(Pscr, 0x14);
 
 struct Hscr
 {
@@ -138,7 +134,6 @@ struct Hscr
     u8 stage;
     char name[9];
 };
-ZUN_ASSERT_SIZE(Hscr, 0x1c);
 
 struct ScoreListNode
 {
@@ -153,7 +148,6 @@ struct ScoreListNode
     ScoreListNode *next;
     Hscr *data;
 };
-ZUN_ASSERT_SIZE(ScoreListNode, 0xc);
 
 struct ScoreRaw
 {
@@ -175,7 +169,6 @@ struct ScoreRaw
     u32 padding; // Originally used as space for a ScoreListNode pointer, but that caused obvious ABI issues
     u32 fileLen;
 };
-ZUN_ASSERT_SIZE(ScoreDat, 0x14);
 
 struct ScoreDat
 {
@@ -248,5 +241,4 @@ struct ResultScreen
     ReplayHeader replays[15];
     ReplayHeader defaultReplay;
 };
-ZUN_ASSERT_SIZE(ResultScreen, 0x56b0);
 }; // namespace th06

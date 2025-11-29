@@ -26,7 +26,7 @@ namespace th06
 {
 Player g_Player;
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(CharacterData, 4, g_CharData) = {
+CharacterData g_CharData[4] = {
     /* ReimuA  */ {4.0, 2.0, 4.0, 2.0, Player::FireBulletReimuA, Player::FireBulletReimuA},
     /* ReimuB  */ {4.0, 2.0, 4.0, 2.0, Player::FireBulletReimuB, Player::FireBulletReimuB},
     /* MarisaA */ {5.0, 2.5, 5.0, 2.5, Player::FireBulletMarisaA, Player::FireBulletMarisaA},
@@ -184,7 +184,7 @@ ChainCallbackResult Player::OnUpdate(Player *p)
         p->bombInfo.calc(p);
         g_EnemyManager.spellcardInfo.isCapturing = false;
         g_GameManager.DecreaseSubrank(200);
-        g_EnemyManager.spellcardInfo.usedBomb = g_EnemyManager.spellcardInfo.isActive;
+        g_EnemyManager.spellcardInfo.usedBomb = g_EnemyManager.spellcardInfo.isActive != 0;
     }
     if (p->playerState == PLAYER_STATE_DEAD)
     {

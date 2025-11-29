@@ -117,7 +117,6 @@ struct MainMenu
     i32 frameCountForRefreshRateCalc;
     u32 lastFrameTime;
 };
-ZUN_ASSERT_SIZE(MainMenu, 0x10f34);
 
 extern MainMenu g_MainMenu;
 }; // namespace th06

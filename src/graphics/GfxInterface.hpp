@@ -50,7 +50,7 @@ enum TransformMatrix
 
 struct GfxInterface
 {
-    virtual void SetFogRange(f32 near, f32 far) = 0;
+    virtual void SetFogRange(f32 nearPlane, f32 farPlane) = 0;
     virtual void SetFogColor(ZunColor color) = 0;
     virtual void ToggleVertexAttribute(u8 attr, bool enable) = 0;
     virtual void SetAttributePointer(VertexAttributeArrays attr, std::size_t stride, void *ptr) = 0;

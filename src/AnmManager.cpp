@@ -641,14 +641,21 @@ void AnmManager::LoadSprite(u32 spriteIdx, AnmLoadedSprite *sprite)
     this->sprites[spriteIdx] = *sprite;
     this->sprites[spriteIdx].spriteId = this->maybeLoadedSpriteCount++;
 
+    // OpenGL texel centers are located at half coordinates and EoSD uses whole number-aligned UVs
+    //   With linear filtering, a whole-numbered UV will pull equally from from the intended texel
+    //   and the next one, which can cause very obvious visual artifacts and gaps on the edges of sprites.
+    //   This prevents that, at the cost of flattening the sprite a tiny amount. If the option were added
+    //   to use nearest filtering for textures, this offsetting would be able to be disabled.
+    // Note that this is a quick and dirty fix and I have no idea if it breaks some assumption somewhere
+    //   else in the ANM code, but it causes orthographic draws to look visually correct, so ¯\_(ツ)_/¯
     this->sprites[spriteIdx].uvStart.x =
-        this->sprites[spriteIdx].startPixelInclusive.x / (this->sprites[spriteIdx].textureWidth);
+        (this->sprites[spriteIdx].startPixelInclusive.x + 0.5f) / this->sprites[spriteIdx].textureWidth;
     this->sprites[spriteIdx].uvEnd.x =
-        this->sprites[spriteIdx].endPixelInclusive.x / (this->sprites[spriteIdx].textureWidth);
+        (this->sprites[spriteIdx].endPixelInclusive.x - 0.5f) / this->sprites[spriteIdx].textureWidth;
     this->sprites[spriteIdx].uvStart.y =
-        this->sprites[spriteIdx].startPixelInclusive.y / (this->sprites[spriteIdx].textureHeight);
+        (this->sprites[spriteIdx].startPixelInclusive.y + 0.5f) / this->sprites[spriteIdx].textureHeight;
     this->sprites[spriteIdx].uvEnd.y =
-        this->sprites[spriteIdx].endPixelInclusive.y / (this->sprites[spriteIdx].textureHeight);
+        (this->sprites[spriteIdx].endPixelInclusive.y - 0.5f) / this->sprites[spriteIdx].textureHeight;
 
     this->sprites[spriteIdx].widthPx =
         this->sprites[spriteIdx].endPixelInclusive.x - this->sprites[spriteIdx].startPixelInclusive.x;
@@ -792,7 +799,8 @@ void AnmManager::UpdateDirtyStates()
             while (changedAttributes != 0)
             {
                 u8 currBit = std::countr_zero(changedAttributes);
-                gfxBackend->ToggleVertexAttribute(changedAttributes & (1 << currBit), this->enabledVertexAttributes & (1 << currBit));
+                gfxBackend->ToggleVertexAttribute(changedAttributes & (1 << currBit),
+                                                  this->enabledVertexAttributes & (1 << currBit));
                 changedAttributes &= ~(1 << currBit);
             }
 
@@ -808,7 +816,8 @@ void AnmManager::UpdateDirtyStates()
 
                 this->attribArrays[i] = this->dirtyAttribArrays[i];
 
-                gfxBackend->SetAttributePointer((VertexAttributeArrays) i, this->attribArrays[i].stride, this->attribArrays[i].ptr);
+                gfxBackend->SetAttributePointer((VertexAttributeArrays)i, this->attribArrays[i].stride,
+                                                this->attribArrays[i].ptr);
             }
 
             break;
@@ -822,7 +831,7 @@ void AnmManager::UpdateDirtyStates()
 
                 this->colorOps[i] = this->dirtyColorOps[i];
 
-                gfxBackend->SetColorOp((TextureOpComponent) i, this->colorOps[i]);
+                gfxBackend->SetColorOp((TextureOpComponent)i, this->colorOps[i]);
             }
 
             break;
@@ -835,8 +844,9 @@ void AnmManager::UpdateDirtyStates()
         case DIRTY_PROJECTION_MATRIX:
         case DIRTY_TEXTURE_MATRIX:
             std::memcpy(&this->transformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX],
-                        &this->dirtyTransformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX], sizeof(*this->transformMatrices));
-            gfxBackend->SetTransformMatrix((TransformMatrix) (currFlagIndex - DIRTY_MODEL_MATRIX),
+                        &this->dirtyTransformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX],
+                        sizeof(*this->transformMatrices));
+            gfxBackend->SetTransformMatrix((TransformMatrix)(currFlagIndex - DIRTY_MODEL_MATRIX),
                                            this->transformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX]);
         }
     }
@@ -1832,13 +1842,17 @@ void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width, i32
 
     this->SetCurrentTexture(this->textures[textureId].handle);
 
-    backBufferPixels = new u8[width * height * 4];
+    backBufferPixels =
+        new u8[((u32)(width * WIDTH_RESOLUTION_SCALE + 1)) * ((u32)(height * HEIGHT_RESOLUTION_SCALE + 1)) * 4];
 
-    g_glFuncTable.glReadPixels(left, GAME_WINDOW_HEIGHT - (top + height), width, height, GL_RGBA, GL_UNSIGNED_BYTE,
-                               backBufferPixels);
+    g_glFuncTable.glReadPixels(left * WIDTH_RESOLUTION_SCALE + VIEWPORT_OFF_X,
+                               GAME_WINDOW_HEIGHT_REAL - ((top + height) * HEIGHT_RESOLUTION_SCALE) - VIEWPORT_OFF_Y,
+                               width * WIDTH_RESOLUTION_SCALE, height * HEIGHT_RESOLUTION_SCALE, GL_RGBA,
+                               GL_UNSIGNED_BYTE, backBufferPixels);
 
-    unstretchedSurface =
-        SDL_CreateRGBSurfaceWithFormatFrom(backBufferPixels, width, height, 32, width * 4, SDL_PIXELFORMAT_RGBA32);
+    unstretchedSurface = SDL_CreateRGBSurfaceWithFormatFrom(backBufferPixels, width * WIDTH_RESOLUTION_SCALE,
+                                                            height * HEIGHT_RESOLUTION_SCALE, 32,
+                                                            width * WIDTH_RESOLUTION_SCALE * 4, SDL_PIXELFORMAT_RGBA32);
     stretchedSurface = SDL_CreateRGBSurfaceWithFormat(0, this->textures[textureId].width,
                                                       this->textures[textureId].height, 32, SDL_PIXELFORMAT_RGBA32);
 
@@ -1853,8 +1867,8 @@ void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width, i32
 
     stretchSrcRect.x = 0;
     stretchSrcRect.y = 0;
-    stretchSrcRect.h = height;
-    stretchSrcRect.w = width;
+    stretchSrcRect.h = height * HEIGHT_RESOLUTION_SCALE;
+    stretchSrcRect.w = width * WIDTH_RESOLUTION_SCALE;
 
     stretchDstRect.x = 0;
     stretchDstRect.y = 0;
@@ -1903,12 +1917,12 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
 
     originalViewport.Get();
 
-    fullscreenViewport.X = 0;
-    fullscreenViewport.Y = 0;
-    fullscreenViewport.Height = GAME_WINDOW_HEIGHT;
-    fullscreenViewport.Width = GAME_WINDOW_WIDTH;
-    fullscreenViewport.MinZ = 0.0f;
-    fullscreenViewport.MaxZ = 1.0f;
+    fullscreenViewport.x = 0;
+    fullscreenViewport.y = 0;
+    fullscreenViewport.height = GAME_WINDOW_HEIGHT;
+    fullscreenViewport.width = GAME_WINDOW_WIDTH;
+    fullscreenViewport.minZ = 0.0f;
+    fullscreenViewport.maxZ = 1.0f;
 
     fullscreenViewport.Set();
 

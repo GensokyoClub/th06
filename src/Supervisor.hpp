@@ -11,7 +11,6 @@
 #include "Controller.hpp"
 #include "MidiOutput.hpp"
 #include "ZunMath.hpp"
-#include "diffbuild.hpp"
 #include "inttypes.hpp"
 
 namespace th06
@@ -180,7 +179,6 @@ struct Supervisor
 
     u32 startupTimeBeforeMenuMusic;
 };
-ZUN_ASSERT_SIZE(Supervisor, 0x4d8);
 
 extern ControllerMapping g_ControllerMapping;
 extern Supervisor g_Supervisor;

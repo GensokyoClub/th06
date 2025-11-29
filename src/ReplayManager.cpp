@@ -467,7 +467,7 @@ void ReplayManager::SaveReplay(char *replayPath, char *replayName)
                 }
 
                 // Write the data to the replay file.
-                file = std::fopen(replayPath, "wb");
+                file = FileSystem::FopenUTF8(replayPath, "wb");
                 std::fwrite(&replayCopy, sizeof(ReplayHeader), 1, file);
                 for (stageIdx = 0; stageIdx < ARRAY_SIZE_SIGNED(mgr->replayData->stageReplayData); stageIdx += 1)
                 {

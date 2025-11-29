@@ -3,17 +3,15 @@
 // #include <d3d8.h>
 // #include <d3dx8math.h>
 
+#include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_video.h>
 
 #include "AnmIdx.hpp"
 #include "AnmVm.hpp"
+#include "graphics/GLFunc.hpp"
 #include "GameManager.hpp"
-#include "graphics/GfxInterface.hpp"
-
-#include "graphics/GLFunc.hpp"
 #include "ZunTimer.hpp"
-#include "diffbuild.hpp"
-#include "graphics/GLFunc.hpp"
+#include "graphics/GfxInterface.hpp"
 #include "inttypes.hpp"
 
 #define TEX_FMT_UNKNOWN 0
@@ -158,14 +156,12 @@ struct AnmRawEntry
     u32 spriteOffsets[10];
     AnmRawScript scripts[10];
 };
-ZUN_ASSERT_SIZE(AnmRawEntry, 0xb8);
 
 struct RenderVertexInfo
 {
     ZunVec3 position;
     ZunVec2 textureUV;
 };
-ZUN_ASSERT_SIZE(RenderVertexInfo, 0x14);
 
 struct AnmManager
 {
@@ -311,10 +307,10 @@ struct AnmManager
         this->SetTransformMatrix(MATRIX_PROJECTION, this->perspectiveMatrixBackup[MATRIX_PROJECTION]);
     }
 
-    void SetFogRange(f32 near, f32 far)
+    void SetFogRange(f32 nearPlane, f32 farPlane)
     {
-        this->dirtyFogNear = near;
-        this->dirtyFogFar = far;
+        this->dirtyFogNear = nearPlane;
+        this->dirtyFogFar = farPlane;
         this->dirtyFlags |= (1 << DIRTY_FOG);
     }
 
@@ -356,10 +352,10 @@ struct AnmManager
 
         if (!std::memcmp(&this->transformMatrices[type], &matrix, sizeof(matrix)))
         {
-            this->dirtyFlags &= ~(1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts) type));
+            this->dirtyFlags &= ~(1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts)type));
         }
 
-        this->dirtyFlags |= 1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts) type);
+        this->dirtyFlags |= 1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts)type);
     }
 
     i32 ExecuteScript(AnmVm *vm);
@@ -475,10 +471,8 @@ struct AnmManager
     ZunColor dirtytTextureFactor;
     ZunMatrix dirtyTransformMatrices[4];
 
-
     ZunMatrix perspectiveMatrixBackup[4]; // Replaces matrix stack use for orthographic mode
 };
-ZUN_ASSERT_SIZE(AnmManager, 0x2112c);
 
 extern AnmManager *g_AnmManager;
 }; // namespace th06

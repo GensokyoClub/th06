@@ -75,7 +75,6 @@ struct PlayerRect
     f32 sizeX;
     f32 sizeY;
 };
-ZUN_ASSERT_SIZE(PlayerRect, 0x10);
 
 struct PlayerBullet
 {
@@ -104,7 +103,6 @@ struct PlayerBullet
         this->sprite.pos.y = *position;
     }
 };
-ZUN_ASSERT_SIZE(PlayerBullet, 0x158);
 
 struct PlayerBombInfo
 {
@@ -119,7 +117,6 @@ struct PlayerBombInfo
     ZunVec3 bombRegionVelocities[8];
     AnmVm sprites[8][4];
 };
-ZUN_ASSERT_SIZE(PlayerBombInfo, 0x231c);
 
 typedef i32 FireBulletResult;
 #define FBR_STOP_SPAWNING (-2)
@@ -135,7 +132,6 @@ struct CharacterData
     FireBulletCallback fireBulletCallback;
     FireBulletCallback fireBulletFocusCallback;
 };
-ZUN_ASSERT_SIZE(CharacterData, 0x18);
 
 struct CharacterPowerBulletData
 {
@@ -151,7 +147,6 @@ struct CharacterPowerBulletData
     i16 anmFileIdx;
     i16 bulletSoundIdx;
 };
-ZUN_ASSERT_SIZE(CharacterPowerBulletData, 0x24);
 
 struct CharacterPowerData
 {
@@ -159,7 +154,6 @@ struct CharacterPowerData
     i32 power;
     CharacterPowerBulletData *bullets;
 };
-ZUN_ASSERT_SIZE(CharacterPowerData, 0xc);
 
 struct Player
 {
@@ -195,7 +189,7 @@ struct Player
     i32 CheckGraze(ZunVec3 *center, ZunVec3 *size);
     i32 CalcKillBoxCollision(ZunVec3 *bulletCenter, ZunVec3 *bulletSize);
     i32 CalcLaserHitbox(ZunVec3 *laserCenter, ZunVec3 *laserSize, ZunVec3 *rotation, f32 angle, i32 canGraze);
-    i32 CalcDamageToEnemy(ZunVec3 *enemyPos, ZunVec3 *enemySize, bool *hitWithLazerDuringBomb);
+    i32 CalcDamageToEnemy(ZunVec3 *enemyPos, ZunVec3 *enemySize, bool *unk);
     i32 CalcItemBoxCollision(ZunVec3 *center, ZunVec3 *size);
     void ScoreGraze(ZunVec3 *center);
     void Die();
@@ -253,7 +247,6 @@ struct Player
         sprite->pos.z = 0.0;
     };
 };
-ZUN_ASSERT_SIZE(Player, 0x98f0);
 
 extern Player g_Player;
 }; // namespace th06

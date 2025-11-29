@@ -1056,10 +1056,10 @@ void Gui::DrawGameScene()
         g_AsciiManager.color = COLOR_WHITE;
         this->lastSpellcardSecondsRemaining = this->spellcardSecondsRemaining;
     }
-    g_Supervisor.viewport.X = 0;
-    g_Supervisor.viewport.Y = 0;
-    g_Supervisor.viewport.Width = 640;
-    g_Supervisor.viewport.Height = 480;
+    g_Supervisor.viewport.x = 0;
+    g_Supervisor.viewport.y = 0;
+    g_Supervisor.viewport.width = GAME_WINDOW_WIDTH;
+    g_Supervisor.viewport.height = GAME_WINDOW_HEIGHT;
     g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
     g_Supervisor.viewport.Set();
     //    g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
@@ -1354,11 +1354,11 @@ void Gui::DrawStageElements()
     }
     if (this->impl->loadingScreenSprite.activeSpriteIndex >= 0)
     {
-        g_Supervisor.viewport.X = g_GameManager.arcadeRegionTopLeftPos.x;
-        g_Supervisor.viewport.Y = g_GameManager.arcadeRegionTopLeftPos.y;
+        g_Supervisor.viewport.x = g_GameManager.arcadeRegionTopLeftPos.x;
+        g_Supervisor.viewport.y = g_GameManager.arcadeRegionTopLeftPos.y;
 
-        g_Supervisor.viewport.Width = g_GameManager.arcadeRegionSize.x;
-        g_Supervisor.viewport.Height = g_GameManager.arcadeRegionSize.y;
+        g_Supervisor.viewport.width = g_GameManager.arcadeRegionSize.x;
+        g_Supervisor.viewport.height = g_GameManager.arcadeRegionSize.y;
 
         g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
         g_Supervisor.viewport.Set();

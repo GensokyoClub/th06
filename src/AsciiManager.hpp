@@ -26,7 +26,6 @@ struct AsciiManagerString
     // If true, we are drawing an element of the Gui class.
     u32 isGui;
 };
-ZUN_ASSERT_SIZE(AsciiManagerString, 0x60);
 
 struct AsciiManagerPopup
 {
@@ -37,7 +36,6 @@ struct AsciiManagerPopup
     u8 inUse;
     u8 characterCount;
 };
-ZUN_ASSERT_SIZE(AsciiManagerPopup, 0x28);
 
 struct WeirdPadding
 {
@@ -100,6 +98,5 @@ struct AsciiManager
     StageMenu retryMenu;
     AsciiManagerPopup popups[515];
 };
-ZUN_ASSERT_SIZE(AsciiManager, 0xc1ac);
 extern AsciiManager g_AsciiManager;
 }; // namespace th06

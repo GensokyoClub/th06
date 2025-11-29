@@ -28,7 +28,7 @@
 namespace th06
 {
 Supervisor g_Supervisor;
-DIFFABLE_STATIC_ASSIGN(ControllerMapping, g_ControllerMapping) = {
+ControllerMapping g_ControllerMapping = {
     (i16)SDL_CONTROLLER_BUTTON_A,
     (i16)SDL_CONTROLLER_BUTTON_B,
     (i16)SDL_CONTROLLER_BUTTON_LEFTSHOULDER,
@@ -661,7 +661,7 @@ bool Supervisor::LoadConfig(const char *path)
         g_Supervisor.cfg.version = GAME_VERSION;
         g_Supervisor.cfg.padXAxis = 600;
         g_Supervisor.cfg.padYAxis = 600;
-        wavFile = std::fopen("bgm/th06_01.wav", "rb");
+        wavFile = FileSystem::FopenUTF8("bgm/th06_01.wav", "rb");
         if (wavFile != NULL)
         {
             g_Supervisor.cfg.musicMode = WAV;
@@ -694,7 +694,7 @@ bool Supervisor::LoadConfig(const char *path)
             g_Supervisor.cfg.version = GAME_VERSION;
             g_Supervisor.cfg.padXAxis = 600;
             g_Supervisor.cfg.padYAxis = 600;
-            wavFile2 = std::fopen("bgm/th06_01.wav", "rb");
+            wavFile2 = FileSystem::FopenUTF8("bgm/th06_01.wav", "rb");
             if (wavFile2 != NULL)
             {
                 g_Supervisor.cfg.musicMode = WAV;

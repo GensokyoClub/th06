@@ -67,10 +67,10 @@ void ItemManager::SpawnItem(ZunVec3 *position, ItemType itemType, i32 state)
     return;
 }
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(i32, 11, g_PowerUpThresholds) = {8, 16, 32, 48, 64, 80, 96, 128, 999, 1, 0};
-DIFFABLE_STATIC_ARRAY_ASSIGN(i32, 31, g_PowerItemScore) = {
-    10,  20,  30,   40,   50,   60,   70,   80,   90,   100,  200,  300,   400,   500,   600,  700,
-    800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 51200};
+i32 g_PowerUpThresholds[11] = {8, 16, 32, 48, 64, 80, 96, 128, 999, 1, 0};
+i32 g_PowerItemScore[31] = {10,   20,   30,   40,   50,   60,    70,    80,    90,   100,  200,
+                            300,  400,  500,  600,  700,  800,   900,   1000,  2000, 3000, 4000,
+                            5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 51200};
 
 i32 inline calculatePointScore(Item *curItem, i32 scoreAcquiredItemTop, i32 scoreAcquiredItemBottom, i32 posMultiplier)
 {

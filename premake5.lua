@@ -79,7 +79,7 @@ project "th06"
   includedirs { "src" }
 
   filter "toolset:gcc"   buildoptions { "-Wall", "-Wextra", "-Wpedantic" }
-  filter "toolset:clang" buildoptions { "-Wall", "-Wextra", "-Wpedantic", "-Wno-gnu-anonymous-struct", "-Wno-unused-parameter", "-Wno-unused-but-set-variable", "-Wno-unused-variable", "-Wno-nontrivial-memcall", "-Wno-c99-extensions", "-Wno-switch", "-Wno-c++11-narrowing" }
+  filter "toolset:clang" buildoptions { "-Wall", "-Wextra", "-Wpedantic", "-Wno-gnu-anonymous-struct", "-Wno-unused-parameter", "-Wno-unused-but-set-variable", "-Wno-unused-variable", "-Wno-nontrivial-memcall", "-Wno-c99-extensions", "-Wno-switch", "-Wno-c++11-narrowing", "-Wno-logical-not-parentheses" }
   filter {}
 
   -- Print out the full path for diagnostics, this lets ctrl+click in the terminal work.

@@ -1769,9 +1769,8 @@ ChainCallbackResult th06::ResultScreen::OnDraw(ResultScreen *resultScreen)
             resultScreen->unk_28a0[1].pos = spritePos;
             g_AnmManager->DrawNoRotation(&resultScreen->unk_28a0[1]);
 
-            spritePos.x -= -320.0f;
+            spritePos.x -= 320.0f;
             spritePos.y += 18.0f;
-            spritePos.y += 320.0f;
 
             ShootScoreListNodeA = resultScreen->scores[resultScreen->diffSelected][resultScreen->charUsed * 2].next;
             ShootScoreListNodeB = resultScreen->scores[resultScreen->diffSelected][resultScreen->charUsed * 2 + 1].next;
@@ -1867,8 +1866,9 @@ ChainCallbackResult th06::ResultScreen::OnDraw(ResultScreen *resultScreen)
                     g_AsciiManager.AddFormatText(&spritePos, "%8s %9d(C)", ShootScoreListNodeB->data->name,
                                                  ShootScoreListNodeB->data->score);
                 }
+
                 spritePos.x -= 336.0f;
-                spritePos.y += 336.0f;
+                spritePos.y += 18.0f;
                 ShootScoreListNodeA = ShootScoreListNodeA->next;
                 ShootScoreListNodeB = ShootScoreListNodeB->next;
             }

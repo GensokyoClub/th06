@@ -1770,7 +1770,7 @@ ChainCallbackResult th06::ResultScreen::OnDraw(ResultScreen *resultScreen)
             g_AnmManager->DrawNoRotation(&resultScreen->unk_28a0[1]);
 
             spritePos.x -= 320.0f;
-            spritePos.y += 18.0f;
+            spritePos.y += 36.0f;
 
             ShootScoreListNodeA = resultScreen->scores[resultScreen->diffSelected][resultScreen->charUsed * 2].next;
             ShootScoreListNodeB = resultScreen->scores[resultScreen->diffSelected][resultScreen->charUsed * 2 + 1].next;

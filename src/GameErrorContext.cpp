@@ -9,7 +9,7 @@ namespace th06
 DIFFABLE_STATIC(GameErrorContext, g_GameErrorContext)
 DIFFABLE_STATIC(CMyFont, g_CMyFont)
 
-const char *GameErrorContext::Log(GameErrorContext *ctx, const char *fmt, ...)
+const char *GameErrorContext::Log(const char *fmt, ...)
 {
     char tmpBuffer[512];
     size_t tmpBufferSize;
@@ -20,12 +20,12 @@ const char *GameErrorContext::Log(GameErrorContext *ctx, const char *fmt, ...)
 
     tmpBufferSize = strlen(tmpBuffer);
 
-    if (ctx->m_BufferEnd + tmpBufferSize < &ctx->m_Buffer[sizeof(ctx->m_Buffer) - 1])
+    if (this->m_BufferEnd + tmpBufferSize < &this->m_Buffer[sizeof(this->m_Buffer) - 1])
     {
-        strcpy(ctx->m_BufferEnd, tmpBuffer);
+        strcpy(this->m_BufferEnd, tmpBuffer);
 
-        ctx->m_BufferEnd += tmpBufferSize;
-        *ctx->m_BufferEnd = '\0';
+        this->m_BufferEnd += tmpBufferSize;
+        *this->m_BufferEnd = '\0';
     }
 
     va_end(args);
@@ -33,7 +33,7 @@ const char *GameErrorContext::Log(GameErrorContext *ctx, const char *fmt, ...)
     return fmt;
 }
 
-const char *GameErrorContext::Fatal(GameErrorContext *ctx, const char *fmt, ...)
+const char *GameErrorContext::Fatal(const char *fmt, ...)
 {
     char tmpBuffer[512];
     size_t tmpBufferSize;
@@ -44,17 +44,17 @@ const char *GameErrorContext::Fatal(GameErrorContext *ctx, const char *fmt, ...)
 
     tmpBufferSize = strlen(tmpBuffer);
 
-    if (ctx->m_BufferEnd + tmpBufferSize < &ctx->m_Buffer[sizeof(ctx->m_Buffer) - 1])
+    if (this->m_BufferEnd + tmpBufferSize < &this->m_Buffer[sizeof(this->m_Buffer) - 1])
     {
-        strcpy(ctx->m_BufferEnd, tmpBuffer);
+        strcpy(this->m_BufferEnd, tmpBuffer);
 
-        ctx->m_BufferEnd += tmpBufferSize;
-        *ctx->m_BufferEnd = '\0';
+        this->m_BufferEnd += tmpBufferSize;
+        *this->m_BufferEnd = '\0';
     }
 
     va_end(args);
 
-    ctx->m_ShowMessageBox = true;
+    this->m_ShowMessageBox = true;
 
     return fmt;
 }
@@ -65,7 +65,7 @@ void GameErrorContext::Flush()
 
     if (m_BufferEnd != m_Buffer)
     {
-        GameErrorContext::Log(this, TH_ERR_LOGGER_END);
+        g_GameErrorContext.Log(TH_ERR_LOGGER_END);
 
         if (m_ShowMessageBox)
         {

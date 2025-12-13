@@ -22,7 +22,7 @@ DIFFABLE_STATIC(ChainElem, g_GuiDrawChain);
 
 ZunBool Gui::IsStageFinished()
 {
-    return this->impl->loadingScreenSprite.activeSpriteIndex >= 0 && this->impl->loadingScreenSprite.flags.flag13;
+    return this->impl->loadingScreenSprite.activeSpriteIndex >= 0 && this->impl->loadingScreenSprite.flags.isStopped;
 }
 
 void Gui::EndPlayerSpellcard()

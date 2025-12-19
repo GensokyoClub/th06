@@ -3,9 +3,9 @@
 [discord]: https://discord.gg/VyGwAjrh9a
 [discord-badge]: https://img.shields.io/discord/1147558514840064030?color=%237289DA&logo=discord&logoColor=%23FFFFFF
 
-This is the readme for the portable fork of EoSD. For the readme of the decomp project, see [here](https://github.com/GensokyoClub/th06/blob/master/README.md).
+This is the readme for the remastered fork of EoSD. Unless you know what you're doing, this probably isn't what you're looking for, as remastered requires some asset modifications to run. For a drop-in compatible portable replacement of EoSD see the [portable branch](https://github.com/GensokyoClub/th06/tree/portable). For the readme of the decomp project, see [here](https://github.com/GensokyoClub/th06/blob/master/README.md).
 
-EoSD-portable is a port of Touhou 6 using SDL2 and OpenGL (with a more general renderer abstraction layer hopefully on the way).
+EoSD-remastered is a port of Touhou 6 using SDL2 and OpenGL (with a more general renderer abstraction layer hopefully on the way).
 This enables theoretical portability to any system supported by SDL2, with Linux and Windows in particular being known to work.
 Builds for OS X, the BSDs, and other Unices are also almost certainly possible, but may require some slight modifications to the build system.
 
@@ -18,7 +18,7 @@ Builds for OS X, the BSDs, and other Unices are also almost certainly possible, 
 
 ### Dependencies
 
-EoSD-portable has the following dependencies:
+EoSD-remastered has the following dependencies:
 
 - `SDL2`
 - `SDL2_image`
@@ -53,10 +53,10 @@ Compile:
 
 ### Use
 
-EoSD-portable is designed to be a drop-in replacement for the vanilla EoSD binary.
+EoSD-remastered is NOT a drop-in replacement for EoSD. Currently it requires unpacked archive files and merging of some of the texture spritesheets. There is a script to apply these automatically, `scripts/configure_assets.sh`, but it requires thtk and has dubious portability.
 You will also need to add a font to your game directory with the filename `msgothic.ttc`.
 This may be the actual MS Gothic, taken from a Windows machine, or a compatible font such as Kochi Gothic.
-EoSD-portable uses the Japanese filenames (e.g. 紅魔郷CM.DAT, 東方紅魔郷.cfg). English and other patches, static or thcrap, do not currently work.
+English and other patches, static or thcrap, do not currently work.
 A Japanese locale is not required.
 
 # Decomp Credits

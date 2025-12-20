@@ -85,6 +85,12 @@ project "th06"
   -- Print out the full path for diagnostics, this lets ctrl+click in the terminal work.
   filter { "toolset:gcc or toolset:clang" }
       buildoptions { "-fdiagnostics-absolute-paths" }
+
+  filter {}
+
+  filter { "configurations:debug" }
+      buildoptions { "-fsanitize=undefined" }
+      linkoptions { "-fsanitize=undefined" }
   filter {}
 
   kind "WindowedApp"

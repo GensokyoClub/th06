@@ -25,7 +25,7 @@ ChainElem g_GuiDrawChain;
 
 bool Gui::IsStageFinished()
 {
-    return this->impl->loadingScreenSprite.activeSpriteIndex >= 0 && this->impl->loadingScreenSprite.flags.flag13;
+    return this->impl->loadingScreenSprite.activeSpriteIndex >= 0 && this->impl->loadingScreenSprite.flags.isStopped;
 }
 
 void Gui::EndPlayerSpellcard()

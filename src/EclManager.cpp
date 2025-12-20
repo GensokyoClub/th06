@@ -12,6 +12,7 @@
 #include "Rng.hpp"
 #include "Stage.hpp"
 #include "utils.hpp"
+#include <cstdlib>
 
 namespace th06
 {
@@ -40,6 +41,17 @@ ExInsn g_EclExInsn[17] = {
 bool EclManager::Load(const char *eclPath)
 {
     i32 idx;
+
+#ifdef WEIRD_ECL_EXPERIMENTS
+    auto rawEcl = FileSystem::OpenPath(eclPath);
+    char buf[256];
+
+    snprintf(buf, sizeof(buf), "truecl c %s.out -g 6 -o %s", eclPath, eclPath);
+
+    utils::DebugPrint2("%s", buf);
+
+    system(buf);
+#endif
 
     this->eclFile = (EclRawHeader *)FileSystem::OpenPath(eclPath);
 

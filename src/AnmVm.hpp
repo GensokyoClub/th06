@@ -49,13 +49,13 @@ struct AnmLoadedSprite
 #define AnmOpcode_InterruptLabel 22
 #define AnmOpcode_23 23
 #define AnmOpcode_StopHide 24
-#define AnmOpcode_25 25
+#define AnmOpcode_UsePosOffset 25
 #define AnmOpcode_SetAutoRotate 26
-#define AnmOpcode_27 27
-#define AnmOpcode_28 28
+#define AnmOpcode_UVScrollX 27
+#define AnmOpcode_UVScrollY 28
 #define AnmOpcode_SetVisibility 29
-#define AnmOpcode_30 30
-#define AnmOpcode_31 31
+#define AnmOpcode_ScaleTime 30
+#define AnmOpcode_SetZWriteDisable 31
 
 struct AnmRawInstr
 {
@@ -67,23 +67,22 @@ struct AnmRawInstr
 
 enum AnmVmFlagsEnum
 {
-    AnmVmFlags_0 = 1 << 0,
+    AnmVmFlags_Visible = 1 << 0,
     AnmVmFlags_1 = 1 << 1,
-    AnmVmFlags_2 = 1 << 2,
-    AnmVmFlags_3 = 1 << 3,
+    AnmVmFlags_BlendMode = 1 << 2,
+    AnmVmFlags_ColorOp = 1 << 3,
     AnmVmFlags_4 = 1 << 4,
-    AnmVmFlags_5 = 1 << 5,
+    AnmVmFlags_UsePosOffset = 1 << 5,
     AnmVmFlags_FlipX = 1 << 6,
     AnmVmFlags_FlipY = 1 << 7,
-    AnmVmFlags_8 = 1 << 8,
-    AnmVmFlags_9 = 1 << 9,
-    AnmVmFlags_10 = 1 << 10,
-    AnmVmFlags_11 = 1 << 11,
-    AnmVmFlags_12 = 1 << 12,
-    AnmVmFlags_13 = 1 << 13,
-    AnmVmFlags_14 = 1 << 14,
-    AnmVmFlags_15 = 1 << 15,
+    AnmVmFlags_AnchorLeft = 1 << 8,
+    AnmVmFlags_AnchorTop = 1 << 9,
+
+    AnmVmFlags_ZWriteDisable = 1 << 12,
+    AnmVmFlags_IsStopped = 1 << 13
 };
+
+#define ANM_VM_INITIAL_FLAGS 0x3
 
 enum AnmVmBlendMode
 {
@@ -114,14 +113,12 @@ union AnmVmFlags {
         u32 blendMode : 1;
         u32 colorOp : 1;
         u32 flag4 : 1;
-        u32 flag5 : 1;
+        u32 usePosOffset : 1;
         u32 flip : 2;
         u32 anchor : 2;
         u32 posTime : 2;
         u32 zWriteDisable : 1;
-        u32 flag13 : 1;
-        u32 flag14 : 1;
-        u32 flag15 : 1;
+        u32 isStopped : 1;
     };
 };
 
@@ -145,7 +142,7 @@ struct AnmVm
         this->alphaInterpEndTime = 0;
         this->color = COLOR_WHITE;
         this->matrix.Identity();
-        this->flags.flags = AnmVmFlags_0 | AnmVmFlags_1;
+        this->flags.flags = AnmVmFlags_Visible | AnmVmFlags_1;
         this->autoRotate = 0;
         this->pendingInterrupt = 0;
         this->posInterpEndTime = 0;

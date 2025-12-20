@@ -337,7 +337,7 @@ ZunResult Supervisor::AddedCallback(Supervisor *s)
 
     if (AsciiManager::RegisterChain() != 0)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_ASCIIMANAGER_INIT_FAILED);
+        g_GameErrorContext.Log(TH_ERR_ASCIIMANAGER_INIT_FAILED);
         return ZUN_ERROR;
     }
 
@@ -365,7 +365,7 @@ ZunResult Supervisor::SetupDInput(Supervisor *supervisor)
         0)
     {
         supervisor->dinputIface = NULL;
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_DIRECTINPUT_NOT_AVAILABLE);
+        g_GameErrorContext.Log(TH_ERR_DIRECTINPUT_NOT_AVAILABLE);
         return ZUN_ERROR;
     }
 
@@ -376,7 +376,7 @@ ZunResult Supervisor::SetupDInput(Supervisor *supervisor)
             supervisor->dinputIface->Release();
             supervisor->dinputIface = NULL;
         }
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_DIRECTINPUT_NOT_AVAILABLE);
+        g_GameErrorContext.Log(TH_ERR_DIRECTINPUT_NOT_AVAILABLE);
         return ZUN_ERROR;
     }
 
@@ -394,7 +394,7 @@ ZunResult Supervisor::SetupDInput(Supervisor *supervisor)
             supervisor->dinputIface = NULL;
         }
 
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_DIRECTINPUT_SETDATAFORMAT_NOT_AVAILABLE);
+        g_GameErrorContext.Log(TH_ERR_DIRECTINPUT_SETDATAFORMAT_NOT_AVAILABLE);
         return ZUN_ERROR;
     }
 
@@ -413,12 +413,12 @@ ZunResult Supervisor::SetupDInput(Supervisor *supervisor)
             supervisor->dinputIface = NULL;
         }
 
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_DIRECTINPUT_SETCOOPERATIVELEVEL_NOT_AVAILABLE);
+        g_GameErrorContext.Log(TH_ERR_DIRECTINPUT_SETCOOPERATIVELEVEL_NOT_AVAILABLE);
         return ZUN_ERROR;
     }
 
     supervisor->keyboard->Acquire();
-    GameErrorContext::Log(&g_GameErrorContext, TH_ERR_DIRECTINPUT_INITIALIZED);
+    g_GameErrorContext.Log(TH_ERR_DIRECTINPUT_INITIALIZED);
 
     supervisor->dinputIface->EnumDevices(DI8DEVCLASS_GAMECTRL, Supervisor::EnumGameControllersCb, NULL,
                                          DIEDFL_ATTACHEDONLY);
@@ -432,7 +432,7 @@ ZunResult Supervisor::SetupDInput(Supervisor *supervisor)
         supervisor->controller->GetCapabilities(&g_Supervisor.controllerCaps);
         supervisor->controller->EnumObjects(Supervisor::ControllerCallback, NULL, DIDFT_ALL);
 
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_PAD_FOUND);
+        g_GameErrorContext.Log(TH_ERR_PAD_FOUND);
     }
     return ZUN_SUCCESS;
 }
@@ -599,7 +599,7 @@ i32 Supervisor::LoadPbg3(i32 pbg3FileIdx, char *filename)
             i32 res = this->pbg3Archives[pbg3FileIdx]->FindEntry(verPath);
             if (res < 0)
             {
-                GameErrorContext::Fatal(&g_GameErrorContext, "error : データのバージョンが違います\n");
+                g_GameErrorContext.Fatal("error : データのバージョンが違います\n");
                 return 1;
             }
         }
@@ -651,7 +651,7 @@ ZunResult Supervisor::LoadConfig(char *path)
         g_Supervisor.cfg.windowed = false;
         g_Supervisor.cfg.frameskipConfig = 0;
         g_Supervisor.cfg.controllerMapping = g_ControllerMapping;
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_CONFIG_NOT_FOUND);
+        g_GameErrorContext.Log(TH_ERR_CONFIG_NOT_FOUND);
     }
     else
     {
@@ -686,64 +686,64 @@ ZunResult Supervisor::LoadConfig(char *path)
             g_Supervisor.cfg.controllerMapping = g_ControllerMapping;
             memset(&g_Supervisor.cfg.opts, 0, sizeof(GameConfigOptsShifts));
             g_Supervisor.cfg.opts |= (1 << GCOS_USE_D3D_HW_TEXTURE_BLENDING);
-            GameErrorContext::Log(&g_GameErrorContext, TH_ERR_CONFIG_CORRUPTED);
+            g_GameErrorContext.Log(TH_ERR_CONFIG_CORRUPTED);
         }
         g_ControllerMapping = g_Supervisor.cfg.controllerMapping;
         free(data);
     }
     if (((this->cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) != 0)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_NO_VERTEX_BUFFER);
+        g_GameErrorContext.Log(TH_ERR_NO_VERTEX_BUFFER);
     }
     if (((this->cfg.opts >> GCOS_DONT_USE_FOG) & 1) != 0)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_NO_FOG);
+        g_GameErrorContext.Log(TH_ERR_NO_FOG);
     }
     if (((this->cfg.opts >> GCOS_FORCE_16BIT_COLOR_MODE) & 1) != 0)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_USE_16BIT_TEXTURES);
+        g_GameErrorContext.Log(TH_ERR_USE_16BIT_TEXTURES);
     }
     if (this->IsUnknown())
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_FORCE_BACKBUFFER_CLEAR);
+        g_GameErrorContext.Log(TH_ERR_FORCE_BACKBUFFER_CLEAR);
     }
     if (((this->cfg.opts >> GCOS_DISPLAY_MINIMUM_GRAPHICS) & 1) != 0)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_DONT_RENDER_ITEMS);
+        g_GameErrorContext.Log(TH_ERR_DONT_RENDER_ITEMS);
     }
     if (((this->cfg.opts >> GCOS_SUPPRESS_USE_OF_GOROUD_SHADING) & 1) != 0)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_NO_GOURAUD_SHADING);
+        g_GameErrorContext.Log(TH_ERR_NO_GOURAUD_SHADING);
     }
     if (((this->cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1) != 0)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_NO_DEPTH_TESTING);
+        g_GameErrorContext.Log(TH_ERR_NO_DEPTH_TESTING);
     }
     if (((this->cfg.opts >> GCOS_FORCE_60FPS) & 1) != 0)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_FORCE_60FPS_MODE);
+        g_GameErrorContext.Log(TH_ERR_FORCE_60FPS_MODE);
         this->vsyncEnabled = 0;
     }
     if (((this->cfg.opts >> GCOS_NO_COLOR_COMP) & 1) != 0)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_NO_TEXTURE_COLOR_COMPOSITING);
+        g_GameErrorContext.Log(TH_ERR_NO_TEXTURE_COLOR_COMPOSITING);
     }
     if (((this->cfg.opts >> GCOS_NO_COLOR_COMP) & 1) != 0)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_LAUNCH_WINDOWED);
+        g_GameErrorContext.Log(TH_ERR_LAUNCH_WINDOWED);
     }
     if (((this->cfg.opts >> GCOS_REFERENCE_RASTERIZER_MODE) & 1) != 0)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_FORCE_REFERENCE_RASTERIZER);
+        g_GameErrorContext.Log(TH_ERR_FORCE_REFERENCE_RASTERIZER);
     }
     if (((this->cfg.opts >> GCOS_NO_DIRECTINPUT_PAD) & 1) != 0)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_DO_NOT_USE_DIRECTINPUT);
+        g_GameErrorContext.Log(TH_ERR_DO_NOT_USE_DIRECTINPUT);
     }
     if (FileSystem::WriteDataToFile(path, &g_Supervisor.cfg, sizeof(GameConfiguration)) != 0)
     {
-        GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_FILE_CANNOT_BE_EXPORTED, path);
-        GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_FOLDER_HAS_WRITE_PROTECT_OR_DISK_FULL);
+        g_GameErrorContext.Fatal(TH_ERR_FILE_CANNOT_BE_EXPORTED, path);
+        g_GameErrorContext.Fatal(TH_ERR_FOLDER_HAS_WRITE_PROTECT_OR_DISK_FULL);
         return ZUN_ERROR;
     }
 

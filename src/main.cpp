@@ -134,7 +134,7 @@ stop:
     {
         g_GameErrorContext.ResetContext();
 
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_OPTION_CHANGED_RESTART);
+        g_GameErrorContext.Log(TH_ERR_OPTION_CHANGED_RESTART);
 
         if (!g_Supervisor.cfg.windowed)
         {

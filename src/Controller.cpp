@@ -19,7 +19,7 @@ u16 Controller::GetJoystickCaps(void)
 
     if (joyGetPosEx(0, &pji) != MMSYSERR_NOERROR)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_NO_PAD_FOUND);
+        g_GameErrorContext.Log(TH_ERR_NO_PAD_FOUND);
         return 1;
     }
 

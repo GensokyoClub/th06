@@ -2,10 +2,8 @@
 
 #include "Enemy.hpp"
 
-namespace th06
-{
-namespace EnemyEclInstr
-{
+namespace th06 {
+namespace EnemyEclInstr {
 i32 *GetVar(Enemy *enemy, EclVarId *varId, EclValueType *valueType);
 f32 *GetVarFloat(Enemy *enemy, f32 *varId, EclValueType *valueType);
 void SetVar(Enemy *enemy, EclVarId lhs, void *rhs);

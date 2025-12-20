@@ -5,14 +5,15 @@
 #include "graphics/GLFunc.hpp"
 #include "inttypes.hpp"
 
-// The internal resolution EoSD uses. 640x480. I can't think of any reason anyone sane
+// The internal resolution EoSD uses. 640x480. I can't think of any reason
+// anyone sane
 //   would want to change this
 #define GAME_WINDOW_WIDTH (640)
 #define GAME_WINDOW_HEIGHT (480)
 
 // The actual resolution used for the output window and viewport scaling
-//   At some point there should be a method to change this without recompiling but for now
-//   this'll do
+//   At some point there should be a method to change this without recompiling
+//   but for now this'll do
 #ifndef GAME_WINDOW_WIDTH_REAL
 #ifdef __SWITCH__
 #define GAME_WINDOW_WIDTH_REAL (1280)
@@ -50,17 +51,14 @@
 #define WIDTH_RESOLUTION_SCALE (((f32)VIEWPORT_WIDTH) / GAME_WINDOW_WIDTH)
 #define HEIGHT_RESOLUTION_SCALE (((f32)VIEWPORT_HEIGHT) / GAME_WINDOW_HEIGHT)
 
-namespace th06
-{
-enum RenderResult
-{
+namespace th06 {
+enum RenderResult {
     RENDER_RESULT_KEEP_RUNNING,
     RENDER_RESULT_EXIT_SUCCESS,
     RENDER_RESULT_EXIT_ERROR,
 };
 
-struct GameWindow
-{
+struct GameWindow {
     RenderResult Render();
     static void Present();
 

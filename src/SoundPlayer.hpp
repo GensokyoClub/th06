@@ -7,10 +7,8 @@
 #include <mutex>
 #include <thread>
 
-namespace th06
-{
-enum SoundIdx
-{
+namespace th06 {
+enum SoundIdx {
     NO_SOUND = -1,
     SOUND_SHOOT = 0,
     SOUND_1 = 1,
@@ -46,29 +44,25 @@ enum SoundIdx
     SOUND_POWERUP = 31,
 };
 
-struct SoundBufferIdxVolume
-{
+struct SoundBufferIdxVolume {
     i32 bufferIdx;
     i16 volume;
 };
 
-struct SoundData
-{
+struct SoundData {
     i16 *samples;
     u32 pos;
     u32 len;
     bool isPlaying;
 };
 
-struct WavData
-{
+struct WavData {
     SDL_RWops *fileStream;
     u32 dataStartOffset;
     u32 samples;
 };
 
-struct MusicStream
-{
+struct MusicStream {
     WavData srcWav;
     u32 pos;
     u32 loopStart;
@@ -77,8 +71,7 @@ struct MusicStream
     u32 fadeoutProgress;
 };
 
-struct SoundPlayer
-{
+struct SoundPlayer {
     SoundPlayer();
 
     bool InitializeDSound();

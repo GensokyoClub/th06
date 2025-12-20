@@ -12,10 +12,8 @@
 #include "midi/MidiDefault.hpp"
 #endif
 
-namespace th06
-{
-struct MidiTimer
-{
+namespace th06 {
+struct MidiTimer {
     MidiTimer();
     ~MidiTimer();
 
@@ -24,16 +22,15 @@ struct MidiTimer
     i32 StopTimer();
     void StartTimer(u32 delay, SDL_TimerCallback cb, void *data);
 
-    //    static void CALLBACK DefaultTimerCallback(u32 uTimerID, u32 uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR
-    //    dw2);
+    //    static void CALLBACK DefaultTimerCallback(u32 uTimerID, u32 uMsg,
+    //    DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2);
     static u32 SDLCALL DefaultTimerCallback(u32 interval, MidiTimer *timer);
 
     SDL_TimerID timerId;
     u32 lastTimerTicks;
 };
 
-enum MidiOpcode
-{
+enum MidiOpcode {
     MIDI_OPCODE_CHANNEL_1 = 0x01,
     MIDI_OPCODE_CHANNEL_2 = 0x02,
     MIDI_OPCODE_CHANNEL_3 = 0x03,
@@ -74,8 +71,7 @@ enum MidiOpcode
     MIDI_OPCODE_SYSTEM_RESET = 0xFF,
 };
 
-struct MidiTrack
-{
+struct MidiTrack {
     bool trackPlaying;
     u32 nextMessageTimePos;
     u32 trackLength;
@@ -86,8 +82,7 @@ struct MidiTrack
     u32 loopPointTimePos;
 };
 
-struct MidiChannel
-{
+struct MidiChannel {
     u8 keyPressedFlags[16];
     u8 instrument;
     u8 instrumentBank;
@@ -97,8 +92,7 @@ struct MidiChannel
     u8 channelVolume;
 };
 
-struct MidiOutput : MidiTimer
-{
+struct MidiOutput : MidiTimer {
     MidiOutput();
     virtual ~MidiOutput();
 

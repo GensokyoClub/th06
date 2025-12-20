@@ -25,8 +25,7 @@
 #include <cstring>
 #include <ctime>
 
-namespace th06
-{
+namespace th06 {
 Supervisor g_Supervisor;
 ControllerMapping g_ControllerMapping = {
     (i16)SDL_CONTROLLER_BUTTON_A,
@@ -45,8 +44,7 @@ u16 g_CurFrameInput;
 u16 g_IsEigthFrameOfHeldInput;
 u16 g_NumOfFramesInputsWereHeld;
 
-ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
-{
+ChainCallbackResult Supervisor::OnUpdate(Supervisor *s) {
 
     //    if (g_SoundPlayer.backgroundMusic != NULL)
     //    {
@@ -55,68 +53,54 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
     g_LastFrameInput = g_CurFrameInput;
     g_CurFrameInput = Controller::GetInput();
     g_IsEigthFrameOfHeldInput = 0;
-    if (g_LastFrameInput == g_CurFrameInput)
-    {
-        if (0x1e <= g_NumOfFramesInputsWereHeld)
-        {
-            if (g_NumOfFramesInputsWereHeld % 8 == 0)
-            {
+    if (g_LastFrameInput == g_CurFrameInput) {
+        if (0x1e <= g_NumOfFramesInputsWereHeld) {
+            if (g_NumOfFramesInputsWereHeld % 8 == 0) {
                 g_IsEigthFrameOfHeldInput = 1;
             }
-            if (0x26 <= g_NumOfFramesInputsWereHeld)
-            {
+            if (0x26 <= g_NumOfFramesInputsWereHeld) {
                 g_NumOfFramesInputsWereHeld = 0x1e;
             }
         }
         g_NumOfFramesInputsWereHeld++;
-    }
-    else
-    {
+    } else {
         g_NumOfFramesInputsWereHeld = 0;
     }
 
-    if (s->wantedState != s->curState)
-    {
+    if (s->wantedState != s->curState) {
         s->wantedState2 = s->wantedState;
-        switch (s->wantedState)
-        {
+        switch (s->wantedState) {
         case SUPERVISOR_STATE_INIT:
         REINIT_MAINMENU:
             s->curState = SUPERVISOR_STATE_MAINMENU;
-            if (!MainMenu::RegisterChain(0))
-            {
+            if (!MainMenu::RegisterChain(0)) {
                 return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
             }
             break;
         case SUPERVISOR_STATE_MAINMENU:
-            switch (s->curState)
-            {
+            switch (s->curState) {
             case SUPERVISOR_STATE_EXITSUCCESS:
                 return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
             case SUPERVISOR_STATE_GAMEMANAGER:
-                if (!GameManager::RegisterChain())
-                {
+                if (!GameManager::RegisterChain()) {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
                 break;
             case SUPERVISOR_STATE_EXITERROR:
                 return CHAIN_CALLBACK_RESULT_EXIT_GAME_ERROR;
             case SUPERVISOR_STATE_RESULTSCREEN:
-                if (!ResultScreen::RegisterChain(0))
-                {
+                if (!ResultScreen::RegisterChain(0)) {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
                 break;
             case SUPERVISOR_STATE_MUSICROOM:
-                if (!MusicRoom::RegisterChain())
-                {
+                if (!MusicRoom::RegisterChain()) {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
                 break;
             case SUPERVISOR_STATE_ENDING:
                 GameManager::CutChain();
-                if (!Ending::RegisterChain())
-                {
+                if (!Ending::RegisterChain()) {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
                 break;
@@ -124,8 +108,7 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
             break;
 
         case SUPERVISOR_STATE_RESULTSCREEN:
-            switch (s->curState)
-            {
+            switch (s->curState) {
             case SUPERVISOR_STATE_EXITSUCCESS:
                 return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
             case SUPERVISOR_STATE_MAINMENU:
@@ -134,8 +117,7 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
             }
             break;
         case SUPERVISOR_STATE_GAMEMANAGER:
-            switch (s->curState)
-            {
+            switch (s->curState) {
             case SUPERVISOR_STATE_EXITSUCCESS:
                 return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
 
@@ -148,19 +130,16 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
 
             case SUPERVISOR_STATE_RESULTSCREEN_FROMGAME:
                 GameManager::CutChain();
-                if (!ResultScreen::RegisterChain(true))
-                {
+                if (!ResultScreen::RegisterChain(true)) {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
                 break;
             case SUPERVISOR_STATE_GAMEMANAGER_REINIT:
                 GameManager::CutChain();
-                if (!GameManager::RegisterChain())
-                {
+                if (!GameManager::RegisterChain()) {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
-                if (s->curState == SUPERVISOR_STATE_MAINMENU)
-                {
+                if (s->curState == SUPERVISOR_STATE_MAINMENU) {
                     goto RETURN_TO_MENU_FROM_GAME;
                 }
                 s->curState = SUPERVISOR_STATE_GAMEMANAGER;
@@ -170,24 +149,21 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
                 s->curState = SUPERVISOR_STATE_INIT;
                 ReplayManager::SaveReplay(NULL, NULL);
                 s->curState = SUPERVISOR_STATE_MAINMENU;
-                if (!MainMenu::RegisterChain(1))
-                {
+                if (!MainMenu::RegisterChain(1)) {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
                 break;
 
             case 10:
                 GameManager::CutChain();
-                if (!Ending::RegisterChain())
-                {
+                if (!Ending::RegisterChain()) {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
                 break;
             }
             break;
         case SUPERVISOR_STATE_RESULTSCREEN_FROMGAME:
-            switch (s->curState)
-            {
+            switch (s->curState) {
             case SUPERVISOR_STATE_EXITSUCCESS:
                 ReplayManager::SaveReplay(NULL, NULL);
                 return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
@@ -198,8 +174,7 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
             }
             break;
         case SUPERVISOR_STATE_MUSICROOM:
-            switch (s->curState)
-            {
+            switch (s->curState) {
             case SUPERVISOR_STATE_EXITSUCCESS:
                 return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
 
@@ -209,16 +184,14 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
             }
             break;
         case SUPERVISOR_STATE_ENDING:
-            switch (s->curState)
-            {
+            switch (s->curState) {
             case SUPERVISOR_STATE_EXITSUCCESS:
                 return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
             case SUPERVISOR_STATE_MAINMENU:
                 s->curState = SUPERVISOR_STATE_INIT;
                 goto REINIT_MAINMENU;
             case SUPERVISOR_STATE_RESULTSCREEN_FROMGAME:
-                if (!ResultScreen::RegisterChain(true))
-                {
+                if (!ResultScreen::RegisterChain(true)) {
                     return CHAIN_CALLBACK_RESULT_EXIT_GAME_SUCCESS;
                 }
             }
@@ -232,8 +205,7 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-ChainCallbackResult Supervisor::OnDraw(Supervisor *s)
-{
+ChainCallbackResult Supervisor::OnDraw(Supervisor *s) {
     AnmManager *anmm1 = g_AnmManager;
     anmm1->currentSprite = NULL;
 
@@ -247,7 +219,8 @@ ChainCallbackResult Supervisor::OnDraw(Supervisor *s)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-// BOOL CALLBACK Supervisor::ControllerCallback(LPCDIDEVICEOBJECTINSTANCEA lpddoi, LPVOID pvRef)
+// BOOL CALLBACK Supervisor::ControllerCallback(LPCDIDEVICEOBJECTINSTANCEA
+// lpddoi, LPVOID pvRef)
 // {
 //     LPVOID pvRefBackup;
 //     DIPROPRANGE diprange;
@@ -262,7 +235,8 @@ ChainCallbackResult Supervisor::OnDraw(Supervisor *s)
 //         diprange.lMin = -1000;
 //         diprange.lMax = 1000;
 //
-//         if (g_Supervisor.controller->SetProperty(DIPROP_RANGE, &diprange.diph) < 0)
+//         if (g_Supervisor.controller->SetProperty(DIPROP_RANGE,
+//         &diprange.diph) < 0)
 //         {
 //             return FALSE;
 //         }
@@ -270,8 +244,7 @@ ChainCallbackResult Supervisor::OnDraw(Supervisor *s)
 //     return TRUE;
 // }
 
-bool Supervisor::RegisterChain()
-{
+bool Supervisor::RegisterChain() {
     ChainElem *chain;
     Supervisor *supervisor = &g_Supervisor;
 
@@ -283,8 +256,7 @@ bool Supervisor::RegisterChain()
     chain->arg = supervisor;
     chain->addedCallback = (ChainAddedCallback)Supervisor::AddedCallback;
     chain->deletedCallback = (ChainDeletedCallback)Supervisor::DeletedCallback;
-    if (!g_Chain.AddToCalcChain(chain, TH_CHAIN_PRIO_CALC_SUPERVISOR))
-    {
+    if (!g_Chain.AddToCalcChain(chain, TH_CHAIN_PRIO_CALC_SUPERVISOR)) {
         return false;
     }
 
@@ -295,8 +267,7 @@ bool Supervisor::RegisterChain()
     return true;
 }
 
-bool Supervisor::AddedCallback(Supervisor *s)
-{
+bool Supervisor::AddedCallback(Supervisor *s) {
     i32 i;
 
     // if (s->LoadPbg3(IN_PBG3_INDEX, TH_IN_DAT_FILE))
@@ -334,22 +305,21 @@ bool Supervisor::AddedCallback(Supervisor *s)
     g_Rng.Initialize((u16)std::time(NULL));
 
     g_SoundPlayer.InitSoundBuffers();
-    if (!g_AnmManager->LoadAnm(ANM_FILE_TEXT, "data/text.anm", ANM_OFFSET_TEXT))
-    {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_TEXT, "data/text.anm",
+                               ANM_OFFSET_TEXT)) {
         return false;
     }
 
-    if (!AsciiManager::RegisterChain())
-    {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_ASCIIMANAGER_INIT_FAILED);
+    if (!AsciiManager::RegisterChain()) {
+        GameErrorContext::Log(&g_GameErrorContext,
+                              TH_ERR_ASCIIMANAGER_INIT_FAILED);
         return false;
     }
 
     s->unk198 = 0;
     g_AnmManager->SetupVertexBuffer();
 
-    if (!TextHelper::CreateTextBuffer())
-    {
+    if (!TextHelper::CreateTextBuffer()) {
         return false;
     }
 
@@ -360,34 +330,35 @@ bool Supervisor::AddedCallback(Supervisor *s)
     return true;
 }
 
-bool Supervisor::SetupDInput(Supervisor *supervisor)
-{
+bool Supervisor::SetupDInput(Supervisor *supervisor) {
     //    HINSTANCE hInst;
     //
-    //    hInst = (HINSTANCE)GetWindowLongA(supervisor->hwndGameWindow, GWL_HINSTANCE);
-    //    if (supervisor->cfg.opts >> GCOS_NO_DIRECTINPUT_PAD & 1)
+    //    hInst = (HINSTANCE)GetWindowLongA(supervisor->hwndGameWindow,
+    //    GWL_HINSTANCE); if (supervisor->cfg.opts >> GCOS_NO_DIRECTINPUT_PAD &
+    //    1)
     //    {
     //        return ZUN_ERROR;
     //    }
     //
-    //    if (DirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8A, (LPVOID *)&supervisor->dinputIface,
-    //    NULL) <
+    //    if (DirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8A,
+    //    (LPVOID *)&supervisor->dinputIface, NULL) <
     //        0)
     //    {
     //        supervisor->dinputIface = NULL;
-    //        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_DIRECTINPUT_NOT_AVAILABLE);
-    //        return ZUN_ERROR;
+    //        GameErrorContext::Log(&g_GameErrorContext,
+    //        TH_ERR_DIRECTINPUT_NOT_AVAILABLE); return ZUN_ERROR;
     //    }
     //
-    //    if (supervisor->dinputIface->CreateDevice(GUID_SysKeyboard, &supervisor->keyboard, NULL) < 0)
+    //    if (supervisor->dinputIface->CreateDevice(GUID_SysKeyboard,
+    //    &supervisor->keyboard, NULL) < 0)
     //    {
     //        if (supervisor->dinputIface)
     //        {
     //            supervisor->dinputIface->Release();
     //            supervisor->dinputIface = NULL;
     //        }
-    //        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_DIRECTINPUT_NOT_AVAILABLE);
-    //        return ZUN_ERROR;
+    //        GameErrorContext::Log(&g_GameErrorContext,
+    //        TH_ERR_DIRECTINPUT_NOT_AVAILABLE); return ZUN_ERROR;
     //    }
     //
     //    if (supervisor->keyboard->SetDataFormat(&c_dfDIKeyboard) < 0)
@@ -404,12 +375,15 @@ bool Supervisor::SetupDInput(Supervisor *supervisor)
     //            supervisor->dinputIface = NULL;
     //        }
     //
-    //        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_DIRECTINPUT_SETDATAFORMAT_NOT_AVAILABLE);
-    //        return ZUN_ERROR;
+    //        GameErrorContext::Log(&g_GameErrorContext,
+    //        TH_ERR_DIRECTINPUT_SETDATAFORMAT_NOT_AVAILABLE); return ZUN_ERROR;
     //    }
     //
-    //    if (supervisor->keyboard->SetCooperativeLevel(supervisor->hwndGameWindow,
-    //                                                  DISCL_NONEXCLUSIVE | DISCL_FOREGROUND | DISCL_NOWINKEY) < 0)
+    //    if
+    //    (supervisor->keyboard->SetCooperativeLevel(supervisor->hwndGameWindow,
+    //                                                  DISCL_NONEXCLUSIVE |
+    //                                                  DISCL_FOREGROUND |
+    //                                                  DISCL_NOWINKEY) < 0)
     //    {
     //        if (supervisor->keyboard)
     //        {
@@ -423,8 +397,9 @@ bool Supervisor::SetupDInput(Supervisor *supervisor)
     //            supervisor->dinputIface = NULL;
     //        }
     //
-    //        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_DIRECTINPUT_SETCOOPERATIVELEVEL_NOT_AVAILABLE);
-    //        return ZUN_ERROR;
+    //        GameErrorContext::Log(&g_GameErrorContext,
+    //        TH_ERR_DIRECTINPUT_SETCOOPERATIVELEVEL_NOT_AVAILABLE); return
+    //        ZUN_ERROR;
     //    }
     //
     //    supervisor->keyboard->Acquire();
@@ -432,41 +407,45 @@ bool Supervisor::SetupDInput(Supervisor *supervisor)
 
     int numSticks = SDL_NumJoysticks();
 
-    for (int i = 0; i < numSticks; i++)
-    {
-        if (SDL_IsGameController(i) && (supervisor->gameController = SDL_GameControllerOpen(i)) != NULL)
-        {
+    for (int i = 0; i < numSticks; i++) {
+        if (SDL_IsGameController(i) &&
+            (supervisor->gameController = SDL_GameControllerOpen(i)) != NULL) {
 
             break;
         }
     }
 
-    //    supervisor->dinputIface->EnumDevices(DI8DEVCLASS_GAMECTRL, Supervisor::EnumGameControllersCb, NULL,
+    //    supervisor->dinputIface->EnumDevices(DI8DEVCLASS_GAMECTRL,
+    //    Supervisor::EnumGameControllersCb, NULL,
     //                                         DIEDFL_ATTACHEDONLY);
     //    if (supervisor->controller)
     //    {
     //        supervisor->controller->SetDataFormat(&c_dfDIJoystick2);
-    //        supervisor->controller->SetCooperativeLevel(supervisor->hwndGameWindow, DISCL_EXCLUSIVE |
-    //        DISCL_FOREGROUND);
+    //        supervisor->controller->SetCooperativeLevel(supervisor->hwndGameWindow,
+    //        DISCL_EXCLUSIVE | DISCL_FOREGROUND);
     //
-    //        g_Supervisor.controllerCaps.dwSize = sizeof(g_Supervisor.controllerCaps);
+    //        g_Supervisor.controllerCaps.dwSize =
+    //        sizeof(g_Supervisor.controllerCaps);
     //
     //        supervisor->controller->GetCapabilities(&g_Supervisor.controllerCaps);
-    //        supervisor->controller->EnumObjects(Supervisor::ControllerCallback, NULL, DIDFT_ALL);
+    //        supervisor->controller->EnumObjects(Supervisor::ControllerCallback,
+    //        NULL, DIDFT_ALL);
     //
     //        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_PAD_FOUND);
     //    }
     return true;
 }
 
-// BOOL CALLBACK Supervisor::EnumGameControllersCb(LPCDIDEVICEINSTANCEA pdidInstance, LPVOID pContext)
+// BOOL CALLBACK Supervisor::EnumGameControllersCb(LPCDIDEVICEINSTANCEA
+// pdidInstance, LPVOID pContext)
 // {
 //     HRESULT result;
 //
 //     if (!g_Supervisor.controller)
 //     {
-//         result = g_Supervisor.dinputIface->CreateDevice(pdidInstance->guidInstance, &g_Supervisor.controller, NULL);
-//         if (result < 0)
+//         result =
+//         g_Supervisor.dinputIface->CreateDevice(pdidInstance->guidInstance,
+//         &g_Supervisor.controller, NULL); if (result < 0)
 //         {
 //             return TRUE;
 //         }
@@ -474,12 +453,12 @@ bool Supervisor::SetupDInput(Supervisor *supervisor)
 //     return FALSE;
 // }
 
-bool Supervisor::DeletedCallback(Supervisor *s)
-{
+bool Supervisor::DeletedCallback(Supervisor *s) {
     // i32 pbg3Idx;
 
     //    g_AnmManager->ReleaseVertexBuffer();
-    // for (pbg3Idx = 0; pbg3Idx < ARRAY_SIZE_SIGNED(s->pbg3Archives); pbg3Idx += 1)
+    // for (pbg3Idx = 0; pbg3Idx < ARRAY_SIZE_SIGNED(s->pbg3Archives); pbg3Idx
+    // += 1)
     // {
     //     s->ReleasePbg3(pbg3Idx);
     // }
@@ -488,8 +467,7 @@ bool Supervisor::DeletedCallback(Supervisor *s)
     g_SoundPlayer.StopBGM();
 
 #ifndef __SWITCH__
-    if (s->midiOutput != NULL)
-    {
+    if (s->midiOutput != NULL) {
         s->midiOutput->StopPlayback();
         delete s->midiOutput;
         s->midiOutput = NULL;
@@ -510,8 +488,7 @@ bool Supervisor::DeletedCallback(Supervisor *s)
     //    {
     //        s->controller->Unacquire();
     //    }
-    if (s->gameController != NULL)
-    {
+    if (s->gameController != NULL) {
         SDL_GameControllerClose(s->gameController);
         s->gameController = NULL;
     }
@@ -523,8 +500,7 @@ bool Supervisor::DeletedCallback(Supervisor *s)
     return true;
 }
 
-void Supervisor::DrawFpsCounter()
-{
+void Supervisor::DrawFpsCounter() {
     u32 curTime;
     float framerate;
     float elapsed;
@@ -536,16 +512,15 @@ void Supervisor::DrawFpsCounter()
     static char g_FpsCounterBuffer[256];
 
     curTime = SDL_GetTicks();
-    g_NumFramesSinceLastTime = g_NumFramesSinceLastTime + 1 + (u32)g_Supervisor.cfg.frameskipConfig;
-    if (500 <= curTime - g_LastTime)
-    {
+    g_NumFramesSinceLastTime =
+        g_NumFramesSinceLastTime + 1 + (u32)g_Supervisor.cfg.frameskipConfig;
+    if (500 <= curTime - g_LastTime) {
         elapsed = (curTime - g_LastTime) / 1000.f;
         fps = g_NumFramesSinceLastTime / elapsed;
         g_LastTime = curTime;
         g_NumFramesSinceLastTime = 0;
         sprintf(g_FpsCounterBuffer, "%.02ffps", fps);
-        if (g_GameManager.isInMenu != 0)
-        {
+        if (g_GameManager.isInMenu != 0) {
             framerate = 60.f / g_Supervisor.framerateMultiplier;
             g_Supervisor.unk1b8 = g_Supervisor.unk1b8 + framerate;
 
@@ -559,8 +534,7 @@ void Supervisor::DrawFpsCounter()
                 g_Supervisor.unk1b4 = framerate * .5f + g_Supervisor.unk1b4;
         }
     }
-    if (!g_Supervisor.isInEnding)
-    {
+    if (!g_Supervisor.isInEnding) {
         fpsCounterPos.x = 512.0;
         fpsCounterPos.y = 464.0;
         fpsCounterPos.z = 0.0;
@@ -569,19 +543,14 @@ void Supervisor::DrawFpsCounter()
     return;
 }
 
-void Supervisor::TickTimer(i32 *frames, f32 *subframes)
-{
-    if (this->framerateMultiplier <= 0.99f)
-    {
+void Supervisor::TickTimer(i32 *frames, f32 *subframes) {
+    if (this->framerateMultiplier <= 0.99f) {
         *subframes = *subframes + this->effectiveFramerateMultiplier;
-        if (*subframes >= 1.0f)
-        {
+        if (*subframes >= 1.0f) {
             *frames = *frames + 1;
             *subframes = *subframes - 1.0f;
         }
-    }
-    else
-    {
+    } else {
         *frames = *frames + 1;
     }
 }
@@ -593,12 +562,15 @@ void Supervisor::TickTimer(i32 *frames, f32 *subframes)
 //     //     return;
 //     // }
 
-//     // Double free! Release is called internally by the Pbg3Archive destructor,
-//     // and as such should not be called directly. By calling it directly here,
+//     // Double free! Release is called internally by the Pbg3Archive
+//     destructor,
+//     // and as such should not be called directly. By calling it directly
+//     here,
 //     // it ends up being called twice, which will cause the resources owned by
 //     // Pbg3Archive to be freed multiple times, which can result in crashes.
 //     //
-//     // For some reason, this double-free doesn't cause crashes in the original
+//     // For some reason, this double-free doesn't cause crashes in the
+//     original
 //     // game. However, this can cause problems in dllbuilds of the game. Maybe
 //     // some accuracy improvements in the PBG3 handling will remove this
 //     // difference.
@@ -609,7 +581,8 @@ void Supervisor::TickTimer(i32 *frames, f32 *subframes)
 
 // i32 Supervisor::LoadPbg3(i32 pbg3FileIdx, const char *filename)
 // {
-//     if (this->pbg3Archives[pbg3FileIdx] == NULL || strcmp(filename, this->pbg3ArchiveNames[pbg3FileIdx]) != 0)
+//     if (this->pbg3Archives[pbg3FileIdx] == NULL || strcmp(filename,
+//     this->pbg3ArchiveNames[pbg3FileIdx]) != 0)
 //     {
 //         this->ReleasePbg3(pbg3FileIdx);
 //         this->pbg3Archives[pbg3FileIdx] = new Pbg3Archive();
@@ -623,8 +596,8 @@ void Supervisor::TickTimer(i32 *frames, f32 *subframes)
 //             i32 res = this->pbg3Archives[pbg3FileIdx]->FindEntry(verPath);
 //             if (res < 0)
 //             {
-//                 GameErrorContext::Fatal(&g_GameErrorContext, "error : データのバージョンが違います\n");
-//                 return 1;
+//                 GameErrorContext::Fatal(&g_GameErrorContext, "error :
+//                 データのバージョンが違います\n"); return 1;
 //             }
 //         }
 //         else
@@ -644,17 +617,16 @@ void Supervisor::TickTimer(i32 *frames, f32 *subframes)
 //     return 0;
 // }
 
-bool Supervisor::LoadConfig(const char *path)
-{
+bool Supervisor::LoadConfig(const char *path) {
     GameConfiguration *data;
     FILE *wavFile;
     FILE *wavFile2;
 
     std::memset(&g_Supervisor.cfg, 0, sizeof(GameConfiguration));
-    g_Supervisor.cfg.opts = g_Supervisor.cfg.opts | (1 << GCOS_USE_D3D_HW_TEXTURE_BLENDING);
+    g_Supervisor.cfg.opts =
+        g_Supervisor.cfg.opts | (1 << GCOS_USE_D3D_HW_TEXTURE_BLENDING);
     data = (GameConfiguration *)FileSystem::OpenPath(path);
-    if (data == NULL)
-    {
+    if (data == NULL) {
         g_Supervisor.cfg.lifeCount = 2;
         g_Supervisor.cfg.bombCount = 3;
         g_Supervisor.cfg.colorMode16bit = 0xff;
@@ -662,13 +634,10 @@ bool Supervisor::LoadConfig(const char *path)
         g_Supervisor.cfg.padXAxis = 600;
         g_Supervisor.cfg.padYAxis = 600;
         wavFile = FileSystem::FopenUTF8("bgm/th06_01.wav", "rb");
-        if (wavFile != NULL)
-        {
+        if (wavFile != NULL) {
             g_Supervisor.cfg.musicMode = WAV;
             std::fclose(wavFile);
-        }
-        else
-        {
+        } else {
             g_Supervisor.cfg.musicMode = MIDI;
             utils::DebugPrint(TH_ERR_NO_WAVE_FILE);
         }
@@ -678,16 +647,18 @@ bool Supervisor::LoadConfig(const char *path)
         g_Supervisor.cfg.frameskipConfig = 0;
         g_Supervisor.cfg.controllerMapping = g_ControllerMapping;
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_CONFIG_NOT_FOUND);
-    }
-    else
-    {
+    } else {
         g_Supervisor.cfg = *data;
-        if ((g_Supervisor.cfg.lifeCount >= 5) || (g_Supervisor.cfg.bombCount >= 4) ||
-            (g_Supervisor.cfg.colorMode16bit >= 2) || (g_Supervisor.cfg.musicMode >= 3) ||
-            (g_Supervisor.cfg.defaultDifficulty >= 5) || (g_Supervisor.cfg.playSounds >= 2) ||
-            (g_Supervisor.cfg.windowed >= 2) || (g_Supervisor.cfg.frameskipConfig >= 3) ||
-            (g_Supervisor.cfg.version != GAME_VERSION) || (g_LastFileSize != 0x38))
-        {
+        if ((g_Supervisor.cfg.lifeCount >= 5) ||
+            (g_Supervisor.cfg.bombCount >= 4) ||
+            (g_Supervisor.cfg.colorMode16bit >= 2) ||
+            (g_Supervisor.cfg.musicMode >= 3) ||
+            (g_Supervisor.cfg.defaultDifficulty >= 5) ||
+            (g_Supervisor.cfg.playSounds >= 2) ||
+            (g_Supervisor.cfg.windowed >= 2) ||
+            (g_Supervisor.cfg.frameskipConfig >= 3) ||
+            (g_Supervisor.cfg.version != GAME_VERSION) ||
+            (g_LastFileSize != 0x38)) {
             g_Supervisor.cfg.lifeCount = 2;
             g_Supervisor.cfg.bombCount = 3;
             g_Supervisor.cfg.colorMode16bit = 0xff;
@@ -695,13 +666,10 @@ bool Supervisor::LoadConfig(const char *path)
             g_Supervisor.cfg.padXAxis = 600;
             g_Supervisor.cfg.padYAxis = 600;
             wavFile2 = FileSystem::FopenUTF8("bgm/th06_01.wav", "rb");
-            if (wavFile2 != NULL)
-            {
+            if (wavFile2 != NULL) {
                 g_Supervisor.cfg.musicMode = WAV;
                 std::fclose(wavFile2);
-            }
-            else
-            {
+            } else {
                 g_Supervisor.cfg.musicMode = MIDI;
                 utils::DebugPrint(TH_ERR_NO_WAVE_FILE);
             }
@@ -710,80 +678,72 @@ bool Supervisor::LoadConfig(const char *path)
             g_Supervisor.cfg.windowed = false;
             g_Supervisor.cfg.frameskipConfig = 0;
             g_Supervisor.cfg.controllerMapping = g_ControllerMapping;
-            std::memset(&g_Supervisor.cfg.opts, 0, sizeof(GameConfigOptsShifts));
+            std::memset(&g_Supervisor.cfg.opts, 0,
+                        sizeof(GameConfigOptsShifts));
             g_Supervisor.cfg.opts |= (1 << GCOS_USE_D3D_HW_TEXTURE_BLENDING);
             GameErrorContext::Log(&g_GameErrorContext, TH_ERR_CONFIG_CORRUPTED);
         }
         g_ControllerMapping = g_Supervisor.cfg.controllerMapping;
         free(data);
     }
-    if (((this->cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) != 0)
-    {
+    if (((this->cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) != 0) {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_NO_VERTEX_BUFFER);
     }
-    if (((this->cfg.opts >> GCOS_DONT_USE_FOG) & 1) != 0)
-    {
+    if (((this->cfg.opts >> GCOS_DONT_USE_FOG) & 1) != 0) {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_NO_FOG);
     }
-    if (((this->cfg.opts >> GCOS_FORCE_16BIT_COLOR_MODE) & 1) != 0)
-    {
+    if (((this->cfg.opts >> GCOS_FORCE_16BIT_COLOR_MODE) & 1) != 0) {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_USE_16BIT_TEXTURES);
     }
-    if (this->RedrawWholeFrame())
-    {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_FORCE_BACKBUFFER_CLEAR);
+    if (this->RedrawWholeFrame()) {
+        GameErrorContext::Log(&g_GameErrorContext,
+                              TH_ERR_FORCE_BACKBUFFER_CLEAR);
     }
-    if (((this->cfg.opts >> GCOS_DISPLAY_MINIMUM_GRAPHICS) & 1) != 0)
-    {
+    if (((this->cfg.opts >> GCOS_DISPLAY_MINIMUM_GRAPHICS) & 1) != 0) {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_DONT_RENDER_ITEMS);
     }
-    if (((this->cfg.opts >> GCOS_SUPPRESS_USE_OF_GOROUD_SHADING) & 1) != 0)
-    {
+    if (((this->cfg.opts >> GCOS_SUPPRESS_USE_OF_GOROUD_SHADING) & 1) != 0) {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_NO_GOURAUD_SHADING);
     }
-    if (((this->cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1) != 0)
-    {
+    if (((this->cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1) != 0) {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_NO_DEPTH_TESTING);
     }
-    if (((this->cfg.opts >> GCOS_FORCE_60FPS) & 1) != 0)
-    {
+    if (((this->cfg.opts >> GCOS_FORCE_60FPS) & 1) != 0) {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_FORCE_60FPS_MODE);
         this->vsyncEnabled = 0;
     }
-    if (((this->cfg.opts >> GCOS_NO_COLOR_COMP) & 1) != 0)
-    {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_NO_TEXTURE_COLOR_COMPOSITING);
+    if (((this->cfg.opts >> GCOS_NO_COLOR_COMP) & 1) != 0) {
+        GameErrorContext::Log(&g_GameErrorContext,
+                              TH_ERR_NO_TEXTURE_COLOR_COMPOSITING);
     }
-    if (((this->cfg.opts >> GCOS_NO_COLOR_COMP) & 1) != 0)
-    {
+    if (((this->cfg.opts >> GCOS_NO_COLOR_COMP) & 1) != 0) {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_LAUNCH_WINDOWED);
     }
-    if (((this->cfg.opts >> GCOS_REFERENCE_RASTERIZER_MODE) & 1) != 0)
-    {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_FORCE_REFERENCE_RASTERIZER);
+    if (((this->cfg.opts >> GCOS_REFERENCE_RASTERIZER_MODE) & 1) != 0) {
+        GameErrorContext::Log(&g_GameErrorContext,
+                              TH_ERR_FORCE_REFERENCE_RASTERIZER);
     }
-    if (((this->cfg.opts >> GCOS_NO_DIRECTINPUT_PAD) & 1) != 0)
-    {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_DO_NOT_USE_DIRECTINPUT);
+    if (((this->cfg.opts >> GCOS_NO_DIRECTINPUT_PAD) & 1) != 0) {
+        GameErrorContext::Log(&g_GameErrorContext,
+                              TH_ERR_DO_NOT_USE_DIRECTINPUT);
     }
-    if (FileSystem::WriteDataToFile(path, &g_Supervisor.cfg, sizeof(GameConfiguration)) != 0)
-    {
-        GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_FILE_CANNOT_BE_EXPORTED, path);
-        GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_FOLDER_HAS_WRITE_PROTECT_OR_DISK_FULL);
+    if (FileSystem::WriteDataToFile(path, &g_Supervisor.cfg,
+                                    sizeof(GameConfiguration)) != 0) {
+        GameErrorContext::Fatal(&g_GameErrorContext,
+                                TH_ERR_FILE_CANNOT_BE_EXPORTED, path);
+        GameErrorContext::Fatal(&g_GameErrorContext,
+                                TH_ERR_FOLDER_HAS_WRITE_PROTECT_OR_DISK_FULL);
         return false;
     }
 
     return true;
 }
 
-bool Supervisor::ReadMidiFile(u32 midiFileIdx, char *path)
-{
+bool Supervisor::ReadMidiFile(u32 midiFileIdx, char *path) {
     // Return conventions seem opposite of normal? But they're never used anyway
-    if (g_Supervisor.cfg.musicMode == MIDI)
-    {
+    if (g_Supervisor.cfg.musicMode == MIDI) {
 #ifndef __SWITCH__
-        if (g_Supervisor.midiOutput != NULL)
-        {
+        if (g_Supervisor.midiOutput != NULL) {
             g_Supervisor.midiOutput->ReadFileData(midiFileIdx, path);
         }
 #endif
@@ -793,14 +753,11 @@ bool Supervisor::ReadMidiFile(u32 midiFileIdx, char *path)
     return true;
 }
 
-bool Supervisor::PlayMidiFile(i32 midiFileIdx)
-{
+bool Supervisor::PlayMidiFile(i32 midiFileIdx) {
 #ifndef __SWITCH__
-    if (g_Supervisor.cfg.musicMode == MIDI)
-    {
+    if (g_Supervisor.cfg.musicMode == MIDI) {
 
-        if (g_Supervisor.midiOutput != NULL)
-        {
+        if (g_Supervisor.midiOutput != NULL) {
             g_Supervisor.midiOutput->StopPlayback();
             g_Supervisor.midiOutput->ParseFile(midiFileIdx);
             g_Supervisor.midiOutput->Play();
@@ -812,25 +769,20 @@ bool Supervisor::PlayMidiFile(i32 midiFileIdx)
     return false;
 }
 
-bool Supervisor::PlayAudio(const char *path)
-{
+bool Supervisor::PlayAudio(const char *path) {
     char wavName[256];
     char wavPos[256];
     char *pathExtension;
 
-    if (g_Supervisor.cfg.musicMode == MIDI)
-    {
+    if (g_Supervisor.cfg.musicMode == MIDI) {
 #ifndef __SWITCH__
-        if (g_Supervisor.midiOutput != NULL)
-        {
+        if (g_Supervisor.midiOutput != NULL) {
             g_Supervisor.midiOutput->StopPlayback();
             g_Supervisor.midiOutput->LoadFile(path);
             g_Supervisor.midiOutput->Play();
         }
 #endif
-    }
-    else if (g_Supervisor.cfg.musicMode == WAV)
-    {
+    } else if (g_Supervisor.cfg.musicMode == WAV) {
         std::strcpy(wavName, path);
         std::strcpy(wavPos, path);
         pathExtension = std::strrchr(wavName, L'.');
@@ -842,41 +794,28 @@ bool Supervisor::PlayAudio(const char *path)
         pathExtension[2] = 'o';
         pathExtension[3] = 's';
         g_SoundPlayer.LoadWav(wavName);
-        if (!g_SoundPlayer.LoadPos(wavPos))
-        {
+        if (!g_SoundPlayer.LoadPos(wavPos)) {
             g_SoundPlayer.PlayBGM(false);
-        }
-        else
-        {
+        } else {
             g_SoundPlayer.PlayBGM(true);
         }
-    }
-    else
-    {
+    } else {
         return false;
     }
     return true;
 }
 
-bool Supervisor::StopAudio()
-{
-    if (g_Supervisor.cfg.musicMode == MIDI)
-    {
+bool Supervisor::StopAudio() {
+    if (g_Supervisor.cfg.musicMode == MIDI) {
 #ifndef __SWITCH__
-        if (g_Supervisor.midiOutput != NULL)
-        {
+        if (g_Supervisor.midiOutput != NULL) {
             g_Supervisor.midiOutput->StopPlayback();
         }
 #endif
-    }
-    else
-    {
-        if (g_Supervisor.cfg.musicMode == WAV)
-        {
+    } else {
+        if (g_Supervisor.cfg.musicMode == WAV) {
             g_SoundPlayer.StopBGM();
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -884,39 +823,26 @@ bool Supervisor::StopAudio()
     return true;
 }
 
-bool Supervisor::FadeOutMusic(f32 fadeOutSeconds)
-{
-    if (g_Supervisor.cfg.musicMode == MIDI)
-    {
+bool Supervisor::FadeOutMusic(f32 fadeOutSeconds) {
+    if (g_Supervisor.cfg.musicMode == MIDI) {
 #ifndef __SWITCH__
-        if (g_Supervisor.midiOutput != NULL)
-        {
+        if (g_Supervisor.midiOutput != NULL) {
             g_Supervisor.midiOutput->SetFadeOut(1000.0f * fadeOutSeconds);
         }
 #endif
-    }
-    else
-    {
-        if (g_Supervisor.cfg.musicMode == WAV)
-        {
-            if (this->effectiveFramerateMultiplier == 0.0f)
-            {
+    } else {
+        if (g_Supervisor.cfg.musicMode == WAV) {
+            if (this->effectiveFramerateMultiplier == 0.0f) {
                 g_SoundPlayer.FadeOut(fadeOutSeconds);
-            }
-            else
-            {
-                if (this->effectiveFramerateMultiplier > 1.0f)
-                {
+            } else {
+                if (this->effectiveFramerateMultiplier > 1.0f) {
                     g_SoundPlayer.FadeOut(fadeOutSeconds);
-                }
-                else
-                {
-                    g_SoundPlayer.FadeOut(fadeOutSeconds / this->effectiveFramerateMultiplier);
+                } else {
+                    g_SoundPlayer.FadeOut(fadeOutSeconds /
+                                          this->effectiveFramerateMultiplier);
                 }
             }
-        }
-        else
-        {
+        } else {
             return false;
         }
     }

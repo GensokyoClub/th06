@@ -5,10 +5,8 @@
 #include "ReplayData.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
-struct ReplayManager
-{
+namespace th06 {
+struct ReplayManager {
     static bool RegisterChain(i32 isDemo, const char *replayFile);
     static ChainCallbackResult OnUpdate(ReplayManager *mgr);
     static ChainCallbackResult OnUpdateDemoHighPrio(ReplayManager *mgr);
@@ -21,14 +19,9 @@ struct ReplayManager
     static void SaveReplay(char *replay_path, char *param_2);
     static bool ValidateReplayData(ReplayHeader *data, i32 fileSize);
 
-    ReplayManager()
-    {
-    }
+    ReplayManager() {}
 
-    i32 IsDemo()
-    {
-        return this->isDemo;
-    }
+    i32 IsDemo() { return this->isDemo; }
 
     i32 frameId;
     ReplayData *replayData;

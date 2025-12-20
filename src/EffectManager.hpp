@@ -6,11 +6,9 @@
 #include "ZunMath.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
+namespace th06 {
 
-enum ParticleEffects
-{
+enum ParticleEffects {
     PARTICLE_EFFECT_UNK_0,
     PARTICLE_EFFECT_UNK_1,
     PARTICLE_EFFECT_UNK_2,
@@ -32,8 +30,7 @@ enum ParticleEffects
     PARTICLE_EFFECT_UNK_18,
     PARTICLE_EFFECT_UNK_19,
 };
-struct EffectManager
-{
+struct EffectManager {
     i32 nextIndex;
     i32 activeEffects;
     Effect effects[513];
@@ -55,7 +52,8 @@ struct EffectManager
 
     static ChainCallbackResult OnDraw(EffectManager *mgr);
     void Reset();
-    Effect *SpawnParticles(i32 effectIdx, ZunVec3 *pos, i32 count, ZunColor color);
+    Effect *SpawnParticles(i32 effectIdx, ZunVec3 *pos, i32 count,
+                           ZunColor color);
 };
 
 extern EffectManager g_EffectManager;

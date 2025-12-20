@@ -10,16 +10,11 @@
 #include "inttypes.hpp"
 #include <cstring>
 
-namespace th06
-{
+namespace th06 {
 struct Enemy;
 
-struct EnemyBulletShooter
-{
-    EnemyBulletShooter()
-    {
-        memset(this, 0, sizeof(EnemyBulletShooter));
-    }
+struct EnemyBulletShooter {
+    EnemyBulletShooter() { memset(this, 0, sizeof(EnemyBulletShooter)); }
     i16 sprite;
     i16 spriteOffset;
     ZunVec3 position;
@@ -38,12 +33,8 @@ struct EnemyBulletShooter
     SoundIdx sfx;
 };
 
-struct EnemyLaserShooter
-{
-    EnemyLaserShooter()
-    {
-        memset(this, 0, sizeof(EnemyLaserShooter));
-    }
+struct EnemyLaserShooter {
+    EnemyLaserShooter() { memset(this, 0, sizeof(EnemyLaserShooter)); }
     i16 sprite;
     i16 spriteOffset;
     ZunVec3 position;
@@ -66,8 +57,7 @@ struct EnemyLaserShooter
     u32 unk_50;
 };
 
-struct EnemyEclContext
-{
+struct EnemyEclContext {
     EclRawInstr *currentInstr;
     ZunTimer time;
     void (*funcSetFunc)(Enemy *, EclRawInstr *);
@@ -87,8 +77,7 @@ struct EnemyEclContext
     u16 subId;
 };
 
-struct EnemyFlags
-{
+struct EnemyFlags {
     // First byte
     u8 unk1 : 2;
     u8 unk2 : 3;
@@ -114,19 +103,15 @@ struct EnemyFlags
     // Rest is padding.
 };
 
-enum EclValueType
-{
+enum EclValueType {
     ECL_VALUE_TYPE_INT,
     ECL_VALUE_TYPE_FLOAT,
     ECL_VALUE_TYPE_READONLY,
     ECL_VALUE_TYPE_UNDEFINED,
 };
 
-struct Enemy
-{
-    Enemy()
-    {
-    }
+struct Enemy {
+    Enemy() {}
 
     void Move();
     void ClampPos();
@@ -137,54 +122,48 @@ struct Enemy
     static void ResetEffectArray(Enemy *enemy);
     static void UpdateEffects(Enemy *enemy);
 
-    f32 LifePercent()
-    {
-        return (f32)this->life / (f32)this->maxLife;
-    }
+    f32 LifePercent() { return (f32)this->life / (f32)this->maxLife; }
 
-    ZunVec3 HitboxDimensions(f32 shrinkFactor)
-    {
+    ZunVec3 HitboxDimensions(f32 shrinkFactor) {
         return this->hitboxDimensions * (1.0f / shrinkFactor);
     }
 
-    bool HasBossTimerFinished()
-    {
+    bool HasBossTimerFinished() {
         return this->bossTimer.current >= this->timerCallbackThreshold;
     }
 
-    static i32 BulletRankAmountInner(i32 low, i32 high, i32 scaleFactor)
-    {
+    static i32 BulletRankAmountInner(i32 low, i32 high, i32 scaleFactor) {
         return scaleFactor * (high - low) / 32 + low;
     }
 
-    i32 BulletRankAmount1(i32 scaleFactor)
-    {
-        return Enemy::BulletRankAmountInner(this->bulletRankAmount1Low, this->bulletRankAmount1High, scaleFactor);
+    i32 BulletRankAmount1(i32 scaleFactor) {
+        return Enemy::BulletRankAmountInner(this->bulletRankAmount1Low,
+                                            this->bulletRankAmount1High,
+                                            scaleFactor);
     }
 
-    i32 BulletRankAmount2(i32 scaleFactor)
-    {
-        return Enemy::BulletRankAmountInner(this->bulletRankAmount2Low, this->bulletRankAmount2High, scaleFactor);
+    i32 BulletRankAmount2(i32 scaleFactor) {
+        return Enemy::BulletRankAmountInner(this->bulletRankAmount2Low,
+                                            this->bulletRankAmount2High,
+                                            scaleFactor);
     }
 
-    static f32 BulletRankSpeedInner(f32 low, f32 high, f32 scaleFactor)
-    {
+    static f32 BulletRankSpeedInner(f32 low, f32 high, f32 scaleFactor) {
         return scaleFactor * (high - low) / 32 + low;
     }
 
-    f32 BulletRankSpeed(f32 scaleFactor)
-    {
-        return Enemy::BulletRankSpeedInner(this->bulletRankSpeedLow, this->bulletRankSpeedHigh, scaleFactor);
+    f32 BulletRankSpeed(f32 scaleFactor) {
+        return Enemy::BulletRankSpeedInner(
+            this->bulletRankSpeedLow, this->bulletRankSpeedHigh, scaleFactor);
     }
 
-    static i32 ShootIntervalInner(i32 low, i32 high, i32 scaleFactor)
-    {
+    static i32 ShootIntervalInner(i32 low, i32 high, i32 scaleFactor) {
         return scaleFactor * (high - low) / 32 + low;
     }
 
-    i32 ShootInterval(i32 scaleFactor)
-    {
-        return Enemy::ShootIntervalInner(this->shootInterval / 5, -this->shootInterval / 5, scaleFactor);
+    i32 ShootInterval(i32 scaleFactor) {
+        return Enemy::ShootIntervalInner(this->shootInterval / 5,
+                                         -this->shootInterval / 5, scaleFactor);
     }
 
     AnmVm primaryVm;

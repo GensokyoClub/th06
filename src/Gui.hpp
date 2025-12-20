@@ -6,10 +6,8 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
-enum MsgOps
-{
+namespace th06 {
+enum MsgOps {
     MSG_OPCODE_MSGDELETE,
     MSG_OPCODE_PORTRAITANMSCRIPT,
     MSG_OPCODE_PORTRAITANMSPRITE,
@@ -26,19 +24,16 @@ enum MsgOps
     MSG_OPCODE_WAITSKIPPABLE,
 };
 
-struct MsgRawInstrArgPortraitAnmScript
-{
+struct MsgRawInstrArgPortraitAnmScript {
     i16 portraitIdx;
     i16 anmScriptIdx;
 };
-struct MsgRawInstrArgText
-{
+struct MsgRawInstrArgText {
     i16 textColor;
     i16 textLine;
     char text[1];
 };
-struct MsgRawInstrArgAnmInterrupt
-{
+struct MsgRawInstrArgAnmInterrupt {
     i16 unk1;
     u8 unk2;
 };
@@ -50,22 +45,19 @@ union MsgRawInstrArgs {
     MsgRawInstrArgAnmInterrupt anmInterrupt;
     i32 music;
 };
-struct MsgRawInstr
-{
+struct MsgRawInstr {
     u16 time;
     u8 opcode;
     u8 argSize;
     MsgRawInstrArgs args;
 };
 
-struct MsgRawHeader
-{
+struct MsgRawHeader {
     i32 numInstrs;
     u32 instrsOffsets[1];
 };
 
-struct GuiMsgVm
-{
+struct GuiMsgVm {
     MsgRawHeader *msgFile;
     MsgRawInstr **instrs;
     MsgRawInstr *currentInstr;
@@ -82,16 +74,14 @@ struct GuiMsgVm
     u8 dialogueSkippable;
 };
 
-struct GuiFormattedText
-{
+struct GuiFormattedText {
     ZunVec3 pos;
     i32 fmtArg;
     i32 isShown;
     ZunTimer timer;
 };
 
-struct GuiImpl
-{
+struct GuiImpl {
     GuiImpl();
     bool RunMsg();
     bool DrawDialogue();
@@ -115,8 +105,7 @@ struct GuiImpl
     GuiFormattedText fullPowerMode;
     GuiFormattedText spellCardBonus;
 };
-struct GuiFlags
-{
+struct GuiFlags {
     u32 flag0 : 2;
     u32 flag1 : 2;
     u32 flag2 : 2;
@@ -124,8 +113,7 @@ struct GuiFlags
     u32 flag4 : 2;
 };
 
-struct Gui
-{
+struct Gui {
     static bool RegisterChain();
     static void CutChain();
     static bool AddedCallback(Gui *);
@@ -158,30 +146,15 @@ struct Gui
 
     void ShowFullPowerMode(i32 fmtArg);
 
-    void SetBossHealthBar(f32 val)
-    {
-        this->bossHealthBar1 = val;
-    }
+    void SetBossHealthBar(f32 val) { this->bossHealthBar1 = val; }
 
-    bool BossPresent()
-    {
-        return this->bossPresent;
-    }
+    bool BossPresent() { return this->bossPresent; }
 
-    void SetSpellcardSeconds(i32 val)
-    {
-        this->spellcardSecondsRemaining = val;
-    }
+    void SetSpellcardSeconds(i32 val) { this->spellcardSecondsRemaining = val; }
 
-    i32 SpellcardSecondsRemaining()
-    {
-        return this->spellcardSecondsRemaining;
-    }
+    i32 SpellcardSecondsRemaining() { return this->spellcardSecondsRemaining; }
 
-    void TickTimer(ZunTimer *timer)
-    {
-        timer->NextTick();
-    }
+    void TickTimer(ZunTimer *timer) { timer->NextTick(); }
 
     GuiFlags flags;
     GuiImpl *impl;

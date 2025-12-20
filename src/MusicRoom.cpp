@@ -9,21 +9,17 @@
 #include <cstdlib>
 #include <cstring>
 
-namespace th06
-{
+namespace th06 {
 
-bool MusicRoom::CheckInputEnable()
-{
-    if (this->waitFramesCount >= 8)
-    {
+bool MusicRoom::CheckInputEnable() {
+    if (this->waitFramesCount >= 8) {
         this->enableInput = 1;
     }
 
     return true;
 }
 
-bool MusicRoom::ProcessInput()
-{
+bool MusicRoom::ProcessInput() {
     i32 i;
     char lineCharBuffer[64];
     // i32 listPos;
@@ -31,65 +27,58 @@ bool MusicRoom::ProcessInput()
     // This variable is never used after this?
     // listPos = this->listingOffset;
 
-    if (WAS_PRESSED(TH_BUTTON_UP))
-    {
+    if (WAS_PRESSED(TH_BUTTON_UP)) {
         this->cursor--;
         // Vertical wrap-around
-        if (this->cursor < 0)
-        {
+        if (this->cursor < 0) {
             this->cursor = this->numDescriptors - 1;
             this->listingOffset = this->numDescriptors - 10;
         }
         // Scroll list up
-        else if (this->listingOffset > this->cursor)
-        {
+        else if (this->listingOffset > this->cursor) {
             this->listingOffset = this->cursor;
         }
     }
 
-    if (WAS_PRESSED(TH_BUTTON_DOWN))
-    {
+    if (WAS_PRESSED(TH_BUTTON_DOWN)) {
         this->cursor++;
         // Vertical wrap-around
-        if (this->cursor >= this->numDescriptors)
-        {
+        if (this->cursor >= this->numDescriptors) {
             this->cursor = 0;
             this->listingOffset = 0;
-        }
-        else
-        {
+        } else {
             // Scroll list down
-            if (this->listingOffset <= this->cursor - 10)
-            {
+            if (this->listingOffset <= this->cursor - 10) {
                 this->listingOffset = this->cursor - 9;
             }
         }
     }
 
-    if (WAS_PRESSED(TH_BUTTON_SELECTMENU))
-    {
+    if (WAS_PRESSED(TH_BUTTON_SELECTMENU)) {
         this->selectedSongIndex = this->cursor;
-        g_Supervisor.PlayAudio(this->trackDescriptors[this->selectedSongIndex].path);
+        g_Supervisor.PlayAudio(
+            this->trackDescriptors[this->selectedSongIndex].path);
 
         // Update description to match newly selected song
-        for (i = 0; i < ARRAY_SIZE_SIGNED(this->descriptionSprites); i++)
-        {
+        for (i = 0; i < ARRAY_SIZE_SIGNED(this->descriptionSprites); i++) {
             std::memset(lineCharBuffer, 0, sizeof(lineCharBuffer));
 
-            if (i % 2 == 0 || std::strlen(this->trackDescriptors[this->selectedSongIndex].description[i / 2]) > 32)
-            {
+            if (i % 2 == 0 ||
+                std::strlen(this->trackDescriptors[this->selectedSongIndex]
+                                .description[i / 2]) > 32) {
                 std::memcpy(lineCharBuffer,
-                            &this->trackDescriptors[this->selectedSongIndex].description[i / 2][(i % 2) * 32], 32);
+                            &this->trackDescriptors[this->selectedSongIndex]
+                                 .description[i / 2][(i % 2) * 32],
+                            32);
             }
 
-            if (lineCharBuffer[0] != '\0')
-            {
+            if (lineCharBuffer[0] != '\0') {
                 this->descriptionSprites[i].flags.flag1 = 1;
-                AnmManager::DrawVmTextFmt(g_AnmManager, &this->descriptionSprites[i], COLOR_MUSIC_ROOM_SONG_DESC_TEXT,
-                                          COLOR_MUSIC_ROOM_SONG_DESC_SHADOW, lineCharBuffer);
-            }
-            else
-            {
+                AnmManager::DrawVmTextFmt(
+                    g_AnmManager, &this->descriptionSprites[i],
+                    COLOR_MUSIC_ROOM_SONG_DESC_TEXT,
+                    COLOR_MUSIC_ROOM_SONG_DESC_SHADOW, lineCharBuffer);
+            } else {
                 this->descriptionSprites[i].flags.flag1 = 0;
             }
 
@@ -100,8 +89,7 @@ bool MusicRoom::ProcessInput()
         }
     }
 
-    if (WAS_PRESSED(TH_BUTTON_RETURNMENU))
-    {
+    if (WAS_PRESSED(TH_BUTTON_RETURNMENU)) {
         g_Supervisor.curState = SUPERVISOR_STATE_MAINMENU;
         return true;
     }
@@ -109,69 +97,63 @@ bool MusicRoom::ProcessInput()
     return false;
 }
 
-bool MusicRoom::RegisterChain()
-{
+bool MusicRoom::RegisterChain() {
     static MusicRoom g_MusicRoom;
     MusicRoom *musicRoom;
 
     musicRoom = &g_MusicRoom;
     std::memset(musicRoom, 0, sizeof(MusicRoom));
 
-    musicRoom->calc_chain = g_Chain.CreateElem((ChainCallback)MusicRoom::OnUpdate);
+    musicRoom->calc_chain =
+        g_Chain.CreateElem((ChainCallback)MusicRoom::OnUpdate);
     musicRoom->calc_chain->arg = musicRoom;
-    musicRoom->calc_chain->addedCallback = (ChainAddedCallback)MusicRoom::AddedCallback;
-    musicRoom->calc_chain->deletedCallback = (ChainDeletedCallback)MusicRoom::DeletedCallback;
+    musicRoom->calc_chain->addedCallback =
+        (ChainAddedCallback)MusicRoom::AddedCallback;
+    musicRoom->calc_chain->deletedCallback =
+        (ChainDeletedCallback)MusicRoom::DeletedCallback;
 
-    if (!g_Chain.AddToCalcChain(musicRoom->calc_chain, TH_CHAIN_PRIO_CALC_MAINMENU))
-    {
+    if (!g_Chain.AddToCalcChain(musicRoom->calc_chain,
+                                TH_CHAIN_PRIO_CALC_MAINMENU)) {
         return false;
     }
 
-    musicRoom->draw_chain = g_Chain.CreateElem((ChainCallback)MusicRoom::OnDraw);
+    musicRoom->draw_chain =
+        g_Chain.CreateElem((ChainCallback)MusicRoom::OnDraw);
     musicRoom->draw_chain->arg = musicRoom;
     g_Chain.AddToDrawChain(musicRoom->draw_chain, TH_CHAIN_PRIO_DRAW_MAINMENU);
 
     return true;
 }
 
-ChainCallbackResult MusicRoom::OnUpdate(MusicRoom *musicRoom)
-{
+ChainCallbackResult MusicRoom::OnUpdate(MusicRoom *musicRoom) {
     i32 oldInputSetting = musicRoom->enableInput;
-    for (;;)
-    {
-        switch (musicRoom->enableInput)
-        {
+    for (;;) {
+        switch (musicRoom->enableInput) {
         case false:
-            if (musicRoom->CheckInputEnable())
-            {
+            if (musicRoom->CheckInputEnable()) {
                 break;
             }
 
             continue;
 
         case true:
-            if (musicRoom->ProcessInput())
-            {
+            if (musicRoom->ProcessInput()) {
                 return CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB;
             }
         }
         break;
     }
 
-    if (oldInputSetting != musicRoom->enableInput)
-    {
+    if (oldInputSetting != musicRoom->enableInput) {
         musicRoom->waitFramesCount = 0;
-    }
-    else
-    {
+    } else {
         musicRoom->waitFramesCount++;
     }
     g_AnmManager->ExecuteScript(musicRoom->mainVm);
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-ChainCallbackResult MusicRoom::OnDraw(MusicRoom *musicRoom)
-{
+ChainCallbackResult MusicRoom::OnDraw(MusicRoom *musicRoom) {
     i32 i;
     ZunVec3 textPos;
     char rightArrowStr[4];
@@ -184,29 +166,26 @@ ChainCallbackResult MusicRoom::OnDraw(MusicRoom *musicRoom)
     g_AnmManager->DrawNoRotation(musicRoom->mainVm);
 
     // Draw the 10 songs in the song select window, and list indices
-    for (i = musicRoom->listingOffset; i < musicRoom->listingOffset + 10; i++)
-    {
-        if (musicRoom->cursor != i)
-        {
-            musicRoom->titleSprites[i].color = COLOR_SET_ALPHA(COLOR_GREY, 0xe0);
+    for (i = musicRoom->listingOffset; i < musicRoom->listingOffset + 10; i++) {
+        if (musicRoom->cursor != i) {
+            musicRoom->titleSprites[i].color =
+                COLOR_SET_ALPHA(COLOR_GREY, 0xe0);
             g_AsciiManager.color = COLOR_SET_ALPHA(COLOR_GREY, 0xe0);
-        }
-        else
-        {
+        } else {
             musicRoom->titleSprites[i].color = COLOR_WHITE;
             g_AsciiManager.color = COLOR_WHITE;
         }
 
         musicRoom->titleSprites[i].pos.x = 93.0f;
-        musicRoom->titleSprites[i].pos.y = 104.0f + (((i + 1) - musicRoom->listingOffset) * 18) - 20.0f;
+        musicRoom->titleSprites[i].pos.y =
+            104.0f + (((i + 1) - musicRoom->listingOffset) * 18) - 20.0f;
         musicRoom->titleSprites[i].pos.z = 0.0f;
         g_AnmManager->DrawNoRotation(&musicRoom->titleSprites[i]);
 
         textPos = musicRoom->titleSprites[i].pos;
         textPos.x -= 60.0f;
 
-        if (musicRoom->cursor == i)
-        {
+        if (musicRoom->cursor == i) {
             g_AsciiManager.AddString(&textPos, rightArrowStr);
         }
 
@@ -216,8 +195,7 @@ ChainCallbackResult MusicRoom::OnDraw(MusicRoom *musicRoom)
 
     i++; // ???
 
-    for (i = 0; i < ARRAY_SIZE_SIGNED(musicRoom->descriptionSprites); i++)
-    {
+    for (i = 0; i < ARRAY_SIZE_SIGNED(musicRoom->descriptionSprites); i++) {
         g_AnmManager->DrawNoRotation(&musicRoom->descriptionSprites[i]);
     }
 
@@ -226,8 +204,7 @@ ChainCallbackResult MusicRoom::OnDraw(MusicRoom *musicRoom)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-bool MusicRoom::AddedCallback(MusicRoom *musicRoom)
-{
+bool MusicRoom::AddedCallback(MusicRoom *musicRoom) {
     u32 charIndex;
     char *currChar;
     char *fileBase;
@@ -235,23 +212,22 @@ bool MusicRoom::AddedCallback(MusicRoom *musicRoom)
     char lineCharBuffer[64];
     i32 lineIndex;
 
-    if (!g_AnmManager->LoadSurface(0, "data/result/music.jpg"))
-    {
+    if (!g_AnmManager->LoadSurface(0, "data/result/music.jpg")) {
         return false;
     }
 
-    if (!g_AnmManager->LoadAnm(ANM_FILE_MUSIC00, "data/music00.anm", ANM_OFFSET_MUSIC00))
-    {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_MUSIC00, "data/music00.anm",
+                               ANM_OFFSET_MUSIC00)) {
         return false;
     }
 
-    if (!g_AnmManager->LoadAnm(ANM_FILE_MUSIC01, "data/music01.anm", ANM_OFFSET_MUSIC01))
-    {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_MUSIC01, "data/music01.anm",
+                               ANM_OFFSET_MUSIC01)) {
         return false;
     }
 
-    if (!g_AnmManager->LoadAnm(ANM_FILE_MUSIC02, "data/music02.anm", ANM_OFFSET_MUSIC02))
-    {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_MUSIC02, "data/music02.anm",
+                               ANM_OFFSET_MUSIC02)) {
         return false;
     }
 
@@ -260,98 +236,84 @@ bool MusicRoom::AddedCallback(MusicRoom *musicRoom)
     currChar = (char *)FileSystem::OpenPath("data/musiccmt.txt");
     fileBase = currChar;
 
-    if (currChar == NULL)
-    {
+    if (currChar == NULL) {
         return false;
     }
 
-    musicRoom->trackDescriptors = new TrackDescriptor[ARRAY_SIZE_SIGNED(musicRoom->titleSprites)]();
+    musicRoom->trackDescriptors =
+        new TrackDescriptor[ARRAY_SIZE_SIGNED(musicRoom->titleSprites)]();
 
     i = -1;
-    while (currChar - fileBase < (i32)g_LastFileSize)
-    {
-        if (*currChar == '@')
-        {
+    while (currChar - fileBase < (i32)g_LastFileSize) {
+        if (*currChar == '@') {
             currChar++;
             i++;
             charIndex = 0;
 
-            while (*currChar != '\n' && *currChar != '\r')
-            {
+            while (*currChar != '\n' && *currChar != '\r') {
                 musicRoom->trackDescriptors[i].path[charIndex] = *currChar;
                 currChar++;
                 charIndex++;
-                if (currChar - fileBase >= (i32)g_LastFileSize)
-                {
+                if (currChar - fileBase >= (i32)g_LastFileSize) {
                     goto finishMusiccmtRead;
                 }
             }
 
-            while (*currChar == '\n' || *currChar == '\r')
-            {
+            while (*currChar == '\n' || *currChar == '\r') {
                 currChar++;
-                if (currChar - fileBase >= (i32)g_LastFileSize)
-                {
+                if (currChar - fileBase >= (i32)g_LastFileSize) {
                     goto finishMusiccmtRead;
                 }
             }
 
             charIndex = 0;
-            while (*currChar != '\n' && *currChar != '\r')
-            {
+            while (*currChar != '\n' && *currChar != '\r') {
                 musicRoom->trackDescriptors[i].title[charIndex] = *currChar;
                 currChar++;
                 charIndex++;
-                if (currChar - fileBase >= (i32)g_LastFileSize)
-                {
+                if (currChar - fileBase >= (i32)g_LastFileSize) {
                     goto finishMusiccmtRead;
                 }
             }
 
-            // Dead code. Is it a bug? Was it an intentional quick and dirty change? Who knows?
-            // Has the effect of offsetting the description text by a line
-            while (*currChar == '\n' && *currChar == '\r')
-            {
+            // Dead code. Is it a bug? Was it an intentional quick and dirty
+            // change? Who knows? Has the effect of offsetting the description
+            // text by a line
+            while (*currChar == '\n' && *currChar == '\r') {
                 currChar++;
-                if (currChar - fileBase >= (i32)g_LastFileSize)
-                {
+                if (currChar - fileBase >= (i32)g_LastFileSize) {
                     goto finishMusiccmtRead;
                 }
             }
 
-            for (lineIndex = 0; lineIndex < 8; lineIndex++)
-            {
-                if (*currChar == '@')
-                {
+            for (lineIndex = 0; lineIndex < 8; lineIndex++) {
+                if (*currChar == '@') {
                     break;
                 }
 
-                std::memset(musicRoom->trackDescriptors[i].description[lineIndex], 0,
-                            sizeof(musicRoom->trackDescriptors[i].description[lineIndex]));
+                std::memset(
+                    musicRoom->trackDescriptors[i].description[lineIndex], 0,
+                    sizeof(
+                        musicRoom->trackDescriptors[i].description[lineIndex]));
                 charIndex = 0;
-                while (*currChar != '\n' && *currChar != '\r')
-                {
-                    musicRoom->trackDescriptors[i].description[lineIndex][charIndex] = *currChar;
+                while (*currChar != '\n' && *currChar != '\r') {
+                    musicRoom->trackDescriptors[i]
+                        .description[lineIndex][charIndex] = *currChar;
                     currChar++;
                     charIndex++;
-                    if (currChar - fileBase >= (i32)g_LastFileSize)
-                    {
+                    if (currChar - fileBase >= (i32)g_LastFileSize) {
                         goto finishMusiccmtRead;
                     }
                 }
 
-                while (*currChar == '\n' || *currChar == '\r')
-                {
+                while (*currChar == '\n' || *currChar == '\r') {
                     currChar++;
-                    if (currChar - fileBase >= (i32)g_LastFileSize)
-                    {
+                    if (currChar - fileBase >= (i32)g_LastFileSize) {
                         goto finishMusiccmtRead;
                     }
                 }
             }
-        }
-        else
-        {
+        } else {
             currChar++;
         }
     }
@@ -359,11 +321,13 @@ bool MusicRoom::AddedCallback(MusicRoom *musicRoom)
 finishMusiccmtRead:
     musicRoom->numDescriptors = i + 1;
 
-    for (i = 0; i < musicRoom->numDescriptors; i++)
-    {
-        g_AnmManager->InitializeAndSetSprite(&musicRoom->titleSprites[i], ANM_OFFSET_MUSIC01 + i);
-        AnmManager::DrawVmTextFmt(g_AnmManager, &musicRoom->titleSprites[i], COLOR_MUSIC_ROOM_SONG_TITLE_TEXT,
-                                  COLOR_MUSIC_ROOM_SONG_TITLE_SHADOW, musicRoom->trackDescriptors[i].title);
+    for (i = 0; i < musicRoom->numDescriptors; i++) {
+        g_AnmManager->InitializeAndSetSprite(&musicRoom->titleSprites[i],
+                                             ANM_OFFSET_MUSIC01 + i);
+        AnmManager::DrawVmTextFmt(g_AnmManager, &musicRoom->titleSprites[i],
+                                  COLOR_MUSIC_ROOM_SONG_TITLE_TEXT,
+                                  COLOR_MUSIC_ROOM_SONG_TITLE_SHADOW,
+                                  musicRoom->trackDescriptors[i].title);
         musicRoom->titleSprites[i].pos.x = 93.0f;
         musicRoom->titleSprites[i].pos.y = 104.0f + ((i + 1) * 18) - 20.0f;
         musicRoom->titleSprites[i].pos.z = 0.0f;
@@ -371,28 +335,33 @@ finishMusiccmtRead:
     }
 
     // Two sprites are used for each line, with a split at the 32nd byte
-    for (i = 0; i < ARRAY_SIZE_SIGNED(musicRoom->descriptionSprites); i++)
-    {
-        g_AnmManager->InitializeAndSetSprite(&musicRoom->descriptionSprites[i], ANM_SCRIPT_TEXT_MUSIC_ROOM_DESC + i);
+    for (i = 0; i < ARRAY_SIZE_SIGNED(musicRoom->descriptionSprites); i++) {
+        g_AnmManager->InitializeAndSetSprite(&musicRoom->descriptionSprites[i],
+                                             ANM_SCRIPT_TEXT_MUSIC_ROOM_DESC +
+                                                 i);
         std::memset(lineCharBuffer, 0, sizeof(lineCharBuffer));
 
-        if (i % 2 == 0 || strlen(musicRoom->trackDescriptors[musicRoom->selectedSongIndex].description[i / 2]) > 32)
-        {
-            memcpy(lineCharBuffer, &musicRoom->trackDescriptors[0].description[i / 2][(i % 2) * 32], 32);
+        if (i % 2 == 0 ||
+            strlen(musicRoom->trackDescriptors[musicRoom->selectedSongIndex]
+                       .description[i / 2]) > 32) {
+            memcpy(lineCharBuffer,
+                   &musicRoom->trackDescriptors[0]
+                        .description[i / 2][(i % 2) * 32],
+                   32);
         }
 
-        if (lineCharBuffer[0] != '\0')
-        {
+        if (lineCharBuffer[0] != '\0') {
             musicRoom->descriptionSprites[i].flags.flag1 = 1;
-            AnmManager::DrawVmTextFmt(g_AnmManager, &musicRoom->descriptionSprites[i], COLOR_MUSIC_ROOM_SONG_DESC_TEXT,
-                                      COLOR_MUSIC_ROOM_SONG_DESC_SHADOW, lineCharBuffer);
-        }
-        else
-        {
+            AnmManager::DrawVmTextFmt(
+                g_AnmManager, &musicRoom->descriptionSprites[i],
+                COLOR_MUSIC_ROOM_SONG_DESC_TEXT,
+                COLOR_MUSIC_ROOM_SONG_DESC_SHADOW, lineCharBuffer);
+        } else {
             musicRoom->descriptionSprites[i].flags.flag1 = 0;
         }
 
-        musicRoom->descriptionSprites[i].pos.x = ((f32)(i % 2)) * 248.0f + 96.0f;
+        musicRoom->descriptionSprites[i].pos.x =
+            ((f32)(i % 2)) * 248.0f + 96.0f;
         musicRoom->descriptionSprites[i].pos.y = 320.0f + ((i / 2) << 4);
         musicRoom->descriptionSprites[i].pos.z = 0.0f;
         musicRoom->descriptionSprites[i].flags.anchor = AnmVmAnchor_TopLeft;
@@ -403,8 +372,7 @@ finishMusiccmtRead:
     return true;
 }
 
-bool MusicRoom::DeletedCallback(MusicRoom *musicRoom)
-{
+bool MusicRoom::DeletedCallback(MusicRoom *musicRoom) {
     delete musicRoom->trackDescriptors;
     musicRoom->trackDescriptors = NULL;
 

@@ -2,17 +2,14 @@
 
 #include "inttypes.hpp"
 
-namespace th06
-{
-struct ReplayDataInput
-{
+namespace th06 {
+struct ReplayDataInput {
     i32 frameNum;
     u16 inputKey;
     u16 padding;
 };
 
-struct StageReplayData
-{
+struct StageReplayData {
     i32 score;
     i16 randomSeed;
     i16 pointItemsCollected;
@@ -25,8 +22,7 @@ struct StageReplayData
     ReplayDataInput replayInputs[53998];
 };
 
-struct ReplayHeader
-{
+struct ReplayHeader {
     char magic[4];
     u16 version;
     u8 shottypeChara;
@@ -45,8 +41,7 @@ struct ReplayHeader
     u32 stageReplayDataOffsets[7];
 };
 
-struct ReplayData
-{
+struct ReplayData {
     struct ReplayHeader *header;
     StageReplayData *stageReplayData[7];
 };

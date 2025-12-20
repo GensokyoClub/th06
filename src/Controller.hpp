@@ -4,10 +4,8 @@
 
 #include <SDL2/SDL_gamecontroller.h>
 
-namespace th06
-{
-enum TouhouButton
-{
+namespace th06 {
+enum TouhouButton {
     TH_BUTTON_SHOOT = 1 << 0,
     TH_BUTTON_BOMB = 1 << 1,
     TH_BUTTON_FOCUS = 1 << 2,
@@ -26,22 +24,27 @@ enum TouhouButton
     TH_BUTTON_UP_RIGHT = TH_BUTTON_UP | TH_BUTTON_RIGHT,
     TH_BUTTON_DOWN_LEFT = TH_BUTTON_DOWN | TH_BUTTON_LEFT,
     TH_BUTTON_DOWN_RIGHT = TH_BUTTON_DOWN | TH_BUTTON_RIGHT,
-    TH_BUTTON_DIRECTION = TH_BUTTON_DOWN | TH_BUTTON_RIGHT | TH_BUTTON_UP | TH_BUTTON_LEFT,
+    TH_BUTTON_DIRECTION =
+        TH_BUTTON_DOWN | TH_BUTTON_RIGHT | TH_BUTTON_UP | TH_BUTTON_LEFT,
 
     TH_BUTTON_SELECTMENU = TH_BUTTON_ENTER | TH_BUTTON_SHOOT,
     TH_BUTTON_RETURNMENU = TH_BUTTON_MENU | TH_BUTTON_BOMB,
-    TH_BUTTON_WRONG_CHEATCODE =
-        TH_BUTTON_SHOOT | TH_BUTTON_BOMB | TH_BUTTON_MENU | TH_BUTTON_Q | TH_BUTTON_S | TH_BUTTON_ENTER,
+    TH_BUTTON_WRONG_CHEATCODE = TH_BUTTON_SHOOT | TH_BUTTON_BOMB |
+                                TH_BUTTON_MENU | TH_BUTTON_Q | TH_BUTTON_S |
+                                TH_BUTTON_ENTER,
     TH_BUTTON_ANY = 0xFFFF,
 };
 
-namespace Controller
-{
+namespace Controller {
 u16 GetJoystickCaps(void);
-u32 SetButtonFromControllerInputs(u16 *outButtons, i16 controllerButtonToTest, TouhouButton touhouButton,
+u32 SetButtonFromControllerInputs(u16 *outButtons, i16 controllerButtonToTest,
+                                  TouhouButton touhouButton,
                                   SDL_GameController *controller);
 
-u32 SetButtonFromDirectInputJoystate(u16 *outButtons, i16 controllerButtonToTest, TouhouButton touhouButton, u8 *inputButtons);
+u32 SetButtonFromDirectInputJoystate(u16 *outButtons,
+                                     i16 controllerButtonToTest,
+                                     TouhouButton touhouButton,
+                                     u8 *inputButtons);
 
 u16 GetControllerInput(u16 buttons);
 u8 *GetControllerState();

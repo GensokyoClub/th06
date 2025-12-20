@@ -3,10 +3,8 @@
 #include "inttypes.hpp"
 #include <alsa/asoundlib.h>
 
-namespace th06
-{
-struct MidiDevice
-{
+namespace th06 {
+struct MidiDevice {
   public:
     MidiDevice();
     ~MidiDevice();

@@ -10,12 +10,10 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
+namespace th06 {
 #define TEXT_RIGHT_ARROW 0x7f
 
-struct AsciiManagerString
-{
+struct AsciiManagerString {
     char text[64];
     ZunVec3 position;
     ZunColor color;
@@ -27,8 +25,7 @@ struct AsciiManagerString
     u32 isGui;
 };
 
-struct AsciiManagerPopup
-{
+struct AsciiManagerPopup {
     char digits[8];
     ZunVec3 position;
     ZunColor color;
@@ -37,8 +34,7 @@ struct AsciiManagerPopup
     u8 characterCount;
 };
 
-struct WeirdPadding
-{
+struct WeirdPadding {
     u32 unk;
 };
 
@@ -48,8 +44,7 @@ struct WeirdPadding
 // - The FPS counter
 // - The in-game menus
 // - Various text elements such as the "Stage clear" prompt.
-struct AsciiManager
-{
+struct AsciiManager {
     AsciiManager();
 
     static bool RegisterChain();
@@ -72,10 +67,7 @@ struct AsciiManager
     void CreatePopup1(ZunVec3 *position, i32 value, ZunColor color);
     void CreatePopup2(ZunVec3 *position, i32 value, ZunColor color);
 
-    void SetColor(ZunColor color)
-    {
-        this->color = color;
-    }
+    void SetColor(ZunColor color) { this->color = color; }
 
     AnmVm vm0;
     AnmVm vm1;

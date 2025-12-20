@@ -2,10 +2,8 @@
 
 #include "Player.hpp"
 
-namespace th06
-{
-struct BombData
-{
+namespace th06 {
+struct BombData {
     void (*calc)(Player *p);
     void (*draw)(Player *p);
 

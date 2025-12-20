@@ -3,10 +3,8 @@
 #include "GfxInterface.hpp"
 #include <SDL2/SDL_opengl.h>
 
-namespace th06
-{
-enum GlShaderUniform
-{
+namespace th06 {
+enum GlShaderUniform {
     UNIFORM_MODELVIEW,
     UNIFORM_PROJECTION,
     UNIFORM_TEXTURE_MATRIX,
@@ -21,23 +19,23 @@ enum GlShaderUniform
     UNIFORMS_COUNT
 };
 
-struct WebGL : GfxInterface 
-{
+struct WebGL : GfxInterface {
     static void SetContextFlags();
     static GfxInterface *Create();
-    
+
     bool Init();
 
     virtual void SetFogRange(f32 nearPlane, f32 farPlane);
     virtual void SetFogColor(ZunColor color);
     virtual void ToggleVertexAttribute(u8 attr, bool enable);
-    virtual void SetAttributePointer(VertexAttributeArrays attr, std::size_t stride, void *ptr);
+    virtual void SetAttributePointer(VertexAttributeArrays attr,
+                                     std::size_t stride, void *ptr);
     virtual void SetColorOp(TextureOpComponent component, ColorOp op);
     virtual void SetTextureFactor(ZunColor factor);
     virtual void SetTransformMatrix(TransformMatrix type, ZunMatrix &matrix);
     virtual void Draw();
 
-private:
+  private:
     GLuint fragmentShaderHandle;
     GLuint vertexShaderHandle;
     GLuint programHandle;
@@ -45,4 +43,3 @@ private:
     GLint uniforms[UNIFORMS_COUNT];
 };
 }; // namespace th06
-

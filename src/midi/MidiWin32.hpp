@@ -4,10 +4,8 @@
 #include <mmsystem.h>
 #include <windows.h>
 
-namespace th06
-{
-struct MidiDevice
-{
+namespace th06 {
+struct MidiDevice {
   public:
     MidiDevice();
     ~MidiDevice();
@@ -23,10 +21,13 @@ struct MidiDevice
     HMIDIOUT handle;
     u32 deviceId;
 
-    // EoSD stores prepared MIDI headers but never does anything with them. Microsoft's documentation
-    //   isn't very clear on what preparing / unpreparing a header actually does, but does note that
-    //   sending MIDI messages can be asynchronous. Therefore I've left the MIDI header array in, just
-    //   in case unpreparing a header immediately can cause a block while waiting for a flush or something.
+    // EoSD stores prepared MIDI headers but never does anything with them.
+    // Microsoft's documentation
+    //   isn't very clear on what preparing / unpreparing a header actually
+    //   does, but does note that sending MIDI messages can be asynchronous.
+    //   Therefore I've left the MIDI header array in, just in case unpreparing
+    //   a header immediately can cause a block while waiting for a flush or
+    //   something.
 
     MIDIHDR *midiHeaders[32];
     u32 midiHeadersCursor;

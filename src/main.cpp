@@ -1,6 +1,6 @@
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_main.h>
+#include <SDL2/SDL_mouse.h>
 #include <cstdio>
 
 #include "AnmManager.hpp"
@@ -45,10 +45,10 @@ static int renderResult = 0;
 #define SWITCH_TH_CONFIG_FILE TH_EN_CONFIG_FILE
 #endif
 
-static bool initialize_game()
-{
+static bool initialize_game() {
 #ifdef _WIN32
-    // TODO: Find a better solution for locales / encoding on Windows, because it's all a mess
+    // TODO: Find a better solution for locales / encoding on Windows, because
+    // it's all a mess
     setlocale(LC_ALL, ".UTF8");
 #endif
 
@@ -63,8 +63,7 @@ static bool initialize_game()
 
 #endif
 
-    if (!loadConfig)
-    {
+    if (!loadConfig) {
         g_GameErrorContext.Flush();
         return false;
     }
@@ -73,8 +72,7 @@ static bool initialize_game()
 
     g_AnmManager = new AnmManager();
 
-    if (GameWindow::InitD3dRendering())
-    {
+    if (GameWindow::InitD3dRendering()) {
         g_GameErrorContext.Flush();
         return false;
     }
@@ -87,8 +85,7 @@ static bool initialize_game()
     Controller::GetJoystickCaps();
     Controller::ResetKeyboard();
 
-    if (!Supervisor::RegisterChain())
-    {
+    if (!Supervisor::RegisterChain()) {
         return false;
     }
 
@@ -101,16 +98,13 @@ static bool initialize_game()
     return true;
 }
 
-static void main_loop()
-{
+static void main_loop() {
     if (!running)
         return;
 
     SDL_Event e;
-    while (SDL_PollEvent(&e))
-    {
-        if (e.type == SDL_QUIT)
-        {
+    while (SDL_PollEvent(&e)) {
+        if (e.type == SDL_QUIT) {
             running = false;
 #ifdef __EMSCRIPTEN__
             emscripten_cancel_main_loop();
@@ -121,16 +115,14 @@ static void main_loop()
     }
 
     renderResult = g_GameWindow.Render();
-    if (renderResult != 0)
-    {
+    if (renderResult != 0) {
         running = false;
 #ifdef __EMSCRIPTEN__
         emscripten_cancel_main_loop();
 #endif
         cleanup();
 
-        if (renderResult == 2)
-        {
+        if (renderResult == 2) {
             restart_game();
         }
     }
@@ -140,22 +132,19 @@ static void main_loop()
 // Cleanup & Restart
 // ------------------------------------------------
 
-static void cleanup()
-{
+static void cleanup() {
     g_Chain.Release();
     g_SoundPlayer.Release();
 
     delete g_AnmManager;
     g_AnmManager = nullptr;
 
-    if (g_GameWindow.window)
-    {
+    if (g_GameWindow.window) {
         SDL_DestroyWindow(g_GameWindow.window);
         g_GameWindow.window = nullptr;
     }
 
-    if (g_GameWindow.glContext)
-    {
+    if (g_GameWindow.glContext) {
         SDL_GL_DeleteContext(g_GameWindow.glContext);
         g_GameWindow.glContext = nullptr;
     }
@@ -163,17 +152,18 @@ static void cleanup()
     SDL_Quit();
 
 #ifdef __EMSCRIPTEN__
-    FileSystem::WriteDataToFile(EM_TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
+    FileSystem::WriteDataToFile(EM_TH_CONFIG_FILE, &g_Supervisor.cfg,
+                                sizeof(g_Supervisor.cfg));
 #else
-    FileSystem::WriteDataToFile(TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
+    FileSystem::WriteDataToFile(TH_CONFIG_FILE, &g_Supervisor.cfg,
+                                sizeof(g_Supervisor.cfg));
 #endif
 
     SDL_ShowCursor(SDL_ENABLE);
     g_GameErrorContext.Flush();
 }
 
-static void restart_game()
-{
+static void restart_game() {
     g_GameErrorContext.ResetContext();
     GameErrorContext::Log(&g_GameErrorContext, TH_ERR_OPTION_CHANGED_RESTART);
 
@@ -181,8 +171,7 @@ static void restart_game()
         SDL_ShowCursor(SDL_ENABLE);
 
     // Reinitialize game
-    if (initialize_game())
-    {
+    if (initialize_game()) {
 #ifdef __EMSCRIPTEN__
         emscripten_set_main_loop(main_loop, 0, 1);
 #else
@@ -192,8 +181,7 @@ static void restart_game()
     }
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     if (!initialize_game())
         return -1;
 

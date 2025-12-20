@@ -3,10 +3,8 @@
 #include "AnmVm.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
-struct StageMenu
-{
+namespace th06 {
+struct StageMenu {
     StageMenu();
 
     i32 OnUpdateGameMenu();

@@ -5,11 +5,9 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
+namespace th06 {
 
-enum EndingFadeType
-{
+enum EndingFadeType {
     ENDING_FADE_TYPE_NO_FADE,
     ENDING_FADE_TYPE_FADE_IN_BLACK,
     ENDING_FADE_TYPE_FADE_OUT_BLACK,
@@ -18,8 +16,7 @@ enum EndingFadeType
 };
 
 #define END_READ_OPCODE '@'
-enum EndOpcode
-{
+enum EndOpcode {
     END_OPCODE_FADE_IN_BLACK = '0',
     END_OPCODE_FADE_OUT_BLACK = '1',
     END_OPCODE_FADE_IN = '2',
@@ -39,10 +36,8 @@ enum EndOpcode
     END_OPCODE_SCROLL_BACKGROUND = 'V',
 };
 
-struct Ending
-{
-    Ending()
-    {
+struct Ending {
+    Ending() {
         memset(this, 0, sizeof(Ending));
         this->line2Delay = 8;
         this->timer2.InitializeForPopup();

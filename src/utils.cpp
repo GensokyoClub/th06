@@ -6,12 +6,9 @@
 #include "ZunMath.hpp"
 #include "utils.hpp"
 
-namespace th06
-{
-namespace utils
-{
-void DebugPrint(const char *fmt, ...)
-{
+namespace th06 {
+namespace utils {
+void DebugPrint(const char *fmt, ...) {
 #ifdef DEBUG
     char tmpBuffer[512];
     std::va_list args;
@@ -24,20 +21,17 @@ void DebugPrint(const char *fmt, ...)
 #endif
 }
 
-f32 AddNormalizeAngle(f32 a, f32 b)
-{
+f32 AddNormalizeAngle(f32 a, f32 b) {
     i32 i;
 
     i = 0;
     a += b;
-    while (a > ZUN_PI)
-    {
+    while (a > ZUN_PI) {
         a -= ZUN_2PI;
         if (i++ > 16)
             break;
     }
-    while (a < -ZUN_PI)
-    {
+    while (a < -ZUN_PI) {
         a += ZUN_2PI;
         if (i++ > 16)
             break;
@@ -45,8 +39,7 @@ f32 AddNormalizeAngle(f32 a, f32 b)
     return a;
 }
 
-void Rotate(ZunVec3 *outVector, ZunVec3 *point, f32 angle)
-{
+void Rotate(ZunVec3 *outVector, ZunVec3 *point, f32 angle) {
     f32 sinOut;
     f32 cosOut;
 
@@ -56,8 +49,7 @@ void Rotate(ZunVec3 *outVector, ZunVec3 *point, f32 angle)
     outVector->y = cosOut * point->y - sinOut * point->x;
 }
 
-void DebugPrint2(const char *fmt, ...)
-{
+void DebugPrint2(const char *fmt, ...) {
 #ifdef DEBUG
     char tmpBuffer[512];
     std::va_list args;

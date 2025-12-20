@@ -5,10 +5,8 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
-struct RawStageHeader
-{
+namespace th06 {
+struct RawStageHeader {
     i16 nbObjects;
     i16 nbFaces;
     i32 facesOffset;
@@ -19,8 +17,7 @@ struct RawStageHeader
     char songPaths[4][128];
 };
 
-struct RawStageQuadBasic
-{
+struct RawStageQuadBasic {
     i16 type;
     i16 byteSize;
     i16 anmScript;
@@ -29,8 +26,7 @@ struct RawStageQuadBasic
     ZunVec2 size;
 };
 
-struct RawStageObject
-{
+struct RawStageObject {
     i16 id;
     i8 zLevel;
     i8 flags;
@@ -39,43 +35,33 @@ struct RawStageObject
     RawStageQuadBasic firstQuad;
 };
 
-struct RawStageObjectInstance
-{
+struct RawStageObjectInstance {
     i16 id;
     i16 unk2;
     ZunVec3 position;
 };
 
-struct RawStageInstr
-{
+struct RawStageInstr {
     i32 frame;
     i16 opcode;
     i16 size;
     i32 args[3];
 };
 
-struct StageCameraSky
-{
+struct StageCameraSky {
     f32 nearPlane;
     f32 farPlane;
     ZunColor color;
 };
 
-enum SpellcardState
-{
-    NOT_RUNNING,
-    RUNNING,
-    RAN_FOR_60_FRAMES
-};
+enum SpellcardState { NOT_RUNNING, RUNNING, RAN_FOR_60_FRAMES };
 
-struct StageFile
-{
+struct StageFile {
     const char *anmFile;
     const char *stdFile;
 };
 
-enum StageOpcode
-{
+enum StageOpcode {
     STDOP_CAMERA_POSITION_KEY,
     STDOP_FOG,
     STDOP_CAMERA_FACING,
@@ -84,8 +70,7 @@ enum StageOpcode
     STDOP_PAUSE,
 };
 
-struct Stage
-{
+struct Stage {
     Stage();
     static bool RegisterChain(u32 stage);
     static void CutChain();

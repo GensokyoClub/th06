@@ -10,20 +10,18 @@
 #include "FileSystem.hpp"
 #include "utils.hpp"
 
-namespace th06
-{
+namespace th06 {
 u32 g_LastFileSize;
 
-FILE *FileSystem::FopenUTF8(const char *filepath, const char *mode)
-{
+FILE *FileSystem::FopenUTF8(const char *filepath, const char *mode) {
 #ifndef _WIN32
     return std::fopen(filepath, mode);
 #else
-    u32 filepathWLen = MultiByteToWideChar(CP_UTF8, 0, filepath, -1, NULL, 0) * 2;
+    u32 filepathWLen =
+        MultiByteToWideChar(CP_UTF8, 0, filepath, -1, NULL, 0) * 2;
     u32 modeWLen = MultiByteToWideChar(CP_UTF8, 0, mode, -1, NULL, 0) * 2;
 
-    if (filepathWLen == 0 || modeWLen == 0)
-    {
+    if (filepathWLen == 0 || modeWLen == 0) {
         return NULL;
     }
 
@@ -42,21 +40,17 @@ FILE *FileSystem::FopenUTF8(const char *filepath, const char *mode)
 #endif
 }
 
-u8 *FileSystem::OpenPath(const char *filepath)
-{
+u8 *FileSystem::OpenPath(const char *filepath) {
     u8 *data;
     FILE *file;
     size_t fsize;
 
     utils::DebugPrint2("%s Load ... \n", filepath);
     file = std::fopen(filepath, "rb");
-    if (file == NULL)
-    {
+    if (file == NULL) {
         utils::DebugPrint2("error : %s is not found.\n", filepath);
         return NULL;
-    }
-    else
-    {
+    } else {
         std::fseek(file, 0, SEEK_END);
         fsize = std::ftell(file);
         g_LastFileSize = fsize;
@@ -68,24 +62,17 @@ u8 *FileSystem::OpenPath(const char *filepath)
     return data;
 }
 
-int FileSystem::WriteDataToFile(const char *path, void *data, size_t size)
-{
+int FileSystem::WriteDataToFile(const char *path, void *data, size_t size) {
     FILE *f;
 
     f = FopenUTF8(path, "wb");
-    if (f == NULL)
-    {
+    if (f == NULL) {
         return -1;
-    }
-    else
-    {
-        if (std::fwrite(data, 1, size, f) != size)
-        {
+    } else {
+        if (std::fwrite(data, 1, size, f) != size) {
             std::fclose(f);
             return -2;
-        }
-        else
-        {
+        } else {
             std::fclose(f);
             return 0;
         }

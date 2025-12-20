@@ -13,12 +13,10 @@
 #include "ZunMath.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
+namespace th06 {
 #define GAME_VERSION 0x102
 
-enum GameConfigOptsShifts
-{
+enum GameConfigOptsShifts {
     GCOS_USE_D3D_HW_TEXTURE_BLENDING = 0x0,
     GCOS_DONT_USE_VERTEX_BUF = 0x1,
     GCOS_FORCE_16BIT_COLOR_MODE = 0x2,
@@ -33,8 +31,7 @@ enum GameConfigOptsShifts
     GCOS_NO_DIRECTINPUT_PAD = 0xb,
 };
 
-struct ControllerMapping
-{
+struct ControllerMapping {
     i16 shootButton;
     i16 bombButton;
     i16 focusButton;
@@ -46,15 +43,9 @@ struct ControllerMapping
     i16 skipButton;
 };
 
-enum MusicMode
-{
-    OFF = 0,
-    WAV = 1,
-    MIDI = 2
-};
+enum MusicMode { OFF = 0, WAV = 1, MIDI = 2 };
 
-struct GameConfiguration
-{
+struct GameConfiguration {
     ControllerMapping controllerMapping;
     // Always 0x102 for 1.02
     i32 version;
@@ -73,9 +64,9 @@ struct GameConfiguration
     // GameConfigOpts bitfield.
     u32 opts;
 
-    u32 IsSoftwareTexturing()
-    {
-        return (this->opts >> GCOS_NO_COLOR_COMP & 1) | (this->opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING & 1);
+    u32 IsSoftwareTexturing() {
+        return (this->opts >> GCOS_NO_COLOR_COMP & 1) |
+               (this->opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING & 1);
     }
 };
 
@@ -87,8 +78,7 @@ struct GameConfiguration
 
 typedef char Pbg3ArchiveName[32];
 
-enum SupervisorState
-{
+enum SupervisorState {
     SUPERVISOR_STATE_INIT,
     SUPERVISOR_STATE_MAINMENU,
     SUPERVISOR_STATE_GAMEMANAGER,
@@ -102,8 +92,7 @@ enum SupervisorState
     SUPERVISOR_STATE_ENDING,
 };
 
-struct Supervisor
-{
+struct Supervisor {
     static bool RegisterChain();
     static ChainCallbackResult OnUpdate(Supervisor *s);
     static ChainCallbackResult OnDraw(Supervisor *s);
@@ -126,22 +115,18 @@ struct Supervisor
 
     void TickTimer(i32 *frames, f32 *subframes);
 
-    f32 FramerateMultiplier()
-    {
-        return this->effectiveFramerateMultiplier;
-    }
+    f32 FramerateMultiplier() { return this->effectiveFramerateMultiplier; }
 
-    u32 RedrawWholeFrame()
-    {
+    u32 RedrawWholeFrame() {
         // SDL makes no guarantees about frame state after buffer swap,
         //   and Wayland will "reuse" old framebuffers in a nondeterministic
-        //   way, so we're basically required to always redraw to avoid UI corruption
+        //   way, so we're basically required to always redraw to avoid UI
+        //   corruption
         return (this->cfg.opts >> GCOS_CLEAR_BACKBUFFER_ON_REFRESH & 1) |
                (this->cfg.opts >> GCOS_DISPLAY_MINIMUM_GRAPHICS & 1) | 1;
     }
 
-    u32 ShouldRunAt60Fps()
-    {
+    u32 ShouldRunAt60Fps() {
         return (this->cfg.opts >> GCOS_FORCE_60FPS & 1) || this->vsyncEnabled;
     }
 

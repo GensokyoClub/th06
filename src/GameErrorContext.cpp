@@ -5,12 +5,10 @@
 #include <cstdio>
 #include <cstring>
 
-namespace th06
-{
+namespace th06 {
 GameErrorContext g_GameErrorContext;
 
-const char *GameErrorContext::Log(GameErrorContext *ctx, const char *fmt, ...)
-{
+const char *GameErrorContext::Log(GameErrorContext *ctx, const char *fmt, ...) {
     char tmpBuffer[512];
     size_t tmpBufferSize;
     va_list args;
@@ -20,8 +18,8 @@ const char *GameErrorContext::Log(GameErrorContext *ctx, const char *fmt, ...)
 
     tmpBufferSize = std::strlen(tmpBuffer);
 
-    if (ctx->m_BufferEnd + tmpBufferSize < &ctx->m_Buffer[sizeof(ctx->m_Buffer) - 1])
-    {
+    if (ctx->m_BufferEnd + tmpBufferSize <
+        &ctx->m_Buffer[sizeof(ctx->m_Buffer) - 1]) {
         std::strcpy(ctx->m_BufferEnd, tmpBuffer);
 
         ctx->m_BufferEnd += tmpBufferSize;
@@ -33,8 +31,8 @@ const char *GameErrorContext::Log(GameErrorContext *ctx, const char *fmt, ...)
     return fmt;
 }
 
-const char *GameErrorContext::Fatal(GameErrorContext *ctx, const char *fmt, ...)
-{
+const char *GameErrorContext::Fatal(GameErrorContext *ctx, const char *fmt,
+                                    ...) {
     char tmpBuffer[512];
     size_t tmpBufferSize;
     va_list args;
@@ -44,8 +42,8 @@ const char *GameErrorContext::Fatal(GameErrorContext *ctx, const char *fmt, ...)
 
     tmpBufferSize = std::strlen(tmpBuffer);
 
-    if (ctx->m_BufferEnd + tmpBufferSize < &ctx->m_Buffer[sizeof(ctx->m_Buffer) - 1])
-    {
+    if (ctx->m_BufferEnd + tmpBufferSize <
+        &ctx->m_Buffer[sizeof(ctx->m_Buffer) - 1]) {
         std::strcpy(ctx->m_BufferEnd, tmpBuffer);
 
         ctx->m_BufferEnd += tmpBufferSize;
@@ -59,17 +57,15 @@ const char *GameErrorContext::Fatal(GameErrorContext *ctx, const char *fmt, ...)
     return fmt;
 }
 
-void GameErrorContext::Flush()
-{
+void GameErrorContext::Flush() {
     FILE *logFile;
 
-    if (m_BufferEnd != m_Buffer)
-    {
+    if (m_BufferEnd != m_Buffer) {
         GameErrorContext::Log(this, TH_ERR_LOGGER_END);
 
-        if (m_ShowMessageBox)
-        {
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "log", m_Buffer, NULL);
+        if (m_ShowMessageBox) {
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "log", m_Buffer,
+                                     NULL);
         }
 
         logFile = FileSystem::FopenUTF8("./log.txt", "w");

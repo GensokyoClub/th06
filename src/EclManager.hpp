@@ -6,15 +6,13 @@
 #include "ZunMath.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
+namespace th06 {
 // Forward declaration to avoid include loop.
 struct Enemy;
 struct EnemyEclContext;
 struct EnemyManager;
 
-enum EclVarId
-{
+enum EclVarId {
     ECL_VAR_I32_0 = -10001,
     ECL_VAR_I32_1 = -10002,
     ECL_VAR_I32_2 = -10003,
@@ -42,8 +40,7 @@ enum EclVarId
     ECL_VAR_PLAYER_SHOT = -10025,
 };
 
-struct EclTimelineInstrArgs
-{
+struct EclTimelineInstrArgs {
     u32 uintVar1;
     u32 uintVar2;
     u32 uintVar3;
@@ -51,14 +48,10 @@ struct EclTimelineInstrArgs
     u16 ushortVar2;
     u32 uintVar4;
 
-    ZunVec3 *Var1AsVec()
-    {
-        return (ZunVec3 *)&this->uintVar1;
-    }
+    ZunVec3 *Var1AsVec() { return (ZunVec3 *)&this->uintVar1; }
 };
 
-struct EclTimelineInstr
-{
+struct EclTimelineInstr {
     i16 time;
     i16 arg0;
     i16 opCode;
@@ -67,15 +60,13 @@ struct EclTimelineInstr
 };
 
 union EclRawInstrArg {
-    struct
-    {
+    struct {
         i8 a;
         i8 b;
         i8 c;
         i8 d;
     } by;
-    struct
-    {
+    struct {
         i16 lo;
         i16 hi;
     } sh;
@@ -84,8 +75,7 @@ union EclRawInstrArg {
     EclVarId id;
 };
 
-struct EclRawInstrAluArgs
-{
+struct EclRawInstrAluArgs {
     EclVarId res;
     EclRawInstrArg arg1;
     EclRawInstrArg arg2;
@@ -93,15 +83,13 @@ struct EclRawInstrAluArgs
     EclRawInstrArg arg4;
 };
 
-struct EclRawInstrJumpArgs
-{
+struct EclRawInstrJumpArgs {
     i32 time;
     i32 offset;
     EclVarId var;
 };
 
-struct EclRawInstrCallArgs
-{
+struct EclRawInstrCallArgs {
     i32 eclSub;
     i32 var0;
     f32 float0;
@@ -109,37 +97,31 @@ struct EclRawInstrCallArgs
     i32 cmpRhs;
 };
 
-struct EclRawInstrCmpArgs
-{
+struct EclRawInstrCmpArgs {
     EclRawInstrArg lhs;
     EclRawInstrArg rhs;
 };
 
-struct EclRawInstrMoveArgs
-{
+struct EclRawInstrMoveArgs {
     ZunVec3 pos;
 };
 
-struct EclRawInstrAnmSetMainArgs
-{
+struct EclRawInstrAnmSetMainArgs {
     i32 scriptIdx;
 };
 
-struct EclRawInstrAnmSetSlotArgs
-{
+struct EclRawInstrAnmSetSlotArgs {
     i32 vmIdx;
     i32 scriptIdx;
 };
 
-struct EclRawInstrAnmSetDeathArgs
-{
+struct EclRawInstrAnmSetDeathArgs {
     i8 deathAnm1;
     i8 deathAnm2;
     i8 deathAnm3;
 };
 
-struct EclRawInstrBulletArgs
-{
+struct EclRawInstrBulletArgs {
     i16 sprite;
     i16 color;
     EclVarId count1;
@@ -151,8 +133,7 @@ struct EclRawInstrBulletArgs
     i32 flags;
 };
 
-struct EclRawInstrLaserArgs
-{
+struct EclRawInstrLaserArgs {
     i16 sprite;
     i16 color;
     f32 angle;
@@ -169,14 +150,12 @@ struct EclRawInstrLaserArgs
     i32 flags;
 };
 
-struct EclRawInstrLaserOpArgs
-{
+struct EclRawInstrLaserOpArgs {
     i32 laserIdx;
     ZunVec3 arg1;
 };
 
-struct EclRawInstrBulletEffectsArgs
-{
+struct EclRawInstrBulletEffectsArgs {
     EclVarId ivar1;
     EclVarId ivar2;
     EclVarId ivar3;
@@ -187,26 +166,22 @@ struct EclRawInstrBulletEffectsArgs
     f32 fvar4;
 };
 
-struct EclRawInstrSetInt
-{
+struct EclRawInstrSetInt {
     i32 i32Param;
 };
 
-struct EclRawInstrSpellcardEffectArgs
-{
+struct EclRawInstrSpellcardEffectArgs {
     i32 effectColorId;
     ZunVec3 pos;
     f32 effectDistance;
 };
 
-struct EclRawInstrMoveBoundSetArgs
-{
+struct EclRawInstrMoveBoundSetArgs {
     ZunVec2 lowerMoveLimit;
     ZunVec2 upperMoveLimit;
 };
 
-struct EclRawInstrAnmSetPosesArgs
-{
+struct EclRawInstrAnmSetPosesArgs {
     i16 anmExDefault;
     i16 anmExFarLeft;
     i16 anmExFarRight;
@@ -214,38 +189,32 @@ struct EclRawInstrAnmSetPosesArgs
     i16 anmExRight;
 };
 
-struct EclRawInstrSetInterruptArgs
-{
+struct EclRawInstrSetInterruptArgs {
     i32 interruptSub;
     i32 interruptId;
 };
 
-struct EclRawInstrSpellcardStartArgs
-{
+struct EclRawInstrSpellcardStartArgs {
     i16 spellcardSprite;
     i16 spellcardId;
     char spellcardName[1];
 };
 
-struct EclRawInstrEffectParticleArgs
-{
+struct EclRawInstrEffectParticleArgs {
     i32 effectId;
     i32 numParticles;
     ZunColor particleColor;
 };
 
-struct EclRawInstrTimeSetArgs
-{
+struct EclRawInstrTimeSetArgs {
     EclVarId timeToSet;
 };
 
-struct EclRawInstrDropItemArgs
-{
+struct EclRawInstrDropItemArgs {
     ItemType itemId;
 };
 
-struct EclRawInstrEnemyCreateArgs
-{
+struct EclRawInstrEnemyCreateArgs {
     i32 subId;
     ZunVec3 pos;
     i16 life;
@@ -253,19 +222,16 @@ struct EclRawInstrEnemyCreateArgs
     i32 score;
 };
 
-struct EclRawInstrAnmInterruptSlotArgs
-{
+struct EclRawInstrAnmInterruptSlotArgs {
     i32 vmId;
     i32 interruptId;
 };
 
-struct EclRawInstrBulletSoundArgs
-{
+struct EclRawInstrBulletSoundArgs {
     SoundIdx bulletSfx;
 };
 
-struct EclRawInstrBulletRankInfluenceArgs
-{
+struct EclRawInstrBulletRankInfluenceArgs {
     f32 bulletRankSpeedLow;
     f32 bulletRankSpeedHigh;
     i32 bulletRankAmount1Low;
@@ -274,8 +240,7 @@ struct EclRawInstrBulletRankInfluenceArgs
     i32 bulletRankAmount2High;
 };
 
-struct EclRawInstrExInstrArgs
-{
+struct EclRawInstrExInstrArgs {
     u32 exInstrIndex;
     union {
         i32 i32Param;
@@ -311,14 +276,10 @@ union EclRawInstrArgs {
     EclRawInstrExInstrArgs exInstr;
     i32 setInt;
 
-    i32 GetBossLifeCount()
-    {
-        return this->setInt;
-    }
+    i32 GetBossLifeCount() { return this->setInt; }
 };
 
-struct EclRawInstr
-{
+struct EclRawInstr {
     i32 time;
     i16 opCode;
     i16 offsetToNext;
@@ -331,16 +292,14 @@ struct EclRawInstr
     EclRawInstrArgs args;
 };
 
-struct EclRawHeader
-{
+struct EclRawHeader {
     i16 subCount;
     i16 mainCount;
     u32 timelineOffsets[3];
     u32 subOffsets[];
 };
 
-enum EclRawInstrOpcode
-{
+enum EclRawInstrOpcode {
     ECL_OPCODE_NOP,
     ECL_OPCODE_UNIMP,
     ECL_OPCODE_JUMP,
@@ -479,8 +438,7 @@ enum EclRawInstrOpcode
     ECL_OPCODE_SPELLCARDFLAGTIMEOUT,
 };
 
-struct EclManager
-{
+struct EclManager {
     bool Load(const char *ecl);
     void Unload();
     bool RunEcl(Enemy *enemy);

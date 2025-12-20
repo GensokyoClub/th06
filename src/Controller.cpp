@@ -9,14 +9,12 @@
 #include "i18n.hpp"
 #include "utils.hpp"
 
-namespace th06
-{
+namespace th06 {
 // DIFFABLE_STATIC(JOYCAPSA, g_JoystickCaps)
 u16 g_FocusButtonConflictState;
 u8 *keyboardState;
 
-u16 Controller::GetJoystickCaps(void)
-{
+u16 Controller::GetJoystickCaps(void) {
     //    JOYINFOEX pji;
 
     //    pji.dwSize = sizeof(JOYINFOEX);
@@ -37,8 +35,7 @@ u16 Controller::GetJoystickCaps(void)
 #define JOYSTICK_BUTTON_PRESSED_INVERT(button, x, y) (x < y ? button : 0)
 #define KEYBOARD_KEY_PRESSED(button, x) keyboardState[x] ? button : 0
 
-u16 Controller::GetControllerInput(u16 buttons)
-{
+u16 Controller::GetControllerInput(u16 buttons) {
     // NOTE: Those names are like this to get perfect stack frame matching
     // TODO: Give meaningfull names that still match.
     //    JOYINFOEX aa;
@@ -51,8 +48,7 @@ u16 Controller::GetControllerInput(u16 buttons)
     i16 stickY;
 
     //
-    if (g_Supervisor.gameController != NULL)
-    {
+    if (g_Supervisor.gameController != NULL) {
         //        memset(&aa, 0, sizeof(aa));
         //        aa.dwSize = sizeof(JOYINFOEX);
         //        aa.dwFlags = JOY_RETURNALL;
@@ -62,90 +58,99 @@ u16 Controller::GetControllerInput(u16 buttons)
         //            return buttons;
         //        }
         //
-        shootPressed = SetButtonFromControllerInputs(&buttons, g_Supervisor.cfg.controllerMapping.shootButton,
-                                                     TH_BUTTON_SHOOT, g_Supervisor.gameController);
+        shootPressed = SetButtonFromControllerInputs(
+            &buttons, g_Supervisor.cfg.controllerMapping.shootButton,
+            TH_BUTTON_SHOOT, g_Supervisor.gameController);
 
-        if (g_ControllerMapping.shootButton != g_ControllerMapping.focusButton)
-        {
-            SetButtonFromControllerInputs(&buttons, g_Supervisor.cfg.controllerMapping.focusButton, TH_BUTTON_FOCUS,
-                                          g_Supervisor.gameController);
-        }
-        else
-        {
-            if (shootPressed != 0)
-            {
-                if (g_FocusButtonConflictState < 16)
-                {
+        if (g_ControllerMapping.shootButton !=
+            g_ControllerMapping.focusButton) {
+            SetButtonFromControllerInputs(
+                &buttons, g_Supervisor.cfg.controllerMapping.focusButton,
+                TH_BUTTON_FOCUS, g_Supervisor.gameController);
+        } else {
+            if (shootPressed != 0) {
+                if (g_FocusButtonConflictState < 16) {
                     g_FocusButtonConflictState++;
                 }
 
-                if (g_FocusButtonConflictState >= 8)
-                {
+                if (g_FocusButtonConflictState >= 8) {
                     buttons |= TH_BUTTON_FOCUS;
                 }
-            }
-            else
-            {
-                if (g_FocusButtonConflictState > 8)
-                {
+            } else {
+                if (g_FocusButtonConflictState > 8) {
                     g_FocusButtonConflictState -= 8;
-                }
-                else
-                {
+                } else {
                     g_FocusButtonConflictState = 0;
                 }
             }
         }
 
-        SetButtonFromControllerInputs(&buttons, g_Supervisor.cfg.controllerMapping.bombButton, TH_BUTTON_BOMB,
-                                      g_Supervisor.gameController);
-        SetButtonFromControllerInputs(&buttons, g_Supervisor.cfg.controllerMapping.menuButton, TH_BUTTON_MENU,
-                                      g_Supervisor.gameController);
-        SetButtonFromControllerInputs(&buttons, g_Supervisor.cfg.controllerMapping.upButton, TH_BUTTON_UP,
-                                      g_Supervisor.gameController);
-        SetButtonFromControllerInputs(&buttons, g_Supervisor.cfg.controllerMapping.downButton, TH_BUTTON_DOWN,
-                                      g_Supervisor.gameController);
-        SetButtonFromControllerInputs(&buttons, g_Supervisor.cfg.controllerMapping.leftButton, TH_BUTTON_LEFT,
-                                      g_Supervisor.gameController);
-        SetButtonFromControllerInputs(&buttons, g_Supervisor.cfg.controllerMapping.rightButton, TH_BUTTON_RIGHT,
-                                      g_Supervisor.gameController);
-        SetButtonFromControllerInputs(&buttons, g_Supervisor.cfg.controllerMapping.skipButton, TH_BUTTON_SKIP,
-                                      g_Supervisor.gameController);
+        SetButtonFromControllerInputs(
+            &buttons, g_Supervisor.cfg.controllerMapping.bombButton,
+            TH_BUTTON_BOMB, g_Supervisor.gameController);
+        SetButtonFromControllerInputs(
+            &buttons, g_Supervisor.cfg.controllerMapping.menuButton,
+            TH_BUTTON_MENU, g_Supervisor.gameController);
+        SetButtonFromControllerInputs(
+            &buttons, g_Supervisor.cfg.controllerMapping.upButton, TH_BUTTON_UP,
+            g_Supervisor.gameController);
+        SetButtonFromControllerInputs(
+            &buttons, g_Supervisor.cfg.controllerMapping.downButton,
+            TH_BUTTON_DOWN, g_Supervisor.gameController);
+        SetButtonFromControllerInputs(
+            &buttons, g_Supervisor.cfg.controllerMapping.leftButton,
+            TH_BUTTON_LEFT, g_Supervisor.gameController);
+        SetButtonFromControllerInputs(
+            &buttons, g_Supervisor.cfg.controllerMapping.rightButton,
+            TH_BUTTON_RIGHT, g_Supervisor.gameController);
+        SetButtonFromControllerInputs(
+            &buttons, g_Supervisor.cfg.controllerMapping.skipButton,
+            TH_BUTTON_SKIP, g_Supervisor.gameController);
 
-        if (SDL_GameControllerHasAxis(g_Supervisor.gameController, SDL_CONTROLLER_AXIS_LEFTX) &&
-            SDL_GameControllerHasAxis(g_Supervisor.gameController, SDL_CONTROLLER_AXIS_LEFTY))
-        {
-            stickX = SDL_GameControllerGetAxis(g_Supervisor.gameController, SDL_CONTROLLER_AXIS_LEFTX);
-            stickY = SDL_GameControllerGetAxis(g_Supervisor.gameController, SDL_CONTROLLER_AXIS_LEFTY);
-        }
-        else if (SDL_GameControllerHasAxis(g_Supervisor.gameController, SDL_CONTROLLER_AXIS_RIGHTX) &&
-                 SDL_GameControllerHasAxis(g_Supervisor.gameController, SDL_CONTROLLER_AXIS_RIGHTY))
-        {
-            stickX = SDL_GameControllerGetAxis(g_Supervisor.gameController, SDL_CONTROLLER_AXIS_RIGHTX);
-            stickY = SDL_GameControllerGetAxis(g_Supervisor.gameController, SDL_CONTROLLER_AXIS_RIGHTY);
-        }
-        else
-        {
+        if (SDL_GameControllerHasAxis(g_Supervisor.gameController,
+                                      SDL_CONTROLLER_AXIS_LEFTX) &&
+            SDL_GameControllerHasAxis(g_Supervisor.gameController,
+                                      SDL_CONTROLLER_AXIS_LEFTY)) {
+            stickX = SDL_GameControllerGetAxis(g_Supervisor.gameController,
+                                               SDL_CONTROLLER_AXIS_LEFTX);
+            stickY = SDL_GameControllerGetAxis(g_Supervisor.gameController,
+                                               SDL_CONTROLLER_AXIS_LEFTY);
+        } else if (SDL_GameControllerHasAxis(g_Supervisor.gameController,
+                                             SDL_CONTROLLER_AXIS_RIGHTX) &&
+                   SDL_GameControllerHasAxis(g_Supervisor.gameController,
+                                             SDL_CONTROLLER_AXIS_RIGHTY)) {
+            stickX = SDL_GameControllerGetAxis(g_Supervisor.gameController,
+                                               SDL_CONTROLLER_AXIS_RIGHTX);
+            stickY = SDL_GameControllerGetAxis(g_Supervisor.gameController,
+                                               SDL_CONTROLLER_AXIS_RIGHTY);
+        } else {
             return buttons;
         }
 
-        // SDL sticks run from -32768 to 32767, with the minimum being up / left and the max being down / right
+        // SDL sticks run from -32768 to 32767, with the minimum being up / left
+        // and the max being down / right
         //
         //        ab = ((g_JoystickCaps.wXmax - g_JoystickCaps.wXmin) / 2 / 2);
         //
 
-        buttons |= JOYSTICK_BUTTON_PRESSED(TH_BUTTON_RIGHT, stickX, JOYSTICK_MIDPOINT(0, INT16_MAX));
-        buttons |= JOYSTICK_BUTTON_PRESSED(TH_BUTTON_LEFT, -stickX, JOYSTICK_MIDPOINT(0, INT16_MAX));
+        buttons |= JOYSTICK_BUTTON_PRESSED(TH_BUTTON_RIGHT, stickX,
+                                           JOYSTICK_MIDPOINT(0, INT16_MAX));
+        buttons |= JOYSTICK_BUTTON_PRESSED(TH_BUTTON_LEFT, -stickX,
+                                           JOYSTICK_MIDPOINT(0, INT16_MAX));
 
-        buttons |= JOYSTICK_BUTTON_PRESSED(TH_BUTTON_DOWN, stickY, JOYSTICK_MIDPOINT(0, INT16_MAX));
-        buttons |= JOYSTICK_BUTTON_PRESSED(TH_BUTTON_UP, -stickY, JOYSTICK_MIDPOINT(0, INT16_MAX));
+        buttons |= JOYSTICK_BUTTON_PRESSED(TH_BUTTON_DOWN, stickY,
+                                           JOYSTICK_MIDPOINT(0, INT16_MAX));
+        buttons |= JOYSTICK_BUTTON_PRESSED(TH_BUTTON_UP, -stickY,
+                                           JOYSTICK_MIDPOINT(0, INT16_MAX));
         //
         //        ab = ((g_JoystickCaps.wYmax - g_JoystickCaps.wYmin) / 2 / 2);
         //        buttons |= JOYSTICK_BUTTON_PRESSED(TH_BUTTON_DOWN, aa.dwYpos,
-        //                                           JOYSTICK_MIDPOINT(g_JoystickCaps.wYmin, g_JoystickCaps.wYmax) +
+        //                                           JOYSTICK_MIDPOINT(g_JoystickCaps.wYmin,
+        //                                           g_JoystickCaps.wYmax) +
         //                                           ab);
         //        buttons |= JOYSTICK_BUTTON_PRESSED(
-        //            TH_BUTTON_UP, JOYSTICK_MIDPOINT(g_JoystickCaps.wYmin, g_JoystickCaps.wYmax) - ab, aa.dwYpos);
+        //            TH_BUTTON_UP, JOYSTICK_MIDPOINT(g_JoystickCaps.wYmin,
+        //            g_JoystickCaps.wYmax) - ab, aa.dwYpos);
         //
     }
     //    else
@@ -162,7 +167,8 @@ u16 Controller::GetControllerInput(u16 buttons)
     //            while (aaa == DIERR_INPUTLOST)
     //            {
     //                aaa = g_Supervisor.controller->Acquire();
-    //                utils::DebugPrint2("error : DIERR_INPUTLOST %d\n", retryCount);
+    //                utils::DebugPrint2("error : DIERR_INPUTLOST %d\n",
+    //                retryCount);
     //
     //                retryCount++;
     //
@@ -178,20 +184,26 @@ u16 Controller::GetControllerInput(u16 buttons)
     //        {
     //            memset(&a0, 0, sizeof(a0));
     //
-    //            aaa = g_Supervisor.controller->GetDeviceState(sizeof(a0), &a0);
+    //            aaa = g_Supervisor.controller->GetDeviceState(sizeof(a0),
+    //            &a0);
     //
     //            if (FAILED(aaa))
     //            {
     //                return buttons;
     //            }
     //
-    //            a2 = SetButtonFromDirectInputJoystate(&buttons, g_Supervisor.cfg.controllerMapping.shootButton,
-    //                                                  TH_BUTTON_SHOOT, a0.rgbButtons);
+    //            a2 = SetButtonFromDirectInputJoystate(&buttons,
+    //            g_Supervisor.cfg.controllerMapping.shootButton,
+    //                                                  TH_BUTTON_SHOOT,
+    //                                                  a0.rgbButtons);
     //
-    //            if (g_Supervisor.cfg.controllerMapping.shootButton != g_Supervisor.cfg.controllerMapping.focusButton)
+    //            if (g_Supervisor.cfg.controllerMapping.shootButton !=
+    //            g_Supervisor.cfg.controllerMapping.focusButton)
     //            {
-    //                SetButtonFromDirectInputJoystate(&buttons, g_Supervisor.cfg.controllerMapping.focusButton,
-    //                                                 TH_BUTTON_FOCUS, a0.rgbButtons);
+    //                SetButtonFromDirectInputJoystate(&buttons,
+    //                g_Supervisor.cfg.controllerMapping.focusButton,
+    //                                                 TH_BUTTON_FOCUS,
+    //                                                 a0.rgbButtons);
     //            }
     //            else
     //            {
@@ -220,59 +232,71 @@ u16 Controller::GetControllerInput(u16 buttons)
     //                }
     //            }
     //
-    //            SetButtonFromDirectInputJoystate(&buttons, g_Supervisor.cfg.controllerMapping.bombButton,
-    //            TH_BUTTON_BOMB,
+    //            SetButtonFromDirectInputJoystate(&buttons,
+    //            g_Supervisor.cfg.controllerMapping.bombButton, TH_BUTTON_BOMB,
     //                                             a0.rgbButtons);
-    //            SetButtonFromDirectInputJoystate(&buttons, g_Supervisor.cfg.controllerMapping.menuButton,
-    //            TH_BUTTON_MENU,
+    //            SetButtonFromDirectInputJoystate(&buttons,
+    //            g_Supervisor.cfg.controllerMapping.menuButton, TH_BUTTON_MENU,
     //                                             a0.rgbButtons);
-    //            SetButtonFromDirectInputJoystate(&buttons, g_Supervisor.cfg.controllerMapping.upButton, TH_BUTTON_UP,
+    //            SetButtonFromDirectInputJoystate(&buttons,
+    //            g_Supervisor.cfg.controllerMapping.upButton, TH_BUTTON_UP,
     //                                             a0.rgbButtons);
-    //            SetButtonFromDirectInputJoystate(&buttons, g_Supervisor.cfg.controllerMapping.downButton,
-    //            TH_BUTTON_DOWN,
+    //            SetButtonFromDirectInputJoystate(&buttons,
+    //            g_Supervisor.cfg.controllerMapping.downButton, TH_BUTTON_DOWN,
     //                                             a0.rgbButtons);
-    //            SetButtonFromDirectInputJoystate(&buttons, g_Supervisor.cfg.controllerMapping.leftButton,
-    //            TH_BUTTON_LEFT,
+    //            SetButtonFromDirectInputJoystate(&buttons,
+    //            g_Supervisor.cfg.controllerMapping.leftButton, TH_BUTTON_LEFT,
     //                                             a0.rgbButtons);
-    //            SetButtonFromDirectInputJoystate(&buttons, g_Supervisor.cfg.controllerMapping.rightButton,
+    //            SetButtonFromDirectInputJoystate(&buttons,
+    //            g_Supervisor.cfg.controllerMapping.rightButton,
     //            TH_BUTTON_RIGHT,
     //                                             a0.rgbButtons);
-    //            SetButtonFromDirectInputJoystate(&buttons, g_Supervisor.cfg.controllerMapping.skipButton,
-    //            TH_BUTTON_SKIP,
+    //            SetButtonFromDirectInputJoystate(&buttons,
+    //            g_Supervisor.cfg.controllerMapping.skipButton, TH_BUTTON_SKIP,
     //                                             a0.rgbButtons);
     //
-    //            buttons |= JOYSTICK_BUTTON_PRESSED(TH_BUTTON_RIGHT, a0.lX, g_Supervisor.cfg.padXAxis);
-    //            buttons |= JOYSTICK_BUTTON_PRESSED_INVERT(TH_BUTTON_LEFT, a0.lX, -g_Supervisor.cfg.padXAxis);
-    //            buttons |= JOYSTICK_BUTTON_PRESSED(TH_BUTTON_DOWN, a0.lY, g_Supervisor.cfg.padYAxis);
-    //            buttons |= JOYSTICK_BUTTON_PRESSED_INVERT(TH_BUTTON_UP, a0.lY, -g_Supervisor.cfg.padYAxis);
+    //            buttons |= JOYSTICK_BUTTON_PRESSED(TH_BUTTON_RIGHT, a0.lX,
+    //            g_Supervisor.cfg.padXAxis); buttons |=
+    //            JOYSTICK_BUTTON_PRESSED_INVERT(TH_BUTTON_LEFT, a0.lX,
+    //            -g_Supervisor.cfg.padXAxis); buttons |=
+    //            JOYSTICK_BUTTON_PRESSED(TH_BUTTON_DOWN, a0.lY,
+    //            g_Supervisor.cfg.padYAxis); buttons |=
+    //            JOYSTICK_BUTTON_PRESSED_INVERT(TH_BUTTON_UP, a0.lY,
+    //            -g_Supervisor.cfg.padYAxis);
     //        }
     //    }
     //
     return buttons;
 }
 
-u32 Controller::SetButtonFromDirectInputJoystate(u16 *outButtons, i16 controllerButtonToTest, TouhouButton touhouButton, u8 *inputButtons)
-{
-    if (controllerButtonToTest < 0)
-    {
+u32 Controller::SetButtonFromDirectInputJoystate(u16 *outButtons,
+                                                 i16 controllerButtonToTest,
+                                                 TouhouButton touhouButton,
+                                                 u8 *inputButtons) {
+    if (controllerButtonToTest < 0) {
         return 0;
     }
 
-    *outButtons |= (inputButtons[controllerButtonToTest] & 0x80 ? touhouButton & 0xFFFF : 0);
+    *outButtons |=
+        (inputButtons[controllerButtonToTest] & 0x80 ? touhouButton & 0xFFFF
+                                                     : 0);
 
-    return inputButtons[controllerButtonToTest] & 0x80 ? touhouButton & 0xFFFF : 0;
+    return inputButtons[controllerButtonToTest] & 0x80 ? touhouButton & 0xFFFF
+                                                       : 0;
 }
 
-u32 Controller::SetButtonFromControllerInputs(u16 *outButtons, i16 controllerButtonToTest, TouhouButton touhouButton, SDL_GameController *controller)
-{
+u32 Controller::SetButtonFromControllerInputs(u16 *outButtons,
+                                              i16 controllerButtonToTest,
+                                              TouhouButton touhouButton,
+                                              SDL_GameController *controller) {
     u8 pressed;
 
-    if (controllerButtonToTest < 0)
-    {
+    if (controllerButtonToTest < 0) {
         return 0;
     }
 
-    pressed = SDL_GameControllerGetButton(controller, (SDL_GameControllerButton)controllerButtonToTest);
+    pressed = SDL_GameControllerGetButton(
+        controller, (SDL_GameControllerButton)controllerButtonToTest);
 
     *outButtons |= pressed ? touhouButton & 0xFFFF : 0;
 
@@ -282,8 +306,7 @@ u32 Controller::SetButtonFromControllerInputs(u16 *outButtons, i16 controllerBut
 u8 g_ControllerData[SDL_CONTROLLER_BUTTON_MAX];
 
 // This is for rebinding keys
-u8 *th06::Controller::GetControllerState()
-{
+u8 *th06::Controller::GetControllerState() {
     //    JOYINFOEX joyinfoex;
     //    u32 joyButtonBit;
     //    u32 joyButtonIndex;
@@ -292,16 +315,15 @@ u8 *th06::Controller::GetControllerState()
     //    DIJOYSTATE2 dijoystate2;
     //    i32 diRetryCount;
 
-    if (g_Supervisor.gameController != NULL)
-    {
+    if (g_Supervisor.gameController != NULL) {
         memset(&g_ControllerData, 0, sizeof(g_ControllerData));
 
-        SDL_Joystick *joystick = SDL_GameControllerGetJoystick(g_Supervisor.gameController);
+        SDL_Joystick *joystick =
+            SDL_GameControllerGetJoystick(g_Supervisor.gameController);
 
-        for (int i = 0; i < SDL_CONTROLLER_BUTTON_MAX; i++)
-        {
-            if (SDL_GameControllerGetButton(g_Supervisor.gameController, (SDL_GameControllerButton)i))
-            {
+        for (int i = 0; i < SDL_CONTROLLER_BUTTON_MAX; i++) {
+            if (SDL_GameControllerGetButton(g_Supervisor.gameController,
+                                            (SDL_GameControllerButton)i)) {
                 g_ControllerData[i] = 0x80;
             }
         }
@@ -317,7 +339,8 @@ u8 *th06::Controller::GetControllerState()
     //        {
     //            return g_ControllerData;
     //        }
-    //        for (joyButtonBit = joyinfoex.dwButtons, joyButtonIndex = 0; joyButtonIndex < 32;
+    //        for (joyButtonBit = joyinfoex.dwButtons, joyButtonIndex = 0;
+    //        joyButtonIndex < 32;
     //             joyButtonIndex += 1, joyButtonBit >>= 1)
     //        {
     //            if ((joyButtonBit & 1) != 0)
@@ -338,28 +361,29 @@ u8 *th06::Controller::GetControllerState()
     //            while (dires == DIERR_INPUTLOST)
     //            {
     //                dires = g_Supervisor.controller->Acquire();
-    //                utils::DebugPrint2("error : DIERR_INPUTLOST %d\n", diRetryCount);
-    //                diRetryCount++;
-    //                if (diRetryCount >= 400)
+    //                utils::DebugPrint2("error : DIERR_INPUTLOST %d\n",
+    //                diRetryCount); diRetryCount++; if (diRetryCount >= 400)
     //                {
     //                    return g_ControllerData;
     //                }
     //            }
     //            return g_ControllerData;
     //        }
-    //        /* dires = */ g_Supervisor.controller->GetDeviceState(sizeof(DIJOYSTATE2), &dijoystate2);
+    //        /* dires = */
+    //        g_Supervisor.controller->GetDeviceState(sizeof(DIJOYSTATE2),
+    //        &dijoystate2);
     //        // TODO: seems ZUN forgot "dires =" above
     //        if (FAILED(dires))
     //        {
     //            return g_ControllerData;
     //        }
-    //        memcpy(&g_ControllerData, dijoystate2.rgbButtons, sizeof(dijoystate2.rgbButtons));
+    //        memcpy(&g_ControllerData, dijoystate2.rgbButtons,
+    //        sizeof(dijoystate2.rgbButtons));
     return g_ControllerData;
     //    }
 }
 
-u16 Controller::GetInput(void)
-{
+u16 Controller::GetInput(void) {
     u16 buttons = 0;
 
     buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP, SDL_SCANCODE_UP);
@@ -389,8 +413,7 @@ u16 Controller::GetInput(void)
     return Controller::GetControllerInput(buttons);
 }
 
-void Controller::ResetKeyboard(void)
-{
+void Controller::ResetKeyboard(void) {
     keyboardState = (u8 *)SDL_GetKeyboardState(NULL);
 }
 }; // namespace th06

@@ -2,11 +2,9 @@
 
 #include "inttypes.hpp"
 
-namespace th06
-{
+namespace th06 {
 
-enum ChainCallbackResult
-{
+enum ChainCallbackResult {
     CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB = (unsigned int)0,
     CHAIN_CALLBACK_RESULT_CONTINUE = (unsigned int)1,
     CHAIN_CALLBACK_RESULT_EXECUTE_AGAIN = (unsigned int)2,
@@ -21,8 +19,7 @@ typedef ChainCallbackResult (*ChainCallback)(void *);
 typedef bool (*ChainAddedCallback)(void *);
 typedef bool (*ChainDeletedCallback)(void *);
 
-class ChainElem
-{
+class ChainElem {
   public:
     short priority;
     u16 isHeapAllocated : 1;
@@ -38,8 +35,7 @@ class ChainElem
     ~ChainElem();
 };
 
-class Chain
-{
+class Chain {
   private:
     ChainElem calcChain;
     ChainElem drawChain;

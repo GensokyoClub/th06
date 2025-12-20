@@ -20,25 +20,22 @@
 // #include <d3d8types.h>
 // #include <d3dx8math.h>
 
-namespace th06
-{
+namespace th06 {
 
-u32 g_ExtraLivesScores[5] = {10000000, 20000000, 40000000, 60000000, 1900000000};
+u32 g_ExtraLivesScores[5] = {10000000, 20000000, 40000000, 60000000,
+                             1900000000};
 
-const char *g_EclFiles[9] = {
-    "dummy",
-    "data/ecldata1.ecl",
-    "data/ecldata2.ecl",
-    "data/ecldata3.ecl",
-    "data/ecldata4.ecl",
-    "data/ecldata5.ecl",
-    "data/ecldata6.ecl",
-    "data/ecldata7.ecl",
-    NULL
-};
+const char *g_EclFiles[9] = {"dummy",
+                             "data/ecldata1.ecl",
+                             "data/ecldata2.ecl",
+                             "data/ecldata3.ecl",
+                             "data/ecldata4.ecl",
+                             "data/ecldata5.ecl",
+                             "data/ecldata6.ecl",
+                             "data/ecldata7.ecl",
+                             NULL};
 
-struct AnmStageFiles
-{
+struct AnmStageFiles {
     const char *file1;
     const char *file2;
 };
@@ -53,8 +50,7 @@ AnmStageFiles g_AnmStageFiles[8] = {
     {"data/stg6enm.anm", "data/stg6enm2.anm"},
     {"data/stg7enm.anm", "data/stg7enm2.anm"},
 };
-struct DifficultyInfo
-{
+struct DifficultyInfo {
     u32 rank;
     u32 minRank;
     u32 maxRank;
@@ -94,52 +90,42 @@ ChainElem g_GameManagerDrawChain;
 
 #define MAX_LIVES 8
 
-i32 GameManager::IsInBounds(f32 x, f32 y, f32 width, f32 height)
-{
-    if (width / 2.0f + x < 0.0f)
-    {
+i32 GameManager::IsInBounds(f32 x, f32 y, f32 width, f32 height) {
+    if (width / 2.0f + x < 0.0f) {
         return false;
     }
-    if ((x - width / 2.0f) > g_GameManager.arcadeRegionSize.x)
-    {
+    if ((x - width / 2.0f) > g_GameManager.arcadeRegionSize.x) {
         return false;
     }
-    if (height / 2.0f + y < 0.0f)
-    {
+    if (height / 2.0f + y < 0.0f) {
         return false;
     }
-    if (y - height / 2.0f > g_GameManager.arcadeRegionSize.y)
-    {
+    if (y - height / 2.0f > g_GameManager.arcadeRegionSize.y) {
         return false;
     }
 
     return true;
 }
 
-ChainCallbackResult GameManager::OnUpdate(GameManager *gameManager)
-{
+ChainCallbackResult GameManager::OnUpdate(GameManager *gameManager) {
     u32 isInMenu;
     u32 scoreIncrement;
 
-    if (gameManager->demoMode)
-    {
-        if (WAS_PRESSED(TH_BUTTON_ANY))
-        {
+    if (gameManager->demoMode) {
+        if (WAS_PRESSED(TH_BUTTON_ANY)) {
             g_Supervisor.curState = SUPERVISOR_STATE_MAINMENU;
         }
         gameManager->demoFrames++;
-        if (gameManager->demoFrames == DEMO_FADEOUT_FRAMES)
-        {
-            ScreenEffect::RegisterChain(SCREEN_EFFECT_FADE_OUT, 120, 0x000000, 0, 0);
+        if (gameManager->demoFrames == DEMO_FADEOUT_FRAMES) {
+            ScreenEffect::RegisterChain(SCREEN_EFFECT_FADE_OUT, 120, 0x000000,
+                                        0, 0);
         }
-        if (gameManager->demoFrames >= DEMO_FRAMES)
-        {
+        if (gameManager->demoFrames >= DEMO_FRAMES) {
             g_Supervisor.curState = SUPERVISOR_STATE_MAINMENU;
         }
     }
-    if (!gameManager->isInRetryMenu && !gameManager->isInGameMenu && !gameManager->demoMode &&
-        WAS_PRESSED(TH_BUTTON_MENU))
-    {
+    if (!gameManager->isInRetryMenu && !gameManager->isInGameMenu &&
+        !gameManager->demoMode && WAS_PRESSED(TH_BUTTON_MENU)) {
         gameManager->isInGameMenu = 1;
         g_GameManager.arcadeRegionTopLeftPos.x = GAME_REGION_LEFT;
         g_GameManager.arcadeRegionTopLeftPos.y = GAME_REGION_TOP;
@@ -148,12 +134,9 @@ ChainCallbackResult GameManager::OnUpdate(GameManager *gameManager)
         g_Supervisor.unk198 = 3;
     }
 
-    if (!gameManager->isInRetryMenu && !gameManager->isInGameMenu)
-    {
+    if (!gameManager->isInRetryMenu && !gameManager->isInGameMenu) {
         isInMenu = 1;
-    }
-    else
-    {
+    } else {
         isInMenu = 0;
     }
 
@@ -173,55 +156,50 @@ ChainCallbackResult GameManager::OnUpdate(GameManager *gameManager)
     g_glFuncTable.glClear(GL_DEPTH_BUFFER_BIT);
 
     //    g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
-    //    g_Supervisor.d3dDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, g_Stage.skyFog.color, 1.0, 0);
+    //    g_Supervisor.d3dDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER,
+    //    g_Stage.skyFog.color, 1.0, 0);
 
-    // Seems like gameManager->isInGameMenu was supposed to have 3 states, but all the times it ends up checking both
-    if (gameManager->isInGameMenu == 1 || gameManager->isInGameMenu == 2 || gameManager->isInRetryMenu)
-    {
+    // Seems like gameManager->isInGameMenu was supposed to have 3 states, but
+    // all the times it ends up checking both
+    if (gameManager->isInGameMenu == 1 || gameManager->isInGameMenu == 2 ||
+        gameManager->isInRetryMenu) {
         return CHAIN_CALLBACK_RESULT_BREAK;
     }
 
-    if (gameManager->score >= MAX_SCORE + 1)
-    {
+    if (gameManager->score >= MAX_SCORE + 1) {
         gameManager->score = MAX_SCORE - 9;
     }
-    if (gameManager->guiScore != gameManager->score)
-    {
-        if (gameManager->score < gameManager->guiScore)
-        {
+    if (gameManager->guiScore != gameManager->score) {
+        if (gameManager->score < gameManager->guiScore) {
             gameManager->score = gameManager->guiScore;
         }
 
         scoreIncrement = (gameManager->score - gameManager->guiScore) >> 5;
-        if (scoreIncrement >= GUI_SCORE_STEP)
-        {
+        if (scoreIncrement >= GUI_SCORE_STEP) {
             scoreIncrement = GUI_SCORE_STEP;
-        }
-        else if (scoreIncrement < 10)
-        {
+        } else if (scoreIncrement < 10) {
             scoreIncrement = 10;
         }
         scoreIncrement = scoreIncrement - scoreIncrement % 10;
 
-        if (gameManager->nextScoreIncrement < scoreIncrement)
-        {
+        if (gameManager->nextScoreIncrement < scoreIncrement) {
             gameManager->nextScoreIncrement = scoreIncrement;
         }
-        if (gameManager->guiScore + gameManager->nextScoreIncrement > gameManager->score)
-        {
-            gameManager->nextScoreIncrement = gameManager->score - gameManager->guiScore;
+        if (gameManager->guiScore + gameManager->nextScoreIncrement >
+            gameManager->score) {
+            gameManager->nextScoreIncrement =
+                gameManager->score - gameManager->guiScore;
         }
 
         gameManager->guiScore += gameManager->nextScoreIncrement;
-        if (gameManager->guiScore >= gameManager->score)
-        {
+        if (gameManager->guiScore >= gameManager->score) {
             gameManager->nextScoreIncrement = 0;
             gameManager->guiScore = gameManager->score;
         }
-        if (gameManager->extraLives >= 0 && g_ExtraLivesScores[gameManager->extraLives] <= gameManager->guiScore)
-        {
-            if (gameManager->livesRemaining < MAX_LIVES)
-            {
+        if (gameManager->extraLives >= 0 &&
+            g_ExtraLivesScores[gameManager->extraLives] <=
+                gameManager->guiScore) {
+            if (gameManager->livesRemaining < MAX_LIVES) {
                 gameManager->livesRemaining++;
                 g_SoundPlayer.PlaySoundByIdx(SOUND_1UP);
             }
@@ -229,8 +207,7 @@ ChainCallbackResult GameManager::OnUpdate(GameManager *gameManager)
             gameManager->extraLives++;
             g_GameManager.IncreaseSubrank(200);
         }
-        if (gameManager->highScore < gameManager->guiScore)
-        {
+        if (gameManager->highScore < gameManager->guiScore) {
             gameManager->highScore = gameManager->guiScore;
         }
     }
@@ -238,42 +215,41 @@ ChainCallbackResult GameManager::OnUpdate(GameManager *gameManager)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-ChainCallbackResult GameManager::OnDraw(GameManager *gameManager)
-{
-    if (gameManager->isInGameMenu)
-    {
+ChainCallbackResult GameManager::OnDraw(GameManager *gameManager) {
+    if (gameManager->isInGameMenu) {
         gameManager->isInGameMenu = 2;
     }
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-bool GameManager::RegisterChain()
-{
+bool GameManager::RegisterChain() {
     GameManager *mgr = &g_GameManager;
 
     g_GameManagerCalcChain.callback = (ChainCallback)GameManager::OnUpdate;
     g_GameManagerCalcChain.addedCallback = NULL;
     g_GameManagerCalcChain.deletedCallback = NULL;
-    g_GameManagerCalcChain.addedCallback = (ChainAddedCallback)GameManager::AddedCallback;
-    g_GameManagerCalcChain.deletedCallback = (ChainDeletedCallback)GameManager::DeletedCallback;
+    g_GameManagerCalcChain.addedCallback =
+        (ChainAddedCallback)GameManager::AddedCallback;
+    g_GameManagerCalcChain.deletedCallback =
+        (ChainDeletedCallback)GameManager::DeletedCallback;
     g_GameManagerCalcChain.arg = mgr;
 
     mgr->gameFrames = 0;
 
-    if (!g_Chain.AddToCalcChain(&g_GameManagerCalcChain, TH_CHAIN_PRIO_CALC_GAMEMANAGER))
-    {
+    if (!g_Chain.AddToCalcChain(&g_GameManagerCalcChain,
+                                TH_CHAIN_PRIO_CALC_GAMEMANAGER)) {
         return false;
     }
     g_GameManagerDrawChain.callback = (ChainCallback)GameManager::OnDraw;
     g_GameManagerDrawChain.addedCallback = NULL;
     g_GameManagerDrawChain.deletedCallback = NULL;
     g_GameManagerDrawChain.arg = mgr;
-    g_Chain.AddToDrawChain(&g_GameManagerDrawChain, TH_CHAIN_PRIO_DRAW_GAMEMANAGER);
+    g_Chain.AddToDrawChain(&g_GameManagerDrawChain,
+                           TH_CHAIN_PRIO_DRAW_GAMEMANAGER);
     return true;
 }
 
-bool GameManager::AddedCallback(GameManager *mgr)
-{
+bool GameManager::AddedCallback(GameManager *mgr) {
     ScoreDat *scoredat;
     u32 clrdIdx;
     u32 catkCursor;
@@ -282,8 +258,7 @@ bool GameManager::AddedCallback(GameManager *mgr)
     bool failedToLoadReplay;
 
     failedToLoadReplay = false;
-    if (g_Supervisor.curState != SUPERVISOR_STATE_GAMEMANAGER_REINIT)
-    {
+    if (g_Supervisor.curState != SUPERVISOR_STATE_GAMEMANAGER_REINIT) {
         g_Supervisor.defaultConfig.bombCount = g_GameManager.bombsRemaining;
         g_Supervisor.defaultConfig.lifeCount = g_GameManager.livesRemaining;
         mgr->arcadeRegionTopLeftPos.x = 32.0;
@@ -301,27 +276,23 @@ bool GameManager::AddedCallback(GameManager *mgr)
         mgr->highScore = 100000;
         mgr->currentPower = 0;
         mgr->numRetries = 0;
-        if (6 <= mgr->currentStage)
-        {
+        if (6 <= mgr->currentStage) {
             mgr->difficulty = EXTRA;
         }
-        if (mgr->difficulty < EXTRA)
-        {
+        if (mgr->difficulty < EXTRA) {
             mgr->extraLives = 0;
-        }
-        else
-        {
+        } else {
             mgr->extraLives = 4;
         }
         g_GameManager.powerItemCountForScore = 0;
         mgr->rank = 8;
         mgr->grazeInTotal = 0;
         mgr->pointItemsCollected = 0;
-        for (catk = mgr->catk, i = 0; i < ARRAY_SIZE_SIGNED(mgr->catk); i++, catk++)
-        {
+        for (catk = mgr->catk, i = 0; i < ARRAY_SIZE_SIGNED(mgr->catk);
+             i++, catk++) {
             // Randomize catk content.
-            for (catkCursor = 0; catkCursor < sizeof(Catk) / sizeof(u16); catkCursor++)
-            {
+            for (catkCursor = 0; catkCursor < sizeof(Catk) / sizeof(u16);
+                 catkCursor++) {
                 ((u16 *)catk)[catkCursor] = g_Rng.GetRandomU16();
             }
             catk->base.magic = CATK_MAGIC;
@@ -337,16 +308,17 @@ bool GameManager::AddedCallback(GameManager *mgr)
 #else
         scoredat = ResultScreen::OpenScore("score.dat");
 #endif
-        g_GameManager.highScore =
-            ResultScreen::GetHighScore(scoredat, NULL, g_GameManager.CharacterShotType(), g_GameManager.difficulty);
+        g_GameManager.highScore = ResultScreen::GetHighScore(
+            scoredat, NULL, g_GameManager.CharacterShotType(),
+            g_GameManager.difficulty);
         ResultScreen::ParseCatk(scoredat, mgr->catk);
         ResultScreen::ParseClrd(scoredat, mgr->clrd);
         ResultScreen::ParsePscr(scoredat, (Pscr *)mgr->pscr);
-        if (mgr->isInPracticeMode != 0)
-        {
+        if (mgr->isInPracticeMode != 0) {
             g_GameManager.highScore =
-                mgr->pscr[g_GameManager.CharacterShotType()][g_GameManager.currentStage][g_GameManager.difficulty]
-                    .score;
+                mgr->pscr[g_GameManager.CharacterShotType()]
+                         [g_GameManager.currentStage][g_GameManager.difficulty]
+                             .score;
         }
         ResultScreen::ReleaseScoreDat(scoredat);
         mgr->rank = g_DifficultyInfo[g_GameManager.difficulty].rank;
@@ -355,9 +327,7 @@ bool GameManager::AddedCallback(GameManager *mgr)
         mgr->deaths = 0;
         mgr->bombsUsed = 0;
         mgr->spellcardsCaptured = 0;
-    }
-    else
-    {
+    } else {
         mgr->guiScore = mgr->score;
         mgr->nextScoreIncrement = 0;
     }
@@ -366,23 +336,26 @@ bool GameManager::AddedCallback(GameManager *mgr)
     mgr->grazeInStage = 0;
     mgr->isInGameMenu = 0;
     mgr->currentStage = mgr->currentStage + 1;
-    if (g_GameManager.isInReplay == 0)
-    {
+    if (g_GameManager.isInReplay == 0) {
         clrdIdx = g_GameManager.CharacterShotType();
         if (mgr->numRetries == 0 &&
-            mgr->clrd[clrdIdx].difficultyClearedWithRetries[g_GameManager.difficulty] < mgr->currentStage - 1)
-        {
-            mgr->clrd[clrdIdx].difficultyClearedWithRetries[g_GameManager.difficulty] = mgr->currentStage - 1;
+            mgr->clrd[clrdIdx]
+                    .difficultyClearedWithRetries[g_GameManager.difficulty] <
+                mgr->currentStage - 1) {
+            mgr->clrd[clrdIdx]
+                .difficultyClearedWithRetries[g_GameManager.difficulty] =
+                mgr->currentStage - 1;
         }
-        if (mgr->clrd[clrdIdx].difficultyClearedWithoutRetries[g_GameManager.difficulty] < mgr->currentStage - 1)
-        {
-            mgr->clrd[clrdIdx].difficultyClearedWithoutRetries[g_GameManager.difficulty] = mgr->currentStage - 1;
+        if (mgr->clrd[clrdIdx]
+                .difficultyClearedWithoutRetries[g_GameManager.difficulty] <
+            mgr->currentStage - 1) {
+            mgr->clrd[clrdIdx]
+                .difficultyClearedWithoutRetries[g_GameManager.difficulty] =
+                mgr->currentStage - 1;
         }
     }
-    if (mgr->isInPracticeMode != 0)
-    {
-        switch (mgr->currentStage)
-        {
+    if (mgr->isInPracticeMode != 0) {
+        switch (mgr->currentStage) {
         case STAGE2:
             break;
         case STAGE3:
@@ -392,64 +365,67 @@ bool GameManager::AddedCallback(GameManager *mgr)
             mgr->currentPower = 128;
         }
     }
-    if (g_GameManager.isInReplay == 1)
-    {
-        if (!ReplayManager::RegisterChain(1, (char *)g_GameManager.replayFile))
-        {
+    if (g_GameManager.isInReplay == 1) {
+        if (!ReplayManager::RegisterChain(1,
+                                          (char *)g_GameManager.replayFile)) {
             failedToLoadReplay = true;
         }
-        while (g_ExtraLivesScores[mgr->extraLives] <= mgr->guiScore)
-        {
+        while (g_ExtraLivesScores[mgr->extraLives] <= mgr->guiScore) {
             mgr->extraLives++;
         }
-        mgr->minRank = g_DifficultyInfoForReplay[g_GameManager.difficulty].minRank;
-        mgr->maxRank = g_DifficultyInfoForReplay[g_GameManager.difficulty].maxRank;
+        mgr->minRank =
+            g_DifficultyInfoForReplay[g_GameManager.difficulty].minRank;
+        mgr->maxRank =
+            g_DifficultyInfoForReplay[g_GameManager.difficulty].maxRank;
     }
     g_Rng.generationCount = 0;
     mgr->randomSeed = g_Rng.seed;
-    if (!Stage::RegisterChain(mgr->currentStage))
-    {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_STAGE);
+    if (!Stage::RegisterChain(mgr->currentStage)) {
+        GameErrorContext::Log(&g_GameErrorContext,
+                              TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_STAGE);
         return false;
     }
 
-    if (!Player::RegisterChain(0))
-    {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_PLAYER);
+    if (!Player::RegisterChain(0)) {
+        GameErrorContext::Log(&g_GameErrorContext,
+                              TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_PLAYER);
         return false;
     }
-    if (!BulletManager::RegisterChain("data/etama.anm"))
-    {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_BULLETMANAGER);
+    if (!BulletManager::RegisterChain("data/etama.anm")) {
+        GameErrorContext::Log(
+            &g_GameErrorContext,
+            TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_BULLETMANAGER);
         return false;
     }
-    if (!EnemyManager::RegisterChain(g_AnmStageFiles[mgr->currentStage].file1,
-                                     g_AnmStageFiles[mgr->currentStage].file2))
-    {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_ENEMYMANAGER);
+    if (!EnemyManager::RegisterChain(
+            g_AnmStageFiles[mgr->currentStage].file1,
+            g_AnmStageFiles[mgr->currentStage].file2)) {
+        GameErrorContext::Log(
+            &g_GameErrorContext,
+            TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_ENEMYMANAGER);
         return false;
     }
-    if (!g_EclManager.Load(g_EclFiles[mgr->currentStage]))
-    {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_ECLMANAGER);
+    if (!g_EclManager.Load(g_EclFiles[mgr->currentStage])) {
+        GameErrorContext::Log(
+            &g_GameErrorContext,
+            TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_ECLMANAGER);
         return false;
     }
-    if (!EffectManager::RegisterChain())
-    {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_EFFECTMANAGER);
+    if (!EffectManager::RegisterChain()) {
+        GameErrorContext::Log(
+            &g_GameErrorContext,
+            TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_EFFECTMANAGER);
         return false;
     }
-    if (!Gui::RegisterChain())
-    {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_GUI);
+    if (!Gui::RegisterChain()) {
+        GameErrorContext::Log(&g_GameErrorContext,
+                              TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_GUI);
         return false;
     }
-    if (g_GameManager.isInReplay == 0)
-    {
+    if (g_GameManager.isInReplay == 0) {
         ReplayManager::RegisterChain(0, "replay/th6_00.rpy");
     }
-    if (g_GameManager.demoMode == 0)
-    {
+    if (g_GameManager.demoMode == 0) {
         // Read boss battle, and store it for use when boss is started.
         g_Supervisor.ReadMidiFile(1, g_Stage.stdData->songPaths[1]);
         // Immediately start playing this level's theme.
@@ -457,8 +433,7 @@ bool GameManager::AddedCallback(GameManager *mgr)
     }
     mgr->isInRetryMenu = 0;
     mgr->isInMenu = 1;
-    if (g_Supervisor.curState != SUPERVISOR_STATE_GAMEMANAGER_REINIT)
-    {
+    if (g_Supervisor.curState != SUPERVISOR_STATE_GAMEMANAGER_REINIT) {
         g_Supervisor.unk1b4 = 0.0;
         g_Supervisor.unk1b8 = 0.0;
     }
@@ -466,18 +441,15 @@ bool GameManager::AddedCallback(GameManager *mgr)
     mgr->score = 0;
     mgr->isGameCompleted = 0;
     g_AsciiManager.InitializeVms();
-    if (failedToLoadReplay)
-    {
+    if (failedToLoadReplay) {
         g_Supervisor.curState = SUPERVISOR_STATE_MAINMENU;
     }
     g_Supervisor.unk198 = 3;
     return true;
 }
 
-bool GameManager::DeletedCallback(GameManager *mgr)
-{
-    if (!g_GameManager.demoMode)
-    {
+bool GameManager::DeletedCallback(GameManager *mgr) {
+    if (!g_GameManager.demoMode) {
         g_Supervisor.StopAudio();
     }
     Stage::CutChain();
@@ -493,14 +465,12 @@ bool GameManager::DeletedCallback(GameManager *mgr)
     return true;
 }
 
-void GameManager::CutChain()
-{
+void GameManager::CutChain() {
     g_Chain.Cut(&g_GameManagerCalcChain);
     g_Chain.Cut(&g_GameManagerDrawChain);
 }
 
-void GameManager::SetupCameraStageBackground(f32 extraRenderDistance)
-{
+void GameManager::SetupCameraStageBackground(f32 extraRenderDistance) {
     ZunVec3 eyeVec;
     ZunVec3 atVec;
     ZunVec3 upVec;
@@ -514,7 +484,8 @@ void GameManager::SetupCameraStageBackground(f32 extraRenderDistance)
 
     viewportMiddleWidth = g_Supervisor.viewport.width / 2.0f;
     viewportMiddleHeight = g_Supervisor.viewport.height / 2.0f;
-    aspectRatio = (f32)g_Supervisor.viewport.width / (f32)g_Supervisor.viewport.height;
+    aspectRatio =
+        (f32)g_Supervisor.viewport.width / (f32)g_Supervisor.viewport.height;
     fov = ZUN_PI * (30.0f / 180.0f);
     cameraDistance = viewportMiddleHeight / ZUN_TANF(fov / 2);
     upVec.x = 0.0f;
@@ -532,14 +503,14 @@ void GameManager::SetupCameraStageBackground(f32 extraRenderDistance)
 
     g_GameManager.cameraDistance = ZUN_FABSF(cameraDistance);
 
-    ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
+    ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(
+        fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
     g_AnmManager->SetTransformMatrix(MATRIX_PROJECTION, perspectiveMatrix);
     g_Supervisor.projectionMatrix = perspectiveMatrix;
     return;
 }
 
-void GameManager::SetupCamera(f32 extraRenderDistance)
-{
+void GameManager::SetupCamera(f32 extraRenderDistance) {
     ZunVec3 eyeVec;
     ZunVec3 atVec;
     ZunVec3 upVec;
@@ -557,7 +528,8 @@ void GameManager::SetupCamera(f32 extraRenderDistance)
 
     viewportMiddleWidth = g_Supervisor.viewport.width / 2.0f;
     viewportMiddleHeight = g_Supervisor.viewport.height / 2.0f;
-    aspectRatio = (f32)g_Supervisor.viewport.width / (f32)g_Supervisor.viewport.height;
+    aspectRatio =
+        (f32)g_Supervisor.viewport.width / (f32)g_Supervisor.viewport.height;
     fov = ZUN_PI * (30.0f / 180.0f);
     cameraDistance = viewportMiddleHeight / ZUN_TANF(fov / 2);
     upVec.x = 0.0f;
@@ -579,43 +551,37 @@ void GameManager::SetupCamera(f32 extraRenderDistance)
 
     g_GameManager.cameraDistance = ZUN_FABSF(cameraDistance);
 
-    ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
+    ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(
+        fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
     g_AnmManager->SetTransformMatrix(MATRIX_PROJECTION, perspectiveMatrix);
     g_Supervisor.projectionMatrix = perspectiveMatrix;
 
     return;
 }
 
-void GameManager::IncreaseSubrank(i32 amount)
-{
+void GameManager::IncreaseSubrank(i32 amount) {
     this->subRank = this->subRank + amount;
-    while (this->subRank >= 100)
-    {
+    while (this->subRank >= 100) {
         this->rank++;
         this->subRank -= 100;
     }
-    if (this->rank > this->maxRank)
-    {
+    if (this->rank > this->maxRank) {
         this->rank = this->maxRank;
     }
 }
 
-void GameManager::DecreaseSubrank(i32 amount)
-{
+void GameManager::DecreaseSubrank(i32 amount) {
     this->subRank = this->subRank - amount;
-    while (this->subRank < 0)
-    {
+    while (this->subRank < 0) {
         this->rank--;
         this->subRank += 100;
     }
-    if (this->rank < this->minRank)
-    {
+    if (this->rank < this->minRank) {
         this->rank = this->minRank;
     }
 }
 
-GameManager::GameManager()
-{
+GameManager::GameManager() {
 
     memset(this, 0, sizeof(GameManager));
 
@@ -625,11 +591,14 @@ GameManager::GameManager()
     (this->arcadeRegionSize).y = GAME_REGION_HEIGHT;
 }
 
-i32 GameManager::HasReachedMaxClears(i32 character, i32 shottype)
-{
-    return (this->clrd[shottype + character * 2].difficultyClearedWithRetries[1] == MAX_CLEARS ||
-            this->clrd[shottype + character * 2].difficultyClearedWithRetries[2] == MAX_CLEARS ||
-            this->clrd[shottype + character * 2].difficultyClearedWithRetries[3] == MAX_CLEARS);
+i32 GameManager::HasReachedMaxClears(i32 character, i32 shottype) {
+    return (
+        this->clrd[shottype + character * 2].difficultyClearedWithRetries[1] ==
+            MAX_CLEARS ||
+        this->clrd[shottype + character * 2].difficultyClearedWithRetries[2] ==
+            MAX_CLEARS ||
+        this->clrd[shottype + character * 2].difficultyClearedWithRetries[3] ==
+            MAX_CLEARS);
 }
 
 }; // namespace th06

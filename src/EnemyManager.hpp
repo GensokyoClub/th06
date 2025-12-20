@@ -5,10 +5,8 @@
 #include "Enemy.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
-struct RunningSpellcardInfo
-{
+namespace th06 {
+struct RunningSpellcardInfo {
     bool isCapturing;
     u32 isActive;
     i32 captureScore;
@@ -16,8 +14,7 @@ struct RunningSpellcardInfo
     bool usedBomb;
 };
 
-struct EnemyManager
-{
+struct EnemyManager {
     void Initialize();
     EnemyManager();
     static bool RegisterChain(const char *stgEnm1, const char *stgEnm2);
@@ -28,7 +25,8 @@ struct EnemyManager
     static bool DeletedCallback(EnemyManager *enemyManager);
 
     void RunEclTimeline();
-    Enemy *SpawnEnemy(i32 eclSubId, ZunVec3 *pos, i16 life, i16 itemDrop, i32 score);
+    Enemy *SpawnEnemy(i32 eclSubId, ZunVec3 *pos, i16 life, i16 itemDrop,
+                      i32 score);
 
     const char *stgEnmAnmFilename;
     const char *stgEnm2AnmFilename;

@@ -4,8 +4,7 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
+namespace th06 {
 enum ItemType : i16 // This enum is 1 byte in size on Enemy
 {
     ITEM_POWER_SMALL,
@@ -19,8 +18,7 @@ enum ItemType : i16 // This enum is 1 byte in size on Enemy
     ITEM_NO_ITEM = -1,
 };
 
-struct Item
-{
+struct Item {
     AnmVm sprite;
     ZunVec3 currentPosition;
     ZunVec3 startPosition;
@@ -32,8 +30,7 @@ struct Item
     i8 state;
 };
 
-struct ItemManager
-{
+struct ItemManager {
     ItemManager();
     void SpawnItem(ZunVec3 *position, ItemType type, i32 state);
     void OnUpdate();

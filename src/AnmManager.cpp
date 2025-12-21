@@ -53,6 +53,17 @@ constexpr int countr_zero(T x) noexcept {
 #endif
 }
 
+// replaces X & ~(1 << countr_zero(X))
+template<typename T>
+T turn_off_rightmost_one(T val) {
+  return val & (val - 1);
+}
+// replaces X & 1 << countr_zero(X)
+template<typename T>
+T isolate_rightmost_one(T val) {
+  return val & -val;
+}
+
 template <typename T>
 constexpr T bit_ceil(T x) noexcept {
     static_assert(std::is_unsigned_v<T>, "bit_ceil requires an unsigned integer type");
@@ -806,14 +817,14 @@ void AnmManager::SetRenderStateForVm(AnmVm *vm) {
 
 void AnmManager::UpdateDirtyStates() {
     while (this->dirtyFlags != 0) {
-        u32 currFlagIndex = countr_zero(this->dirtyFlags);
-        this->dirtyFlags &= ~(1 << currFlagIndex);
+        u32 curFlagIndex = countr_zero(this->dirtyFlags);
+        this->dirtyFlags &= ~(1 << curFlagIndex);
 
         // This would all be nicer if the enum was flag values rather than
         // indices,
         //   but compilers just aren't able to deal with that in the switch
         //   statement :/
-        switch (currFlagIndex) {
+        switch (curFlagIndex) {
         case DIRTY_FOG:
             if (this->dirtyFogNear != this->fogNear ||
                 this->dirtyFogFar != this->fogFar) {
@@ -853,11 +864,12 @@ void AnmManager::UpdateDirtyStates() {
             this->enabledVertexAttributes = this->dirtyEnabledVertexAttributes;
 
             while (changedAttributes != 0) {
-                u8 currBit = countr_zero(changedAttributes);
+                u8 isolated = isolate_rightmost_one(changedAttributes);
                 gfxBackend->ToggleVertexAttribute(
-                    changedAttributes & (1 << currBit),
-                    this->enabledVertexAttributes & (1 << currBit));
-                changedAttributes &= ~(1 << currBit);
+                    isolated,
+                    this->enabledVertexAttributes & isolated
+                );
+                changedAttributes = turn_off_rightmost_one(changedAttributes);
             }
 
             break;
@@ -900,13 +912,13 @@ void AnmManager::UpdateDirtyStates() {
         case DIRTY_PROJECTION_MATRIX:
         case DIRTY_TEXTURE_MATRIX:
             std::memcpy(
-                &this->transformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX],
-                &this->dirtyTransformMatrices[currFlagIndex -
-                                              DIRTY_MODEL_MATRIX],
-                sizeof(*this->transformMatrices));
+                &this->transformMatrices[curFlagIndex - DIRTY_MODEL_MATRIX],
+                &this->dirtyTransformMatrices[curFlagIndex - DIRTY_MODEL_MATRIX],
+                sizeof(*this->transformMatrices)
+            );
             gfxBackend->SetTransformMatrix(
-                (TransformMatrix)(currFlagIndex - DIRTY_MODEL_MATRIX),
-                this->transformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX]);
+                (TransformMatrix)(curFlagIndex - DIRTY_MODEL_MATRIX),
+                this->transformMatrices[curFlagIndex - DIRTY_MODEL_MATRIX]);
         }
     }
 }

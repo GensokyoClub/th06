@@ -80,7 +80,7 @@ project "th06"
 
   includedirs { "src" }
 
-  filter "toolset:gcc"   buildoptions { "-Wall", "-Wextra", "-Wpedantic" }
+  filter "toolset:gcc"   buildoptions { "-Wall", "-Wextra", "-Wpedantic", "-fjump-tables" }
   filter "toolset:clang" buildoptions { "-Wall", "-Wextra", "-Wpedantic", "-Wno-gnu-anonymous-struct" }
   filter {}
 

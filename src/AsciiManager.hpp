@@ -34,10 +34,6 @@ struct AsciiManagerPopup {
     u8 characterCount;
 };
 
-struct WeirdPadding {
-    u32 unk;
-};
-
 // The AsciiManager is responsible for drawing various textual elements on the
 // screen:
 //
@@ -79,13 +75,10 @@ struct AsciiManager {
     ZunVec2 scale;
     // If true, we are drawing an element of the Gui class.
     u32 isGui;
-    // If true, we are drawing the currently selected element of the MainMenu
-    // class.
+    // If true, we are drawing the currently selected element of the MainMenu class.
     bool isSelected;
     i32 nextPopupIndex1;
     i32 nextPopupIndex2;
-    // Seems unused
-    // WeirdPadding unk3;
     // Menu that shows up when the player presses the menu button while in-game.
     StageMenu gameMenu;
     // Menu that shows up when the player dies after losing their last life.

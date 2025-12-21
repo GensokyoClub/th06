@@ -18,11 +18,9 @@ ChainElem g_AsciiManagerCalcChain;
 ChainElem g_AsciiManagerOnDrawMenusChain;
 ChainElem g_AsciiManagerOnDrawPopupsChain;
 
-AsciiManager::AsciiManager() {
-}
+AsciiManager::AsciiManager() {}
 
-StageMenu::StageMenu() {
-}
+StageMenu::StageMenu() {}
 
 ChainCallbackResult AsciiManager::OnUpdate(AsciiManager *mgr) {
     if (!g_GameManager.isInGameMenu && !g_GameManager.isInRetryMenu) {
@@ -33,8 +31,7 @@ ChainCallbackResult AsciiManager::OnUpdate(AsciiManager *mgr) {
                 continue;
             }
 
-            curPopup->position.y -=
-                0.5f * g_Supervisor.effectiveFramerateMultiplier;
+            curPopup->position.y -= 0.5f * g_Supervisor.effectiveFramerateMultiplier;
             curPopup->timer.Tick();
             if (curPopup->timer > 60) {
                 curPopup->inUse = false;
@@ -73,13 +70,11 @@ bool AsciiManager::RegisterChain() {
     g_AsciiManagerCalcChain.callback = (ChainCallback)AsciiManager::OnUpdate;
     g_AsciiManagerCalcChain.addedCallback = NULL;
     g_AsciiManagerCalcChain.deletedCallback = NULL;
-    g_AsciiManagerCalcChain.addedCallback =
-        (ChainAddedCallback)AsciiManager::AddedCallback;
-    g_AsciiManagerCalcChain.deletedCallback =
-        (ChainDeletedCallback)AsciiManager::DeletedCallback;
+    g_AsciiManagerCalcChain.addedCallback = (ChainAddedCallback)AsciiManager::AddedCallback;
+    g_AsciiManagerCalcChain.deletedCallback = (ChainDeletedCallback)AsciiManager::DeletedCallback;
     g_AsciiManagerCalcChain.arg = mgr;
-    if (!g_Chain.AddToCalcChain(&g_AsciiManagerCalcChain,
-                                TH_CHAIN_PRIO_CALC_ASCIIMANAGER)) {
+
+    if (!g_Chain.AddToCalcChain(&g_AsciiManagerCalcChain, TH_CHAIN_PRIO_CALC_ASCIIMANAGER)) {
         return false;
     }
 
@@ -87,15 +82,13 @@ bool AsciiManager::RegisterChain() {
     g_AsciiManagerOnDrawMenusChain.addedCallback = NULL;
     g_AsciiManagerOnDrawMenusChain.deletedCallback = NULL;
     g_AsciiManagerOnDrawMenusChain.arg = mgr;
-    g_Chain.AddToDrawChain(&g_AsciiManagerOnDrawMenusChain,
-                           TH_CHAIN_PRIO_DRAW_ASCIIMANAGER_MENUS);
+    g_Chain.AddToDrawChain(&g_AsciiManagerOnDrawMenusChain, TH_CHAIN_PRIO_DRAW_ASCIIMANAGER_MENUS);
 
     g_AsciiManagerOnDrawPopupsChain.callback = (ChainCallback)OnDrawPopups;
     g_AsciiManagerOnDrawPopupsChain.addedCallback = NULL;
     g_AsciiManagerOnDrawPopupsChain.deletedCallback = NULL;
     g_AsciiManagerOnDrawPopupsChain.arg = mgr;
-    g_Chain.AddToDrawChain(&g_AsciiManagerOnDrawPopupsChain,
-                           TH_CHAIN_PRIO_DRAW_ASCIIMANAGER_POPUPS);
+    g_Chain.AddToDrawChain(&g_AsciiManagerOnDrawPopupsChain, TH_CHAIN_PRIO_DRAW_ASCIIMANAGER_POPUPS);
 
     return true;
 }
@@ -103,18 +96,16 @@ bool AsciiManager::RegisterChain() {
 bool AsciiManager::AddedCallback(AsciiManager *s) {
     int x, y, z;
 
-    if (!g_AnmManager->LoadAnm(ANM_FILE_ASCII, "data/ascii.anm",
-                               ANM_OFFSET_ASCII)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_ASCII, "data/ascii.anm", ANM_OFFSET_ASCII)) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_ASCIIS, "data/asciis.anm",
-                               ANM_OFFSET_ASCIIS)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_ASCIIS, "data/asciis.anm", ANM_OFFSET_ASCIIS)) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_CAPTURE, "data/capture.anm",
-                               ANM_OFFSET_CAPTURE)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_CAPTURE, "data/capture.anm", ANM_OFFSET_CAPTURE)) {
         return false;
     }
+
     s->InitializeVms();
     return true;
 }
@@ -188,19 +179,15 @@ void AsciiManager::AddFormatText(ZunVec3 *position, const char *fmt, ...) {
 }
 
 void AsciiManager::DrawStrings(void) {
-    // i32 padding_1;
-    // i32 padding_2;
-    // i32 padding_3;
-    i32 i;
-    bool guiString;
     f32 charWidth;
-    AsciiManagerString *string;
     u8 *text;
 
-    guiString = true;
-    string = this->strings;
+    bool guiString = true;
+    AsciiManagerString *string = this->strings;
     this->vm0.flags.isVisible = 1;
     this->vm0.flags.anchor = AnmVmAnchor_TopLeft;
+
+    i32 i;
     for (i = 0; i < this->numStrings; i++, string++) {
         this->vm0.pos = string->position;
         text = (u8 *)string->text;
@@ -249,21 +236,17 @@ void AsciiManager::DrawStrings(void) {
 }
 
 void AsciiManager::CreatePopup1(ZunVec3 *position, i32 value, ZunColor color) {
-    AsciiManagerPopup *popup;
-    i32 characterCount;
-
     if (this->nextPopupIndex1 >= (ARRAY_SIZE_SIGNED(this->popups) - 3)) {
         this->nextPopupIndex1 = 0;
     }
 
-    popup = &this->popups[this->nextPopupIndex1];
+    AsciiManagerPopup *popup = &this->popups[this->nextPopupIndex1];
     popup->inUse = 1;
-    characterCount = 0;
 
+    i32 characterCount = 0;
     if (value >= 0) {
         while (value) {
             popup->digits[characterCount++] = (char)(value % 10);
-
             value /= 10;
         }
     } else {
@@ -283,21 +266,17 @@ void AsciiManager::CreatePopup1(ZunVec3 *position, i32 value, ZunColor color) {
 }
 
 void AsciiManager::CreatePopup2(ZunVec3 *position, i32 value, ZunColor color) {
-    AsciiManagerPopup *popup;
-    i32 characterCount;
-
     if (this->nextPopupIndex2 >= 3) {
         this->nextPopupIndex2 = 0;
     }
 
-    popup = &this->popups[0x200 + this->nextPopupIndex2];
+    AsciiManagerPopup *popup = &this->popups[0x200 + this->nextPopupIndex2];
     popup->inUse = 1;
-    characterCount = 0;
 
+    i32 characterCount = 0;
     if (value >= 0) {
         while (value) {
             popup->digits[characterCount++] = (char)(value % 10);
-
             value /= 10;
         }
     } else {
@@ -335,12 +314,10 @@ enum UpdateGameMenuState {
 
 #define GAME_MENU_SPRITES_START_PAUSE GAME_MENU_SPRITE_TITLE_PAUSE
 #define GAME_MENU_SPRITES_COUNT_PAUSE 3
-#define GAME_MENU_SPRITES_END_PAUSE \
-    (GAME_MENU_SPRITES_START_PAUSE + GAME_MENU_SPRITES_COUNT_PAUSE)
+#define GAME_MENU_SPRITES_END_PAUSE (GAME_MENU_SPRITES_START_PAUSE + GAME_MENU_SPRITES_COUNT_PAUSE)
 #define GAME_MENU_SPRITES_START_QUIT GAME_MENU_SPRITE_TITLE_QUIT
 #define GAME_MENU_SPRITES_COUNT_QUIT 3
-#define GAME_MENU_SPRITES_END_QUIT \
-    (GAME_MENU_SPRITES_START_QUIT + GAME_MENU_SPRITES_COUNT_QUIT)
+#define GAME_MENU_SPRITES_END_QUIT (GAME_MENU_SPRITES_START_QUIT + GAME_MENU_SPRITES_COUNT_QUIT)
 
 i32 StageMenu::OnUpdateGameMenu() {
     i32 vmIdx;
@@ -367,36 +344,30 @@ i32 StageMenu::OnUpdateGameMenu() {
     switch (this->curState) {
     case GAME_MENU_PAUSE_OPENING:
         for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites); vmIdx++) {
-            g_AnmManager->SetAndExecuteScriptIdx(&this->menuSprites[vmIdx],
-                                                 vmIdx + 2);
+            g_AnmManager->SetAndExecuteScriptIdx(&this->menuSprites[vmIdx], vmIdx + 2);
         }
-        for (vmIdx = GAME_MENU_SPRITES_START_PAUSE;
-             vmIdx < GAME_MENU_SPRITES_END_PAUSE; vmIdx++) {
+        for (vmIdx = GAME_MENU_SPRITES_START_PAUSE; vmIdx < GAME_MENU_SPRITES_END_PAUSE; vmIdx++) {
             this->menuSprites[vmIdx].pendingInterrupt = 1;
         }
         this->curState++;
         this->numFrames = 0;
         if (g_Supervisor.lockableBackbuffer) {
             g_AnmManager->RequestScreenshot();
-            g_AnmManager->SetAndExecuteScriptIdx(&this->menuBackground,
-                                                 ANM_SCRIPT_CAPTURE_PAUSE_BG);
+            g_AnmManager->SetAndExecuteScriptIdx(&this->menuBackground, ANM_SCRIPT_CAPTURE_PAUSE_BG);
             this->menuBackground.pos.x = GAME_REGION_LEFT;
             this->menuBackground.pos.y = GAME_REGION_TOP;
             this->menuBackground.pos.z = 0.0f;
         }
     case GAME_MENU_PAUSE_CURSOR_UNPAUSE:
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].color =
-            COLOR_LIGHT_RED;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].color =
-            COLOR_SET_ALPHA(COLOR_GREY, 0x80);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].color = COLOR_LIGHT_RED;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleY = 1.7f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleX = 1.7f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleY = 1.5f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleX = 1.5f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].posOffset =
-            ZunVec3(-4.0f, -4.0f, 0.0f);
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].posOffset =
-            ZunVec3(0.0f, 0.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].posOffset = ZunVec3(-4.0f, -4.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].posOffset = ZunVec3(0.0f, 0.0f, 0.0f);
+
         if (4 <= this->numFrames) {
             if (WAS_PRESSED(TH_BUTTON_UP) || WAS_PRESSED(TH_BUTTON_DOWN)) {
                 this->curState = GAME_MENU_PAUSE_CURSOR_QUIT;
@@ -413,17 +384,14 @@ i32 StageMenu::OnUpdateGameMenu() {
         }
         break;
     case GAME_MENU_PAUSE_CURSOR_QUIT:
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].color =
-            COLOR_SET_ALPHA(COLOR_GREY, 0x80);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].color = COLOR_LIGHT_RED;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleY = 1.5f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleX = 1.5f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleY = 1.7f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleX = 1.7f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].posOffset =
-            ZunVec3(0.0f, 0.0f, 0.0f);
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].posOffset =
-            ZunVec3(-4.0f, -4.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].posOffset = ZunVec3(0.0f, 0.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].posOffset = ZunVec3(-4.0f, -4.0f, 0.0f);
         if (4 <= this->numFrames) {
             if (WAS_PRESSED(TH_BUTTON_UP) || WAS_PRESSED(TH_BUTTON_DOWN)) {
                 this->curState = GAME_MENU_PAUSE_CURSOR_UNPAUSE;
@@ -447,31 +415,26 @@ i32 StageMenu::OnUpdateGameMenu() {
         if (20 <= this->numFrames) {
             this->curState = GAME_MENU_PAUSE_OPENING;
             g_GameManager.isInGameMenu = 0;
-            for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites);
-                 vmIdx++) {
+            for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites); vmIdx++) {
                 this->menuSprites[vmIdx].SetInvisible();
             }
         }
         break;
     case GAME_MENU_QUIT_CURSOR_YES:
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].color = COLOR_LIGHT_RED;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].color =
-            COLOR_SET_ALPHA(COLOR_GREY, 0x80);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleY = 1.7f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleX = 1.7f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleY = 1.5f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleX = 1.5f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].posOffset =
-            ZunVec3(-4.0f, -4.0f, 0.0f);
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].posOffset =
-            ZunVec3(0.0f, 0.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].posOffset = ZunVec3(-4.0f, -4.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].posOffset = ZunVec3(0.0f, 0.0f, 0.0f);
         if (4 <= this->numFrames) {
             if (WAS_PRESSED(TH_BUTTON_UP) || WAS_PRESSED(TH_BUTTON_DOWN)) {
                 this->curState = GAME_MENU_QUIT_CURSOR_NO;
             }
             if (WAS_PRESSED(TH_BUTTON_SHOOT)) {
-                for (vmIdx = GAME_MENU_SPRITES_START_QUIT;
-                     vmIdx < GAME_MENU_SPRITES_END_QUIT; vmIdx++) {
+                for (vmIdx = GAME_MENU_SPRITES_START_QUIT; vmIdx < GAME_MENU_SPRITES_END_QUIT; vmIdx++) {
                     this->menuSprites[vmIdx].pendingInterrupt = 2;
                 }
                 this->curState = GAME_MENU_QUIT_SELECTED_YES;
@@ -480,28 +443,23 @@ i32 StageMenu::OnUpdateGameMenu() {
         }
         break;
     case GAME_MENU_QUIT_CURSOR_NO:
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].color =
-            COLOR_SET_ALPHA(COLOR_GREY, 0x80);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].color = COLOR_LIGHT_RED;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleY = 1.5f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleX = 1.5f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleY = 1.7f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleX = 1.7f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].posOffset =
-            ZunVec3(0.0f, 0.0f, 0.0f);
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].posOffset =
-            ZunVec3(-4.0f, -4.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].posOffset = ZunVec3(0.0f, 0.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].posOffset = ZunVec3(-4.0f, -4.0f, 0.0f);
         if (GAME_MENU_SPRITE_CURSOR_YES <= this->numFrames) {
             if (WAS_PRESSED(TH_BUTTON_UP) || WAS_PRESSED(TH_BUTTON_DOWN)) {
                 this->curState = GAME_MENU_QUIT_CURSOR_YES;
             }
             if (WAS_PRESSED(TH_BUTTON_SHOOT)) {
-                for (vmIdx = GAME_MENU_SPRITES_START_PAUSE;
-                     vmIdx < GAME_MENU_SPRITES_END_PAUSE; vmIdx++) {
+                for (vmIdx = GAME_MENU_SPRITES_START_PAUSE; vmIdx < GAME_MENU_SPRITES_END_PAUSE; vmIdx++) {
                     this->menuSprites[vmIdx].pendingInterrupt = 1;
                 }
-                for (vmIdx = GAME_MENU_SPRITES_START_QUIT;
-                     vmIdx < GAME_MENU_SPRITES_END_QUIT; vmIdx++) {
+                for (vmIdx = GAME_MENU_SPRITES_START_QUIT; vmIdx < GAME_MENU_SPRITES_END_QUIT; vmIdx++) {
                     this->menuSprites[vmIdx].pendingInterrupt = 2;
                 }
                 this->curState = GAME_MENU_PAUSE_CURSOR_QUIT;
@@ -514,8 +472,7 @@ i32 StageMenu::OnUpdateGameMenu() {
             this->curState = GAME_MENU_PAUSE_OPENING;
             g_GameManager.isInGameMenu = 0;
             g_Supervisor.curState = SUPERVISOR_STATE_MAINMENU;
-            for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites);
-                 vmIdx++) {
+            for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites); vmIdx++) {
                 this->menuSprites[vmIdx].SetInvisible();
             }
         }
@@ -596,126 +553,113 @@ i32 StageMenu::OnUpdateRetryMenu() {
         return 1;
     }
     switch (this->curState) {
-    case RETRY_MENU_OPENING:
-        if (this->numFrames == 0) {
-            for (idx = RETRY_MENU_SPRITES_START; idx < RETRY_MENU_SPRITES_END;
-                 idx++) {
-                if (idx < 2) {
-                    g_AnmManager->SetAndExecuteScriptIdx(
-                        &this->menuSprites[idx], idx + 8);
-                } else {
-                    g_AnmManager->SetAndExecuteScriptIdx(
-                        &this->menuSprites[idx], idx + 4);
+        case RETRY_MENU_OPENING:
+            if (this->numFrames == 0) {
+                for (idx = RETRY_MENU_SPRITES_START; idx < RETRY_MENU_SPRITES_END; idx++) {
+                    if (idx < 2) {
+                        g_AnmManager->SetAndExecuteScriptIdx(&this->menuSprites[idx], idx + 8);
+                    } else {
+                        g_AnmManager->SetAndExecuteScriptIdx(&this->menuSprites[idx], idx + 4);
+                    }
+                    this->menuSprites[idx].pendingInterrupt = 1;
                 }
-                this->menuSprites[idx].pendingInterrupt = 1;
+                if (g_Supervisor.lockableBackbuffer) {
+                    g_AnmManager->RequestScreenshot();
+                    g_AnmManager->SetAndExecuteScriptIdx(&this->menuBackground, ANM_SCRIPT_CAPTURE_PAUSE_BG);
+                    this->menuBackground.pos.x = GAME_REGION_LEFT;
+                    this->menuBackground.pos.y = GAME_REGION_TOP;
+                    this->menuBackground.pos.z = 0.0f;
+                }
             }
-            if (g_Supervisor.lockableBackbuffer) {
-                g_AnmManager->RequestScreenshot();
-                g_AnmManager->SetAndExecuteScriptIdx(
-                    &this->menuBackground, ANM_SCRIPT_CAPTURE_PAUSE_BG);
-                this->menuBackground.pos.x = GAME_REGION_LEFT;
-                this->menuBackground.pos.y = GAME_REGION_TOP;
-                this->menuBackground.pos.z = 0.0f;
+            if (this->numFrames > 8)
+                break;
+            this->curState += RETRY_MENU_CURSOR_NO;
+            this->numFrames = 0;
+        case RETRY_MENU_CURSOR_YES:
+            this->menuSprites[RETRY_MENU_SPRITE_YES].color = COLOR_LIGHT_RED;
+            this->menuSprites[RETRY_MENU_SPRITE_NO].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
+            this->menuSprites[RETRY_MENU_SPRITE_YES].scaleY = 1.7f;
+            this->menuSprites[RETRY_MENU_SPRITE_YES].scaleX = 1.7f;
+            this->menuSprites[RETRY_MENU_SPRITE_NO].scaleY = 1.5f;
+            this->menuSprites[RETRY_MENU_SPRITE_NO].scaleX = 1.5f;
+            this->menuSprites[RETRY_MENU_SPRITE_YES].posOffset = ZunVec3(-4.0f, -4.0f, 0.0f);
+            this->menuSprites[RETRY_MENU_SPRITE_NO].posOffset = ZunVec3(0.0f, 0.0f, 0.0f);
+            if (4 <= this->numFrames) {
+                if (WAS_PRESSED(TH_BUTTON_UP) || WAS_PRESSED(TH_BUTTON_DOWN)) {
+                    this->curState = RETRY_MENU_CURSOR_NO;
+                }
+                if (WAS_PRESSED(TH_BUTTON_SHOOT)) {
+                    for (idx = RETRY_MENU_SPRITES_START;
+                        idx < RETRY_MENU_SPRITES_END; idx++) {
+                        this->menuSprites[idx].pendingInterrupt = 2;
+                    }
+                    this->curState = RETRY_MENU_SELECTED_YES;
+                    this->menuBackground.pendingInterrupt = 1;
+                    this->numFrames = 0;
+                }
             }
-        }
-        if (this->numFrames > 8)
             break;
-        this->curState += RETRY_MENU_CURSOR_NO;
-        this->numFrames = 0;
-    case RETRY_MENU_CURSOR_YES:
-        this->menuSprites[RETRY_MENU_SPRITE_YES].color = COLOR_LIGHT_RED;
-        this->menuSprites[RETRY_MENU_SPRITE_NO].color =
-            COLOR_SET_ALPHA(COLOR_GREY, 0x80);
-        this->menuSprites[RETRY_MENU_SPRITE_YES].scaleY = 1.7f;
-        this->menuSprites[RETRY_MENU_SPRITE_YES].scaleX = 1.7f;
-        this->menuSprites[RETRY_MENU_SPRITE_NO].scaleY = 1.5f;
-        this->menuSprites[RETRY_MENU_SPRITE_NO].scaleX = 1.5f;
-        this->menuSprites[RETRY_MENU_SPRITE_YES].posOffset =
-            ZunVec3(-4.0f, -4.0f, 0.0f);
-        this->menuSprites[RETRY_MENU_SPRITE_NO].posOffset =
-            ZunVec3(0.0f, 0.0f, 0.0f);
-        if (4 <= this->numFrames) {
-            if (WAS_PRESSED(TH_BUTTON_UP) || WAS_PRESSED(TH_BUTTON_DOWN)) {
-                this->curState = RETRY_MENU_CURSOR_NO;
-            }
-            if (WAS_PRESSED(TH_BUTTON_SHOOT)) {
-                for (idx = RETRY_MENU_SPRITES_START;
-                     idx < RETRY_MENU_SPRITES_END; idx++) {
-                    this->menuSprites[idx].pendingInterrupt = 2;
+        case RETRY_MENU_CURSOR_NO:
+            this->menuSprites[RETRY_MENU_SPRITE_NO].color = COLOR_LIGHT_RED;
+            this->menuSprites[RETRY_MENU_SPRITE_YES].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
+            this->menuSprites[RETRY_MENU_SPRITE_YES].scaleY = 1.5f;
+            this->menuSprites[RETRY_MENU_SPRITE_YES].scaleX = 1.5f;
+            this->menuSprites[RETRY_MENU_SPRITE_NO].scaleY = 1.7f;
+            this->menuSprites[RETRY_MENU_SPRITE_NO].scaleX = 1.7f;
+            this->menuSprites[RETRY_MENU_SPRITE_NO].posOffset = ZunVec3(-4.0f, -4.0f, 0.0f);
+            this->menuSprites[RETRY_MENU_SPRITE_YES].posOffset = ZunVec3(0.0f, 0.0f, 0.0f);
+            if (this->numFrames >= 30) {
+                if (WAS_PRESSED(TH_BUTTON_UP) || WAS_PRESSED(TH_BUTTON_DOWN)) {
+                    this->curState = RETRY_MENU_CURSOR_YES;
                 }
-                this->curState = RETRY_MENU_SELECTED_YES;
-                this->menuBackground.pendingInterrupt = 1;
-                this->numFrames = 0;
-            }
-        }
-        break;
-    case RETRY_MENU_CURSOR_NO:
-        this->menuSprites[RETRY_MENU_SPRITE_NO].color = COLOR_LIGHT_RED;
-        this->menuSprites[RETRY_MENU_SPRITE_YES].color =
-            COLOR_SET_ALPHA(COLOR_GREY, 0x80);
-        this->menuSprites[RETRY_MENU_SPRITE_YES].scaleY = 1.5f;
-        this->menuSprites[RETRY_MENU_SPRITE_YES].scaleX = 1.5f;
-        this->menuSprites[RETRY_MENU_SPRITE_NO].scaleY = 1.7f;
-        this->menuSprites[RETRY_MENU_SPRITE_NO].scaleX = 1.7f;
-        this->menuSprites[RETRY_MENU_SPRITE_NO].posOffset =
-            ZunVec3(-4.0f, -4.0f, 0.0f);
-        this->menuSprites[RETRY_MENU_SPRITE_YES].posOffset =
-            ZunVec3(0.0f, 0.0f, 0.0f);
-        if (this->numFrames >= 30) {
-            if (WAS_PRESSED(TH_BUTTON_UP) || WAS_PRESSED(TH_BUTTON_DOWN)) {
-                this->curState = RETRY_MENU_CURSOR_YES;
-            }
-            if (WAS_PRESSED(TH_BUTTON_SHOOT)) {
-                for (idx = RETRY_MENU_SPRITES_START;
-                     idx < RETRY_MENU_SPRITES_END; idx++) {
-                    this->menuSprites[idx].pendingInterrupt = 2;
+                if (WAS_PRESSED(TH_BUTTON_SHOOT)) {
+                    for (idx = RETRY_MENU_SPRITES_START; idx < RETRY_MENU_SPRITES_END; idx++) {
+                        this->menuSprites[idx].pendingInterrupt = 2;
+                    }
+                    this->curState = RETRY_MENU_SELECTED_NO;
+                    this->numFrames = 0;
                 }
-                this->curState = RETRY_MENU_SELECTED_NO;
+            }
+            break;
+        case RETRY_MENU_SELECTED_NO:
+            if (this->numFrames >= 20) {
+                this->curState = 0;
                 this->numFrames = 0;
+                g_GameManager.isInRetryMenu = 0;
+                g_Supervisor.curState = SUPERVISOR_STATE_RESULTSCREEN_FROMGAME;
+                for (idx = RETRY_MENU_SPRITES_START; idx < RETRY_MENU_SPRITES_END; idx++) {
+                    this->menuSprites[idx].SetInvisible();
+                }
+                g_GameManager.guiScore = g_GameManager.score;
+                return 0;
             }
-        }
-        break;
-    case RETRY_MENU_SELECTED_NO:
-        if (this->numFrames >= 20) {
-            this->curState = 0;
-            this->numFrames = 0;
-            g_GameManager.isInRetryMenu = 0;
-            g_Supervisor.curState = SUPERVISOR_STATE_RESULTSCREEN_FROMGAME;
-            for (idx = RETRY_MENU_SPRITES_START; idx < RETRY_MENU_SPRITES_END;
-                 idx++) {
-                this->menuSprites[idx].SetInvisible();
+            break;
+        case RETRY_MENU_SELECTED_YES:
+            if (this->numFrames >= 30) {
+                this->curState = 0;
+                this->numFrames = 0;
+                g_GameManager.isInRetryMenu = 0;
+                for (idx = RETRY_MENU_SPRITES_START; idx < RETRY_MENU_SPRITES_END; idx++) {
+                    this->menuSprites[idx].SetInvisible();
+                }
+                g_GameManager.numRetries++;
+                g_GameManager.guiScore = g_GameManager.numRetries;
+                g_GameManager.nextScoreIncrement = 0;
+                g_GameManager.score = g_GameManager.guiScore;
+                g_GameManager.livesRemaining = g_Supervisor.defaultConfig.lifeCount;
+                g_GameManager.bombsRemaining = g_Supervisor.defaultConfig.bombCount;
+                g_GameManager.grazeInStage = 0;
+                g_GameManager.currentPower = 0;
+                g_GameManager.pointItemsCollectedInStage = 0;
+                g_GameManager.extraLives = 0;
+                g_Gui.flags.flag0 = 2;
+                g_Gui.flags.flag1 = 2;
+                g_Gui.flags.flag3 = 2;
+                g_Gui.flags.flag4 = 2;
+                g_Gui.flags.flag2 = 2;
+                return 0;
             }
-            g_GameManager.guiScore = g_GameManager.score;
-            return 0;
-        }
-        break;
-    case RETRY_MENU_SELECTED_YES:
-        if (this->numFrames >= 30) {
-            this->curState = 0;
-            this->numFrames = 0;
-            g_GameManager.isInRetryMenu = 0;
-            for (idx = RETRY_MENU_SPRITES_START; idx < RETRY_MENU_SPRITES_END;
-                 idx++) {
-                this->menuSprites[idx].SetInvisible();
-            }
-            g_GameManager.numRetries++;
-            g_GameManager.guiScore = g_GameManager.numRetries;
-            g_GameManager.nextScoreIncrement = 0;
-            g_GameManager.score = g_GameManager.guiScore;
-            g_GameManager.livesRemaining = g_Supervisor.defaultConfig.lifeCount;
-            g_GameManager.bombsRemaining = g_Supervisor.defaultConfig.bombCount;
-            g_GameManager.grazeInStage = 0;
-            g_GameManager.currentPower = 0;
-            g_GameManager.pointItemsCollectedInStage = 0;
-            g_GameManager.extraLives = 0;
-            g_Gui.flags.flag0 = 2;
-            g_Gui.flags.flag1 = 2;
-            g_Gui.flags.flag3 = 2;
-            g_Gui.flags.flag4 = 2;
-            g_Gui.flags.flag2 = 2;
-            return 0;
-        }
-        break;
+            break;
     }
     for (idx = RETRY_MENU_SPRITES_START; idx < RETRY_MENU_SPRITES_END; idx++) {
         g_AnmManager->ExecuteScript(&this->menuSprites[idx]);
@@ -737,25 +681,16 @@ void StageMenu::OnDrawRetryMenu() {
         g_Supervisor.viewport.height = g_GameManager.arcadeRegionSize.y;
         g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
         g_Supervisor.viewport.Set();
-        //        g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
-        if (g_Supervisor.lockableBackbuffer &&
-            (this->curState != RETRY_MENU_OPENING || this->numFrames > 2)) {
+        if (g_Supervisor.lockableBackbuffer && (this->curState != RETRY_MENU_OPENING || this->numFrames > 2)) {
             g_AnmManager->DrawNoRotation(&this->menuBackground);
         }
-        if (this->curState == RETRY_MENU_CURSOR_YES ||
-            this->curState == RETRY_MENU_CURSOR_NO) {
-            this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER] =
-                this->menuSprites[RETRY_MENU_SPRITE_RETRIES_LABEL];
-            this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER].pos.x +=
-                8.0f *
-                this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER].scaleX;
-            this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER].sprite =
-                &g_AnmManager->sprites[30 - g_GameManager.numRetries];
-            g_AnmManager->DrawNoRotation(
-                &this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER]);
+        if (this->curState == RETRY_MENU_CURSOR_YES || this->curState == RETRY_MENU_CURSOR_NO) {
+            this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER] = this->menuSprites[RETRY_MENU_SPRITE_RETRIES_LABEL];
+            this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER].pos.x += 8.0f * this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER].scaleX;
+            this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER].sprite = &g_AnmManager->sprites[30 - g_GameManager.numRetries];
+            g_AnmManager->DrawNoRotation(&this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER]);
         }
-        for (idx = RETRY_MENU_SPRITES_START; idx < RETRY_MENU_SPRITES_END;
-             idx++) {
+        for (idx = RETRY_MENU_SPRITES_START; idx < RETRY_MENU_SPRITES_END; idx++) {
             if (this->menuSprites[idx].flags.isVisible) {
                 g_AnmManager->DrawNoRotation(&this->menuSprites[idx]);
             }
@@ -783,13 +718,11 @@ void AsciiManager::DrawPopupsWithHwVertexProcessing() {
             continue;
         }
 
-        this->vm1.pos.x =
-            currentPopup->position.x - (currentPopup->characterCount * 4);
+        this->vm1.pos.x = currentPopup->position.x - (currentPopup->characterCount * 4);
         this->vm1.pos.y = currentPopup->position.y;
         this->vm1.color = currentPopup->color;
 
-        currentDigit =
-            (u8 *)currentPopup->digits + currentPopup->characterCount - 1;
+        currentDigit = (u8 *)currentPopup->digits + currentPopup->characterCount - 1;
         for (j = currentPopup->characterCount; 0 < j; j--) {
             this->vm1.sprite = g_AnmManager->sprites + *currentDigit;
             if (*currentDigit >= '\n') {
@@ -829,13 +762,11 @@ void AsciiManager::DrawPopupsWithoutHwVertexProcessing() {
             continue;
         }
 
-        this->vm1.pos.x =
-            currentPopup->position.x - (currentPopup->characterCount * 4);
+        this->vm1.pos.x = currentPopup->position.x - (currentPopup->characterCount * 4);
         this->vm1.pos.y = currentPopup->position.y;
         this->vm1.color = currentPopup->color;
 
-        currentDigit =
-            (u8 *)currentPopup->digits + currentPopup->characterCount - 1;
+        currentDigit = (u8 *)currentPopup->digits + currentPopup->characterCount - 1;
         for (j = currentPopup->characterCount; 0 < j; j--) {
             this->vm1.sprite = g_AnmManager->sprites + *currentDigit;
             if (*currentDigit >= '\n') {

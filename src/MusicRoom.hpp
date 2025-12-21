@@ -6,7 +6,9 @@
 
 namespace th06 {
 struct TrackDescriptor {
-    TrackDescriptor() { memset(this, 0, sizeof(TrackDescriptor)); }
+    TrackDescriptor() {
+        memset(this, 0, sizeof(TrackDescriptor));
+    }
 
     char path[64];
     char title[34];
@@ -14,7 +16,9 @@ struct TrackDescriptor {
 };
 
 struct MusicRoom {
-    MusicRoom() { memset(this, 0, sizeof(MusicRoom)); }
+    MusicRoom() {
+        memset(this, 0, sizeof(MusicRoom));
+    }
 
     static bool AddedCallback(MusicRoom *musicRoom);
     static bool DeletedCallback(MusicRoom *musicRoom);

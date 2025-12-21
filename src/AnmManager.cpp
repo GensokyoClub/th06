@@ -10,7 +10,6 @@
 #include "i18n.hpp"
 #include "utils.hpp"
 
-#include <bit>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -20,6 +19,51 @@
 #include <SDL2/SDL_rwops.h>
 #include <SDL2/SDL_surface.h>
 
+
+template <typename T>
+constexpr int countr_zero(T x) noexcept {
+    static_assert(std::is_unsigned_v<T>, "countr_zero requires an unsigned type!");
+
+#if defined(__clang__) || defined(__GNUC__)
+    if constexpr (sizeof(T) <= sizeof(unsigned int))
+        return __builtin_ctz(static_cast<unsigned int>(x));
+    else if constexpr (sizeof(T) <= sizeof(unsigned long))
+        return __builtin_ctzl(static_cast<unsigned long>(x));
+    else
+        return __builtin_ctzll(static_cast<unsigned long long>(x));
+
+#elif defined(_MSC_VER)
+    unsigned long index;
+    if constexpr (sizeof(T) <= 4) {
+        _BitScanForward(&index, static_cast<unsigned long>(x));
+    } else {
+        _BitScanForward64(&index, static_cast<unsigned long long>(x));
+    }
+    return static_cast<int>(index);
+
+#else
+    constexpr int debruijn32[32] = {
+        0, 1, 28, 2, 29, 14, 24, 3,
+        30, 22, 20, 15, 25, 17, 4, 8,
+        31, 27, 13, 23, 21, 19, 16, 7,
+        26, 12, 18, 6, 11, 5, 10, 9
+    };
+    // :lesanae:
+    return debruijn32[((x & -x) * 0x077CB531u) >> 27];
+#endif
+}
+
+template <typename T>
+constexpr T bit_ceil(T x) noexcept {
+    static_assert(std::is_unsigned_v<T>, "bit_ceil requires an unsigned integer type");
+
+    if (x <= 1)
+        return T(1);
+
+    constexpr int digits = std::numeric_limits<T>::digits;
+    return T(1) << (digits - countr_zero(T(x - 1)));
+}
+
 namespace th06 {
 VertexTex1Xyzrhw g_PrimitivesToDrawVertexBuf[4];
 VertexTex1DiffuseXyzrhw g_PrimitivesToDrawNoVertexBuf[4];
@@ -28,19 +72,24 @@ AnmManager *g_AnmManager;
 
 SDL_PixelFormatEnum g_TextureFormatSDLMapping[6] = {
     SDL_PIXELFORMAT_UNKNOWN, SDL_PIXELFORMAT_RGBA32, SDL_PIXELFORMAT_RGBA5551,
-    SDL_PIXELFORMAT_RGB565,  SDL_PIXELFORMAT_RGB24,  SDL_PIXELFORMAT_RGBA4444};
+    SDL_PIXELFORMAT_RGB565, SDL_PIXELFORMAT_RGB24, SDL_PIXELFORMAT_RGBA4444
+};
 
-GLenum g_TextureFormatGLFormatMapping[6] = {0,      GL_RGBA, GL_RGBA,
-                                            GL_RGB, GL_RGB,  GL_RGBA};
+GLenum g_TextureFormatGLFormatMapping[6] = {
+    0, GL_RGBA, GL_RGBA,
+    GL_RGB, GL_RGB, GL_RGBA
+};
 
-GLenum g_TextureFormatGLTypeMapping[6] = {0,
-                                          GL_UNSIGNED_BYTE,
-                                          GL_UNSIGNED_SHORT_5_5_5_1,
-                                          GL_UNSIGNED_SHORT_5_6_5,
-                                          GL_UNSIGNED_BYTE,
-                                          GL_UNSIGNED_SHORT_4_4_4_4};
+GLenum g_TextureFormatGLTypeMapping[6] = {
+    0,
+    GL_UNSIGNED_BYTE,
+    GL_UNSIGNED_SHORT_5_5_5_1,
+    GL_UNSIGNED_SHORT_5_6_5,
+    GL_UNSIGNED_BYTE,
+    GL_UNSIGNED_SHORT_4_4_4_4
+};
 
-u8 g_TextureFormatBytesPerPixel[6] = {0, 4, 2, 2, 3, 2};
+u8 g_TextureFormatBytesPerPixel[6] = { 0, 4, 2, 2, 3, 2 };
 
 void AnmManager::CreateTextureObject() {
     g_glFuncTable.glGenTextures(1, &this->currentTextureHandle);
@@ -50,28 +99,21 @@ void AnmManager::CreateTextureObject() {
                                   GL_LINEAR);
 }
 
-SDL_Surface *AnmManager::LoadToSurfaceWithFormat(const char *filename,
-                                                 SDL_PixelFormatEnum format,
-                                                 u8 **fileData) {
-    u8 *data;
-    SDL_Surface *imageSrcSurface;
-    SDL_Surface *imageTargetSurface;
-    SDL_RWops *rwData;
-
-    data = FileSystem::OpenPath(filename);
+SDL_Surface *AnmManager::LoadToSurfaceWithFormat(const char *filename, SDL_PixelFormatEnum format, u8 **fileData) {
+    u8 *data = FileSystem::OpenPath(filename);
 
     if (data == NULL) {
         return NULL;
     }
 
-    rwData = SDL_RWFromConstMem(data, g_LastFileSize);
+    SDL_RWops *rwData = SDL_RWFromConstMem(data, g_LastFileSize);
 
     if (rwData == NULL) {
         std::free(data);
         return NULL;
     }
 
-    imageSrcSurface = IMG_Load_RW(rwData, 1);
+    SDL_Surface *imageSrcSurface = IMG_Load_RW(rwData, 1);
 
     if (imageSrcSurface == NULL) {
         utils::DebugPrint2("%s", SDL_GetError());
@@ -79,7 +121,7 @@ SDL_Surface *AnmManager::LoadToSurfaceWithFormat(const char *filename,
         return NULL;
     }
 
-    imageTargetSurface = SDL_ConvertSurfaceFormat(imageSrcSurface, format, 0);
+    SDL_Surface *imageTargetSurface = SDL_ConvertSurfaceFormat(imageSrcSurface, format, 0);
 
     SDL_FreeSurface(imageSrcSurface);
 
@@ -356,8 +398,8 @@ bool AnmManager::LoadTexture(i32 textureIdx, char *textureName,
             0, entry->width, entry->height,
             g_TextureFormatBytesPerPixel[textureFormat] * 8,
             g_TextureFormatSDLMapping[textureFormat]);
-        SDL_Rect srcRect = {0, 0, textureSurface->w, textureSurface->h};
-        SDL_Rect dstRect = {0, 0, entry->width, entry->height};
+        SDL_Rect srcRect = { 0, 0, textureSurface->w, textureSurface->h };
+        SDL_Rect dstRect = { 0, 0, entry->width, entry->height };
         SDL_BlitScaled(textureSurface, &srcRect, textureSurface2, &dstRect);
         SDL_FreeSurface(textureSurface);
         textureSurface = textureSurface2;
@@ -513,8 +555,8 @@ bool AnmManager::CreateEmptyTexture(i32 textureIdx, u32 width, u32 height,
     CreateTextureObject();
 
     this->textures[textureIdx].handle = this->currentTextureHandle;
-    this->textures[textureIdx].width = std::__bit_ceil(width);
-    this->textures[textureIdx].height = std::__bit_ceil(height);
+    this->textures[textureIdx].width = bit_ceil(width);
+    this->textures[textureIdx].height = bit_ceil(height);
     this->textures[textureIdx].format = textureFormat;
 
     g_glFuncTable.glTexImage2D(
@@ -761,7 +803,7 @@ void AnmManager::SetRenderStateForVm(AnmVm *vm) {
 
 void AnmManager::UpdateDirtyStates() {
     while (this->dirtyFlags != 0) {
-        u32 currFlagIndex = std::countr_zero(this->dirtyFlags);
+        u32 currFlagIndex = countr_zero(this->dirtyFlags);
         this->dirtyFlags &= ~(1 << currFlagIndex);
 
         // This would all be nicer if the enum was flag values rather than
@@ -808,7 +850,7 @@ void AnmManager::UpdateDirtyStates() {
             this->enabledVertexAttributes = this->dirtyEnabledVertexAttributes;
 
             while (changedAttributes != 0) {
-                u8 currBit = std::countr_zero(changedAttributes);
+                u8 currBit = countr_zero(changedAttributes);
                 gfxBackend->ToggleVertexAttribute(
                     changedAttributes & (1 << currBit),
                     this->enabledVertexAttributes & (1 << currBit));
@@ -1846,8 +1888,8 @@ void AnmManager::CopySurfaceRectToBackBuffer(i32 surfaceIdx, i32 dstX, i32 dstY,
     ApplySurfaceToColorBuffer(
         srcSurface,
         (SDL_Rect){
-            .x = rectLeft, .y = rectTop, .w = rectWidth, .h = rectHeight},
-        (SDL_Rect){.x = dstX, .y = dstY, .w = rectWidth, .h = rectHeight});
+            .x = rectLeft, .y = rectTop, .w = rectWidth, .h = rectHeight },
+        (SDL_Rect){ .x = dstX, .y = dstY, .w = rectWidth, .h = rectHeight });
 }
 
 void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width,
@@ -1965,8 +2007,8 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src,
 
     CreateTextureObject();
 
-    u32 textureWidth = std::__bit_ceil((u32)src->w);
-    u32 textureHeight = std::__bit_ceil((u32)src->h);
+    u32 textureWidth = bit_ceil((u32)src->w);
+    u32 textureHeight = bit_ceil((u32)src->h);
 
     g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth,
                                textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,

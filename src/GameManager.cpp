@@ -22,18 +22,18 @@
 
 namespace th06 {
 
-u32 g_ExtraLivesScores[5] = {10000000, 20000000, 40000000, 60000000,
-                             1900000000};
+u32 g_ExtraLivesScores[5] = { 10000000, 20000000, 40000000, 60000000,
+                              1900000000 };
 
-const char *g_EclFiles[9] = {"dummy",
-                             "data/ecldata1.ecl",
-                             "data/ecldata2.ecl",
-                             "data/ecldata3.ecl",
-                             "data/ecldata4.ecl",
-                             "data/ecldata5.ecl",
-                             "data/ecldata6.ecl",
-                             "data/ecldata7.ecl",
-                             NULL};
+const char *g_EclFiles[9] = { "dummy",
+                              "data/ecldata1.ecl",
+                              "data/ecldata2.ecl",
+                              "data/ecldata3.ecl",
+                              "data/ecldata4.ecl",
+                              "data/ecldata5.ecl",
+                              "data/ecldata6.ecl",
+                              "data/ecldata7.ecl",
+                              NULL };
 
 struct AnmStageFiles {
     const char *file1;
@@ -41,14 +41,14 @@ struct AnmStageFiles {
 };
 
 AnmStageFiles g_AnmStageFiles[8] = {
-    {"dummy", "dummy"},
-    {"data/stg1enm.anm", "data/stg1enm2.anm"},
-    {"data/stg2enm.anm", "data/stg2enm2.anm"},
-    {"data/stg3enm.anm", NULL},
-    {"data/stg4enm.anm", NULL},
-    {"data/stg5enm.anm", "data/stg5enm2.anm"},
-    {"data/stg6enm.anm", "data/stg6enm2.anm"},
-    {"data/stg7enm.anm", "data/stg7enm2.anm"},
+    { "dummy", "dummy" },
+    { "data/stg1enm.anm", "data/stg1enm2.anm" },
+    { "data/stg2enm.anm", "data/stg2enm2.anm" },
+    { "data/stg3enm.anm", NULL },
+    { "data/stg4enm.anm", NULL },
+    { "data/stg5enm.anm", "data/stg5enm2.anm" },
+    { "data/stg6enm.anm", "data/stg6enm2.anm" },
+    { "data/stg7enm.anm", "data/stg7enm2.anm" },
 };
 struct DifficultyInfo {
     u32 rank;
@@ -58,20 +58,20 @@ struct DifficultyInfo {
 
 DifficultyInfo g_DifficultyInfoForReplay[5] = {
     // rank, minRank, maxRank
-    /* EASY    */ {16, 12, 20},
-    /* NORMAL  */ {16, 10, 32},
-    /* HARD    */ {16, 10, 32},
-    /* LUNATIC */ {16, 10, 32},
-    /* EXTRA   */ {16, 14, 18},
+    /* EASY    */ { 16, 12, 20 },
+    /* NORMAL  */ { 16, 10, 32 },
+    /* HARD    */ { 16, 10, 32 },
+    /* LUNATIC */ { 16, 10, 32 },
+    /* EXTRA   */ { 16, 14, 18 },
 };
 
 DifficultyInfo g_DifficultyInfo[5] = {
     // rank, minRank, maxRank
-    /* EASY    */ {16, 12, 20},
-    /* NORMAL  */ {16, 10, 32},
-    /* HARD    */ {16, 10, 32},
-    /* LUNATIC */ {16, 10, 32},
-    /* EXTRA   */ {16, 14, 18},
+    /* EASY    */ { 16, 12, 20 },
+    /* NORMAL  */ { 16, 10, 32 },
+    /* HARD    */ { 16, 10, 32 },
+    /* LUNATIC */ { 16, 10, 32 },
+    /* EXTRA   */ { 16, 14, 18 },
 };
 
 // These are either on Supervisor.cpp or somewhere else

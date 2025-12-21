@@ -10,7 +10,9 @@ MidiDevice::MidiDevice() {
     this->hasConnection = false;
 }
 
-MidiDevice::~MidiDevice() { this->Close(); }
+MidiDevice::~MidiDevice() {
+    this->Close();
+}
 
 bool MidiDevice::OpenDevice(u32 uDeviceId) {
     (void)uDeviceId;
@@ -109,7 +111,7 @@ bool MidiDevice::SendLongMsg(u8 *buf, u32 len) {
 }
 
 bool MidiDevice::SendShortMsg(u8 midiStatus, u8 firstByte, u8 secondByte) {
-    u8 command[3] = {midiStatus, firstByte, secondByte};
+    u8 command[3] = { midiStatus, firstByte, secondByte };
 
     return this->SendLongMsg(command, 3);
 }

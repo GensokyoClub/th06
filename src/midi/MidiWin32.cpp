@@ -15,7 +15,9 @@ MidiDevice::MidiDevice() {
     this->midiHeadersCursor = 0;
 }
 
-MidiDevice::~MidiDevice() { this->Close(); }
+MidiDevice::~MidiDevice() {
+    this->Close();
+}
 
 bool MidiDevice::OpenDevice(u32 uDeviceId) {
     if (this->handle != 0) {
@@ -53,7 +55,8 @@ bool MidiDevice::Close() {
 }
 
 union MidiShortMsg {
-    struct {
+    struct
+    {
         u8 midiStatus;
         i8 firstByte;
         i8 secondByte;

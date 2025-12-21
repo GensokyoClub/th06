@@ -36,7 +36,9 @@ void Gui::EndEnemySpellcard() {
     return;
 }
 
-bool Gui::IsDialogueSkippable() { return (this->impl->msg).dialogueSkippable; }
+bool Gui::IsDialogueSkippable() {
+    return (this->impl->msg).dialogueSkippable;
+}
 
 void Gui::ShowBonusScore(u32 bonusScore) {
     this->impl->bonusScore.pos = ZunVec3(416.0f, 32.0f, 0.0f);
@@ -824,7 +826,9 @@ bool Gui::MsgWait() {
     return 0 <= this->impl->msg.currentMsgIdx;
 }
 
-bool Gui::HasCurrentMsgIdx() { return 0 <= this->impl->msg.currentMsgIdx; }
+bool Gui::HasCurrentMsgIdx() {
+    return 0 <= this->impl->msg.currentMsgIdx;
+}
 
 void Gui::UpdateStageElements() {
     i32 stageScore;
@@ -1319,7 +1323,9 @@ void Gui::DrawStageElements() {
     }
 }
 
-bool Gui::AddedCallback(Gui *gui) { return gui->ActualAddedCallback(); }
+bool Gui::AddedCallback(Gui *gui) {
+    return gui->ActualAddedCallback();
+}
 
 bool Gui::DeletedCallback(Gui *gui) {
     g_AnmManager->ReleaseAnm(ANM_FILE_FACE_STAGE_A);

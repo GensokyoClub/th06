@@ -11,9 +11,13 @@
 #include <cstring>
 
 namespace th06 {
-MidiTimer::MidiTimer() { this->timerId = 0; }
+MidiTimer::MidiTimer() {
+    this->timerId = 0;
+}
 
-MidiTimer::~MidiTimer() { this->StopTimer(); }
+MidiTimer::~MidiTimer() {
+    this->StopTimer();
+}
 
 void MidiTimer::StartTimer(u32 delay, SDL_TimerCallback cb, void *data) {
     this->StopTimer();

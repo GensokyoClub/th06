@@ -43,7 +43,11 @@ struct ControllerMapping {
     i16 skipButton;
 };
 
-enum MusicMode { OFF = 0, WAV = 1, MIDI = 2 };
+enum MusicMode {
+    OFF = 0,
+    WAV = 1,
+    MIDI = 2
+};
 
 struct GameConfiguration {
     ControllerMapping controllerMapping;
@@ -115,7 +119,9 @@ struct Supervisor {
 
     void TickTimer(i32 *frames, f32 *subframes);
 
-    f32 FramerateMultiplier() { return this->effectiveFramerateMultiplier; }
+    f32 FramerateMultiplier() {
+        return this->effectiveFramerateMultiplier;
+    }
 
     u32 RedrawWholeFrame() {
         // SDL makes no guarantees about frame state after buffer swap,

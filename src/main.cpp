@@ -78,7 +78,7 @@ static bool initialize_game() {
     }
 
 #ifdef __EMSCRIPTEN__
-    emscripten_set_element_css_size("#canvas", 640, 480);
+    emscripten_set_element_css_size("#canvas", GAME_WINDOW_WIDTH_REAL, GAME_WINDOW_HEIGHT_REAL);
 #endif
 
     g_SoundPlayer.InitializeDSound();

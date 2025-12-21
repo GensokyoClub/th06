@@ -16,40 +16,44 @@ ChainElem g_EffectManagerCalcChain;
 ChainElem g_EffectManagerDrawChain;
 
 EffectInfo g_Effects[20] = {
-    {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_SMALL, NULL},
-    {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_SPIRAL, NULL},
-    {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_NORMAL, NULL},
-    {ANM_SCRIPT_BULLET4_SPAWN_GLOW_1,
-     EffectManager::EffectCallbackRandomSplashBig},
-    {ANM_SCRIPT_BULLET4_SPAWN_WHITE_PARTICLE,
-     EffectManager::EffectCallbackRandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_RED_PARTICLE,
-     EffectManager::EffectCallbackRandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_GREEN_PARTICLE,
-     EffectManager::EffectCallbackRandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_BLUE_PARTICLE,
-     EffectManager::EffectCallbackRandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_WHITE_PARTICLE_SMALL,
-     EffectManager::EffectCallbackRandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_RED_PARTICLE_SMALL,
-     EffectManager::EffectCallbackRandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_GREEN_PARTICLE_SMALL,
-     EffectManager::EffectCallbackRandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_BLUE_PARTICLE_SMALL,
-     EffectManager::EffectCallbackRandomSplash},
-    {ANM_SCRIPT_BULLET4_SCRIPT_17, NULL},
-    {ANM_SCRIPT_BULLET4_SCRIPT_18, EffectManager::EffectUpdateCallback4},
-    {ANM_SCRIPT_BULLET4_SCRIPT_18, EffectManager::EffectUpdateCallback4},
-    {ANM_SCRIPT_BULLET4_SCRIPT_18, EffectManager::EffectUpdateCallback4},
-    {ANM_SCRIPT_EFFECTS_SPELLCARD_BACKGROUND, NULL},
-    {ANM_SCRIPT_BULLET4_SPAWN_GLOW_2, EffectManager::EffectCallbackAttract},
-    {ANM_SCRIPT_BULLET4_SPAWN_GLOW_3, EffectManager::EffectCallbackAttractSlow},
-    {ANM_SCRIPT_BULLET4_SCRIPT_19, EffectManager::EffectCallbackStill},
+    { ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_SMALL, NULL },
+    { ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_SPIRAL, NULL },
+    { ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_NORMAL, NULL },
+    { ANM_SCRIPT_BULLET4_SPAWN_GLOW_1,
+      EffectManager::EffectCallbackRandomSplashBig },
+    { ANM_SCRIPT_BULLET4_SPAWN_WHITE_PARTICLE,
+      EffectManager::EffectCallbackRandomSplash },
+    { ANM_SCRIPT_BULLET4_SPAWN_RED_PARTICLE,
+      EffectManager::EffectCallbackRandomSplash },
+    { ANM_SCRIPT_BULLET4_SPAWN_GREEN_PARTICLE,
+      EffectManager::EffectCallbackRandomSplash },
+    { ANM_SCRIPT_BULLET4_SPAWN_BLUE_PARTICLE,
+      EffectManager::EffectCallbackRandomSplash },
+    { ANM_SCRIPT_BULLET4_SPAWN_WHITE_PARTICLE_SMALL,
+      EffectManager::EffectCallbackRandomSplash },
+    { ANM_SCRIPT_BULLET4_SPAWN_RED_PARTICLE_SMALL,
+      EffectManager::EffectCallbackRandomSplash },
+    { ANM_SCRIPT_BULLET4_SPAWN_GREEN_PARTICLE_SMALL,
+      EffectManager::EffectCallbackRandomSplash },
+    { ANM_SCRIPT_BULLET4_SPAWN_BLUE_PARTICLE_SMALL,
+      EffectManager::EffectCallbackRandomSplash },
+    { ANM_SCRIPT_BULLET4_SCRIPT_17, NULL },
+    { ANM_SCRIPT_BULLET4_SCRIPT_18, EffectManager::EffectUpdateCallback4 },
+    { ANM_SCRIPT_BULLET4_SCRIPT_18, EffectManager::EffectUpdateCallback4 },
+    { ANM_SCRIPT_BULLET4_SCRIPT_18, EffectManager::EffectUpdateCallback4 },
+    { ANM_SCRIPT_EFFECTS_SPELLCARD_BACKGROUND, NULL },
+    { ANM_SCRIPT_BULLET4_SPAWN_GLOW_2, EffectManager::EffectCallbackAttract },
+    { ANM_SCRIPT_BULLET4_SPAWN_GLOW_3, EffectManager::EffectCallbackAttractSlow },
+    { ANM_SCRIPT_BULLET4_SCRIPT_19, EffectManager::EffectCallbackStill },
 };
 
-EffectManager::EffectManager() { this->Reset(); }
+EffectManager::EffectManager() {
+    this->Reset();
+}
 
-void EffectManager::Reset() { memset(this, 0, sizeof(*this)); }
+void EffectManager::Reset() {
+    memset(this, 0, sizeof(*this));
+}
 
 i32 EffectManager::EffectCallbackRandomSplash(Effect *effect) {
     if (effect->timer == 0 && effect->timer.HasTicked()) {

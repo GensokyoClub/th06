@@ -146,15 +146,25 @@ struct Gui {
 
     void ShowFullPowerMode(i32 fmtArg);
 
-    void SetBossHealthBar(f32 val) { this->bossHealthBar1 = val; }
+    void SetBossHealthBar(f32 val) {
+        this->bossHealthBar1 = val;
+    }
 
-    bool BossPresent() { return this->bossPresent; }
+    bool BossPresent() {
+        return this->bossPresent;
+    }
 
-    void SetSpellcardSeconds(i32 val) { this->spellcardSecondsRemaining = val; }
+    void SetSpellcardSeconds(i32 val) {
+        this->spellcardSecondsRemaining = val;
+    }
 
-    i32 SpellcardSecondsRemaining() { return this->spellcardSecondsRemaining; }
+    i32 SpellcardSecondsRemaining() {
+        return this->spellcardSecondsRemaining;
+    }
 
-    void TickTimer(ZunTimer *timer) { timer->NextTick(); }
+    void TickTimer(ZunTimer *timer) {
+        timer->NextTick();
+    }
 
     GuiFlags flags;
     GuiImpl *impl;

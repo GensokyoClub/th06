@@ -24,15 +24,17 @@ f64 g_LastFrameTime;
 
 #define FRAME_TIME (1000. / 60.)
 
-static struct {
+static struct
+{
     const char *name;
     bool isEsContext;
     void (*setContextFlags)();
     GfxInterface *(*init)();
 } s_RenderBackends[] = {
-    {"GL(ES) 2.0 / WebGL", true, WebGL::SetContextFlags, WebGL::Create},
-    {"Fixed function GL(ES)", false, FixedFunctionGL::SetContextFlags,
-     FixedFunctionGL::Init}};
+    { "GL(ES) 2.0 / WebGL", true, WebGL::SetContextFlags, WebGL::Create },
+    { "Fixed function GL(ES)", false, FixedFunctionGL::SetContextFlags,
+      FixedFunctionGL::Init }
+};
 
 RenderResult GameWindow::Render() {
     i32 res;

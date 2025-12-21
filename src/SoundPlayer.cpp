@@ -23,10 +23,10 @@ namespace th06 {
 #define BACKGROUND_MUSIC_WAV_NUM_CHANNELS 2
 #define BACKGROUND_MUSIC_WAV_SAMPLE_RATE 44100
 #define BACKGROUND_MUSIC_WAV_BITS_PER_SAMPLE 16
-#define BACKGROUND_MUSIC_WAV_BLOCK_ALIGN                                       \
-    (BACKGROUND_MUSIC_WAV_BITS_PER_SAMPLE / 8 *                                \
+#define BACKGROUND_MUSIC_WAV_BLOCK_ALIGN        \
+    (BACKGROUND_MUSIC_WAV_BITS_PER_SAMPLE / 8 * \
      BACKGROUND_MUSIC_WAV_NUM_CHANNELS)
-#define BACKGROUND_MUSIC_WAV_BYTE_RATE                                         \
+#define BACKGROUND_MUSIC_WAV_BYTE_RATE \
     (BACKGROUND_MUSIC_WAV_BLOCK_ALIGN * BACKGROUND_MUSIC_WAV_SAMPLE_RATE)
 
 // DirectSound deals with volume by subtracting a number measured in hundredths
@@ -36,27 +36,72 @@ namespace th06 {
 //   factor of 10
 
 SoundBufferIdxVolume g_SoundBufferIdxVol[32] = {
-    {0, -1500},  {0, -2000},  {1, -1200},  {1, -1400}, {2, -1000}, {3, -500},
-    {4, -500},   {5, -1700},  {6, -1700},  {7, -1700}, {8, -1000}, {9, -1000},
-    {10, -1900}, {11, -1200}, {12, -900},  {5, -1500}, {13, -900}, {14, -900},
-    {15, -600},  {16, -400},  {17, -1100}, {18, -900}, {5, -1800}, {6, -1800},
-    {7, -1800},  {19, -300},  {20, -600},  {21, -800}, {22, -100}, {23, -500},
-    {24, -1000}, {25, -1000},
+    { 0, -1500 },
+    { 0, -2000 },
+    { 1, -1200 },
+    { 1, -1400 },
+    { 2, -1000 },
+    { 3, -500 },
+    { 4, -500 },
+    { 5, -1700 },
+    { 6, -1700 },
+    { 7, -1700 },
+    { 8, -1000 },
+    { 9, -1000 },
+    { 10, -1900 },
+    { 11, -1200 },
+    { 12, -900 },
+    { 5, -1500 },
+    { 13, -900 },
+    { 14, -900 },
+    { 15, -600 },
+    { 16, -400 },
+    { 17, -1100 },
+    { 18, -900 },
+    { 5, -1800 },
+    { 6, -1800 },
+    { 7, -1800 },
+    { 19, -300 },
+    { 20, -600 },
+    { 21, -800 },
+    { 22, -100 },
+    { 23, -500 },
+    { 24, -1000 },
+    { 25, -1000 },
 };
 const char *g_SFXList[26] = {
-    "data/wav/plst00.wav",   "data/wav/enep00.wav",   "data/wav/pldead00.wav",
-    "data/wav/power0.wav",   "data/wav/power1.wav",   "data/wav/tan00.wav",
-    "data/wav/tan01.wav",    "data/wav/tan02.wav",    "data/wav/ok00.wav",
-    "data/wav/cancel00.wav", "data/wav/select00.wav", "data/wav/gun00.wav",
-    "data/wav/cat00.wav",    "data/wav/lazer00.wav",  "data/wav/lazer01.wav",
-    "data/wav/enep01.wav",   "data/wav/nep00.wav",    "data/wav/damage00.wav",
-    "data/wav/item00.wav",   "data/wav/kira00.wav",   "data/wav/kira01.wav",
-    "data/wav/kira02.wav",   "data/wav/extend.wav",   "data/wav/timeout.wav",
-    "data/wav/graze.wav",    "data/wav/powerup.wav",
+    "data/wav/plst00.wav",
+    "data/wav/enep00.wav",
+    "data/wav/pldead00.wav",
+    "data/wav/power0.wav",
+    "data/wav/power1.wav",
+    "data/wav/tan00.wav",
+    "data/wav/tan01.wav",
+    "data/wav/tan02.wav",
+    "data/wav/ok00.wav",
+    "data/wav/cancel00.wav",
+    "data/wav/select00.wav",
+    "data/wav/gun00.wav",
+    "data/wav/cat00.wav",
+    "data/wav/lazer00.wav",
+    "data/wav/lazer01.wav",
+    "data/wav/enep01.wav",
+    "data/wav/nep00.wav",
+    "data/wav/damage00.wav",
+    "data/wav/item00.wav",
+    "data/wav/kira00.wav",
+    "data/wav/kira01.wav",
+    "data/wav/kira02.wav",
+    "data/wav/extend.wav",
+    "data/wav/timeout.wav",
+    "data/wav/graze.wav",
+    "data/wav/powerup.wav",
 };
 SoundPlayer g_SoundPlayer;
 
-SoundPlayer::SoundPlayer() { std::memset(this, 0, sizeof(SoundPlayer)); }
+SoundPlayer::SoundPlayer() {
+    std::memset(this, 0, sizeof(SoundPlayer));
+}
 
 bool SoundPlayer::InitializeDSound() {
     SDL_AudioSpec desiredAudio;

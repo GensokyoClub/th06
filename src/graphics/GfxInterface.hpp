@@ -6,7 +6,10 @@
 #include <cstddef>
 
 namespace th06 {
-enum DepthFunc { DEPTH_FUNC_LEQUAL, DEPTH_FUNC_ALWAYS };
+enum DepthFunc {
+    DEPTH_FUNC_LEQUAL,
+    DEPTH_FUNC_ALWAYS
+};
 
 // Position is implied, since everything uses is anyway
 enum VertexAttributeFlags {
@@ -20,9 +23,16 @@ enum VertexAttributeArrays {
     VERTEX_ARRAY_DIFFUSE
 };
 
-enum ColorOp { COLOR_OP_MODULATE, COLOR_OP_ADD, COLOR_OP_REPLACE };
+enum ColorOp {
+    COLOR_OP_MODULATE,
+    COLOR_OP_ADD,
+    COLOR_OP_REPLACE
+};
 
-enum TextureOpComponent { COMPONENT_RGB, COMPONENT_ALPHA };
+enum TextureOpComponent {
+    COMPONENT_RGB,
+    COMPONENT_ALPHA
+};
 
 enum TransformMatrix {
     MATRIX_MODEL,

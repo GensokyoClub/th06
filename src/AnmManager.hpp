@@ -41,7 +41,8 @@ struct ColorData {
     GLubyte b;
     GLubyte a;
 
-    ColorData() {}
+    ColorData() {
+    }
 
     ColorData(ZunColor color) {
         a = (color >> 24);

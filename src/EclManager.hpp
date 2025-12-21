@@ -48,7 +48,9 @@ struct EclTimelineInstrArgs {
     u16 ushortVar2;
     u32 uintVar4;
 
-    ZunVec3 *Var1AsVec() { return (ZunVec3 *)&this->uintVar1; }
+    ZunVec3 *Var1AsVec() {
+        return (ZunVec3 *)&this->uintVar1;
+    }
 };
 
 struct EclTimelineInstr {
@@ -60,13 +62,15 @@ struct EclTimelineInstr {
 };
 
 union EclRawInstrArg {
-    struct {
+    struct
+    {
         i8 a;
         i8 b;
         i8 c;
         i8 d;
     } by;
-    struct {
+    struct
+    {
         i16 lo;
         i16 hi;
     } sh;
@@ -276,7 +280,9 @@ union EclRawInstrArgs {
     EclRawInstrExInstrArgs exInstr;
     i32 setInt;
 
-    i32 GetBossLifeCount() { return this->setInt; }
+    i32 GetBossLifeCount() {
+        return this->setInt;
+    }
 };
 
 struct EclRawInstr {

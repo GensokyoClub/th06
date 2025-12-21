@@ -14,7 +14,9 @@ namespace th06 {
 struct Enemy;
 
 struct EnemyBulletShooter {
-    EnemyBulletShooter() { memset(this, 0, sizeof(EnemyBulletShooter)); }
+    EnemyBulletShooter() {
+        memset(this, 0, sizeof(EnemyBulletShooter));
+    }
     i16 sprite;
     i16 spriteOffset;
     ZunVec3 position;
@@ -34,7 +36,9 @@ struct EnemyBulletShooter {
 };
 
 struct EnemyLaserShooter {
-    EnemyLaserShooter() { memset(this, 0, sizeof(EnemyLaserShooter)); }
+    EnemyLaserShooter() {
+        memset(this, 0, sizeof(EnemyLaserShooter));
+    }
     i16 sprite;
     i16 spriteOffset;
     ZunVec3 position;
@@ -111,7 +115,8 @@ enum EclValueType {
 };
 
 struct Enemy {
-    Enemy() {}
+    Enemy() {
+    }
 
     void Move();
     void ClampPos();
@@ -122,7 +127,9 @@ struct Enemy {
     static void ResetEffectArray(Enemy *enemy);
     static void UpdateEffects(Enemy *enemy);
 
-    f32 LifePercent() { return (f32)this->life / (f32)this->maxLife; }
+    f32 LifePercent() {
+        return (f32)this->life / (f32)this->maxLife;
+    }
 
     ZunVec3 HitboxDimensions(f32 shrinkFactor) {
         return this->hitboxDimensions * (1.0f / shrinkFactor);

@@ -3,9 +3,12 @@
 #include "i18n.hpp"
 
 namespace th06 {
-MidiDevice::MidiDevice() { printedWarning = false; }
+MidiDevice::MidiDevice() {
+    printedWarning = false;
+}
 
-MidiDevice::~MidiDevice() {}
+MidiDevice::~MidiDevice() {
+}
 
 bool MidiDevice::OpenDevice(u32 uDeviceId) {
     (void)uDeviceId;
@@ -18,9 +21,13 @@ bool MidiDevice::OpenDevice(u32 uDeviceId) {
     return true;
 }
 
-bool MidiDevice::Close() { return true; }
+bool MidiDevice::Close() {
+    return true;
+}
 
-bool MidiDevice::SendLongMsg(u8 *buf, u32 len) { return true; }
+bool MidiDevice::SendLongMsg(u8 *buf, u32 len) {
+    return true;
+}
 
 bool MidiDevice::SendShortMsg(u8 midiStatus, u8 firstByte, u8 secondByte) {
     return true;

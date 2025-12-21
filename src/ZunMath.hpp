@@ -31,7 +31,8 @@ struct ZunVec2 {
     f32 x;
     f32 y;
 
-    ZunVec2() {}
+    ZunVec2() {
+    }
 
     ZunVec2(f32 x, f32 y) {
         this->x = x;
@@ -42,7 +43,9 @@ struct ZunVec2 {
         return std::sqrt((f64)(this->x * this->x + this->y * this->y));
     }
 
-    f64 VectorLengthF64() { return (f64)this->VectorLength(); }
+    f64 VectorLengthF64() {
+        return (f64)this->VectorLength();
+    }
 };
 static_assert(sizeof(ZunVec2) == 0x08,
               "ZunVec2 has additional padding between struct members!");
@@ -53,7 +56,8 @@ struct ZunVec3 {
     f32 y;
     f32 z;
 
-    ZunVec3() {}
+    ZunVec3() {
+    }
 
     ZunVec3(f32 x, f32 y, f32 z) {
         this->x = x;
@@ -61,7 +65,9 @@ struct ZunVec3 {
         this->z = z;
     }
 
-    ZunVec3 operator-() const { return ZunVec3(-this->x, -this->y, -this->z); }
+    ZunVec3 operator-() const {
+        return ZunVec3(-this->x, -this->y, -this->z);
+    }
 
     ZunVec3 operator+(const ZunVec3 &b) const {
         return ZunVec3(this->x + b.x, this->y + b.y, this->z + b.z);
@@ -116,7 +122,9 @@ struct ZunVec3 {
                          this->z * this->z);
     }
 
-    void getNormalized(ZunVec3 &norm) { norm = *this / this->getMagnitude(); }
+    void getNormalized(ZunVec3 &norm) {
+        norm = *this / this->getMagnitude();
+    }
 
     void calcCross(ZunVec3 &dst, ZunVec3 &vec) {
         dst = ZunVec3(this->y * vec.z - this->z * vec.y,
@@ -147,7 +155,8 @@ struct ZunVec4 {
     f32 z;
     f32 w;
 
-    ZunVec4() {}
+    ZunVec4() {
+    }
 
     ZunVec4(f32 x, f32 y, f32 z, f32 w) {
         this->x = x;
@@ -336,7 +345,9 @@ inline void sincosmul(ZunVec3 *out_vel, f32 input, f32 multiplier) {
     out_vel->y = std::sin(input) * multiplier;
 }
 
-inline f32 invertf(f32 x) { return 1.f / x; }
+inline f32 invertf(f32 x) {
+    return 1.f / x;
+}
 
 // TODO: Check value of x87 control word RC field in EoSD to verify this is
 // actually correct

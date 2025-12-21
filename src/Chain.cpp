@@ -6,7 +6,8 @@
 namespace th06 {
 Chain g_Chain;
 
-Chain::~Chain() {}
+Chain::~Chain() {
+}
 
 ChainElem::ChainElem() {
     prev = NULL;
@@ -32,7 +33,8 @@ ChainElem::~ChainElem() {
     deletedCallback = NULL;
 }
 
-Chain::Chain() {}
+Chain::Chain() {
+}
 
 bool Chain::AddToCalcChain(ChainElem *elem, int priority) {
     ChainElem *cur;

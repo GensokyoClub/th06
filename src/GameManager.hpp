@@ -59,7 +59,9 @@ struct GameManager {
     void DecreaseSubrank(i32 amount);
     i32 IsInBounds(f32 x, f32 y, f32 width, f32 height);
 
-    void AddScore(i32 points) { this->score += points; }
+    void AddScore(i32 points) {
+        this->score += points;
+    }
 
     static i32 CharacterShotType() {
         return g_GameManager.shotType + g_GameManager.character * 2;

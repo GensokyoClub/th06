@@ -20,14 +20,15 @@ ChainElem g_EnemyManagerCalcChain;
 ChainElem g_EnemyManagerDrawChain;
 
 u8 g_RandomItems[32] = {
-    ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,
-    ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,
-    ITEM_POINT,       ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_SMALL,
-    ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POINT,       ITEM_POWER_SMALL,
-    ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,
-    ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,
-    ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,
-    ITEM_POINT,       ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_BIG};
+    ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT, ITEM_POWER_SMALL,
+    ITEM_POINT, ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,
+    ITEM_POINT, ITEM_POINT, ITEM_POWER_SMALL, ITEM_POWER_SMALL,
+    ITEM_POWER_SMALL, ITEM_POINT, ITEM_POINT, ITEM_POWER_SMALL,
+    ITEM_POINT, ITEM_POWER_SMALL, ITEM_POINT, ITEM_POWER_SMALL,
+    ITEM_POINT, ITEM_POWER_SMALL, ITEM_POINT, ITEM_POWER_SMALL,
+    ITEM_POINT, ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,
+    ITEM_POINT, ITEM_POINT, ITEM_POWER_SMALL, ITEM_POWER_BIG
+};
 
 void EnemyManager::Initialize() {
     i32 i;
@@ -82,7 +83,9 @@ void EnemyManager::Initialize() {
     enemy->bulletRankSpeedHigh = 0.5f;
 }
 
-EnemyManager::EnemyManager() { this->Initialize(); }
+EnemyManager::EnemyManager() {
+    this->Initialize();
+}
 
 Enemy *EnemyManager::SpawnEnemy(i32 eclSubId, ZunVec3 *pos, i16 life,
                                 i16 itemDrop, i32 score) {

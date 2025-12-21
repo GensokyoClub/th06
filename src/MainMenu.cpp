@@ -34,12 +34,12 @@
 #endif
 
 namespace th06 {
-const char *g_ShortCharacterList[4] = {"ReimuA ", "ReimuB ", "MarisaA",
-                                       "MarisaB"};
-const char *g_DifficultyList[5] = {"Easy   ", "Normal ", "Hard   ", "Lunatic",
-                                   "Extra  "};
-const char *g_StageList[7] = {"Stage1", "Stage2", "Stage3", "Stage4",
-                              "Stage5", "Stage6", "Extra "};
+const char *g_ShortCharacterList[4] = { "ReimuA ", "ReimuB ", "MarisaA",
+                                        "MarisaB" };
+const char *g_DifficultyList[5] = { "Easy   ", "Normal ", "Hard   ", "Lunatic",
+                                    "Extra  " };
+const char *g_StageList[7] = { "Stage1", "Stage2", "Stage3", "Stage4",
+                               "Stage5", "Stage6", "Extra " };
 
 i16 g_LastJoystickInput;
 
@@ -1260,8 +1260,7 @@ i32 MainMenu::ReplayHandling() {
                 }
             }
         }
-        if (WAS_PRESSED(TH_BUTTON_SELECTMENU) /* && this->currentReplay[this->cursor].header->stageReplayDataOffsets */)
-        {
+        if (WAS_PRESSED(TH_BUTTON_SELECTMENU) /* && this->currentReplay[this->cursor].header->stageReplayDataOffsets */) {
             g_GameManager.isInReplay = 1;
             g_Supervisor.framerateMultiplier = 1.0;
             std::strcpy((char *)g_GameManager.replayFile,

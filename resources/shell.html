@@ -37,8 +37,8 @@
     canvas {
       display: block;
       margin: auto;
-      width: 640px;
-      height: 480px;
+      width: 1280px;
+      height: 960px;
     }
 
     .button-container {
@@ -55,7 +55,7 @@
   </div>
   <div id="loading-text">Loading...</div>
 
-  <canvas id="canvas" width="640" height="480"></canvas>
+  <canvas id="canvas" width="1280" height="960"></canvas>
 
   <div class="button-container">
       <button id="fullscreen-button">Fullscreen</button>
@@ -146,11 +146,11 @@
         loadingContainer.remove();
         loadingText.remove();
 
-        canvas.width = 640;
-        canvas.height = 480;
+        canvas.width = 1280;
+        canvas.height = 960;
         const iv = setInterval(() => {
-          canvas.width = 640;
-          canvas.height = 480;
+          canvas.width = 1280;
+          canvas.height = 960;
         }, 500);
 
         try {

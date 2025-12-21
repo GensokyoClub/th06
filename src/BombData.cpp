@@ -11,10 +11,10 @@
 
 namespace th06 {
 BombData g_BombData[4] = {
-    /* ReimuA  */ {BombData::BombReimuACalc, BombData::BombReimuADraw},
-    /* ReimuB  */ {BombData::BombReimuBCalc, BombData::BombReimuBDraw},
-    /* MarisaA */ {BombData::BombMarisaACalc, BombData::BombMarisaADraw},
-    /* MarisaB */ {BombData::BombMarisaBCalc, BombData::BombMarisaBDraw},
+    /* ReimuA  */ { BombData::BombReimuACalc, BombData::BombReimuADraw },
+    /* ReimuB  */ { BombData::BombReimuBCalc, BombData::BombReimuBDraw },
+    /* MarisaA */ { BombData::BombMarisaACalc, BombData::BombMarisaADraw },
+    /* MarisaB */ { BombData::BombMarisaBCalc, BombData::BombMarisaBDraw },
 };
 
 void BombData::BombReimuACalc(Player *player) {

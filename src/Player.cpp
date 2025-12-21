@@ -26,17 +26,18 @@ namespace th06 {
 Player g_Player;
 
 CharacterData g_CharData[4] = {
-    /* ReimuA  */ {4.0, 2.0, 4.0, 2.0, Player::FireBulletReimuA,
-                   Player::FireBulletReimuA},
+    /* ReimuA  */ { 4.0, 2.0, 4.0, 2.0, Player::FireBulletReimuA,
+                    Player::FireBulletReimuA },
     /* ReimuB  */
-    {4.0, 2.0, 4.0, 2.0, Player::FireBulletReimuB, Player::FireBulletReimuB},
+    { 4.0, 2.0, 4.0, 2.0, Player::FireBulletReimuB, Player::FireBulletReimuB },
     /* MarisaA */
-    {5.0, 2.5, 5.0, 2.5, Player::FireBulletMarisaA, Player::FireBulletMarisaA},
+    { 5.0, 2.5, 5.0, 2.5, Player::FireBulletMarisaA, Player::FireBulletMarisaA },
     /* MarisaB */
-    {5.0, 2.5, 5.0, 2.5, Player::FireBulletMarisaB, Player::FireBulletMarisaB},
+    { 5.0, 2.5, 5.0, 2.5, Player::FireBulletMarisaB, Player::FireBulletMarisaB },
 };
 
-Player::Player() {}
+Player::Player() {
+}
 
 bool Player::RegisterChain(u8 unk) {
     Player *p = &g_Player;

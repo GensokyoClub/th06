@@ -24,7 +24,7 @@
 
 namespace th06 {
 
-f32 g_DifficultyWeightsList[5] = {-30.0f, -10.0f, 20.0f, 30.0f, 30.0f};
+f32 g_DifficultyWeightsList[5] = { -30.0f, -10.0f, 20.0f, 30.0f, 30.0f };
 
 u32 g_DefaultMagic = 'DMYS';
 
@@ -37,15 +37,17 @@ const char *g_AlphabetList =
 
 const char *g_CharacterList[6] = {
     TH_HAKUREI_REIMU_SPIRIT, TH_HAKUREI_REIMU_DREAM, TH_KIRISAME_MARISA_DEVIL,
-    TH_KIRISAME_MARISA_LOVE, TH_SATSUKI_RIN_FLOWER,  TH_SATSUKI_RIN_WIND};
+    TH_KIRISAME_MARISA_LOVE, TH_SATSUKI_RIN_FLOWER, TH_SATSUKI_RIN_WIND
+};
 
-f32 g_SpellcardsWeightsList[5] = {1.0f, 1.5f, 1.5f, 2.0f, 2.5f};
+f32 g_SpellcardsWeightsList[5] = { 1.0f, 1.5f, 1.5f, 2.0f, 2.5f };
 
 const char *g_RightAlignedDifficultyList[5] = {
-    "     Easy", "   Normal", "     Hard", "  Lunatic", "    Extra"};
+    "     Easy", "   Normal", "     Hard", "  Lunatic", "    Extra"
+};
 
-const char *g_ShortCharacterList2[4] = {"ReimuA ", "ReimuB ", "MarisaA",
-                                        "MarisaB"};
+const char *g_ShortCharacterList2[4] = { "ReimuA ", "ReimuB ", "MarisaA",
+                                         "MarisaB" };
 
 #define DEFAULT_HIGH_SCORE_NAME "Nanashi "
 

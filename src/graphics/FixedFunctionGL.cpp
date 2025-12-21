@@ -76,7 +76,8 @@ void FixedFunctionGL::SetFogRange(f32 nearPlane, f32 farPlane) {
 void FixedFunctionGL::SetFogColor(ZunColor color) {
     GLfloat normalizedFogColor[4] = {
         ((color >> 16) & 0xFF) / 255.0f, ((color >> 8) & 0xFF) / 255.0f,
-        (color & 0xFF) / 255.0f, ((color >> 24) & 0xFF) / 255.0f};
+        (color & 0xFF) / 255.0f, ((color >> 24) & 0xFF) / 255.0f
+    };
 
     g_glFuncTable.glFogfv(GL_FOG_COLOR, normalizedFogColor);
 }
@@ -123,7 +124,7 @@ void FixedFunctionGL::SetAttributePointer(VertexAttributeArrays attr,
 }
 
 void FixedFunctionGL::SetColorOp(TextureOpComponent component, ColorOp op) {
-    const GLenum opEnums[3] = {GL_MODULATE, GL_ADD, GL_REPLACE};
+    const GLenum opEnums[3] = { GL_MODULATE, GL_ADD, GL_REPLACE };
 
     if (component > COMPONENT_ALPHA || op > COLOR_OP_REPLACE) {
         return;
@@ -138,7 +139,8 @@ void FixedFunctionGL::SetColorOp(TextureOpComponent component, ColorOp op) {
 void FixedFunctionGL::SetTextureFactor(ZunColor factor) {
     GLfloat tfactorColor[4] = {
         ((factor >> 16) & 0xFF) / 255.0f, ((factor >> 8) & 0xFF) / 255.0f,
-        (factor & 0xFF) / 255.0f, ((factor >> 24) & 0xFF) / 255.0f};
+        (factor & 0xFF) / 255.0f, ((factor >> 24) & 0xFF) / 255.0f
+    };
 
     g_glFuncTable.glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR,
                              tfactorColor);
@@ -147,12 +149,13 @@ void FixedFunctionGL::SetTextureFactor(ZunColor factor) {
 void FixedFunctionGL::SetTransformMatrix(TransformMatrix type,
                                          ZunMatrix &matrix) {
     // This is not going to work for modelview
-    GLenum matrixEnum[4] = {GL_MODELVIEW, GL_MODELVIEW, GL_PROJECTION,
-                            GL_TEXTURE};
+    GLenum matrixEnum[4] = { GL_MODELVIEW, GL_MODELVIEW, GL_PROJECTION,
+                             GL_TEXTURE };
 
     g_glFuncTable.glMatrixMode(matrixEnum[type]);
     g_glFuncTable.glLoadMatrixf((GLfloat *)&matrix);
 }
 
-void FixedFunctionGL::Draw() {}
+void FixedFunctionGL::Draw() {
+}
 }; // namespace th06

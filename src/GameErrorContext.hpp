@@ -20,7 +20,8 @@ class GameErrorContext {
         Log(this, TH_ERR_LOGGER_START);
     }
 
-    ~GameErrorContext() {}
+    ~GameErrorContext() {
+    }
 
     void ResetContext() {
         m_BufferEnd = m_Buffer;

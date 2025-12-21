@@ -18,9 +18,11 @@ ChainElem g_AsciiManagerCalcChain;
 ChainElem g_AsciiManagerOnDrawMenusChain;
 ChainElem g_AsciiManagerOnDrawPopupsChain;
 
-AsciiManager::AsciiManager() {}
+AsciiManager::AsciiManager() {
+}
 
-StageMenu::StageMenu() {}
+StageMenu::StageMenu() {
+}
 
 ChainCallbackResult AsciiManager::OnUpdate(AsciiManager *mgr) {
     if (!g_GameManager.isInGameMenu && !g_GameManager.isInRetryMenu) {
@@ -333,11 +335,11 @@ enum UpdateGameMenuState {
 
 #define GAME_MENU_SPRITES_START_PAUSE GAME_MENU_SPRITE_TITLE_PAUSE
 #define GAME_MENU_SPRITES_COUNT_PAUSE 3
-#define GAME_MENU_SPRITES_END_PAUSE                                            \
+#define GAME_MENU_SPRITES_END_PAUSE \
     (GAME_MENU_SPRITES_START_PAUSE + GAME_MENU_SPRITES_COUNT_PAUSE)
 #define GAME_MENU_SPRITES_START_QUIT GAME_MENU_SPRITE_TITLE_QUIT
 #define GAME_MENU_SPRITES_COUNT_QUIT 3
-#define GAME_MENU_SPRITES_END_QUIT                                             \
+#define GAME_MENU_SPRITES_END_QUIT \
     (GAME_MENU_SPRITES_START_QUIT + GAME_MENU_SPRITES_COUNT_QUIT)
 
 i32 StageMenu::OnUpdateGameMenu() {
@@ -569,7 +571,7 @@ enum RetryGameMenuState {
 
 #define RETRY_MENU_SPRITES_START RETRY_MENU_SPRITE_TITLE
 #define RETRY_MENU_SPRITES_COUNT 4
-#define RETRY_MENU_SPRITES_END                                                 \
+#define RETRY_MENU_SPRITES_END \
     (RETRY_MENU_SPRITES_START + RETRY_MENU_SPRITES_COUNT)
 
 i32 StageMenu::OnUpdateRetryMenu() {

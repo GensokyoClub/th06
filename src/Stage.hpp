@@ -54,7 +54,11 @@ struct StageCameraSky {
     ZunColor color;
 };
 
-enum SpellcardState { NOT_RUNNING, RUNNING, RAN_FOR_60_FRAMES };
+enum SpellcardState {
+    NOT_RUNNING,
+    RUNNING,
+    RAN_FOR_60_FRAMES
+};
 
 struct StageFile {
     const char *anmFile;

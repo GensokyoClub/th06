@@ -58,9 +58,13 @@ enum ResultScreenMainMenuCursor {
 };
 
 struct Th6k {
-    Th6k *ShiftOneByte() { return (Th6k *)(((u8 *)this) + 1); };
+    Th6k *ShiftOneByte() {
+        return (Th6k *)(((u8 *)this) + 1);
+    };
 
-    Th6k *ShiftBytes(i32 value) { return (Th6k *)(((u8 *)this) + value); };
+    Th6k *ShiftBytes(i32 value) {
+        return (Th6k *)(((u8 *)this) + value);
+    };
 
     u32 magic;
     u16 th6kLen;
@@ -90,9 +94,13 @@ struct Clrd {
 };
 
 struct Pscr {
-    Pscr *ShiftOneByte() { return (Pscr *)(((u8 *)this) + 1); };
+    Pscr *ShiftOneByte() {
+        return (Pscr *)(((u8 *)this) + 1);
+    };
 
-    Pscr *ShiftBytes(i32 value) { return (Pscr *)(((u8 *)this) + value); };
+    Pscr *ShiftBytes(i32 value) {
+        return (Pscr *)(((u8 *)this) + value);
+    };
 
     Th6k base;
     i32 score;
@@ -102,7 +110,9 @@ struct Pscr {
 };
 
 struct Hscr {
-    Hscr *ShiftBytes(i32 value) { return (Hscr *)(((u8 *)this) + value); };
+    Hscr *ShiftBytes(i32 value) {
+        return (Hscr *)(((u8 *)this) + value);
+    };
 
     Th6k base;
     u32 score;
@@ -125,9 +135,13 @@ struct ScoreListNode {
 };
 
 struct ScoreRaw {
-    Th6k *ShiftOneByte() { return (Th6k *)(((u8 *)this) + 1); };
+    Th6k *ShiftOneByte() {
+        return (Th6k *)(((u8 *)this) + 1);
+    };
 
-    Th6k *ShiftBytes(i32 value) { return (Th6k *)(((u8 *)this) + value); };
+    Th6k *ShiftBytes(i32 value) {
+        return (Th6k *)(((u8 *)this) + value);
+    };
 
     u8 xorseed[2];
     u16 csum;

@@ -19,9 +19,12 @@ struct ReplayManager {
     static void SaveReplay(char *replay_path, char *param_2);
     static bool ValidateReplayData(ReplayHeader *data, i32 fileSize);
 
-    ReplayManager() {}
+    ReplayManager() {
+    }
 
-    i32 IsDemo() { return this->isDemo; }
+    i32 IsDemo() {
+        return this->isDemo;
+    }
 
     i32 frameId;
     ReplayData *replayData;

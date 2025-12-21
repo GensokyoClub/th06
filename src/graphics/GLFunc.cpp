@@ -5,9 +5,9 @@
 namespace th06 {
 GLFuncTable g_glFuncTable;
 
-#define TRY_RESOLVE_FUNCTION(func)                                             \
+#define TRY_RESOLVE_FUNCTION(func) \
     this->func = (decltype(this->func))SDL_GL_GetProcAddress(#func);
-#define TRY_RESOLVE_FUNCTION_GLES(func)                                        \
+#define TRY_RESOLVE_FUNCTION_GLES(func) \
     this->func##_ptr = (decltype(this->func##_ptr))SDL_GL_GetProcAddress(#func);
 
 void GLFuncTable::ResolveFunctions(bool glesContext) {

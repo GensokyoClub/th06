@@ -99,7 +99,8 @@ enum AnmVmAnchor {
 
 union AnmVmFlags {
     u16 flags;
-    struct {
+    struct
+    {
         u32 isVisible : 1;
         u32 flag1 : 1;
         u32 blendMode : 1;
@@ -139,9 +140,13 @@ struct AnmVm {
         this->currentTimeInScript.Initialize();
     }
 
-    AnmVm() { this->activeSpriteIndex = -1; }
+    AnmVm() {
+        this->activeSpriteIndex = -1;
+    }
 
-    void SetInvisible() { this->flags.isVisible = 0; }
+    void SetInvisible() {
+        this->flags.isVisible = 0;
+    }
 
     ZunVec3 rotation;
     ZunVec3 angleVel;

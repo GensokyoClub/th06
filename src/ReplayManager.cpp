@@ -130,8 +130,8 @@ bool ReplayManager::RegisterChain(i32 isDemo, const char *replayFile) {
     return true;
 }
 
-#define TH_BUTTON_REPLAY_CAPTURE                                               \
-    (TH_BUTTON_SHOOT | TH_BUTTON_BOMB | TH_BUTTON_FOCUS | TH_BUTTON_SKIP |     \
+#define TH_BUTTON_REPLAY_CAPTURE                                           \
+    (TH_BUTTON_SHOOT | TH_BUTTON_BOMB | TH_BUTTON_FOCUS | TH_BUTTON_SKIP | \
      TH_BUTTON_DIRECTION)
 
 ChainCallbackResult ReplayManager::OnUpdate(ReplayManager *mgr) {
@@ -199,9 +199,13 @@ inline StageReplayData *AllocateStageReplayData(i32 size) {
     return (StageReplayData *)std::malloc(size);
 }
 
-inline void ReleaseReplayData(void *data) { return std::free(data); }
+inline void ReleaseReplayData(void *data) {
+    return std::free(data);
+}
 
-inline void ReleaseStageReplayData(void *data) { return std::free(data); }
+inline void ReleaseStageReplayData(void *data) {
+    return std::free(data);
+}
 
 bool ReplayManager::AddedCallback(ReplayManager *mgr) {
     StageReplayData *stageReplayData;

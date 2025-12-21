@@ -67,7 +67,9 @@ struct AsciiManager {
     void CreatePopup1(ZunVec3 *position, i32 value, ZunColor color);
     void CreatePopup2(ZunVec3 *position, i32 value, ZunColor color);
 
-    void SetColor(ZunColor color) { this->color = color; }
+    void SetColor(ZunColor color) {
+        this->color = color;
+    }
 
     AnmVm vm0;
     AnmVm vm1;

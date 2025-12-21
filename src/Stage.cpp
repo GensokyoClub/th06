@@ -17,18 +17,19 @@ ChainElem g_StageOnDrawHighPrioChain;
 ChainElem g_StageOnDrawLowPrioChain;
 
 StageFile g_StageFiles[8] = {
-    {"dummy", "dummy"},
-    {"data/stg1bg.anm", "data/stage1.std"},
-    {"data/stg2bg.anm", "data/stage2.std"},
-    {"data/stg3bg.anm", "data/stage3.std"},
-    {"data/stg4bg.anm", "data/stage4.std"},
-    {"data/stg5bg.anm", "data/stage5.std"},
-    {"data/stg6bg.anm", "data/stage6.std"},
-    {"data/stg7bg.anm", "data/stage7.std"},
+    { "dummy", "dummy" },
+    { "data/stg1bg.anm", "data/stage1.std" },
+    { "data/stg2bg.anm", "data/stage2.std" },
+    { "data/stg3bg.anm", "data/stage3.std" },
+    { "data/stg4bg.anm", "data/stage4.std" },
+    { "data/stg5bg.anm", "data/stage5.std" },
+    { "data/stg6bg.anm", "data/stage6.std" },
+    { "data/stg7bg.anm", "data/stage7.std" },
 };
 Stage g_Stage;
 
-Stage::Stage() {}
+Stage::Stage() {
+}
 
 ChainCallbackResult Stage::OnUpdate(Stage *stage) {
     f32 posInterpRatio;

@@ -23,26 +23,27 @@ i32 g_SpellcardScore[64] = {
     400000, 400000, 400000, 400000, 400000, 400000, 400000, 400000,
     500000, 500000, 500000, 500000, 500000, 500000, 600000, 600000,
     600000, 600000, 600000, 700000, 700000, 700000, 700000, 700000,
-    700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000};
+    700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000
+};
 EclManager g_EclManager;
 typedef void (*ExInsn)(Enemy *, EclRawInstr *);
-ExInsn g_EclExInsn[17] = {EnemyEclInstr::ExInsCirnoRainbowBallJank,
-                          EnemyEclInstr::ExInsShootAtRandomArea,
-                          EnemyEclInstr::ExInsShootStarPattern,
-                          EnemyEclInstr::ExInsPatchouliShottypeSetVars,
-                          EnemyEclInstr::ExInsStage56Func4,
-                          EnemyEclInstr::ExInsStage5Func5,
-                          EnemyEclInstr::ExInsStage6XFunc6,
-                          EnemyEclInstr::ExInsStage6Func7,
-                          EnemyEclInstr::ExInsStage6Func8,
-                          EnemyEclInstr::ExInsStage6Func9,
-                          EnemyEclInstr::ExInsStage6XFunc10,
-                          EnemyEclInstr::ExInsStage6Func11,
-                          EnemyEclInstr::ExInsStage4Func12,
-                          EnemyEclInstr::ExInsStageXFunc13,
-                          EnemyEclInstr::ExInsStageXFunc14,
-                          EnemyEclInstr::ExInsStageXFunc15,
-                          EnemyEclInstr::ExInsStageXFunc16};
+ExInsn g_EclExInsn[17] = { EnemyEclInstr::ExInsCirnoRainbowBallJank,
+                           EnemyEclInstr::ExInsShootAtRandomArea,
+                           EnemyEclInstr::ExInsShootStarPattern,
+                           EnemyEclInstr::ExInsPatchouliShottypeSetVars,
+                           EnemyEclInstr::ExInsStage56Func4,
+                           EnemyEclInstr::ExInsStage5Func5,
+                           EnemyEclInstr::ExInsStage6XFunc6,
+                           EnemyEclInstr::ExInsStage6Func7,
+                           EnemyEclInstr::ExInsStage6Func8,
+                           EnemyEclInstr::ExInsStage6Func9,
+                           EnemyEclInstr::ExInsStage6XFunc10,
+                           EnemyEclInstr::ExInsStage6Func11,
+                           EnemyEclInstr::ExInsStage4Func12,
+                           EnemyEclInstr::ExInsStageXFunc13,
+                           EnemyEclInstr::ExInsStageXFunc14,
+                           EnemyEclInstr::ExInsStageXFunc15,
+                           EnemyEclInstr::ExInsStageXFunc16 };
 
 bool EclManager::Load(const char *eclPath) {
     i32 idx;

@@ -23,17 +23,19 @@ u32 g_EffectsColorWithTextureBlending[28] = {
     0xff400040, 0xff800080, 0xffff30ff, 0xff000050, 0xff000090, 0xff2020ff,
     0xff203060, 0xff304090, 0xff3080ff, 0xff005000, 0xff009000, 0xff20ff20,
     0xff206000, 0xff409010, 0xff80ff20, 0xff505000, 0xff909000, 0xffffff20,
-    0xff603000, 0xff904010, 0xfff08020, 0xffffffff};
+    0xff603000, 0xff904010, 0xfff08020, 0xffffffff
+};
 
 u32 g_EffectsColorWithoutTextureBlending[28] = {
     0xfff0f0f0, 0xfff0f0f0, 0xffffffff, 0xffffe0e0, 0xffffe0e0, 0xffffe0e0,
     0xffffe0ff, 0xffffe0ff, 0xffffe0ff, 0xffe0e0ff, 0xffe0e0ff, 0xffe0e0ff,
     0xffe0ffff, 0xffe0ffff, 0xffe0ffff, 0xffe0ffe0, 0xffe0ffe0, 0xffe0ffe0,
     0xffe0ffe0, 0xffe0ffe0, 0xffe0ffe0, 0xffffffe0, 0xffffffe0, 0xffffffe0,
-    0xffffe0e0, 0xffffe0e0, 0xffffe0e0, 0xffffffff};
-u32 g_BulletSpriteOffset16Px[16] = {0, 1, 1, 1, 1, 2, 2, 2,
-                                    2, 3, 3, 3, 4, 4, 4, 0};
-u32 g_BulletSpriteOffset32Px[8] = {0, 1, 1, 2, 2, 3, 4, 0};
+    0xffffe0e0, 0xffffe0e0, 0xffffe0e0, 0xffffffff
+};
+u32 g_BulletSpriteOffset16Px[16] = { 0, 1, 1, 1, 1, 2, 2, 2,
+                                     2, 3, 3, 3, 4, 4, 4, 0 };
+u32 g_BulletSpriteOffset32Px[8] = { 0, 1, 1, 2, 2, 3, 4, 0 };
 
 u32 *g_EffectsColor = g_EffectsColorWithTextureBlending;
 
@@ -48,33 +50,35 @@ struct BulletTypeInfo {
 #define ASB3(x) ANM_SCRIPT_BULLET3_##x
 #define ASB4(x) ANM_SCRIPT_BULLET4_##x
 BulletTypeInfo g_BulletTypeInfos[10] = {
-    {ASB3(PELLET), ASB3(SPAWN_PELLET_FAST), ASB3(SPAWN_PELLET_NORMAL),
-     ASB3(SPAWN_PELLET_SLOW), ASB3(SPAWN_DONUT_SMALL)},
-    {ASB3(RING_BALL), ASB3(SPAWN_BIG_BALL_FAST), ASB3(SPAWN_BIG_BALL_NORMAL),
-     ASB3(SPAWN_BIG_BALL_SLOW), ASB3(SPAWN_DONUT_MEDIUM)},
-    {ASB3(RICE), ASB3(SPAWN_BIG_BALL_FAST), ASB3(SPAWN_BIG_BALL_NORMAL),
-     ASB3(SPAWN_BIG_BALL_SLOW), ASB3(SPAWN_DONUT_MEDIUM)},
-    {ASB3(BALL), ASB3(SPAWN_BIG_BALL_FAST), ASB3(SPAWN_BIG_BALL_NORMAL),
-     ASB3(SPAWN_BIG_BALL_SLOW), ASB3(SPAWN_DONUT_MEDIUM)},
-    {ASB3(KUNAI), ASB3(SPAWN_BIG_BALL_FAST), ASB3(SPAWN_BIG_BALL_NORMAL),
-     ASB3(SPAWN_BIG_BALL_SLOW), ASB3(SPAWN_DONUT_MEDIUM)},
-    {ASB3(SHARD), ASB3(SPAWN_BIG_BALL_FAST), ASB3(SPAWN_BIG_BALL_NORMAL),
-     ASB3(SPAWN_BIG_BALL_SLOW), ASB3(SPAWN_DONUT_MEDIUM)},
-    {ASB3(BIG_BALL), ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_BIG_BALL_HUGE),
-     ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_DONUT_BIG)},
-    {ASB3(FIREBALL), ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_BIG_BALL_HUGE),
-     ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_DONUT_BIG)},
-    {ASB3(DAGGER), ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_BIG_BALL_HUGE),
-     ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_DONUT_BIG)},
-    {ASB4(BUBBLE), ASB4(SPAWN_BUBBLE_SLOW), ASB4(SPAWN_BUBBLE_SLOW),
-     ASB4(SPAWN_BUBBLE_SLOW), ASB4(SPAWN_BUBBLE_NORMAL)},
+    { ASB3(PELLET), ASB3(SPAWN_PELLET_FAST), ASB3(SPAWN_PELLET_NORMAL),
+      ASB3(SPAWN_PELLET_SLOW), ASB3(SPAWN_DONUT_SMALL) },
+    { ASB3(RING_BALL), ASB3(SPAWN_BIG_BALL_FAST), ASB3(SPAWN_BIG_BALL_NORMAL),
+      ASB3(SPAWN_BIG_BALL_SLOW), ASB3(SPAWN_DONUT_MEDIUM) },
+    { ASB3(RICE), ASB3(SPAWN_BIG_BALL_FAST), ASB3(SPAWN_BIG_BALL_NORMAL),
+      ASB3(SPAWN_BIG_BALL_SLOW), ASB3(SPAWN_DONUT_MEDIUM) },
+    { ASB3(BALL), ASB3(SPAWN_BIG_BALL_FAST), ASB3(SPAWN_BIG_BALL_NORMAL),
+      ASB3(SPAWN_BIG_BALL_SLOW), ASB3(SPAWN_DONUT_MEDIUM) },
+    { ASB3(KUNAI), ASB3(SPAWN_BIG_BALL_FAST), ASB3(SPAWN_BIG_BALL_NORMAL),
+      ASB3(SPAWN_BIG_BALL_SLOW), ASB3(SPAWN_DONUT_MEDIUM) },
+    { ASB3(SHARD), ASB3(SPAWN_BIG_BALL_FAST), ASB3(SPAWN_BIG_BALL_NORMAL),
+      ASB3(SPAWN_BIG_BALL_SLOW), ASB3(SPAWN_DONUT_MEDIUM) },
+    { ASB3(BIG_BALL), ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_BIG_BALL_HUGE),
+      ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_DONUT_BIG) },
+    { ASB3(FIREBALL), ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_BIG_BALL_HUGE),
+      ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_DONUT_BIG) },
+    { ASB3(DAGGER), ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_BIG_BALL_HUGE),
+      ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_DONUT_BIG) },
+    { ASB4(BUBBLE), ASB4(SPAWN_BUBBLE_SLOW), ASB4(SPAWN_BUBBLE_SLOW),
+      ASB4(SPAWN_BUBBLE_SLOW), ASB4(SPAWN_BUBBLE_NORMAL) },
 };
 
 void BulletManager::InitializeToZero() {
     memset(this, 0, sizeof(BulletManager));
 }
 
-BulletManager::BulletManager() { this->InitializeToZero(); }
+BulletManager::BulletManager() {
+    this->InitializeToZero();
+}
 
 u32 BulletManager::SpawnSingleBullet(EnemyBulletShooter *bulletProps,
                                      i32 bulletIdx1, i32 bulletIdx2,
@@ -406,7 +410,9 @@ void BulletManager::RemoveAllBullets(bool turnIntoItem) {
     }
 }
 
-void BulletManager::TurnAllBulletsIntoPoints() { this->RemoveAllBullets(true); }
+void BulletManager::TurnAllBulletsIntoPoints() {
+    this->RemoveAllBullets(true);
+}
 
 i32 BulletManager::DespawnBullets(i32 maxBonusScore, bool awardPoints) {
     i32 bulletScore;

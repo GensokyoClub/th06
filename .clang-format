@@ -4,3 +4,8 @@ Language: Cpp
 # Force pointers to the type for C++.
 DerivePointerAlignment: false
 PointerAlignment: Right
+
+ColumnLimit: 0
+Cpp11BracedListStyle: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None

@@ -15,15 +15,16 @@ namespace EnemyEclInstr {
 #define MAX_BOSS_TIME 7200
 
 struct PatchouliShottypeVars {
-    struct {
+    struct
+    {
         i32 var1;
         i32 var2;
         i32 var3;
     } shotVars[2];
 };
 
-PatchouliShottypeVars g_PatchouliShottypeVars[2] = {{{{0, 3, 1}, {2, 3, 4}}},
-                                                    {{{1, 4, 0}, {4, 2, 3}}}};
+PatchouliShottypeVars g_PatchouliShottypeVars[2] = { { { { 0, 3, 1 }, { 2, 3, 4 } } },
+                                                     { { { 1, 4, 0 }, { 4, 2, 3 } } } };
 i32 g_PlayerShot;
 f32 g_PlayerDistance;
 f32 g_PlayerAngle;

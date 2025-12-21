@@ -60,8 +60,11 @@ constexpr T bit_ceil(T x) noexcept {
     if (x <= 1)
         return T(1);
 
-    constexpr int digits = std::numeric_limits<T>::digits;
-    return T(1) << (digits - countr_zero(T(x - 1)));
+    --x;
+    for (size_t shift = 1; shift < std::numeric_limits<T>::digits; shift <<= 1)
+        x |= x >> shift;
+
+    return x + 1;
 }
 
 namespace th06 {

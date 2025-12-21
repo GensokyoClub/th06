@@ -19,7 +19,6 @@
 #include <SDL2/SDL_rwops.h>
 #include <SDL2/SDL_surface.h>
 
-
 template <typename T>
 constexpr int countr_zero(T x) noexcept {
     static_assert(std::is_unsigned_v<T>, "countr_zero requires an unsigned type!");
@@ -54,14 +53,14 @@ constexpr int countr_zero(T x) noexcept {
 }
 
 // replaces X & ~(1 << countr_zero(X))
-template<typename T>
+template <typename T>
 T turn_off_rightmost_one(T val) {
-  return val & (val - 1);
+    return val & (val - 1);
 }
 // replaces X & 1 << countr_zero(X)
-template<typename T>
+template <typename T>
 T isolate_rightmost_one(T val) {
-  return val & -val;
+    return val & -val;
 }
 
 template <typename T>
@@ -108,9 +107,7 @@ u8 g_TextureFormatBytesPerPixel[6] = { 0, 4, 2, 2, 3, 2 };
 void AnmManager::CreateTextureObject() {
     g_glFuncTable.glGenTextures(1, &this->currentTextureHandle);
     g_glFuncTable.glBindTexture(GL_TEXTURE_2D, this->currentTextureHandle);
-
-    g_glFuncTable.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                                  GL_LINEAR);
+    g_glFuncTable.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
 SDL_Surface *AnmManager::LoadToSurfaceWithFormat(const char *filename, SDL_PixelFormatEnum format, u8 **fileData) {
@@ -170,26 +167,21 @@ u8 *AnmManager::ExtractSurfacePixels(SDL_Surface *src, u8 pixelDepth) {
 }
 
 void AnmManager::FlipSurface(SDL_Surface *surface) {
-    u8 *copyBuf;
-    u8 *highPtr;
-    u32 lowIndex;
-
     if (surface->h < 2) {
         return;
     }
 
     SDL_LockSurface(surface);
 
-    copyBuf = new u8[surface->h / 2 * surface->pitch];
+    u8 *copyBuf = new u8[surface->h / 2 * surface->pitch];
 
-    lowIndex = 0;
-    highPtr = ((u8 *)surface->pixels) + (surface->h - 1) * surface->pitch;
+    u32 lowIndex = 0;
+    u8 *highPtr = ((u8 *)surface->pixels) + (surface->h - 1) * surface->pitch;
 
     std::memcpy(copyBuf, surface->pixels, surface->h / 2 * surface->pitch);
 
     for (int i = 0; i < surface->h / 2; i++) {
-        std::memcpy(((u8 *)surface->pixels) + lowIndex, highPtr,
-                    surface->pitch);
+        std::memcpy(((u8 *)surface->pixels) + lowIndex, highPtr, surface->pitch);
         std::memcpy(highPtr, copyBuf + lowIndex, surface->pitch);
 
         lowIndex += surface->pitch;
@@ -212,9 +204,7 @@ void AnmManager::ReleaseSurfaces(void) {
 
 void AnmManager::TakeScreenshotIfRequested() {
     if (this->screenshotTextureId >= 0) {
-        this->TakeScreenshot(this->screenshotTextureId, this->screenshotLeft,
-                             this->screenshotTop, this->screenshotWidth,
-                             this->screenshotHeight);
+        this->TakeScreenshot(this->screenshotTextureId, this->screenshotLeft, this->screenshotTop, this->screenshotWidth, this->screenshotHeight);
         this->screenshotTextureId = -1;
     }
     return;
@@ -245,18 +235,14 @@ AnmManager::AnmManager() {
 
     std::memset(this, 0, sizeof(AnmManager));
 
-    for (i32 spriteIndex = 0; spriteIndex < ARRAY_SIZE_SIGNED(this->sprites);
-         spriteIndex++) {
+    for (i32 spriteIndex = 0; spriteIndex < ARRAY_SIZE_SIGNED(this->sprites); spriteIndex++) {
         this->sprites[spriteIndex].sourceFileIndex = -1;
     }
 
     g_PrimitivesToDrawVertexBuf[3].position.w = 1.0;
-    g_PrimitivesToDrawVertexBuf[2].position.w =
-        g_PrimitivesToDrawVertexBuf[3].position.w;
-    g_PrimitivesToDrawVertexBuf[1].position.w =
-        g_PrimitivesToDrawVertexBuf[2].position.w;
-    g_PrimitivesToDrawVertexBuf[0].position.w =
-        g_PrimitivesToDrawVertexBuf[1].position.w;
+    g_PrimitivesToDrawVertexBuf[2].position.w = g_PrimitivesToDrawVertexBuf[3].position.w;
+    g_PrimitivesToDrawVertexBuf[1].position.w = g_PrimitivesToDrawVertexBuf[2].position.w;
+    g_PrimitivesToDrawVertexBuf[0].position.w = g_PrimitivesToDrawVertexBuf[1].position.w;
     g_PrimitivesToDrawVertexBuf[0].textureUV.x = 0.0;
     g_PrimitivesToDrawVertexBuf[0].textureUV.y = 0.0;
     g_PrimitivesToDrawVertexBuf[1].textureUV.x = 1.0;
@@ -267,12 +253,9 @@ AnmManager::AnmManager() {
     g_PrimitivesToDrawVertexBuf[3].textureUV.y = 1.0;
 
     g_PrimitivesToDrawNoVertexBuf[3].position.w = 1.0;
-    g_PrimitivesToDrawNoVertexBuf[2].position.w =
-        g_PrimitivesToDrawNoVertexBuf[3].position.w;
-    g_PrimitivesToDrawNoVertexBuf[1].position.w =
-        g_PrimitivesToDrawNoVertexBuf[2].position.w;
-    g_PrimitivesToDrawNoVertexBuf[0].position.w =
-        g_PrimitivesToDrawNoVertexBuf[1].position.w;
+    g_PrimitivesToDrawNoVertexBuf[2].position.w = g_PrimitivesToDrawNoVertexBuf[3].position.w;
+    g_PrimitivesToDrawNoVertexBuf[1].position.w = g_PrimitivesToDrawNoVertexBuf[2].position.w;
+    g_PrimitivesToDrawNoVertexBuf[0].position.w = g_PrimitivesToDrawNoVertexBuf[1].position.w;
     g_PrimitivesToDrawNoVertexBuf[0].textureUV.x = 0.0;
     g_PrimitivesToDrawNoVertexBuf[0].textureUV.y = 0.0;
     g_PrimitivesToDrawNoVertexBuf[1].textureUV.x = 1.0;
@@ -289,10 +272,8 @@ AnmManager::AnmManager() {
     // ensure the texture can't be considered incomplete in these cases.
     this->CreateTextureObject();
     this->dummyTextureHandle = this->currentTextureHandle;
-    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA,
-                               GL_UNSIGNED_BYTE, NULL);
+    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
-    //    this->vertexBuffer = NULL;
     this->currentBlendMode = 0;
     this->screenshotTextureId = -1;
     this->projectionMode = PROJECTION_MODE_PERSPECTIVE;
@@ -330,88 +311,53 @@ void AnmManager::SetupVertexBuffer() {
     this->vertexBufferContents[3].textureUV.y = 1;
     this->vertexBufferContents[2].textureUV.y = 1;
 
-    g_PrimitivesToDrawUnknown[0].position =
-        this->vertexBufferContents[0].position;
-    g_PrimitivesToDrawUnknown[1].position =
-        this->vertexBufferContents[1].position;
-    g_PrimitivesToDrawUnknown[2].position =
-        this->vertexBufferContents[2].position;
-    g_PrimitivesToDrawUnknown[3].position =
-        this->vertexBufferContents[3].position;
+    g_PrimitivesToDrawUnknown[0].position = this->vertexBufferContents[0].position;
+    g_PrimitivesToDrawUnknown[1].position = this->vertexBufferContents[1].position;
+    g_PrimitivesToDrawUnknown[2].position = this->vertexBufferContents[2].position;
+    g_PrimitivesToDrawUnknown[3].position = this->vertexBufferContents[3].position;
 
-    g_PrimitivesToDrawUnknown[0].textureUV.x =
-        this->vertexBufferContents[0].textureUV.x;
-    g_PrimitivesToDrawUnknown[0].textureUV.y =
-        this->vertexBufferContents[0].textureUV.y;
-    g_PrimitivesToDrawUnknown[1].textureUV.x =
-        this->vertexBufferContents[1].textureUV.x;
-    g_PrimitivesToDrawUnknown[1].textureUV.y =
-        this->vertexBufferContents[1].textureUV.y;
-    g_PrimitivesToDrawUnknown[2].textureUV.x =
-        this->vertexBufferContents[2].textureUV.x;
-    g_PrimitivesToDrawUnknown[2].textureUV.y =
-        this->vertexBufferContents[2].textureUV.y;
-    g_PrimitivesToDrawUnknown[3].textureUV.x =
-        this->vertexBufferContents[3].textureUV.x;
-    g_PrimitivesToDrawUnknown[3].textureUV.y =
-        this->vertexBufferContents[3].textureUV.y;
+    g_PrimitivesToDrawUnknown[0].textureUV.x = this->vertexBufferContents[0].textureUV.x;
+    g_PrimitivesToDrawUnknown[0].textureUV.y = this->vertexBufferContents[0].textureUV.y;
+    g_PrimitivesToDrawUnknown[1].textureUV.x = this->vertexBufferContents[1].textureUV.x;
+    g_PrimitivesToDrawUnknown[1].textureUV.y = this->vertexBufferContents[1].textureUV.y;
+    g_PrimitivesToDrawUnknown[2].textureUV.x = this->vertexBufferContents[2].textureUV.x;
+    g_PrimitivesToDrawUnknown[2].textureUV.y = this->vertexBufferContents[2].textureUV.y;
+    g_PrimitivesToDrawUnknown[3].textureUV.x = this->vertexBufferContents[3].textureUV.x;
+    g_PrimitivesToDrawUnknown[3].textureUV.y = this->vertexBufferContents[3].textureUV.y;
 
     //    RenderVertexInfo *buffer;
 
     if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0) {
-        //        g_Supervisor.d3dDevice->CreateVertexBuffer(sizeof(this->vertexBufferContents),
-        //        0, D3DFVF_TEX1 | D3DFVF_XYZ,
-        //                                                   D3DPOOL_MANAGED,
-        //                                                   &this->vertexBuffer);
-        //
-        //        this->vertexBuffer->Lock(0, 0, (BYTE **)&buffer, 0);
-        //        memcpy(buffer, this->vertexBufferContents,
-        //        sizeof(this->vertexBufferContents));
-        //        this->vertexBuffer->Unlock();
-        //
-        //        g_Supervisor.d3dDevice->SetStreamSource(0,
-        //        g_AnmManager->vertexBuffer, sizeof(RenderVertexInfo));
-        this->SetAttributePointer(VERTEX_ARRAY_POSITION,
-                                  sizeof(*vertexBufferContents),
-                                  &this->vertexBufferContents[0].position);
-        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD,
-                                  sizeof(*vertexBufferContents),
-                                  &this->vertexBufferContents[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*vertexBufferContents), &this->vertexBufferContents[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*vertexBufferContents), &this->vertexBufferContents[0].textureUV);
     }
 }
 
-bool AnmManager::LoadTexture(i32 textureIdx, char *textureName,
-                             i32 textureFormat, ZunColor colorKey) {
+bool AnmManager::LoadTexture(i32 textureIdx, char *textureName, i32 textureFormat, ZunColor colorKey) {
     u8 *rawTextureData;
     SDL_Surface *textureSurface;
 
     ReleaseTexture(textureIdx);
 
     if (((g_Supervisor.cfg.opts >> GCOS_FORCE_16BIT_COLOR_MODE) & 1) != 0) {
-        if (g_TextureFormatSDLMapping[textureFormat] ==
-                SDL_PIXELFORMAT_RGBA32 ||
-            g_TextureFormatSDLMapping[textureFormat] ==
-                SDL_PIXELFORMAT_UNKNOWN) {
+        if (g_TextureFormatSDLMapping[textureFormat] == SDL_PIXELFORMAT_RGBA32 || g_TextureFormatSDLMapping[textureFormat] == SDL_PIXELFORMAT_UNKNOWN) {
             textureFormat = TEX_FMT_A4R4G4B4;
-        } else if (g_TextureFormatSDLMapping[textureFormat] ==
-                   SDL_PIXELFORMAT_RGB24) {
+        } else if (g_TextureFormatSDLMapping[textureFormat] == SDL_PIXELFORMAT_RGB24) {
             textureFormat = TEX_FMT_R5G6B5;
         }
     }
 
-    textureSurface = LoadToSurfaceWithFormat(
-        textureName, g_TextureFormatSDLMapping[textureFormat],
-        (u8 **)&this->textures[textureIdx].fileData);
+    textureSurface = LoadToSurfaceWithFormat(textureName, g_TextureFormatSDLMapping[textureFormat], (u8 **)&this->textures[textureIdx].fileData);
 
     // Hideous hack to account for ANM entries that report a different texture
     // size than the actual size
     AnmRawEntry *entry = this->anmFiles[textureIdx];
-    if (textureSurface->w != entry->width ||
-        textureSurface->h != entry->height) {
+    if (textureSurface->w != entry->width || textureSurface->h != entry->height) {
         SDL_Surface *textureSurface2 = SDL_CreateRGBSurfaceWithFormat(
             0, entry->width, entry->height,
             g_TextureFormatBytesPerPixel[textureFormat] * 8,
-            g_TextureFormatSDLMapping[textureFormat]);
+            g_TextureFormatSDLMapping[textureFormat]
+        );
         SDL_Rect srcRect = { 0, 0, textureSurface->w, textureSurface->h };
         SDL_Rect dstRect = { 0, 0, entry->width, entry->height };
         SDL_BlitScaled(textureSurface, &srcRect, textureSurface2, &dstRect);
@@ -427,10 +373,10 @@ bool AnmManager::LoadTexture(i32 textureIdx, char *textureName,
 
     // Clear any errors that might be pending
     while (g_glFuncTable.glGetError() != GL_NO_ERROR) {
+
     }
 
-    rawTextureData = ExtractSurfacePixels(
-        textureSurface, g_TextureFormatBytesPerPixel[textureFormat]);
+    rawTextureData = ExtractSurfacePixels(textureSurface, g_TextureFormatBytesPerPixel[textureFormat]);
 
     this->textures[textureIdx].handle = this->currentTextureHandle;
     this->textures[textureIdx].textureData = rawTextureData;
@@ -449,7 +395,8 @@ bool AnmManager::LoadTexture(i32 textureIdx, char *textureName,
         GL_TEXTURE_2D, 0, g_TextureFormatGLFormatMapping[textureFormat],
         textureSurface->w, textureSurface->h, 0,
         g_TextureFormatGLFormatMapping[textureFormat],
-        g_TextureFormatGLTypeMapping[textureFormat], rawTextureData);
+        g_TextureFormatGLTypeMapping[textureFormat], rawTextureData
+    );
 
     SDL_FreeSurface(textureSurface);
 
@@ -564,8 +511,7 @@ bool AnmManager::LoadTexture(i32 textureIdx, char *textureName,
 //     return true;
 // }
 
-bool AnmManager::CreateEmptyTexture(i32 textureIdx, u32 width, u32 height,
-                                    i32 textureFormat) {
+bool AnmManager::CreateEmptyTexture(i32 textureIdx, u32 width, u32 height, i32 textureFormat) {
     CreateTextureObject();
 
     this->textures[textureIdx].handle = this->currentTextureHandle;
@@ -577,7 +523,8 @@ bool AnmManager::CreateEmptyTexture(i32 textureIdx, u32 width, u32 height,
         GL_TEXTURE_2D, 0, g_TextureFormatGLFormatMapping[textureFormat],
         textures[textureIdx].width, textures[textureIdx].height, 0,
         g_TextureFormatGLFormatMapping[textureFormat],
-        g_TextureFormatGLTypeMapping[textureFormat], NULL);
+        g_TextureFormatGLTypeMapping[textureFormat], NULL
+    );
 
     return true;
 }
@@ -589,8 +536,7 @@ bool AnmManager::LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset) {
     AnmRawEntry *anm = this->anmFiles[anmIdx];
 
     if (anm == NULL) {
-        GameErrorContext::Fatal(&g_GameErrorContext,
-                                TH_ERR_ANMMANAGER_SPRITE_CORRUPTED, path);
+        GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_ANMMANAGER_SPRITE_CORRUPTED, path);
         return false;
     }
 
@@ -606,12 +552,9 @@ bool AnmManager::LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset) {
     }
 
     if (*anmName == '@') {
-        this->CreateEmptyTexture(anm->textureIdx, anm->width, anm->height,
-                                 anm->format);
-    } else if (!this->LoadTexture(anm->textureIdx, anmName, anm->format,
-                                  anm->colorKey)) {
-        GameErrorContext::Fatal(&g_GameErrorContext,
-                                TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, anmName);
+        this->CreateEmptyTexture(anm->textureIdx, anm->width, anm->height, anm->format);
+    } else if (!this->LoadTexture(anm->textureIdx, anmName, anm->format, anm->colorKey)) {
+        GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, anmName);
         return false;
     }
 
@@ -632,28 +575,23 @@ bool AnmManager::LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset) {
     i32 index;
     AnmRawSprite *rawSprite;
 
-    for (index = 0; index < this->anmFiles[anmIdx]->numSprites;
-         index++, curSpriteOffset++) {
+    for (index = 0; index < this->anmFiles[anmIdx]->numSprites; index++, curSpriteOffset++) {
         rawSprite = (AnmRawSprite *)((u8 *)anm + *curSpriteOffset);
 
         AnmLoadedSprite loadedSprite;
         loadedSprite.sourceFileIndex = this->anmFiles[anmIdx]->textureIdx;
         loadedSprite.startPixelInclusive.x = rawSprite->offset.x;
         loadedSprite.startPixelInclusive.y = rawSprite->offset.y;
-        loadedSprite.endPixelInclusive.x =
-            rawSprite->offset.x + rawSprite->size.x;
-        loadedSprite.endPixelInclusive.y =
-            rawSprite->offset.y + rawSprite->size.y;
+        loadedSprite.endPixelInclusive.x = rawSprite->offset.x + rawSprite->size.x;
+        loadedSprite.endPixelInclusive.y = rawSprite->offset.y + rawSprite->size.y;
         loadedSprite.textureWidth = (float)anm->width;
         loadedSprite.textureHeight = (float)anm->height;
         this->LoadSprite(rawSprite->id + spriteIdxOffset, &loadedSprite);
     }
 
     for (index = 0; index < anm->numScripts; index++, curSpriteOffset += 2) {
-        this->scripts[curSpriteOffset[0] + spriteIdxOffset] =
-            (AnmRawInstr *)((u8 *)anm + curSpriteOffset[1]);
-        this->spriteIndices[curSpriteOffset[0] + spriteIdxOffset] =
-            spriteIdxOffset;
+        this->scripts[curSpriteOffset[0] + spriteIdxOffset] = (AnmRawInstr *)((u8 *)anm + curSpriteOffset[1]);
+        this->spriteIndices[curSpriteOffset[0] + spriteIdxOffset] = spriteIdxOffset;
     }
 
     this->anmFilesSpriteIndexOffsets[anmIdx] = spriteIdxOffset;
@@ -664,21 +602,21 @@ bool AnmManager::LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset) {
 void AnmManager::ReleaseAnm(i32 anmIdx) {
     if (this->anmFiles[anmIdx] != NULL) {
         i32 *spriteIdx;
-        i32 i;
         i32 spriteIdxOffset = this->anmFilesSpriteIndexOffsets[anmIdx];
         u32 *byteOffset = this->anmFiles[anmIdx]->spriteOffsets;
+
+        i32 i;
         for (i = 0; i < this->anmFiles[anmIdx]->numSprites; i++, byteOffset++) {
             spriteIdx = (i32 *)((u8 *)this->anmFiles[anmIdx] + *byteOffset);
-            memset(&this->sprites[*spriteIdx + spriteIdxOffset], 0,
-                   sizeof(this->sprites[*spriteIdx + spriteIdxOffset]));
+            memset(&this->sprites[*spriteIdx + spriteIdxOffset], 0, sizeof(this->sprites[*spriteIdx + spriteIdxOffset]));
             this->sprites[*spriteIdx + spriteIdxOffset].sourceFileIndex = -1;
         }
-
         for (i = 0; i < this->anmFiles[anmIdx]->numScripts;
              i++, byteOffset += 2) {
             this->scripts[*byteOffset + spriteIdxOffset] = NULL;
             this->spriteIndices[*byteOffset + spriteIdxOffset] = 0;
         }
+
         this->anmFilesSpriteIndexOffsets[anmIdx] = 0;
         AnmRawEntry *entry = this->anmFiles[anmIdx];
         this->ReleaseTexture(entry->textureIdx);
@@ -724,25 +662,13 @@ void AnmManager::LoadSprite(u32 spriteIdx, AnmLoadedSprite *sprite) {
     // some assumption somewhere
     //   else in the ANM code, but it causes orthographic draws to look visually
     //   correct, so ¯\_(ツ)_/¯
-    this->sprites[spriteIdx].uvStart.x =
-        (this->sprites[spriteIdx].startPixelInclusive.x + 0.5f) /
-        this->sprites[spriteIdx].textureWidth;
-    this->sprites[spriteIdx].uvEnd.x =
-        (this->sprites[spriteIdx].endPixelInclusive.x - 0.5f) /
-        this->sprites[spriteIdx].textureWidth;
-    this->sprites[spriteIdx].uvStart.y =
-        (this->sprites[spriteIdx].startPixelInclusive.y + 0.5f) /
-        this->sprites[spriteIdx].textureHeight;
-    this->sprites[spriteIdx].uvEnd.y =
-        (this->sprites[spriteIdx].endPixelInclusive.y - 0.5f) /
-        this->sprites[spriteIdx].textureHeight;
+    this->sprites[spriteIdx].uvStart.x = (this->sprites[spriteIdx].startPixelInclusive.x + 0.5f) / this->sprites[spriteIdx].textureWidth;
+    this->sprites[spriteIdx].uvEnd.x = (this->sprites[spriteIdx].endPixelInclusive.x - 0.5f) / this->sprites[spriteIdx].textureWidth;
+    this->sprites[spriteIdx].uvStart.y = (this->sprites[spriteIdx].startPixelInclusive.y + 0.5f) / this->sprites[spriteIdx].textureHeight;
+    this->sprites[spriteIdx].uvEnd.y = (this->sprites[spriteIdx].endPixelInclusive.y - 0.5f) / this->sprites[spriteIdx].textureHeight;
 
-    this->sprites[spriteIdx].widthPx =
-        this->sprites[spriteIdx].endPixelInclusive.x -
-        this->sprites[spriteIdx].startPixelInclusive.x;
-    this->sprites[spriteIdx].heightPx =
-        this->sprites[spriteIdx].endPixelInclusive.y -
-        this->sprites[spriteIdx].startPixelInclusive.y;
+    this->sprites[spriteIdx].widthPx = this->sprites[spriteIdx].endPixelInclusive.x - this->sprites[spriteIdx].startPixelInclusive.x;
+    this->sprites[spriteIdx].heightPx = this->sprites[spriteIdx].endPixelInclusive.y - this->sprites[spriteIdx].startPixelInclusive.y;
 }
 
 bool AnmManager::SetActiveSprite(AnmVm *vm, u32 sprite_index) {
@@ -783,17 +709,12 @@ void AnmManager::SetRenderStateForVm(AnmVm *vm) {
         this->currentBlendMode = vm->flags.blendMode;
         if (this->currentBlendMode == AnmVmBlendMode_InvSrcAlpha) {
             g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_DESTBLEND,
-            //            D3DBLEND_INVSRCALPHA);
         } else {
             g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-            //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_DESTBLEND,
-            //            D3DBLEND_ONE);
         }
     }
 
-    if (((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING) & 1) ==
-        0) {
+    if (((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING) & 1) == 0) {
         this->SetColorOp(COMPONENT_RGB, (ColorOp)vm->flags.colorOp);
     }
 
@@ -825,100 +746,91 @@ void AnmManager::UpdateDirtyStates() {
         //   but compilers just aren't able to deal with that in the switch
         //   statement :/
         switch (curFlagIndex) {
-        case DIRTY_FOG:
-            if (this->dirtyFogNear != this->fogNear ||
-                this->dirtyFogFar != this->fogFar) {
-                this->fogNear = this->dirtyFogNear;
-                this->fogFar = this->dirtyFogFar;
-                gfxBackend->SetFogRange(this->fogNear, this->fogFar);
-            }
-
-            if (this->dirtyFogColor != this->fogColor) {
-                this->fogColor = this->dirtyFogColor;
-                gfxBackend->SetFogColor(this->fogColor);
-            }
-
-            break;
-        case DIRTY_DEPTH_CONFIG:
-            if (this->dirtyDepthMask != this->depthMask) {
-                this->depthMask = this->dirtyDepthMask;
-                g_glFuncTable.glDepthMask(this->depthMask);
-            }
-
-            if (this->dirtyDepthFunc != this->depthFunc) {
-                this->depthFunc = this->dirtyDepthFunc;
-
-                // This'll end up less awkward once there's a render backend
-                // abstraction layer I swear
-                if (this->depthFunc == DEPTH_FUNC_ALWAYS) {
-                    g_glFuncTable.glDepthFunc(GL_ALWAYS);
-                } else {
-                    g_glFuncTable.glDepthFunc(GL_LEQUAL);
+            case DIRTY_FOG:
+                if (this->dirtyFogNear != this->fogNear ||
+                    this->dirtyFogFar != this->fogFar) {
+                    this->fogNear = this->dirtyFogNear;
+                    this->fogFar = this->dirtyFogFar;
+                    gfxBackend->SetFogRange(this->fogNear, this->fogFar);
                 }
+
+                if (this->dirtyFogColor != this->fogColor) {
+                    this->fogColor = this->dirtyFogColor;
+                    gfxBackend->SetFogColor(this->fogColor);
+                }
+
+                break;
+            case DIRTY_DEPTH_CONFIG:
+                if (this->dirtyDepthMask != this->depthMask) {
+                    this->depthMask = this->dirtyDepthMask;
+                    g_glFuncTable.glDepthMask(this->depthMask);
+                }
+
+                if (this->dirtyDepthFunc != this->depthFunc) {
+                    this->depthFunc = this->dirtyDepthFunc;
+
+                    // This'll end up less awkward once there's a render backend
+                    // abstraction layer I swear
+                    if (this->depthFunc == DEPTH_FUNC_ALWAYS) {
+                        g_glFuncTable.glDepthFunc(GL_ALWAYS);
+                    } else {
+                        g_glFuncTable.glDepthFunc(GL_LEQUAL);
+                    }
+                }
+
+                break;
+            case DIRTY_VERTEX_ATTRIBUTE_ENABLE: {
+                u8 changedAttributes = this->dirtyEnabledVertexAttributes ^ this->enabledVertexAttributes;
+                this->enabledVertexAttributes = this->dirtyEnabledVertexAttributes;
+
+                while (changedAttributes != 0) {
+                    u8 isolated = isolate_rightmost_one(changedAttributes);
+                    gfxBackend->ToggleVertexAttribute(isolated, this->enabledVertexAttributes & isolated);
+                    changedAttributes = turn_off_rightmost_one(changedAttributes);
+                }
+
+                break;
             }
+            case DIRTY_VERTEX_ATTRIBUTE_ARRAY:
+                for (u32 i = 0; i < 3; i++) {
+                    if (!std::memcmp(&this->attribArrays[i], &this->dirtyAttribArrays[i], sizeof(*this->attribArrays))) {
+                        continue;
+                    }
 
-            break;
-        case DIRTY_VERTEX_ATTRIBUTE_ENABLE: {
-            u8 changedAttributes = this->dirtyEnabledVertexAttributes ^
-                                   this->enabledVertexAttributes;
-            this->enabledVertexAttributes = this->dirtyEnabledVertexAttributes;
+                    this->attribArrays[i] = this->dirtyAttribArrays[i];
 
-            while (changedAttributes != 0) {
-                u8 isolated = isolate_rightmost_one(changedAttributes);
-                gfxBackend->ToggleVertexAttribute(
-                    isolated,
-                    this->enabledVertexAttributes & isolated
+                    gfxBackend->SetAttributePointer((VertexAttributeArrays)i, this->attribArrays[i].stride, this->attribArrays[i].ptr);
+                }
+
+                break;
+            case DIRTY_COLOR_OP:
+                for (u32 i = 0; i < 2; i++) {
+                    if (this->colorOps[i] == this->dirtyColorOps[i]) {
+                        continue;
+                    }
+
+                    this->colorOps[i] = this->dirtyColorOps[i];
+                    gfxBackend->SetColorOp((TextureOpComponent)i, this->colorOps[i]);
+                }
+
+                break;
+            case DIRTY_TEXTURE_FACTOR:
+                this->textureFactor = this->dirtytTextureFactor;
+                gfxBackend->SetTextureFactor(this->textureFactor);
+                break;
+            case DIRTY_MODEL_MATRIX:
+            case DIRTY_VIEW_MATRIX:
+            case DIRTY_PROJECTION_MATRIX:
+            case DIRTY_TEXTURE_MATRIX:
+                std::memcpy(
+                    &this->transformMatrices[curFlagIndex - DIRTY_MODEL_MATRIX],
+                    &this->dirtyTransformMatrices[curFlagIndex - DIRTY_MODEL_MATRIX],
+                    sizeof(*this->transformMatrices)
                 );
-                changedAttributes = turn_off_rightmost_one(changedAttributes);
-            }
-
-            break;
-        }
-        case DIRTY_VERTEX_ATTRIBUTE_ARRAY:
-            for (u32 i = 0; i < 3; i++) {
-                if (!std::memcmp(&this->attribArrays[i],
-                                 &this->dirtyAttribArrays[i],
-                                 sizeof(*this->attribArrays))) {
-                    continue;
-                }
-
-                this->attribArrays[i] = this->dirtyAttribArrays[i];
-
-                gfxBackend->SetAttributePointer((VertexAttributeArrays)i,
-                                                this->attribArrays[i].stride,
-                                                this->attribArrays[i].ptr);
-            }
-
-            break;
-        case DIRTY_COLOR_OP:
-            for (u32 i = 0; i < 2; i++) {
-                if (this->colorOps[i] == this->dirtyColorOps[i]) {
-                    continue;
-                }
-
-                this->colorOps[i] = this->dirtyColorOps[i];
-
-                gfxBackend->SetColorOp((TextureOpComponent)i,
-                                       this->colorOps[i]);
-            }
-
-            break;
-        case DIRTY_TEXTURE_FACTOR:
-            this->textureFactor = this->dirtytTextureFactor;
-            gfxBackend->SetTextureFactor(this->textureFactor);
-            break;
-        case DIRTY_MODEL_MATRIX:
-        case DIRTY_VIEW_MATRIX:
-        case DIRTY_PROJECTION_MATRIX:
-        case DIRTY_TEXTURE_MATRIX:
-            std::memcpy(
-                &this->transformMatrices[curFlagIndex - DIRTY_MODEL_MATRIX],
-                &this->dirtyTransformMatrices[curFlagIndex - DIRTY_MODEL_MATRIX],
-                sizeof(*this->transformMatrices)
-            );
-            gfxBackend->SetTransformMatrix(
-                (TransformMatrix)(curFlagIndex - DIRTY_MODEL_MATRIX),
-                this->transformMatrices[curFlagIndex - DIRTY_MODEL_MATRIX]);
+                gfxBackend->SetTransformMatrix(
+                    (TransformMatrix)(curFlagIndex - DIRTY_MODEL_MATRIX),
+                    this->transformMatrices[curFlagIndex - DIRTY_MODEL_MATRIX]
+                );
         }
     }
 }
@@ -931,44 +843,24 @@ bool AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel) {
         //   comment in inverseViewportMatrix() for a more detailed explanation
         //   and porting notes.
 
-        g_PrimitivesToDrawVertexBuf[0].position.x =
-            rintf(g_PrimitivesToDrawVertexBuf[0].position.x);
-        g_PrimitivesToDrawVertexBuf[2].position.x =
-            g_PrimitivesToDrawVertexBuf[0].position.x;
-        g_PrimitivesToDrawVertexBuf[1].position.x =
-            rintf(g_PrimitivesToDrawVertexBuf[1].position.x);
-        g_PrimitivesToDrawVertexBuf[3].position.x =
-            g_PrimitivesToDrawVertexBuf[1].position.x;
-        g_PrimitivesToDrawVertexBuf[0].position.y =
-            rintf(g_PrimitivesToDrawVertexBuf[0].position.y);
-        g_PrimitivesToDrawVertexBuf[1].position.y =
-            g_PrimitivesToDrawVertexBuf[0].position.y;
-        g_PrimitivesToDrawVertexBuf[2].position.y =
-            rintf(g_PrimitivesToDrawVertexBuf[2].position.y);
-        g_PrimitivesToDrawVertexBuf[3].position.y =
-            g_PrimitivesToDrawVertexBuf[2].position.y;
+        g_PrimitivesToDrawVertexBuf[0].position.x = rintf(g_PrimitivesToDrawVertexBuf[0].position.x);
+        g_PrimitivesToDrawVertexBuf[2].position.x = g_PrimitivesToDrawVertexBuf[0].position.x;
+        g_PrimitivesToDrawVertexBuf[1].position.x = rintf(g_PrimitivesToDrawVertexBuf[1].position.x);
+        g_PrimitivesToDrawVertexBuf[3].position.x = g_PrimitivesToDrawVertexBuf[1].position.x;
+        g_PrimitivesToDrawVertexBuf[0].position.y = rintf(g_PrimitivesToDrawVertexBuf[0].position.y);
+        g_PrimitivesToDrawVertexBuf[1].position.y = g_PrimitivesToDrawVertexBuf[0].position.y;
+        g_PrimitivesToDrawVertexBuf[2].position.y = rintf(g_PrimitivesToDrawVertexBuf[2].position.y);
+        g_PrimitivesToDrawVertexBuf[3].position.y = g_PrimitivesToDrawVertexBuf[2].position.y;
     }
-    g_PrimitivesToDrawVertexBuf[0].position.z =
-        g_PrimitivesToDrawVertexBuf[1].position.z =
-            g_PrimitivesToDrawVertexBuf[2].position.z =
-                g_PrimitivesToDrawVertexBuf[3].position.z = vm->pos.z;
+    g_PrimitivesToDrawVertexBuf[0].position.z = g_PrimitivesToDrawVertexBuf[1].position.z = g_PrimitivesToDrawVertexBuf[2].position.z = g_PrimitivesToDrawVertexBuf[3].position.z = vm->pos.z;
     if (this->currentSprite != vm->sprite) {
         this->currentSprite = vm->sprite;
-        g_PrimitivesToDrawVertexBuf[0].textureUV.x =
-            g_PrimitivesToDrawVertexBuf[2].textureUV.x =
-                vm->sprite->uvStart.x + vm->uvScrollPos.x;
-        g_PrimitivesToDrawVertexBuf[1].textureUV.x =
-            g_PrimitivesToDrawVertexBuf[3].textureUV.x =
-                vm->sprite->uvEnd.x + vm->uvScrollPos.x;
-        g_PrimitivesToDrawVertexBuf[0].textureUV.y =
-            g_PrimitivesToDrawVertexBuf[1].textureUV.y =
-                vm->sprite->uvStart.y + vm->uvScrollPos.y;
-        g_PrimitivesToDrawVertexBuf[2].textureUV.y =
-            g_PrimitivesToDrawVertexBuf[3].textureUV.y =
-                vm->sprite->uvEnd.y + vm->uvScrollPos.y;
+        g_PrimitivesToDrawVertexBuf[0].textureUV.x = g_PrimitivesToDrawVertexBuf[2].textureUV.x = vm->sprite->uvStart.x + vm->uvScrollPos.x;
+        g_PrimitivesToDrawVertexBuf[1].textureUV.x = g_PrimitivesToDrawVertexBuf[3].textureUV.x = vm->sprite->uvEnd.x + vm->uvScrollPos.x;
+        g_PrimitivesToDrawVertexBuf[0].textureUV.y = g_PrimitivesToDrawVertexBuf[1].textureUV.y = vm->sprite->uvStart.y + vm->uvScrollPos.y;
+        g_PrimitivesToDrawVertexBuf[2].textureUV.y = g_PrimitivesToDrawVertexBuf[3].textureUV.y = vm->sprite->uvEnd.y + vm->uvScrollPos.y;
 
-        this->SetCurrentTexture(
-            this->textures[vm->sprite->sourceFileIndex].handle);
+        this->SetCurrentTexture(this->textures[vm->sprite->sourceFileIndex].handle);
     }
 
     if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0) {
@@ -978,73 +870,32 @@ bool AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel) {
     }
 
     this->SetRenderStateForVm(vm);
-
     this->SetProjectionMode(PROJECTION_MODE_ORTHOGRAPHIC);
 
-    //    if (roundToPixel)
-    //    {
-    //        g_glFuncTable.glMatrixMode(GL_MODELVIEW);
-    //        g_glFuncTable.glTranslatef(0.5f, 0.5f, 0.0f);
-    //    }
-
     if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0) {
-        this->SetAttributePointer(VERTEX_ARRAY_POSITION,
-                                  sizeof(*g_PrimitivesToDrawVertexBuf),
-                                  &g_PrimitivesToDrawVertexBuf[0].position);
-        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD,
-                                  sizeof(*g_PrimitivesToDrawVertexBuf),
-                                  &g_PrimitivesToDrawVertexBuf[0].textureUV);
-        //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP,
-        //        2, g_PrimitivesToDrawVertexBuf, 0x18);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawVertexBuf), &g_PrimitivesToDrawVertexBuf[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawVertexBuf), &g_PrimitivesToDrawVertexBuf[0].textureUV);
     } else {
-        g_PrimitivesToDrawNoVertexBuf[0].position.x =
-            g_PrimitivesToDrawVertexBuf[0].position.x;
-        g_PrimitivesToDrawNoVertexBuf[0].position.y =
-            g_PrimitivesToDrawVertexBuf[0].position.y;
-        g_PrimitivesToDrawNoVertexBuf[0].position.z =
-            g_PrimitivesToDrawVertexBuf[0].position.z;
-        g_PrimitivesToDrawNoVertexBuf[1].position.x =
-            g_PrimitivesToDrawVertexBuf[1].position.x;
-        g_PrimitivesToDrawNoVertexBuf[1].position.y =
-            g_PrimitivesToDrawVertexBuf[1].position.y;
-        g_PrimitivesToDrawNoVertexBuf[1].position.z =
-            g_PrimitivesToDrawVertexBuf[1].position.z;
-        g_PrimitivesToDrawNoVertexBuf[2].position.x =
-            g_PrimitivesToDrawVertexBuf[2].position.x;
-        g_PrimitivesToDrawNoVertexBuf[2].position.y =
-            g_PrimitivesToDrawVertexBuf[2].position.y;
-        g_PrimitivesToDrawNoVertexBuf[2].position.z =
-            g_PrimitivesToDrawVertexBuf[2].position.z;
-        g_PrimitivesToDrawNoVertexBuf[3].position.x =
-            g_PrimitivesToDrawVertexBuf[3].position.x;
-        g_PrimitivesToDrawNoVertexBuf[3].position.y =
-            g_PrimitivesToDrawVertexBuf[3].position.y;
-        g_PrimitivesToDrawNoVertexBuf[3].position.z =
-            g_PrimitivesToDrawVertexBuf[3].position.z;
-        g_PrimitivesToDrawNoVertexBuf[0].textureUV.x =
-            g_PrimitivesToDrawNoVertexBuf[2].textureUV.x =
-                vm->sprite->uvStart.x + vm->uvScrollPos.x;
-        g_PrimitivesToDrawNoVertexBuf[1].textureUV.x =
-            g_PrimitivesToDrawNoVertexBuf[3].textureUV.x =
-                vm->sprite->uvEnd.x + vm->uvScrollPos.x;
-        g_PrimitivesToDrawNoVertexBuf[0].textureUV.y =
-            g_PrimitivesToDrawNoVertexBuf[1].textureUV.y =
-                vm->sprite->uvStart.y + vm->uvScrollPos.y;
-        g_PrimitivesToDrawNoVertexBuf[2].textureUV.y =
-            g_PrimitivesToDrawNoVertexBuf[3].textureUV.y =
-                vm->sprite->uvEnd.y + vm->uvScrollPos.y;
+        g_PrimitivesToDrawNoVertexBuf[0].position.x = g_PrimitivesToDrawVertexBuf[0].position.x;
+        g_PrimitivesToDrawNoVertexBuf[0].position.y = g_PrimitivesToDrawVertexBuf[0].position.y;
+        g_PrimitivesToDrawNoVertexBuf[0].position.z = g_PrimitivesToDrawVertexBuf[0].position.z;
+        g_PrimitivesToDrawNoVertexBuf[1].position.x = g_PrimitivesToDrawVertexBuf[1].position.x;
+        g_PrimitivesToDrawNoVertexBuf[1].position.y = g_PrimitivesToDrawVertexBuf[1].position.y;
+        g_PrimitivesToDrawNoVertexBuf[1].position.z = g_PrimitivesToDrawVertexBuf[1].position.z;
+        g_PrimitivesToDrawNoVertexBuf[2].position.x = g_PrimitivesToDrawVertexBuf[2].position.x;
+        g_PrimitivesToDrawNoVertexBuf[2].position.y = g_PrimitivesToDrawVertexBuf[2].position.y;
+        g_PrimitivesToDrawNoVertexBuf[2].position.z = g_PrimitivesToDrawVertexBuf[2].position.z;
+        g_PrimitivesToDrawNoVertexBuf[3].position.x = g_PrimitivesToDrawVertexBuf[3].position.x;
+        g_PrimitivesToDrawNoVertexBuf[3].position.y = g_PrimitivesToDrawVertexBuf[3].position.y;
+        g_PrimitivesToDrawNoVertexBuf[3].position.z = g_PrimitivesToDrawVertexBuf[3].position.z;
+        g_PrimitivesToDrawNoVertexBuf[0].textureUV.x = g_PrimitivesToDrawNoVertexBuf[2].textureUV.x = vm->sprite->uvStart.x + vm->uvScrollPos.x;
+        g_PrimitivesToDrawNoVertexBuf[1].textureUV.x = g_PrimitivesToDrawNoVertexBuf[3].textureUV.x = vm->sprite->uvEnd.x + vm->uvScrollPos.x;
+        g_PrimitivesToDrawNoVertexBuf[0].textureUV.y = g_PrimitivesToDrawNoVertexBuf[1].textureUV.y = vm->sprite->uvStart.y + vm->uvScrollPos.y;
+        g_PrimitivesToDrawNoVertexBuf[2].textureUV.y = g_PrimitivesToDrawNoVertexBuf[3].textureUV.y = vm->sprite->uvEnd.y + vm->uvScrollPos.y;
 
-        this->SetAttributePointer(VERTEX_ARRAY_POSITION,
-                                  sizeof(*g_PrimitivesToDrawNoVertexBuf),
-                                  &g_PrimitivesToDrawNoVertexBuf[0].position);
-        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD,
-                                  sizeof(*g_PrimitivesToDrawNoVertexBuf),
-                                  &g_PrimitivesToDrawNoVertexBuf[0].textureUV);
-        this->SetAttributePointer(VERTEX_ARRAY_DIFFUSE,
-                                  sizeof(*g_PrimitivesToDrawNoVertexBuf),
-                                  &g_PrimitivesToDrawNoVertexBuf[0].diffuse);
-        //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP,
-        //        2, g_PrimitivesToDrawNoVertexBuf, 0x1c);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawNoVertexBuf), &g_PrimitivesToDrawNoVertexBuf[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawNoVertexBuf), &g_PrimitivesToDrawNoVertexBuf[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*g_PrimitivesToDrawNoVertexBuf), &g_PrimitivesToDrawNoVertexBuf[0].diffuse);
     }
 
     this->BackendDrawCall();
@@ -1068,35 +919,23 @@ bool AnmManager::DrawNoRotation(AnmVm *vm) {
     fVar2 = (vm->sprite->widthPx * vm->scaleX) / 2.0f;
     fVar3 = (vm->sprite->heightPx * vm->scaleY) / 2.0f;
     if ((vm->flags.anchor & AnmVmAnchor_Left) == 0) {
-        g_PrimitivesToDrawVertexBuf[0].position.x =
-            g_PrimitivesToDrawVertexBuf[2].position.x = vm->pos.x - fVar2;
-        g_PrimitivesToDrawVertexBuf[1].position.x =
-            g_PrimitivesToDrawVertexBuf[3].position.x = fVar2 + vm->pos.x;
+        g_PrimitivesToDrawVertexBuf[0].position.x = g_PrimitivesToDrawVertexBuf[2].position.x = vm->pos.x - fVar2;
+        g_PrimitivesToDrawVertexBuf[1].position.x = g_PrimitivesToDrawVertexBuf[3].position.x = fVar2 + vm->pos.x;
     } else {
-        g_PrimitivesToDrawVertexBuf[0].position.x =
-            g_PrimitivesToDrawVertexBuf[2].position.x = vm->pos.x;
-        g_PrimitivesToDrawVertexBuf[1].position.x =
-            g_PrimitivesToDrawVertexBuf[3].position.x =
-                fVar2 + vm->pos.x + fVar2;
+        g_PrimitivesToDrawVertexBuf[0].position.x = g_PrimitivesToDrawVertexBuf[2].position.x = vm->pos.x;
+        g_PrimitivesToDrawVertexBuf[1].position.x = g_PrimitivesToDrawVertexBuf[3].position.x = fVar2 + vm->pos.x + fVar2;
     }
     if ((vm->flags.anchor & AnmVmAnchor_Top) == 0) {
-        g_PrimitivesToDrawVertexBuf[0].position.y =
-            g_PrimitivesToDrawVertexBuf[1].position.y = vm->pos.y - fVar3;
-        g_PrimitivesToDrawVertexBuf[2].position.y =
-            g_PrimitivesToDrawVertexBuf[3].position.y = fVar3 + vm->pos.y;
+        g_PrimitivesToDrawVertexBuf[0].position.y = g_PrimitivesToDrawVertexBuf[1].position.y = vm->pos.y - fVar3;
+        g_PrimitivesToDrawVertexBuf[2].position.y = g_PrimitivesToDrawVertexBuf[3].position.y = fVar3 + vm->pos.y;
     } else {
-        g_PrimitivesToDrawVertexBuf[0].position.y =
-            g_PrimitivesToDrawVertexBuf[1].position.y = vm->pos.y;
-        g_PrimitivesToDrawVertexBuf[2].position.y =
-            g_PrimitivesToDrawVertexBuf[3].position.y =
-                fVar3 + vm->pos.y + fVar3;
+        g_PrimitivesToDrawVertexBuf[0].position.y = g_PrimitivesToDrawVertexBuf[1].position.y = vm->pos.y;
+        g_PrimitivesToDrawVertexBuf[2].position.y = g_PrimitivesToDrawVertexBuf[3].position.y = fVar3 + vm->pos.y + fVar3;
     }
     return this->DrawOrthographic(vm, true);
 }
 
-void AnmManager::TranslateRotation(VertexTex1Xyzrhw *param_1, f32 x, f32 y,
-                                   f32 sine, f32 cosine, f32 xOffset,
-                                   f32 yOffset) {
+void AnmManager::TranslateRotation(VertexTex1Xyzrhw *param_1, f32 x, f32 y, f32 sine, f32 cosine, f32 xOffset, f32 yOffset) {
     param_1->position.x = x * cosine + y * sine + xOffset;
     param_1->position.y = -x * sine + y * cosine + yOffset;
     return;
@@ -1129,22 +968,11 @@ bool AnmManager::Draw(AnmVm *vm) {
     yOffset = rintf(vm->pos.y);
     spriteXCenter = rintf((vm->sprite->widthPx * vm->scaleX) / 2.0f);
     spriteYCenter = rintf((vm->sprite->heightPx * vm->scaleY) / 2.0f);
-    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[0],
-                            -spriteXCenter - 0.5f, -spriteYCenter - 0.5f, zSine,
-                            zCosine, xOffset, yOffset);
-    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[1],
-                            spriteXCenter - 0.5f, -spriteYCenter - 0.5f, zSine,
-                            zCosine, xOffset, yOffset);
-    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[2],
-                            -spriteXCenter - 0.5f, spriteYCenter - 0.5f, zSine,
-                            zCosine, xOffset, yOffset);
-    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[3],
-                            spriteXCenter - 0.5f, spriteYCenter - 0.5f, zSine,
-                            zCosine, xOffset, yOffset);
-    g_PrimitivesToDrawVertexBuf[0].position.z =
-        g_PrimitivesToDrawVertexBuf[1].position.z =
-            g_PrimitivesToDrawVertexBuf[2].position.z =
-                g_PrimitivesToDrawVertexBuf[3].position.z = vm->pos.z;
+    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[0], -spriteXCenter - 0.5f, -spriteYCenter - 0.5f, zSine, zCosine, xOffset, yOffset);
+    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[1], spriteXCenter - 0.5f, -spriteYCenter - 0.5f, zSine, zCosine, xOffset, yOffset);
+    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[2], -spriteXCenter - 0.5f, spriteYCenter - 0.5f, zSine, zCosine, xOffset, yOffset);
+    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[3], spriteXCenter - 0.5f, spriteYCenter - 0.5f, zSine, zCosine, xOffset, yOffset);
+    g_PrimitivesToDrawVertexBuf[0].position.z = g_PrimitivesToDrawVertexBuf[1].position.z = g_PrimitivesToDrawVertexBuf[2].position.z = g_PrimitivesToDrawVertexBuf[3].position.z = vm->pos.z;
     if ((vm->flags.anchor & AnmVmAnchor_Left) != 0) {
         g_PrimitivesToDrawVertexBuf[0].position.x += spriteXCenter;
         g_PrimitivesToDrawVertexBuf[1].position.x += spriteXCenter;
@@ -1177,28 +1005,18 @@ bool AnmManager::DrawFacingCamera(AnmVm *vm) {
     centerX = vm->sprite->widthPx * vm->scaleX / 2.0f;
     centerY = vm->sprite->heightPx * vm->scaleY / 2.0f;
     if ((vm->flags.anchor & AnmVmAnchor_Left) == 0) {
-        g_PrimitivesToDrawVertexBuf[0].position.x =
-            g_PrimitivesToDrawVertexBuf[2].position.x = vm->pos.x - centerX;
-        g_PrimitivesToDrawVertexBuf[1].position.x =
-            g_PrimitivesToDrawVertexBuf[3].position.x = vm->pos.x + centerX;
+        g_PrimitivesToDrawVertexBuf[0].position.x = g_PrimitivesToDrawVertexBuf[2].position.x = vm->pos.x - centerX;
+        g_PrimitivesToDrawVertexBuf[1].position.x = g_PrimitivesToDrawVertexBuf[3].position.x = vm->pos.x + centerX;
     } else {
-        g_PrimitivesToDrawVertexBuf[0].position.x =
-            g_PrimitivesToDrawVertexBuf[2].position.x = vm->pos.x;
-        g_PrimitivesToDrawVertexBuf[1].position.x =
-            g_PrimitivesToDrawVertexBuf[3].position.x =
-                vm->pos.x + centerX + centerX;
+        g_PrimitivesToDrawVertexBuf[0].position.x = g_PrimitivesToDrawVertexBuf[2].position.x = vm->pos.x;
+        g_PrimitivesToDrawVertexBuf[1].position.x = g_PrimitivesToDrawVertexBuf[3].position.x = vm->pos.x + centerX + centerX;
     }
     if ((vm->flags.anchor & AnmVmAnchor_Top) == 0) {
-        g_PrimitivesToDrawVertexBuf[0].position.y =
-            g_PrimitivesToDrawVertexBuf[1].position.y = vm->pos.y - centerY;
-        g_PrimitivesToDrawVertexBuf[2].position.y =
-            g_PrimitivesToDrawVertexBuf[3].position.y = vm->pos.y + centerY;
+        g_PrimitivesToDrawVertexBuf[0].position.y = g_PrimitivesToDrawVertexBuf[1].position.y = vm->pos.y - centerY;
+        g_PrimitivesToDrawVertexBuf[2].position.y = g_PrimitivesToDrawVertexBuf[3].position.y = vm->pos.y + centerY;
     } else {
-        g_PrimitivesToDrawVertexBuf[0].position.y =
-            g_PrimitivesToDrawVertexBuf[1].position.y = vm->pos.y;
-        g_PrimitivesToDrawVertexBuf[2].position.y =
-            g_PrimitivesToDrawVertexBuf[3].position.y =
-                vm->pos.y + centerY + centerY;
+        g_PrimitivesToDrawVertexBuf[0].position.y = g_PrimitivesToDrawVertexBuf[1].position.y = vm->pos.y;
+        g_PrimitivesToDrawVertexBuf[2].position.y = g_PrimitivesToDrawVertexBuf[3].position.y = vm->pos.y + centerY + centerY;
     }
     return this->DrawOrthographic(vm, false);
 }
@@ -1229,26 +1047,14 @@ bool AnmManager::Draw3(AnmVm *vm) {
     worldTransformMatrix.m[1][1] *= -vm->scaleY;
 
     if (vm->rotation.x != 0.0) {
-        //        D3DXMatrixRotationX(&rotationMatrix, vm->rotation.x);
-        //        D3DXMatrixMultiply(&worldTransformMatrix,
-        //        &worldTransformMatrix, &rotationMatrix);
-
         worldTransformMatrix.Rotate(vm->rotation.x, 1.0f, 0.0f, 0.0f);
     }
 
     if (vm->rotation.y != 0.0) {
-        //        D3DXMatrixRotationY(&rotationMatrix, vm->rotation.y);
-        //        D3DXMatrixMultiply(&worldTransformMatrix,
-        //        &worldTransformMatrix, &rotationMatrix);
-
         worldTransformMatrix.Rotate(vm->rotation.y, 0.0f, 1.0f, 0.0f);
     }
 
     if (vm->rotation.z != 0.0) {
-        //        D3DXMatrixRotationZ(&rotationMatrix, vm->rotation.z);
-        //        D3DXMatrixMultiply(&worldTransformMatrix,
-        //        &worldTransformMatrix, &rotationMatrix);
-
         worldTransformMatrix.Rotate(vm->rotation.z, 0.0f, 0.0f, 1.0f);
     }
 
@@ -1295,22 +1101,12 @@ bool AnmManager::Draw3(AnmVm *vm) {
 
     // Draw the VM.
     if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) == 0) {
-        this->SetAttributePointer(VERTEX_ARRAY_POSITION,
-                                  sizeof(*g_PrimitivesToDrawUnknown),
-                                  &g_PrimitivesToDrawUnknown[0].position);
-        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD,
-                                  sizeof(*g_PrimitivesToDrawUnknown),
-                                  &g_PrimitivesToDrawUnknown[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawUnknown), &g_PrimitivesToDrawUnknown[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawUnknown), &g_PrimitivesToDrawUnknown[0].textureUV);
     } else {
-        this->SetAttributePointer(VERTEX_ARRAY_POSITION,
-                                  sizeof(*g_PrimitivesToDrawUnknown),
-                                  &g_PrimitivesToDrawUnknown[0].position);
-        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD,
-                                  sizeof(*g_PrimitivesToDrawUnknown),
-                                  &g_PrimitivesToDrawUnknown[0].textureUV);
-        this->SetAttributePointer(VERTEX_ARRAY_DIFFUSE,
-                                  sizeof(*g_PrimitivesToDrawUnknown),
-                                  &g_PrimitivesToDrawUnknown[0].diffuse);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawUnknown), &g_PrimitivesToDrawUnknown[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawUnknown), &g_PrimitivesToDrawUnknown[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*g_PrimitivesToDrawUnknown), &g_PrimitivesToDrawUnknown[0].diffuse);
     }
 
     this->BackendDrawCall();
@@ -1345,12 +1141,10 @@ bool AnmManager::Draw2(AnmVm *vm) {
     worldTransformMatrix.m[3][0] = rintf(vm->pos.x) - 0.5f;
     worldTransformMatrix.m[3][1] = -rintf(vm->pos.y) + 0.5f;
     if ((vm->flags.anchor & AnmVmAnchor_Left) != 0) {
-        worldTransformMatrix.m[3][0] +=
-            (vm->sprite->widthPx * vm->scaleX) / 2.0f;
+        worldTransformMatrix.m[3][0] += (vm->sprite->widthPx * vm->scaleX) / 2.0f;
     }
     if ((vm->flags.anchor & AnmVmAnchor_Top) != 0) {
-        worldTransformMatrix.m[3][1] -=
-            (vm->sprite->heightPx * vm->scaleY) / 2.0f;
+        worldTransformMatrix.m[3][1] -= (vm->sprite->heightPx * vm->scaleY) / 2.0f;
     }
     worldTransformMatrix.m[3][2] = vm->pos.z;
     worldTransformMatrix.m[0][0] *= vm->scaleX;
@@ -1367,51 +1161,24 @@ bool AnmManager::Draw2(AnmVm *vm) {
         textureMatrix.m[3][1] = vm->sprite->uvStart.y + vm->uvScrollPos.y;
 
         this->SetTransformMatrix(MATRIX_TEXTURE, textureMatrix);
-
-        //        if (this->currentTextureHandle !=
-        //        this->textures[vm->sprite->sourceFileIndex].handle)
-        //        {
-        //            this->currentTexture =
-        //            this->textures[vm->sprite->sourceFileIndex];
-        //            g_Supervisor.d3dDevice->SetTexture(0,
-        //            this->currentTexture);
-        //        }
-
         SetCurrentTexture(this->textures[vm->sprite->sourceFileIndex].handle);
 
         if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0) {
             this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD);
         } else {
-            this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD |
-                                      VERTEX_ATTR_DIFFUSE);
+            this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD | VERTEX_ATTR_DIFFUSE);
         }
     }
 
     this->SetRenderStateForVm(vm);
 
     if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) == 0) {
-        this->SetAttributePointer(VERTEX_ARRAY_POSITION,
-                                  sizeof(*g_PrimitivesToDrawUnknown),
-                                  &g_PrimitivesToDrawUnknown[0].position);
-        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD,
-                                  sizeof(*g_PrimitivesToDrawUnknown),
-                                  &g_PrimitivesToDrawUnknown[0].textureUV);
-
-        //        g_Supervisor.d3dDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0,
-        //        2);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawUnknown), &g_PrimitivesToDrawUnknown[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawUnknown), &g_PrimitivesToDrawUnknown[0].textureUV);
     } else {
-        this->SetAttributePointer(VERTEX_ARRAY_POSITION,
-                                  sizeof(*g_PrimitivesToDrawUnknown),
-                                  &g_PrimitivesToDrawUnknown[0].position);
-        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD,
-                                  sizeof(*g_PrimitivesToDrawUnknown),
-                                  &g_PrimitivesToDrawUnknown[0].textureUV);
-        this->SetAttributePointer(VERTEX_ARRAY_DIFFUSE,
-                                  sizeof(*g_PrimitivesToDrawUnknown),
-                                  &g_PrimitivesToDrawUnknown[0].diffuse);
-
-        //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP,
-        //        2, , 0x18);
+        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawUnknown), &g_PrimitivesToDrawUnknown[0].position);
+        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawUnknown), &g_PrimitivesToDrawUnknown[0].textureUV);
+        this->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*g_PrimitivesToDrawUnknown), &g_PrimitivesToDrawUnknown[0].diffuse);
     }
 
     this->BackendDrawCall();
@@ -1444,212 +1211,191 @@ i32 AnmManager::ExecuteScript(AnmVm *vm) {
         goto yolo;
     }
 
-    while (curInstr = vm->currentInstruction,
-           curInstr->time <= vm->currentTimeInScript.AsFrames()) {
+    while (curInstr = vm->currentInstruction, curInstr->time <= vm->currentTimeInScript.AsFrames()) {
         switch (curInstr->opcode) {
-        case AnmOpcode_Exit:
-            vm->flags.isVisible = 0;
-        case AnmOpcode_ExitHide:
-            vm->currentInstruction = NULL;
-            return 1;
-        case AnmOpcode_SetActiveSprite:
-            vm->flags.isVisible = 1;
-            this->SetActiveSprite(
-                vm, AnmI32Arg(0) + this->spriteIndices[vm->anmFileIndex]);
-            vm->timeOfLastSpriteSet = vm->currentTimeInScript.AsFrames();
-            break;
-        case AnmOpcode_SetRandomSprite:
-            vm->flags.isVisible = 1;
-            this->SetActiveSprite(
-                vm, AnmI32Arg(0) + g_Rng.GetRandomU16InRange(AnmI32Arg(1)) +
-                        this->spriteIndices[vm->anmFileIndex]);
-            vm->timeOfLastSpriteSet = vm->currentTimeInScript.AsFrames();
-            break;
-        case AnmOpcode_SetScale:
-            vm->scaleX = AnmF32Arg(0);
-            vm->scaleY = AnmF32Arg(1);
-            break;
-        case AnmOpcode_SetAlpha:
-            COLOR_SET_COMPONENT(vm->color, COLOR_ALPHA_BYTE_IDX,
-                                AnmI32Arg(0) & 0xff);
-            break;
-        case AnmOpcode_SetColor:
-            vm->color = COLOR_COMBINE_ALPHA(AnmI32Arg(0), vm->color);
-            break;
-        case AnmOpcode_Jump:
-            vm->currentInstruction =
-                (AnmRawInstr *)(((u8 *)vm->beginingOfScript->args) +
-                                AnmI32Arg(0) - 4);
-            vm->currentTimeInScript.current = vm->currentInstruction->time;
-            continue;
-        case AnmOpcode_FlipX:
-            vm->flags.flip ^= 1;
-            vm->scaleX *= -1.f;
-            break;
-        case AnmOpcode_UsePosOffset:
-            vm->flags.usePosOffset = AnmI32Arg(0);
-            break;
-        case AnmOpcode_FlipY:
-            vm->flags.flip ^= 2;
-            vm->scaleY *= -1.f;
-            break;
-        case AnmOpcode_SetRotation:
-            vm->rotation.x = AnmF32Arg(0);
-            vm->rotation.y = AnmF32Arg(1);
-            vm->rotation.z = AnmF32Arg(2);
-            break;
-        case AnmOpcode_SetAngleVel:
-            vm->angleVel.x = AnmF32Arg(0);
-            vm->angleVel.y = AnmF32Arg(1);
-            vm->angleVel.z = AnmF32Arg(2);
-            break;
-        case AnmOpcode_SetScaleSpeed:
-            vm->scaleInterpFinalX = AnmF32Arg(0);
-            vm->scaleInterpFinalY = AnmF32Arg(1);
-            vm->scaleInterpEndTime = 0;
-            break;
-        case AnmOpcode_ScaleTime:
-            vm->scaleInterpFinalX = AnmF32Arg(0);
-            vm->scaleInterpFinalY = AnmF32Arg(1);
-            vm->scaleInterpEndTime = AnmI16Arg(2);
-            vm->scaleInterpTime.InitializeForPopup();
-            vm->scaleInterpInitialX = vm->scaleX;
-            vm->scaleInterpInitialY = vm->scaleY;
-            break;
-        case AnmOpcode_Fade:
-            vm->alphaInterpInitial = vm->color;
-            vm->alphaInterpFinal = COLOR_SET_ALPHA2(vm->color, AnmU32Arg(0));
-            vm->alphaInterpEndTime = AnmU32Arg(1);
-            vm->alphaInterpTime.InitializeForPopup();
-            break;
-        case AnmOpcode_SetBlendAdditive:
-            vm->flags.blendMode = AnmVmBlendMode_One;
-            break;
-        case AnmOpcode_SetBlendDefault:
-            vm->flags.blendMode = AnmVmBlendMode_InvSrcAlpha;
-            break;
-        case AnmOpcode_SetPosition:
-            if (vm->flags.usePosOffset == 0) {
-                vm->pos = ZunVec3(AnmF32Arg(0), AnmF32Arg(1), AnmF32Arg(2));
-            } else {
-                vm->posOffset =
-                    ZunVec3(AnmF32Arg(0), AnmF32Arg(1), AnmF32Arg(2));
-            }
-            break;
-        case AnmOpcode_PosTimeAccel:
-            vm->flags.posTime = 2;
-            goto PosTimeDoStuff;
-        case AnmOpcode_PosTimeDecel:
-            vm->flags.posTime = 1;
-            goto PosTimeDoStuff;
-        case AnmOpcode_PosTimeLinear:
-            vm->flags.posTime = 0;
-        PosTimeDoStuff:
-            if (vm->flags.usePosOffset == 0) {
-                // This was supposedly originally a memcpy, but any sane
-                // compiler should compile a struct assignment to a memcpy
-                vm->posInterpInitial = vm->pos;
-            } else {
-                // This was supposedly originally a memcpy, but any sane
-                // compiler should compile a struct assignment to a memcpy
-                vm->posInterpInitial = vm->posOffset;
-            }
-            vm->posInterpFinal =
-                ZunVec3(AnmF32Arg(0), AnmF32Arg(1), AnmF32Arg(2));
-            vm->posInterpEndTime = AnmI32Arg(3);
-            vm->posInterpTime.InitializeForPopup();
-            break;
-        case AnmOpcode_StopHide:
-            vm->flags.isVisible = 0;
-        case AnmOpcode_Stop:
-            if (vm->pendingInterrupt == 0) {
-                vm->flags.isStopped = 1;
-                vm->currentTimeInScript.Decrement(1);
-                goto stop;
-            }
-        yolo:
-            nextInstr = NULL;
-            curInstr = vm->beginingOfScript;
-            while ((curInstr->opcode != AnmOpcode_InterruptLabel ||
-                    vm->pendingInterrupt != AnmI32Arg(0)) &&
-                   curInstr->opcode != AnmOpcode_Exit &&
-                   curInstr->opcode != AnmOpcode_ExitHide) {
-                if (curInstr->opcode == AnmOpcode_InterruptLabel &&
-                    AnmI32Arg(0) == -1) {
-                    nextInstr = curInstr;
+            case AnmOpcode_Exit:
+                vm->flags.isVisible = 0;
+            case AnmOpcode_ExitHide:
+                vm->currentInstruction = NULL;
+                return 1;
+            case AnmOpcode_SetActiveSprite:
+                vm->flags.isVisible = 1;
+                this->SetActiveSprite(vm, AnmI32Arg(0) + this->spriteIndices[vm->anmFileIndex]);
+                vm->timeOfLastSpriteSet = vm->currentTimeInScript.AsFrames();
+                break;
+            case AnmOpcode_SetRandomSprite:
+                vm->flags.isVisible = 1;
+                this->SetActiveSprite(vm, AnmI32Arg(0) + g_Rng.GetRandomU16InRange(AnmI32Arg(1)) + this->spriteIndices[vm->anmFileIndex]);
+                vm->timeOfLastSpriteSet = vm->currentTimeInScript.AsFrames();
+                break;
+            case AnmOpcode_SetScale:
+                vm->scaleX = AnmF32Arg(0);
+                vm->scaleY = AnmF32Arg(1);
+                break;
+            case AnmOpcode_SetAlpha:
+                COLOR_SET_COMPONENT(vm->color, COLOR_ALPHA_BYTE_IDX, AnmI32Arg(0) & 0xff);
+                break;
+            case AnmOpcode_SetColor:
+                vm->color = COLOR_COMBINE_ALPHA(AnmI32Arg(0), vm->color);
+                break;
+            case AnmOpcode_Jump:
+                vm->currentInstruction = (AnmRawInstr *)(((u8 *)vm->beginingOfScript->args) + AnmI32Arg(0) - 4);
+                vm->currentTimeInScript.current = vm->currentInstruction->time;
+                continue;
+            case AnmOpcode_FlipX:
+                vm->flags.flip ^= 1;
+                vm->scaleX *= -1.f;
+                break;
+            case AnmOpcode_UsePosOffset:
+                vm->flags.usePosOffset = AnmI32Arg(0);
+                break;
+            case AnmOpcode_FlipY:
+                vm->flags.flip ^= 2;
+                vm->scaleY *= -1.f;
+                break;
+            case AnmOpcode_SetRotation:
+                vm->rotation.x = AnmF32Arg(0);
+                vm->rotation.y = AnmF32Arg(1);
+                vm->rotation.z = AnmF32Arg(2);
+                break;
+            case AnmOpcode_SetAngleVel:
+                vm->angleVel.x = AnmF32Arg(0);
+                vm->angleVel.y = AnmF32Arg(1);
+                vm->angleVel.z = AnmF32Arg(2);
+                break;
+            case AnmOpcode_SetScaleSpeed:
+                vm->scaleInterpFinalX = AnmF32Arg(0);
+                vm->scaleInterpFinalY = AnmF32Arg(1);
+                vm->scaleInterpEndTime = 0;
+                break;
+            case AnmOpcode_ScaleTime:
+                vm->scaleInterpFinalX = AnmF32Arg(0);
+                vm->scaleInterpFinalY = AnmF32Arg(1);
+                vm->scaleInterpEndTime = AnmI16Arg(2);
+                vm->scaleInterpTime.InitializeForPopup();
+                vm->scaleInterpInitialX = vm->scaleX;
+                vm->scaleInterpInitialY = vm->scaleY;
+                break;
+            case AnmOpcode_Fade:
+                vm->alphaInterpInitial = vm->color;
+                vm->alphaInterpFinal = COLOR_SET_ALPHA2(vm->color, AnmU32Arg(0));
+                vm->alphaInterpEndTime = AnmU32Arg(1);
+                vm->alphaInterpTime.InitializeForPopup();
+                break;
+            case AnmOpcode_SetBlendAdditive:
+                vm->flags.blendMode = AnmVmBlendMode_One;
+                break;
+            case AnmOpcode_SetBlendDefault:
+                vm->flags.blendMode = AnmVmBlendMode_InvSrcAlpha;
+                break;
+            case AnmOpcode_SetPosition:
+                if (vm->flags.usePosOffset == 0) {
+                    vm->pos = ZunVec3(AnmF32Arg(0), AnmF32Arg(1), AnmF32Arg(2));
+                } else {
+                    vm->posOffset = ZunVec3(AnmF32Arg(0), AnmF32Arg(1), AnmF32Arg(2));
                 }
-                curInstr = (AnmRawInstr *)(((u8 *)curInstr->args) +
-                                           curInstr->argsCount);
-            }
-
-            vm->pendingInterrupt = 0;
-            vm->flags.isStopped = 0;
-            if (curInstr->opcode != AnmOpcode_InterruptLabel) {
-                if (nextInstr == NULL) {
+                break;
+            case AnmOpcode_PosTimeAccel:
+                vm->flags.posTime = 2;
+                goto PosTimeDoStuff;
+            case AnmOpcode_PosTimeDecel:
+                vm->flags.posTime = 1;
+                goto PosTimeDoStuff;
+            case AnmOpcode_PosTimeLinear:
+                vm->flags.posTime = 0;
+            PosTimeDoStuff:
+                if (vm->flags.usePosOffset == 0) {
+                    // This was supposedly originally a memcpy, but any sane
+                    // compiler should compile a struct assignment to a memcpy
+                    vm->posInterpInitial = vm->pos;
+                } else {
+                    // This was supposedly originally a memcpy, but any sane
+                    // compiler should compile a struct assignment to a memcpy
+                    vm->posInterpInitial = vm->posOffset;
+                }
+                vm->posInterpFinal = ZunVec3(AnmF32Arg(0), AnmF32Arg(1), AnmF32Arg(2));
+                vm->posInterpEndTime = AnmI32Arg(3);
+                vm->posInterpTime.InitializeForPopup();
+                break;
+            case AnmOpcode_StopHide:
+                vm->flags.isVisible = 0;
+            case AnmOpcode_Stop:
+                if (vm->pendingInterrupt == 0) {
+                    vm->flags.isStopped = 1;
                     vm->currentTimeInScript.Decrement(1);
                     goto stop;
                 }
-                curInstr = nextInstr;
-            }
+            yolo:
+                nextInstr = NULL;
+                curInstr = vm->beginingOfScript;
+                while ((curInstr->opcode != AnmOpcode_InterruptLabel || vm->pendingInterrupt != AnmI32Arg(0)) && curInstr->opcode != AnmOpcode_Exit && curInstr->opcode != AnmOpcode_ExitHide) {
+                    if (curInstr->opcode == AnmOpcode_InterruptLabel &&
+                        AnmI32Arg(0) == -1) {
+                        nextInstr = curInstr;
+                    }
+                    curInstr = (AnmRawInstr *)(((u8 *)curInstr->args) + curInstr->argsCount);
+                }
 
-            curInstr =
-                (AnmRawInstr *)(((u8 *)curInstr->args) + curInstr->argsCount);
-            vm->currentInstruction = curInstr;
-            vm->currentTimeInScript.SetCurrent(vm->currentInstruction->time);
-            vm->flags.isVisible = 1;
-            continue;
-        case AnmOpcode_SetVisibility:
-            vm->flags.isVisible = AnmI32Arg(0);
-            break;
-        case AnmOpcode_23:
-            vm->flags.anchor = AnmVmAnchor_TopLeft;
-            break;
-        case AnmOpcode_SetAutoRotate:
-            vm->autoRotate = AnmI32Arg(0);
-            break;
-        case AnmOpcode_UVScrollX:
-            vm->uvScrollPos.x += AnmF32Arg(0);
-            if (vm->uvScrollPos.x >= 1.0f) {
-                vm->uvScrollPos.x -= 1.0f;
-            } else if (vm->uvScrollPos.x < 0.0f) {
-                vm->uvScrollPos.x += 1.0f;
-            }
-            break;
-        case AnmOpcode_UVScrollY:
-            vm->uvScrollPos.y += AnmF32Arg(0);
-            if (vm->uvScrollPos.y >= 1.0f) {
-                vm->uvScrollPos.y -= 1.0f;
-            } else if (vm->uvScrollPos.y < 0.0f) {
-                vm->uvScrollPos.y += 1.0f;
-            }
-            break;
-        case AnmOpcode_SetZWriteDisable:
-            vm->flags.zWriteDisable = AnmI32Arg(0);
-            break;
-        case AnmOpcode_Nop:
-        case AnmOpcode_InterruptLabel:
-        default:
-            break;
+                vm->pendingInterrupt = 0;
+                vm->flags.isStopped = 0;
+                if (curInstr->opcode != AnmOpcode_InterruptLabel) {
+                    if (nextInstr == NULL) {
+                        vm->currentTimeInScript.Decrement(1);
+                        goto stop;
+                    }
+                    curInstr = nextInstr;
+                }
+
+                curInstr = (AnmRawInstr *)(((u8 *)curInstr->args) + curInstr->argsCount);
+                vm->currentInstruction = curInstr;
+                vm->currentTimeInScript.SetCurrent(vm->currentInstruction->time);
+                vm->flags.isVisible = 1;
+                continue;
+            case AnmOpcode_SetVisibility:
+                vm->flags.isVisible = AnmI32Arg(0);
+                break;
+            case AnmOpcode_23:
+                vm->flags.anchor = AnmVmAnchor_TopLeft;
+                break;
+            case AnmOpcode_SetAutoRotate:
+                vm->autoRotate = AnmI32Arg(0);
+                break;
+            case AnmOpcode_UVScrollX:
+                vm->uvScrollPos.x += AnmF32Arg(0);
+                if (vm->uvScrollPos.x >= 1.0f) {
+                    vm->uvScrollPos.x -= 1.0f;
+                } else if (vm->uvScrollPos.x < 0.0f) {
+                    vm->uvScrollPos.x += 1.0f;
+                }
+                break;
+            case AnmOpcode_UVScrollY:
+                vm->uvScrollPos.y += AnmF32Arg(0);
+                if (vm->uvScrollPos.y >= 1.0f) {
+                    vm->uvScrollPos.y -= 1.0f;
+                } else if (vm->uvScrollPos.y < 0.0f) {
+                    vm->uvScrollPos.y += 1.0f;
+                }
+                break;
+            case AnmOpcode_SetZWriteDisable:
+                vm->flags.zWriteDisable = AnmI32Arg(0);
+                break;
+            case AnmOpcode_Nop:
+            case AnmOpcode_InterruptLabel:
+            default:
+                break;
         }
-        vm->currentInstruction =
-            (AnmRawInstr *)(((u8 *)curInstr->args) + curInstr->argsCount);
+        vm->currentInstruction = (AnmRawInstr *)(((u8 *)curInstr->args) + curInstr->argsCount);
     }
 
 stop:
     if (vm->angleVel.x != 0.0f) {
-        vm->rotation.x = utils::AddNormalizeAngle(
-            vm->rotation.x,
-            g_Supervisor.effectiveFramerateMultiplier * vm->angleVel.x);
+        vm->rotation.x = utils::AddNormalizeAngle(vm->rotation.x, g_Supervisor.effectiveFramerateMultiplier * vm->angleVel.x);
     }
     if (vm->angleVel.y != 0.0f) {
-        vm->rotation.y = utils::AddNormalizeAngle(
-            vm->rotation.y,
-            g_Supervisor.effectiveFramerateMultiplier * vm->angleVel.y);
+        vm->rotation.y = utils::AddNormalizeAngle(vm->rotation.y, g_Supervisor.effectiveFramerateMultiplier * vm->angleVel.y);
     }
     if (vm->angleVel.z != 0.0f) {
-        vm->rotation.z = utils::AddNormalizeAngle(
-            vm->rotation.z,
-            g_Supervisor.effectiveFramerateMultiplier * vm->angleVel.z);
+        vm->rotation.z = utils::AddNormalizeAngle(vm->rotation.z, g_Supervisor.effectiveFramerateMultiplier * vm->angleVel.z);
     }
     if (vm->scaleInterpEndTime > 0) {
         vm->scaleInterpTime.Tick();
@@ -1664,6 +1410,7 @@ stop:
                              vm->scaleInterpTime.AsFramesFloat() /
                              vm->scaleInterpEndTime +
                          vm->scaleInterpInitialX;
+
             vm->scaleY = (vm->scaleInterpFinalY - vm->scaleInterpInitialY) *
                              vm->scaleInterpTime.AsFramesFloat() /
                              vm->scaleInterpEndTime +
@@ -1676,32 +1423,23 @@ stop:
             vm->scaleY = vm->scaleY * -1.f;
         }
     } else {
-        vm->scaleY =
-            g_Supervisor.effectiveFramerateMultiplier * vm->scaleInterpFinalY +
-            vm->scaleY;
-        vm->scaleX =
-            g_Supervisor.effectiveFramerateMultiplier * vm->scaleInterpFinalX +
-            vm->scaleX;
+        vm->scaleY = g_Supervisor.effectiveFramerateMultiplier * vm->scaleInterpFinalY + vm->scaleY;
+        vm->scaleX = g_Supervisor.effectiveFramerateMultiplier * vm->scaleInterpFinalX + vm->scaleX;
     }
     if (0 < vm->alphaInterpEndTime) {
         vm->alphaInterpTime.Tick();
         local_2c = vm->alphaInterpInitial;
         local_28 = vm->alphaInterpFinal;
-        local_30 =
-            vm->alphaInterpTime.AsFramesFloat() / (f32)vm->alphaInterpEndTime;
+        local_30 = vm->alphaInterpTime.AsFramesFloat() / (f32)vm->alphaInterpEndTime;
         if (local_30 >= 1.0f) {
             local_30 = 1.0;
         }
         for (local_38 = 0; local_38 < 4; local_38++) {
-            local_34 = ((f32)COLOR_GET_COMPONENT(local_28, local_38) -
-                        (f32)COLOR_GET_COMPONENT(local_2c, local_38)) *
-                           local_30 +
-                       COLOR_GET_COMPONENT(local_2c, local_38);
+            local_34 = ((f32)COLOR_GET_COMPONENT(local_28, local_38) - (f32)COLOR_GET_COMPONENT(local_2c, local_38)) * local_30 + COLOR_GET_COMPONENT(local_2c, local_38);
             if (local_34 < 0) {
                 local_34 = 0;
             }
-            COLOR_SET_COMPONENT(local_2c, local_38,
-                                local_34 >= 256 ? 255 : local_34);
+            COLOR_SET_COMPONENT(local_2c, local_38, local_34 >= 256 ? 255 : local_34);
         }
         vm->color = local_2c;
         if (vm->alphaInterpTime.AsFrames() >= vm->alphaInterpEndTime) {
@@ -1709,8 +1447,7 @@ stop:
         }
     }
     if (vm->posInterpEndTime != 0) {
-        local_3c =
-            vm->posInterpTime.AsFramesFloat() / (f32)vm->posInterpEndTime;
+        local_3c = vm->posInterpTime.AsFramesFloat() / (f32)vm->posInterpEndTime;
         if (local_3c >= 1.0f) {
             local_3c = 1.0;
         }
@@ -1727,19 +1464,13 @@ stop:
             break;
         }
         if (vm->flags.usePosOffset == 0) {
-            vm->pos.x = local_3c * vm->posInterpFinal.x +
-                        (1.0f - local_3c) * vm->posInterpInitial.x;
-            vm->pos.y = local_3c * vm->posInterpFinal.y +
-                        (1.0f - local_3c) * vm->posInterpInitial.y;
-            vm->pos.z = local_3c * vm->posInterpFinal.z +
-                        (1.0f - local_3c) * vm->posInterpInitial.z;
+            vm->pos.x = local_3c * vm->posInterpFinal.x + (1.0f - local_3c) * vm->posInterpInitial.x;
+            vm->pos.y = local_3c * vm->posInterpFinal.y + (1.0f - local_3c) * vm->posInterpInitial.y;
+            vm->pos.z = local_3c * vm->posInterpFinal.z + (1.0f - local_3c) * vm->posInterpInitial.z;
         } else {
-            vm->posOffset.x = local_3c * vm->posInterpFinal.x +
-                              (1.0f - local_3c) * vm->posInterpInitial.x;
-            vm->posOffset.y = local_3c * vm->posInterpFinal.y +
-                              (1.0f - local_3c) * vm->posInterpInitial.y;
-            vm->posOffset.z = local_3c * vm->posInterpFinal.z +
-                              (1.0f - local_3c) * vm->posInterpInitial.z;
+            vm->posOffset.x = local_3c * vm->posInterpFinal.x + (1.0f - local_3c) * vm->posInterpInitial.x;
+            vm->posOffset.y = local_3c * vm->posInterpFinal.y + (1.0f - local_3c) * vm->posInterpInitial.y;
+            vm->posOffset.z = local_3c * vm->posInterpFinal.z + (1.0f - local_3c) * vm->posInterpInitial.z;
         }
 
         if (vm->posInterpTime.AsFrames() >= vm->posInterpEndTime) {
@@ -1756,11 +1487,7 @@ stop:
 #undef AnmU32Arg
 #undef AnmI16Arg
 
-void AnmManager::DrawTextToSprite(u32 textureDstIdx, i32 xPos, i32 yPos,
-                                  i32 spriteWidth, i32 spriteHeight,
-                                  i32 fontWidth, i32 fontHeight,
-                                  ZunColor textColor, ZunColor shadowColor,
-                                  const char *strToPrint) {
+void AnmManager::DrawTextToSprite(u32 textureDstIdx, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontWidth, i32 fontHeight, ZunColor textColor, ZunColor shadowColor, const char *strToPrint) {
     if (fontWidth <= 0) {
         fontWidth = 15;
     }
@@ -1779,14 +1506,11 @@ void AnmManager::DrawTextToSprite(u32 textureDstIdx, i32 xPos, i32 yPos,
     return;
 }
 
-void AnmManager::DrawVmTextFmt(AnmManager *anmMgr, AnmVm *vm,
-                               ZunColor textColor, ZunColor shadowColor,
-                               const char *fmt, ...) {
-    u32 fontWidth;
+void AnmManager::DrawVmTextFmt(AnmManager *anmMgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...) {
     char buffer[64];
     va_list argptr;
 
-    fontWidth = vm->fontWidth;
+    u32 fontWidth = vm->fontWidth;
     va_start(argptr, fmt);
     vsprintf(buffer, fmt, argptr);
     va_end(argptr);
@@ -1799,15 +1523,11 @@ void AnmManager::DrawVmTextFmt(AnmManager *anmMgr, AnmVm *vm,
     return;
 }
 
-void AnmManager::DrawStringFormat(AnmManager *mgr, AnmVm *vm,
-                                  ZunColor textColor, ZunColor shadowColor,
-                                  const char *fmt, ...) {
+void AnmManager::DrawStringFormat(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...) {
     char buf[64];
     va_list args;
-    i32 fontWidth;
-    i32 secondPartStartX;
 
-    fontWidth = vm->fontWidth <= 0 ? 15 : vm->fontWidth;
+    i32 fontWidth = vm->fontWidth <= 0 ? 15 : vm->fontWidth;
     va_start(args, fmt);
     vsprintf(buf, fmt, args);
     va_end(args);
@@ -1816,21 +1536,18 @@ void AnmManager::DrawStringFormat(AnmManager *mgr, AnmVm *vm,
         vm->sprite->startPixelInclusive.y, vm->sprite->textureWidth,
         vm->sprite->textureHeight, fontWidth, vm->fontHeight, textColor,
         shadowColor, " ");
-    secondPartStartX = vm->sprite->startPixelInclusive.x +
-                       vm->sprite->textureWidth -
-                       ((f32)strlen(buf) * (f32)(fontWidth + 1) / 2.0f);
-    mgr->DrawTextToSprite(vm->sprite->sourceFileIndex, secondPartStartX,
-                          vm->sprite->startPixelInclusive.y,
-                          vm->sprite->textureWidth, vm->sprite->textureHeight,
-                          fontWidth, vm->fontHeight, textColor, shadowColor,
-                          buf);
+    i32 secondPartStartX = vm->sprite->startPixelInclusive.x + vm->sprite->textureWidth - ((f32)strlen(buf) * (f32)(fontWidth + 1) / 2.0f);
+    mgr->DrawTextToSprite(
+        vm->sprite->sourceFileIndex, secondPartStartX,
+        vm->sprite->startPixelInclusive.y,
+        vm->sprite->textureWidth, vm->sprite->textureHeight,
+        fontWidth, vm->fontHeight, textColor, shadowColor,
+        buf);
     vm->flags.isVisible = true;
     return;
 }
 
-void AnmManager::DrawStringFormat2(AnmManager *mgr, AnmVm *vm,
-                                   ZunColor textColor, ZunColor shadowColor,
-                                   const char *fmt, ...) {
+void AnmManager::DrawStringFormat2(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...) {
     char buf[64];
     va_list args;
     i32 fontWidth;
@@ -1845,14 +1562,13 @@ void AnmManager::DrawStringFormat2(AnmManager *mgr, AnmVm *vm,
         vm->sprite->startPixelInclusive.y, vm->sprite->textureWidth,
         vm->sprite->textureHeight, fontWidth, vm->fontHeight, textColor,
         shadowColor, " ");
-    secondPartStartX = vm->sprite->startPixelInclusive.x +
-                       vm->sprite->textureWidth / 2.0f -
-                       ((f32)strlen(buf) * (f32)(fontWidth + 1) / 4.0f);
-    mgr->DrawTextToSprite(vm->sprite->sourceFileIndex, secondPartStartX,
-                          vm->sprite->startPixelInclusive.y,
-                          vm->sprite->textureWidth, vm->sprite->textureHeight,
-                          fontWidth, vm->fontHeight, textColor, shadowColor,
-                          buf);
+    secondPartStartX = vm->sprite->startPixelInclusive.x + vm->sprite->textureWidth / 2.0f - ((f32)strlen(buf) * (f32)(fontWidth + 1) / 4.0f);
+    mgr->DrawTextToSprite(
+        vm->sprite->sourceFileIndex, secondPartStartX,
+        vm->sprite->startPixelInclusive.y,
+        vm->sprite->textureWidth, vm->sprite->textureHeight,
+        fontWidth, vm->fontHeight, textColor, shadowColor,
+        buf);
     vm->flags.isVisible = true;
     return;
 }
@@ -1879,43 +1595,33 @@ void AnmManager::ReleaseSurface(i32 surfaceIdx) {
     }
 }
 
-void AnmManager::CopySurfaceToBackBuffer(i32 surfaceIdx, i32 srcX, i32 srcY,
-                                         i32 dstX, i32 dstY) {
+void AnmManager::CopySurfaceToBackBuffer(i32 surfaceIdx, i32 srcX, i32 srcY, i32 dstX, i32 dstY) {
     SDL_Surface *srcSurface = this->surfaces[surfaceIdx];
 
     if (srcSurface == NULL) {
         return;
     }
 
-    CopySurfaceRectToBackBuffer(surfaceIdx, dstX, dstY, srcX, srcY,
-                                srcSurface->w - srcX, srcSurface->h - srcY);
+    CopySurfaceRectToBackBuffer(surfaceIdx, dstX, dstY, srcX, srcY, srcSurface->w - srcX, srcSurface->h - srcY);
 }
 
-void AnmManager::CopySurfaceRectToBackBuffer(i32 surfaceIdx, i32 dstX, i32 dstY,
-                                             i32 rectLeft, i32 rectTop,
-                                             i32 rectWidth, i32 rectHeight) {
+void AnmManager::CopySurfaceRectToBackBuffer(i32 surfaceIdx, i32 dstX, i32 dstY, i32 rectLeft, i32 rectTop, i32 rectWidth, i32 rectHeight) {
     SDL_Surface *srcSurface = this->surfaces[surfaceIdx];
 
     if (srcSurface == NULL) {
         return;
     }
 
-    ApplySurfaceToColorBuffer(
-        srcSurface,
-        (SDL_Rect){
-            .x = rectLeft, .y = rectTop, .w = rectWidth, .h = rectHeight },
-        (SDL_Rect){ .x = dstX, .y = dstY, .w = rectWidth, .h = rectHeight });
+    ApplySurfaceToColorBuffer(srcSurface,
+                              { .x = rectLeft, .y = rectTop, .w = rectWidth, .h = rectHeight },
+                              { .x = dstX, .y = dstY, .w = rectWidth, .h = rectHeight });
 }
 
-void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width,
-                                i32 height) {
-    u8 *backBufferPixels = NULL;
+void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width, i32 height) {
     u8 *dstFormatPixels = NULL;
     SDL_Surface *dstFormatSurface = NULL;
     SDL_Rect stretchDstRect;
     SDL_Rect stretchSrcRect;
-    SDL_Surface *stretchedSurface = NULL;
-    SDL_Surface *unstretchedSurface = NULL;
 
     // OpenGL throws an error specifically for negative W / H and pixels are
     // undefined for 0 inputs.
@@ -1925,9 +1631,7 @@ void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width,
 
     this->SetCurrentTexture(this->textures[textureId].handle);
 
-    backBufferPixels =
-        new u8[((u32)(width * WIDTH_RESOLUTION_SCALE + 1)) *
-               ((u32)(height * HEIGHT_RESOLUTION_SCALE + 1)) * 4];
+    u8 *backBufferPixels = new u8[((u32)(width * WIDTH_RESOLUTION_SCALE + 1)) * ((u32)(height * HEIGHT_RESOLUTION_SCALE + 1)) * 4];
 
     g_glFuncTable.glReadPixels(
         left * WIDTH_RESOLUTION_SCALE + VIEWPORT_OFF_X,
@@ -1936,11 +1640,12 @@ void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width,
         width * WIDTH_RESOLUTION_SCALE, height * HEIGHT_RESOLUTION_SCALE,
         GL_RGBA, GL_UNSIGNED_BYTE, backBufferPixels);
 
-    unstretchedSurface = SDL_CreateRGBSurfaceWithFormatFrom(
+    SDL_Surface *unstretchedSurface = SDL_CreateRGBSurfaceWithFormatFrom(
         backBufferPixels, width * WIDTH_RESOLUTION_SCALE,
         height * HEIGHT_RESOLUTION_SCALE, 32,
         width * WIDTH_RESOLUTION_SCALE * 4, SDL_PIXELFORMAT_RGBA32);
-    stretchedSurface = SDL_CreateRGBSurfaceWithFormat(
+
+    SDL_Surface *stretchedSurface = SDL_CreateRGBSurfaceWithFormat(
         0, this->textures[textureId].width, this->textures[textureId].height,
         32, SDL_PIXELFORMAT_RGBA32);
 
@@ -1963,8 +1668,7 @@ void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width,
     stretchDstRect.h = this->textures[textureId].height;
     stretchDstRect.w = this->textures[textureId].width;
 
-    if (SDL_SoftStretchLinear(unstretchedSurface, &stretchSrcRect,
-                              stretchedSurface, &stretchDstRect) < 0) {
+    if (SDL_SoftStretchLinear(unstretchedSurface, &stretchSrcRect, stretchedSurface, &stretchDstRect) < 0) {
         goto cleanup;
     }
 
@@ -1997,9 +1701,7 @@ cleanup:
 }
 
 // Utter mess that needs to be rewritten
-void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src,
-                                           const SDL_Rect &srcRect,
-                                           const SDL_Rect &dstRect) {
+void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &srcRect, const SDL_Rect &dstRect) {
     ZunViewport originalViewport;
     ZunViewport fullscreenViewport;
 
@@ -2025,14 +1727,11 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src,
     u32 textureWidth = bit_ceil((u32)src->w);
     u32 textureHeight = bit_ceil((u32)src->h);
 
-    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth,
-                               textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
-                               NULL);
+    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
     u8 *surfaceData = ExtractSurfacePixels(src, 3);
 
-    g_glFuncTable.glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, src->w, src->h,
-                                  GL_RGB, GL_UNSIGNED_BYTE, surfaceData);
+    g_glFuncTable.glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, src->w, src->h, GL_RGB, GL_UNSIGNED_BYTE, surfaceData);
 
     delete[] surfaceData;
 
@@ -2041,21 +1740,17 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src,
     verts[0].position = ZunVec3(dstRect.x, dstRect.y, 0.0f);
     verts[1].position = ZunVec3(dstRect.x + dstRect.w, dstRect.y, 0.0f);
     verts[2].position = ZunVec3(dstRect.x, dstRect.y + dstRect.h, 0.0f);
-    verts[3].position =
-        ZunVec3(dstRect.x + dstRect.w, dstRect.y + dstRect.h, 0.0f);
+    verts[3].position = ZunVec3(dstRect.x + dstRect.w, dstRect.y + dstRect.h, 0.0f);
 
     verts[0].textureUV = ZunVec2(0.0f, 0.0f);
     verts[1].textureUV = ZunVec2(((f32)src->w) / textureWidth, 0.0f);
     verts[2].textureUV = ZunVec2(0.0f, ((f32)src->h) / textureHeight);
-    verts[3].textureUV =
-        ZunVec2(((f32)src->w) / textureWidth, ((f32)src->h) / textureHeight);
+    verts[3].textureUV = ZunVec2(((f32)src->w) / textureWidth, ((f32)src->h) / textureHeight);
 
     this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD);
 
-    this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*verts),
-                              &verts[0].position);
-    this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*verts),
-                              &verts[0].textureUV);
+    this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*verts), &verts[0].position);
+    this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*verts), &verts[0].textureUV);
 
     this->SetColorOp(COMPONENT_ALPHA, COLOR_OP_REPLACE);
     this->SetColorOp(COMPONENT_RGB, COLOR_OP_REPLACE);

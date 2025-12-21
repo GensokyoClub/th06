@@ -51,8 +51,7 @@ struct ColorData {
         b = color & 0xFF;
     };
 };
-static_assert(sizeof(ColorData) == 0x04,
-              "ColorData has additional padding between struct members");
+static_assert(sizeof(ColorData) == 0x04, "ColorData has additional padding between struct members");
 
 // NOTE: Every usage of a position with RHW in EoSD simply sets RHW to 1.0f
 // D3D8 interprets vertices with D3DFVF_XYZRHW as having already been
@@ -164,15 +163,13 @@ struct AnmManager {
 
     bool CreateEmptyTexture(i32 textureIdx, u32 width, u32 height,
                             i32 textureFormat);
-    bool LoadTexture(i32 textureIdx, char *textureName, i32 textureFormat,
-                     ZunColor colorKey);
+    bool LoadTexture(i32 textureIdx, char *textureName, i32 textureFormat, ZunColor colorKey);
     // bool LoadTextureAlphaChannel(i32 textureIdx, char *textureName, i32
     // textureFormat, ZunColor colorKey);
 
     void ReleaseTexture(i32 textureIdx);
     void TakeScreenshotIfRequested();
-    void TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width,
-                        i32 height);
+    void TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width, i32 height);
 
     void SetAndExecuteScript(AnmVm *vm, AnmRawInstr *beginingOfScript);
     void SetAndExecuteScriptIdx(AnmVm *vm, i32 anmFileIdx) {
@@ -202,8 +199,7 @@ struct AnmManager {
     void SetVertexAttributes(u8 vertexShader) {
         this->dirtyEnabledVertexAttributes = vertexShader;
 
-        if (this->dirtyEnabledVertexAttributes ==
-            this->enabledVertexAttributes) {
+        if (this->dirtyEnabledVertexAttributes == this->enabledVertexAttributes) {
             this->dirtyFlags &= ~(1 << DIRTY_VERTEX_ATTRIBUTE_ENABLE);
             return;
         }
@@ -214,8 +210,7 @@ struct AnmManager {
     void SetColorOp(TextureOpComponent component, ColorOp op) {
         this->dirtyColorOps[component] = op;
 
-        if ((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 1 ||
-            this->dirtyColorOps[component] == this->colorOps[component]) {
+        if ((g_Supervisor.cfg.opts >> GCOS_NO_COLOR_COMP) & 1 || this->dirtyColorOps[component] == this->colorOps[component]) {
             dirtyFlags &= ~(1 << DIRTY_COLOR_OP);
             return;
         }
@@ -230,8 +225,7 @@ struct AnmManager {
     void SetDepthMask(bool depthEnable) {
         this->dirtyDepthMask = depthEnable;
 
-        if ((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1 ||
-            this->dirtyDepthMask == this->depthMask) {
+        if ((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1 || this->dirtyDepthMask == this->depthMask) {
             return;
         }
 
@@ -267,8 +261,7 @@ struct AnmManager {
         if (projectionMode == PROJECTION_MODE_ORTHOGRAPHIC) {
             ZunMatrix identityMatrix;
 
-            memcpy(this->perspectiveMatrixBackup, this->dirtyTransformMatrices,
-                   sizeof(this->perspectiveMatrixBackup));
+            memcpy(this->perspectiveMatrixBackup, this->dirtyTransformMatrices, sizeof(this->perspectiveMatrixBackup));
 
             identityMatrix.Identity();
 
@@ -284,11 +277,8 @@ struct AnmManager {
 
         g_Supervisor.viewport.Set();
 
-        this->SetTransformMatrix(MATRIX_VIEW,
-                                 this->perspectiveMatrixBackup[MATRIX_VIEW]);
-        this->SetTransformMatrix(
-            MATRIX_PROJECTION,
-            this->perspectiveMatrixBackup[MATRIX_PROJECTION]);
+        this->SetTransformMatrix(MATRIX_VIEW, this->perspectiveMatrixBackup[MATRIX_VIEW]);
+        this->SetTransformMatrix(MATRIX_PROJECTION, this->perspectiveMatrixBackup[MATRIX_PROJECTION]);
     }
 
     void SetFogRange(f32 nearPlane, f32 farPlane) {
@@ -302,14 +292,11 @@ struct AnmManager {
         this->dirtyFlags |= (1 << DIRTY_FOG);
     }
 
-    void SetAttributePointer(VertexAttributeArrays attr, std::size_t stride,
-                             void *ptr) {
+    void SetAttributePointer(VertexAttributeArrays attr, std::size_t stride, void *ptr) {
         this->dirtyAttribArrays[attr].ptr = ptr;
         this->dirtyAttribArrays[attr].stride = stride;
 
-        if (!std::memcmp(&this->dirtyAttribArrays[attr],
-                         &this->attribArrays[attr],
-                         sizeof(*this->dirtyAttribArrays))) {
+        if (!std::memcmp(&this->dirtyAttribArrays[attr], &this->attribArrays[attr], sizeof(*this->dirtyAttribArrays))) {
             return;
         }
 
@@ -328,33 +315,21 @@ struct AnmManager {
     }
 
     void SetTransformMatrix(TransformMatrix type, ZunMatrix &matrix) {
-        std::memcpy(&this->dirtyTransformMatrices[type], &matrix,
-                    sizeof(matrix));
+        std::memcpy(&this->dirtyTransformMatrices[type], &matrix, sizeof(matrix));
 
-        if (!std::memcmp(&this->transformMatrices[type], &matrix,
-                         sizeof(matrix))) {
-            this->dirtyFlags &=
-                ~(1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts)type));
+        if (!std::memcmp(&this->transformMatrices[type], &matrix, sizeof(matrix))) {
+            this->dirtyFlags &= ~(1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts)type));
         }
 
-        this->dirtyFlags |=
-            1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts)type);
+        this->dirtyFlags |= 1 << (DIRTY_MODEL_MATRIX + (DirtyRenderStateBitShifts)type);
     }
 
     i32 ExecuteScript(AnmVm *vm);
     bool Draw(AnmVm *vm);
-    void DrawTextToSprite(u32 spriteDstIndex, i32 xPos, i32 yPos,
-                          i32 spriteWidth, i32 spriteHeight, i32 fontWidth,
-                          i32 fontHeight, ZunColor textColor,
-                          ZunColor shadowColor, const char *strToPrint);
-    static void DrawStringFormat(AnmManager *mgr, AnmVm *vm, ZunColor textColor,
-                                 ZunColor shadowColor, const char *fmt, ...);
-    static void DrawStringFormat2(AnmManager *mgr, AnmVm *vm,
-                                  ZunColor textColor, ZunColor shadowColor,
-                                  const char *fmt, ...);
-    static void DrawVmTextFmt(AnmManager *anm_mgr, AnmVm *vm,
-                              ZunColor textColor, ZunColor shadowColor,
-                              const char *fmt, ...);
+    void DrawTextToSprite(u32 spriteDstIndex, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontWidth, i32 fontHeight, ZunColor textColor, ZunColor shadowColor, const char *strToPrint);
+    static void DrawStringFormat(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
+    static void DrawStringFormat2(AnmManager *mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
+    static void DrawVmTextFmt(AnmManager *anm_mgr, AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
     bool DrawNoRotation(AnmVm *vm);
     bool DrawOrthographic(AnmVm *vm, bool roundToPixel);
     bool DrawFacingCamera(AnmVm *vm);
@@ -367,15 +342,10 @@ struct AnmManager {
     void ReleaseSurfaces(void);
     bool LoadSurface(i32 surfaceIdx, const char *path);
     void ReleaseSurface(i32 surfaceIdx);
-    void CopySurfaceToBackBuffer(i32 surfaceIdx, i32 left, i32 top, i32 x,
-                                 i32 y);
-    void CopySurfaceRectToBackBuffer(i32 surfaceIdx, i32 rectX, i32 rectY,
-                                     i32 rectLeft, i32 rectTop, i32 width,
-                                     i32 height);
+    void CopySurfaceToBackBuffer(i32 surfaceIdx, i32 left, i32 top, i32 x, i32 y);
+    void CopySurfaceRectToBackBuffer(i32 surfaceIdx, i32 rectX, i32 rectY, i32 rectLeft, i32 rectTop, i32 width, i32 height);
 
-    void TranslateRotation(VertexTex1Xyzrhw *param_1, float x, float y,
-                           float sine, float cosine, float xOffset,
-                           float yOffset);
+    void TranslateRotation(VertexTex1Xyzrhw *param_1, float x, float y, float sine, float cosine, float xOffset, float yOffset);
 
     void ReleaseAnm(i32 anmIdx);
     bool LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset);
@@ -399,13 +369,10 @@ struct AnmManager {
         this->screenshotHeight = GAME_REGION_HEIGHT;
     }
 
-    static SDL_Surface *LoadToSurfaceWithFormat(const char *filename,
-                                                SDL_PixelFormatEnum format,
-                                                u8 **fileData);
+    static SDL_Surface *LoadToSurfaceWithFormat(const char *filename, SDL_PixelFormatEnum format, u8 **fileData);
     static u8 *ExtractSurfacePixels(SDL_Surface *src, u8 pixelDepth);
     static void FlipSurface(SDL_Surface *surface);
-    void ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &srcRect,
-                                   const SDL_Rect &dstRect);
+    void ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &srcRect, const SDL_Rect &dstRect);
     // Creates, binds, and set parameters for a new texture
     void CreateTextureObject();
     void UpdateDirtyStates();
@@ -422,13 +389,11 @@ struct AnmManager {
     u32 anmFilesSpriteIndexOffsets[128];
     SDL_Surface *surfaces[32];
     //    SDL_Surface *surfacesBis[32];
-    //    D3DXIMAGE_INFO surfaceSourceInfo[32];
     GLuint currentTextureHandle;
     GLuint dummyTextureHandle;
     u8 currentBlendMode;
     ProjectionMode projectionMode;
     AnmLoadedSprite *currentSprite;
-    //    IDirect3DVertexBuffer8 *vertexBuffer;
     RenderVertexInfo vertexBufferContents[4];
     i32 screenshotTextureId;
     i32 screenshotLeft;
@@ -462,8 +427,7 @@ struct AnmManager {
     ZunColor dirtytTextureFactor;
     ZunMatrix dirtyTransformMatrices[4];
 
-    ZunMatrix perspectiveMatrixBackup[4]; // Replaces matrix stack use for
-                                          // orthographic mode
+    ZunMatrix perspectiveMatrixBackup[4]; // Replaces matrix stack use for orthographic mode
 };
 
 extern AnmManager *g_AnmManager;

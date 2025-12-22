@@ -4,8 +4,6 @@
 #include "pbg3/FileAbstraction.hpp"
 #include "pbg3/IPbg3Parser.hpp"
 
-namespace th06
-{
 class Pbg3Parser : public IPbg3Parser, public FileAbstraction
 {
   public:
@@ -24,4 +22,3 @@ class Pbg3Parser : public IPbg3Parser, public FileAbstraction
 
     ~Pbg3Parser();
 };
-}; // namespace th06

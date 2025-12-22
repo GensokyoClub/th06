@@ -5,8 +5,6 @@
 #include <filesystem>
 #include <system_error>
 
-namespace th06
-{
 enum AccessMode
 {
     ACCESS_READ,
@@ -64,4 +62,3 @@ class FileAbstraction : public IFileAbstraction
   private:
     AccessMode access;
 };
-}; // namespace th06

@@ -3,8 +3,6 @@
 #include "Supervisor.hpp"
 #include <SDL2/SDL.h>
 
-namespace th06
-{
 void FixedFunctionGL::SetContextFlags()
 {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
@@ -181,4 +179,3 @@ void FixedFunctionGL::Draw()
 {
 
 }
-}; // namespace th06

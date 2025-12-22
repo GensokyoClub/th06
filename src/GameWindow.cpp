@@ -15,8 +15,6 @@
 #include <SDL2/SDL_timer.h>
 #include <cstring>
 
-namespace th06
-{
 GameWindow g_GameWindow;
 i32 g_TickCountToEffectiveFramerate;
 f64 g_LastFrameTime;
@@ -566,4 +564,3 @@ void GameWindow::InitD3dDevice(void)
     g_Stage.skyFogNeedsSetup = 1;
     return;
 }
-}; // namespace th06

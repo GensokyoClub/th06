@@ -3,8 +3,6 @@
 #include <cstdlib>
 #include <cstring>
 
-namespace th06
-{
 MidiDevice::MidiDevice()
 {
     this->handle = NULL;
@@ -165,4 +163,3 @@ success:
     return ZUN_SUCCESS;
 }
 
-}; // namespace th06

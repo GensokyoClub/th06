@@ -8,8 +8,6 @@
 // #include <d3d8.h>
 // #include <d3dx8math.h>
 
-namespace th06
-{
 struct RawStageHeader
 {
     i16 nbObjects;
@@ -136,4 +134,3 @@ struct Stage
 };
 
 extern Stage g_Stage;
-}; // namespace th06

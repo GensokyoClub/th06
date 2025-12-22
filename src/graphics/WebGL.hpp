@@ -3,8 +3,6 @@
 #include "GfxInterface.hpp"
 #include <SDL2/SDL_opengl.h>
 
-namespace th06
-{
 enum GlShaderUniform
 {
     UNIFORM_MODELVIEW,
@@ -44,5 +42,4 @@ private:
 
     GLint uniforms[UNIFORMS_COUNT];
 };
-}; // namespace th06
 

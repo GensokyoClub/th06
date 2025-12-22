@@ -19,8 +19,6 @@
 #include <SDL2/SDL_rwops.h>
 #include <SDL2/SDL_surface.h>
 
-namespace th06
-{
 VertexTex1Xyzrhw g_PrimitivesToDrawVertexBuf[4];
 VertexTex1DiffuseXyzrhw g_PrimitivesToDrawNoVertexBuf[4];
 VertexTex1DiffuseXyz g_PrimitivesToDrawUnknown[4];
@@ -2121,4 +2119,3 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
 
     originalViewport.Set();
 }
-}; // namespace th06

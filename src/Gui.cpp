@@ -17,8 +17,6 @@
 #include "ZunColor.hpp"
 #include "utils.hpp"
 
-namespace th06
-{
 Gui g_Gui;
 ChainElem g_GuiCalcChain;
 ChainElem g_GuiDrawChain;
@@ -1432,4 +1430,3 @@ void Gui::CutChain()
     return;
 }
 
-}; // namespace th06

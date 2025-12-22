@@ -7,8 +7,6 @@
 #include "inttypes.hpp"
 // #include <Windows.h>
 
-namespace th06
-{
 struct RunningSpellcardInfo
 {
     bool isCapturing;
@@ -48,4 +46,3 @@ struct EnemyManager
 };
 
 extern EnemyManager g_EnemyManager;
-}; // namespace th06

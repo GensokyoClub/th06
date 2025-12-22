@@ -13,8 +13,6 @@
 #include "utils.hpp"
 #include <cstdlib>
 
-namespace th06
-{
 i32 Ending::ReadEndFileParameter()
 {
     i32 readResult;
@@ -638,4 +636,3 @@ ZunResult Ending::DeletedCallback(Ending *ending)
     g_Supervisor.ReleasePbg3(ED_PBG3_INDEX);
     return ZUN_SUCCESS;
 }
-}; // namespace th06

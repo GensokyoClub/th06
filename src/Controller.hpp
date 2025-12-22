@@ -4,8 +4,6 @@
 
 #include <SDL2/SDL_gamecontroller.h>
 
-namespace th06
-{
 enum TouhouButton
 {
     TH_BUTTON_SHOOT = 1 << 0,
@@ -49,4 +47,3 @@ u8 *GetControllerState();
 u16 GetInput(void);
 void ResetKeyboard(void);
 }; // namespace Controller
-}; // namespace th06

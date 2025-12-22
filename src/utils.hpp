@@ -17,8 +17,6 @@
 #define WAS_PRESSED_PERIODIC(key)                                                                                      \
     (WAS_PRESSED(key) || (((g_CurFrameInput & (key)) != 0) && (g_IsEigthFrameOfHeldInput != 0)))
 
-namespace th06
-{
 namespace utils
 {
 void DebugPrint(const char *fmt, ...);
@@ -27,4 +25,3 @@ void DebugPrint2(const char *fmt, ...);
 f32 AddNormalizeAngle(f32 a, f32 b);
 void Rotate(ZunVec3 *outVector, ZunVec3 *point, f32 angle);
 }; // namespace utils
-}; // namespace th06

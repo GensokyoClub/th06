@@ -2,8 +2,6 @@
 
 #include "inttypes.hpp"
 
-namespace th06
-{
 struct ReplayDataInput
 {
     i32 frameNum;
@@ -50,4 +48,3 @@ struct ReplayData
     struct ReplayHeader *header;
     StageReplayData *stageReplayData[7];
 };
-}; // namespace th06

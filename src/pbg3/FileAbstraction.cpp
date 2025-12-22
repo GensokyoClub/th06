@@ -1,8 +1,6 @@
 #include "pbg3/FileAbstraction.hpp"
 #include <FileSystem.hpp>
 
-namespace th06
-{
 FileAbstraction::FileAbstraction()
 {
     handle = NULL;
@@ -195,4 +193,3 @@ FileAbstraction::~FileAbstraction()
 {
     this->Close();
 }
-}; // namespace th06

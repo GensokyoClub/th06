@@ -23,8 +23,6 @@
 #define TEX_COORDS_ATTRIBUTE_INDEX 1
 #define DIFFUSE_ATTRIBUTE_INDEX 2
 
-namespace th06
-{
 
 GLuint createShader(const char *source, GLenum type, const char *descString)
 {
@@ -293,4 +291,3 @@ void WebGL::Draw()
 {
 
 }
-}; // namespace th06

@@ -25,8 +25,6 @@
 #include <cstring>
 #include <ctime>
 
-namespace th06
-{
 Supervisor g_Supervisor;
 ControllerMapping g_ControllerMapping = {
     (i16)SDL_CONTROLLER_BUTTON_A,
@@ -913,4 +911,3 @@ ZunResult Supervisor::FadeOutMusic(f32 fadeOutSeconds)
     return ZUN_SUCCESS;
 }
 
-}; // namespace th06

@@ -5,8 +5,6 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
 enum EffectCallbackResult
 {
     EFFECT_CALLBACK_RESULT_STOP = 0,
@@ -41,4 +39,3 @@ struct EffectInfo
     i32 anmIdx;
     EffectUpdateCallback updateCallback;
 };
-}; // namespace th06

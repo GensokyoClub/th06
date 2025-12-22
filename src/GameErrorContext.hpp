@@ -3,8 +3,6 @@
 #include "i18n.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
 class GameErrorContext;
 
 class GameErrorContext
@@ -41,4 +39,3 @@ class GameErrorContext
 };
 
 extern GameErrorContext g_GameErrorContext;
-}; // namespace th06

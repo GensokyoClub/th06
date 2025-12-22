@@ -7,8 +7,6 @@
 #include "i18n.hpp"
 #include "utils.hpp"
 
-namespace th06
-{
 namespace utils
 {
 void DebugPrint(const char *fmt, ...)
@@ -71,4 +69,3 @@ void DebugPrint2(const char *fmt, ...)
 #endif
 }
 }; // namespace utils
-}; // namespace th06

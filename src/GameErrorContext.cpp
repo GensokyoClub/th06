@@ -5,8 +5,6 @@
 #include <cstdio>
 #include <cstring>
 
-namespace th06
-{
 GameErrorContext g_GameErrorContext;
 
 const char *GameErrorContext::Log(GameErrorContext *ctx, const char *fmt, ...)
@@ -78,4 +76,3 @@ void GameErrorContext::Flush()
         std::fclose(logFile);
     }
 }
-}; // namespace th06

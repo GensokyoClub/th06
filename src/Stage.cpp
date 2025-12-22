@@ -12,8 +12,6 @@
 #include "utils.hpp"
 // #include <d3d8.h>
 
-namespace th06
-{
 ChainElem g_StageCalcChain;
 ChainElem g_StageOnDrawHighPrioChain;
 ChainElem g_StageOnDrawLowPrioChain;
@@ -704,4 +702,3 @@ ZunResult Stage::RenderObjects(i32 zLevel)
     }
     return ZUN_SUCCESS;
 }
-}; // namespace th06

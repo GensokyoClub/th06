@@ -2,8 +2,6 @@
 
 #include "GfxInterface.hpp"
 
-namespace th06
-{
 struct FixedFunctionGL : GfxInterface 
 {
     static GfxInterface *Init();
@@ -18,5 +16,4 @@ struct FixedFunctionGL : GfxInterface
     virtual void SetTransformMatrix(TransformMatrix type, ZunMatrix &matrix);
     virtual void Draw();
 };
-}; // namespace th06
 

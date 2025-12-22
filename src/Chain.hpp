@@ -3,8 +3,6 @@
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
 
 enum ChainCallbackResult
 {
@@ -62,4 +60,3 @@ class Chain
 };
 
 extern Chain g_Chain;
-}; // namespace th06

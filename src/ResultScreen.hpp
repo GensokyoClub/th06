@@ -5,8 +5,6 @@
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
 
 #define TH6K_MAGIC 'K6HT'
 #define HSCR_MAGIC 'RCSH'
@@ -242,4 +240,3 @@ struct ResultScreen
     ReplayHeader replays[15];
     ReplayHeader defaultReplay;
 };
-}; // namespace th06

@@ -6,8 +6,6 @@
 // The MIDI interface used if a specific platform MIDI API is not supported
 // Obviously can't do much, but something needs to be linked
 
-namespace th06
-{
 struct MidiDevice
 {
 public:
@@ -22,4 +20,3 @@ public:
 private:
     bool printedWarning;
 };
-}; // namespace th06

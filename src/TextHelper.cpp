@@ -9,8 +9,6 @@
 #include <cstring>
 #include <iconv.h>
 
-namespace th06
-{
 
 TTF_Font *g_Font;
 ;
@@ -352,7 +350,7 @@ void TextHelper::RenderTextToTexture(i32 xPos, i32 yPos, i32 spriteWidth, i32 sp
 }
 
 // Extended to free all globals for text helper
-void th06::TextHelper::ReleaseTextBuffer()
+void TextHelper::ReleaseTextBuffer()
 {
     if (g_Font != NULL)
     {
@@ -375,4 +373,3 @@ void th06::TextHelper::ReleaseTextBuffer()
     return;
 }
 
-}; // namespace th06

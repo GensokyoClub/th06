@@ -5,8 +5,6 @@
 #include "ZunColor.hpp"
 #include "ZunMath.hpp"
 
-namespace th06
-{
 enum DepthFunc
 {
     DEPTH_FUNC_LEQUAL,
@@ -59,4 +57,3 @@ struct GfxInterface
     virtual void SetTransformMatrix(TransformMatrix type, ZunMatrix &matrix) = 0;
     virtual void Draw() = 0;
 };
-}; // namespace th06

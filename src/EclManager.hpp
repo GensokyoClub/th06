@@ -9,8 +9,6 @@
 // #include <Windows.h>
 // #include <d3dx8math.h>
 
-namespace th06
-{
 // Forward declaration to avoid include loop.
 struct Enemy;
 struct EnemyEclContext;
@@ -496,4 +494,3 @@ struct EclManager
 };
 
 extern EclManager g_EclManager;
-}; // namespace th06

@@ -6,8 +6,6 @@
 
 // #include <d3dx8math.h>
 
-namespace th06
-{
 enum ItemType // This enum is 1 byte in size on Enemy
 {
     ITEM_POWER_SMALL,
@@ -47,4 +45,3 @@ struct ItemManager
 };
 
 extern ItemManager g_ItemManager;
-}; // namespace th06

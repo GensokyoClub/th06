@@ -10,8 +10,6 @@
 #include "Rng.hpp"
 #include "utils.hpp"
 
-namespace th06
-{
 
 #define ITEM_SPAWNS 3
 #define ITEM_TABLES 8
@@ -868,4 +866,3 @@ void Enemy::Move()
     this->position.y += g_Supervisor.effectiveFramerateMultiplier * this->axisSpeed.y;
     this->position.z += g_Supervisor.effectiveFramerateMultiplier * this->axisSpeed.z;
 }
-}; // namespace th06

@@ -8,8 +8,6 @@
 #include <mutex>
 #include <thread>
 
-namespace th06
-{
 enum SoundIdx
 {
     NO_SOUND = -1,
@@ -112,4 +110,3 @@ struct SoundPlayer
 extern SoundBufferIdxVolume g_SoundBufferIdxVol[32];
 extern const char *g_SFXList[26];
 extern SoundPlayer g_SoundPlayer;
-}; // namespace th06

@@ -2,8 +2,6 @@
 
 #include "Enemy.hpp"
 
-namespace th06
-{
 namespace EnemyEclInstr
 {
 i32 *GetVar(Enemy *enemy, EclVarId *varId, EclValueType *valueType);
@@ -39,4 +37,3 @@ void ExInsStageXFunc14(Enemy *enemy, EclRawInstr *instr);
 void ExInsStageXFunc15(Enemy *enemy, EclRawInstr *instr);
 void ExInsStageXFunc16(Enemy *enemy, EclRawInstr *instr);
 }; // namespace EnemyEclInstr
-}; // namespace th06

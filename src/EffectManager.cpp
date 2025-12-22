@@ -10,8 +10,6 @@
 #include "ZunResult.hpp"
 #include "utils.hpp"
 
-namespace th06
-{
 EffectManager g_EffectManager;
 
 ChainElem g_EffectManagerCalcChain;
@@ -396,4 +394,3 @@ void EffectManager::CutChain()
     g_Chain.Cut(&g_EffectManagerCalcChain);
     g_Chain.Cut(&g_EffectManagerDrawChain);
 }
-}; // namespace th06

@@ -10,8 +10,6 @@
 
 // #include <d3dx8math.h>
 
-namespace th06
-{
 ItemManager g_ItemManager;
 
 ItemManager::ItemManager() {
@@ -396,4 +394,3 @@ void ItemManager::OnDraw()
     return;
 }
 
-}; // namespace th06

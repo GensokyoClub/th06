@@ -20,8 +20,6 @@
 #define ZUN_POWF(x, y) (std::pow((f32)(x), (f32)(y)))
 #define ZUN_RINTF(n) (std::rintf((f32)(x)))
 
-namespace th06
-{
 
 // sizeof checks kept in because technically, the standard does allow compilers to add more padding than is required
 
@@ -517,4 +515,3 @@ inline void projectVec3(ZunVec3 &out, ZunVec3 &inVec, ZunViewport &viewport, Zun
     out.z = mapRange(clipVector.z, -1.0f, 1.0f, viewport.minZ, viewport.maxZ);
 }
 
-}; // namespace th06

@@ -10,8 +10,6 @@
 #include <cstdlib>
 #include <cstring>
 
-namespace th06
-{
 MidiTimer::MidiTimer()
 {
     this->timerId = 0;
@@ -538,4 +536,3 @@ void MidiOutput::FadeOutSetVolume(i32 volume)
     }
 }
 
-}; // namespace th06

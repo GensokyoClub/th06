@@ -9,8 +9,6 @@
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
 enum GameState
 {
     STATE_STARTUP,
@@ -120,4 +118,3 @@ struct MainMenu
 };
 
 extern MainMenu g_MainMenu;
-}; // namespace th06

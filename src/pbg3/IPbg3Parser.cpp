@@ -1,7 +1,5 @@
 #include "pbg3/IPbg3Parser.hpp"
 
-namespace th06
-{
 void IPbg3Parser::Reset()
 {
     this->bitIdxInCurByte = 128;
@@ -85,4 +83,3 @@ u32 IPbg3Parser::ReadString(char *out, u32 maxSize)
 
     return false;
 }
-}; // namespace th06

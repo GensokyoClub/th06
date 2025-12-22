@@ -4,8 +4,6 @@
 #include "ZunResult.hpp"
 #include <alsa/asoundlib.h>
 
-namespace th06
-{
 struct MidiDevice
 {
 public:
@@ -33,4 +31,3 @@ private:
 
     bool hasConnection;
 };
-}; // namespace th06

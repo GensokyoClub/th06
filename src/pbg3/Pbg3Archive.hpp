@@ -3,8 +3,6 @@
 #include "inttypes.hpp"
 #include "pbg3/Pbg3Parser.hpp"
 
-namespace th06
-{
 struct Pbg3Entry
 {
     u32 unk1;
@@ -39,4 +37,3 @@ class Pbg3Archive
 };
 
 extern Pbg3Archive **g_Pbg3Archives;
-}; // namespace th06

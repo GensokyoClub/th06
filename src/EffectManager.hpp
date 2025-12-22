@@ -7,8 +7,6 @@
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
 
 enum ParticleEffects
 {
@@ -60,4 +58,3 @@ struct EffectManager
 };
 
 extern EffectManager g_EffectManager;
-}; // namespace th06

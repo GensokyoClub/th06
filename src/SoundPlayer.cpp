@@ -17,8 +17,6 @@
 //   loop points that would be accurate to the sample like EoSD needs. So instead we get to read WAVs and
 //   mix everything by hand. Yay
 
-namespace th06
-{
 
 #define BACKGROUND_MUSIC_WAV_NUM_CHANNELS 2
 #define BACKGROUND_MUSIC_WAV_SAMPLE_RATE 44100
@@ -644,4 +642,3 @@ void SoundPlayer::BackgroundMusicPlayerThread()
         SDL_Delay(5);
     }
 }
-}; // namespace th06

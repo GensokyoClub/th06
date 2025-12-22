@@ -11,8 +11,6 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
 #define TEXT_RIGHT_ARROW 0x7f
 
 struct AsciiManagerString
@@ -100,4 +98,3 @@ struct AsciiManager
     AsciiManagerPopup popups[515];
 };
 extern AsciiManager g_AsciiManager;
-}; // namespace th06

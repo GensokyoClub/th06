@@ -4,8 +4,6 @@
 
 #include "pbg3/Pbg3Archive.hpp"
 
-namespace th06
-{
 Pbg3Archive **g_Pbg3Archives;
 
 Pbg3Archive::Pbg3Archive()
@@ -341,4 +339,3 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, const char *filename)
 
     return out;
 }
-}; // namespace th06

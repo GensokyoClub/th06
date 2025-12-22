@@ -1,7 +1,5 @@
 #include "pbg3/Pbg3Parser.hpp"
 
-namespace th06
-{
 
 Pbg3Parser::Pbg3Parser() : IPbg3Parser(), FileAbstraction()
 {
@@ -165,4 +163,3 @@ Pbg3Parser::~Pbg3Parser()
 {
     this->Close();
 }
-}; // namespace th06

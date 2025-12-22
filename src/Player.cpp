@@ -22,8 +22,6 @@
 #include "i18n.hpp"
 #include "utils.hpp"
 
-namespace th06
-{
 Player g_Player;
 
 CharacterData g_CharData[4] = {
@@ -1409,4 +1407,3 @@ void Player::Die()
     }
     return;
 }
-}; // namespace th06

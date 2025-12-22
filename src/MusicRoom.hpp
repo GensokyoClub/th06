@@ -5,8 +5,6 @@
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
 struct TrackDescriptor
 {
     TrackDescriptor()
@@ -48,4 +46,3 @@ struct MusicRoom
     AnmVm descriptionSprites[16];
 };
 
-}; // namespace th06

@@ -14,8 +14,6 @@
 #include "i18n.hpp"
 #include "utils.hpp"
 
-using namespace th06;
-
 int main(int argc, char *argv[])
 {
     (void)argc;

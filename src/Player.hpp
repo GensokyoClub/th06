@@ -9,8 +9,6 @@
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
 struct Player;
 
 enum PlayerDirection
@@ -250,4 +248,3 @@ struct Player
 };
 
 extern Player g_Player;
-}; // namespace th06

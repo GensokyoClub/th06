@@ -4,8 +4,6 @@
 #include "inttypes.hpp"
 #include <cstdio>
 
-namespace th06
-{
 namespace FileSystem
 {
 // Wrapper to open a UTF-8 path string on systems that might not have first-class UTF-8 support (WINDOWS!!!)
@@ -17,4 +15,3 @@ u8 *OpenPath(const char *filepath, int isExternalResource);
 int WriteDataToFile(const char *path, void *data, std::size_t size);
 } // namespace FileSystem
 extern u32 g_LastFileSize;
-}; // namespace th06

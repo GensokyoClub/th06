@@ -42,8 +42,6 @@
 #define WIDTH_RESOLUTION_SCALE (((f32)VIEWPORT_WIDTH) / GAME_WINDOW_WIDTH)
 #define HEIGHT_RESOLUTION_SCALE (((f32)VIEWPORT_HEIGHT) / GAME_WINDOW_HEIGHT)
 
-namespace th06
-{
 enum RenderResult
 {
     RENDER_RESULT_KEEP_RUNNING,
@@ -75,4 +73,3 @@ struct GameWindow
 extern GameWindow g_GameWindow;
 extern i32 g_TickCountToEffectiveFramerate;
 extern double g_LastFrameTime;
-}; // namespace th06

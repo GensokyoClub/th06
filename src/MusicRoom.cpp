@@ -9,8 +9,6 @@
 #include <cstdlib>
 #include <cstring>
 
-namespace th06
-{
 
 ZunResult MusicRoom::CheckInputEnable()
 {
@@ -417,5 +415,3 @@ ZunResult MusicRoom::DeletedCallback(MusicRoom *musicRoom)
 
     return ZUN_SUCCESS;
 }
-
-} // namespace th06

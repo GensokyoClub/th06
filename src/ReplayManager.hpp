@@ -5,8 +5,6 @@
 #include "ReplayData.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
 struct ReplayManager
 {
     static ZunResult RegisterChain(i32 isDemo, char *replayFile);
@@ -42,4 +40,3 @@ struct ReplayManager
     ChainElem *drawChain;
     ChainElem *calcChainDemoHighPrio;
 };
-}; // namespace th06

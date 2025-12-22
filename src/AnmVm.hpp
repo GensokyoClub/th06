@@ -9,8 +9,6 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-namespace th06
-{
 struct AnmLoadedSprite
 {
     i32 sourceFileIndex;
@@ -204,4 +202,3 @@ struct AnmVm
     u8 fontHeight;
     // Two final padding bytes
 };
-}; // namespace th06

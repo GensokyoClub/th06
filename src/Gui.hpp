@@ -7,8 +7,6 @@
 #include "inttypes.hpp"
 // #include <Windows.h>
 
-namespace th06
-{
 enum MsgOps
 {
     MSG_OPCODE_MSGDELETE,
@@ -198,4 +196,3 @@ struct Gui
 };
 
 extern Gui g_Gui;
-}; // namespace th06

@@ -142,17 +142,6 @@ i32 Pbg3Parser::ReadByteAlignedData(u8 *data, u32 bytesToRead)
     return FileAbstraction::Read(data, bytesToRead, &numBytesRead);
 }
 
-i32 Pbg3Parser::GetLastWriteTime(std::filesystem::file_time_type &lastWriteTime)
-{
-    if (!this->HasNonNullHandle())
-    {
-        return false;
-    }
-
-    // EWWWW abstraction violation much? (Maybe this is an inlined function?)
-    return FileAbstraction::GetLastWriteTime(lastWriteTime);
-}
-
 i32 Pbg3Parser::ReadByte()
 {
     // MSVC generates an add -0x18 instruction to get the caller base here, while the original binary uses a sub 0x18?

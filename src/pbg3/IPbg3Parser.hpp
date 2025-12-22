@@ -20,7 +20,6 @@ class IPbg3Parser
     virtual i32 SeekToOffset(u32 fileOffset) = 0;
     virtual i32 SeekToNextByte() = 0;
     virtual i32 ReadByteAlignedData(u8 *data, u32 bytesToRead) = 0;
-    virtual i32 GetLastWriteTime(std::filesystem::file_time_type &lastWriteTime) = 0;
     virtual ~IPbg3Parser()
     {
     }

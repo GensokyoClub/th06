@@ -48,12 +48,6 @@ class FileAbstraction : public IFileAbstraction
     {
         return this->handle != NULL;
     }
-    bool GetLastWriteTime(std::filesystem::file_time_type &lastWriteTime)
-    {
-        std::error_code err;
-        lastWriteTime = std::filesystem::last_write_time(*path, err);
-        return (bool)err;
-    }
 
   protected:
     std::FILE *handle;

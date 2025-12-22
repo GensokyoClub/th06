@@ -15,7 +15,6 @@ class Pbg3Parser : public IPbg3Parser, public FileAbstraction
     i32 SeekToOffset(u32 fileOffset);
     i32 SeekToNextByte();
     i32 ReadByteAlignedData(u8 *data, u32 bytesToRead);
-    i32 GetLastWriteTime(std::filesystem::file_time_type &lastWriteTime);
 
     void Close();
     i32 ReadByte();

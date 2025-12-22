@@ -636,6 +636,7 @@ void SoundPlayer::MixAudio(u32 samples) {
 void SoundPlayer::BackgroundMusicPlayerThread() {
     SDL_PauseAudioDevice(this->audioDev, 0);
 
+    u32 latencyLimit = 14'700;
     u64 samplesSent = 0;
     u64 startTick = SDL_GetTicks64();
 
@@ -644,8 +645,19 @@ void SoundPlayer::BackgroundMusicPlayerThread() {
 
         // Keep slightly more than 1 frame's worth of samples in the audio
         // buffer at all times
-        i32 targetSamples =
-            (curTicks - startTick) * 44.100 - samplesSent + 1024;
+        i32 targetSamples = (curTicks - startTick) * 44.100 - samplesSent + 1024;
+
+        if (SDL_GetQueuedAudioSize(this->audioDev) > latencyLimit)
+        {
+            latencyLimit += 2'940; // 1 frame
+            samplesSent += targetSamples;
+            targetSamples = 0;
+        }
+        else if (targetSamples > 1024)
+        {
+            samplesSent += targetSamples - 1024;
+            targetSamples = 1024;
+        }
 
         if (targetSamples > 0) {
             this->MixAudio(targetSamples * 2);

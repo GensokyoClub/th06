@@ -312,11 +312,10 @@ void TextHelper::RenderTextToTexture(i32 xPos, i32 yPos, i32 spriteWidth,
         SDL_FreeSurface(regularText);
     }
 
-    if (!outTexture->textureData) {
-        outTexture->textureData =
-            (u8 *)malloc(outTexture->width * outTexture->height * 4);
-        memset(outTexture->textureData, 0,
-               outTexture->width * outTexture->height * 4);
+    if (!outTexture->textureData || outTexture->format != TEX_FMT_A8R8G8B8) {
+        free(outTexture->textureData);
+        outTexture->textureData = (u8 *)malloc(outTexture->width * outTexture->height * 4);
+        memset(outTexture->textureData, 0, outTexture->width * outTexture->height * 4);
     }
 
     outTexture->format = TEX_FMT_A8R8G8B8;
@@ -340,9 +339,7 @@ void TextHelper::RenderTextToTexture(i32 xPos, i32 yPos, i32 spriteWidth,
 
     g_AnmManager->SetCurrentTexture(outTexture->handle);
 
-    g_glFuncTable.glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, outTexture->width,
-                                  outTexture->height, GL_RGBA, GL_UNSIGNED_BYTE,
-                                  outTexture->textureData);
+    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, outTexture->width, outTexture->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, outTexture->textureData);
 
     SDL_FreeSurface(textureSurface);
 

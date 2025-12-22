@@ -10,17 +10,7 @@
 #include <cstdlib>
 #include <cstring>
 
-MidiTimer::MidiTimer()
-{
-    this->timerId = 0;
-}
-
-MidiTimer::~MidiTimer()
-{
-    this->StopTimer();
-}
-
-void MidiTimer::StartTimer(u32 delay, SDL_TimerCallback cb, void *data)
+void MidiOutput::StartTimer(u32 delay, SDL_TimerCallback cb, void *data)
 {
     this->StopTimer();
 
@@ -32,11 +22,11 @@ void MidiTimer::StartTimer(u32 delay, SDL_TimerCallback cb, void *data)
     }
     else
     {
-        this->timerId = SDL_AddTimer(delay, (SDL_TimerCallback)&MidiTimer::DefaultTimerCallback, this);
+        this->timerId = SDL_AddTimer(delay, (SDL_TimerCallback)&MidiOutput::DefaultTimerCallback, this);
     }
 }
 
-i32 MidiTimer::StopTimer()
+i32 MidiOutput::StopTimer()
 {
     if (this->timerId != 0)
     {
@@ -48,7 +38,7 @@ i32 MidiTimer::StopTimer()
     return 1;
 }
 
-u32 SDLCALL MidiTimer::DefaultTimerCallback(u32 interval, MidiTimer *timer)
+u32 SDLCALL MidiOutput::DefaultTimerCallback(u32 interval, MidiOutput *timer)
 {
     timer->OnTimerElapsed();
 
@@ -73,6 +63,8 @@ u32 MidiOutput::ReadVariableLength(u8 **curTrackDataCursor)
 
 MidiOutput::MidiOutput()
 {
+    this->timerId = 0;
+
     this->tracks = NULL;
     this->divisions = 0;
     this->tempo = 0;
@@ -89,6 +81,8 @@ MidiOutput::MidiOutput()
 
 MidiOutput::~MidiOutput()
 {
+    this->StopTimer();
+
     this->StopPlayback();
     this->ClearTracks();
     for (i32 i = 0; i < 32; i++)

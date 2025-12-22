@@ -13,24 +13,6 @@
 #include "midi/MidiDefault.hpp"
 #endif
 
-struct MidiTimer
-{
-    MidiTimer();
-    ~MidiTimer();
-
-    virtual void OnTimerElapsed() = 0;
-
-    i32 StopTimer();
-    void StartTimer(u32 delay, SDL_TimerCallback cb, void *data);
-
-    //    static void CALLBACK DefaultTimerCallback(u32 uTimerID, u32 uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR
-    //    dw2);
-    static u32 SDLCALL DefaultTimerCallback(u32 interval, MidiTimer *timer);
-
-    SDL_TimerID timerId;
-    u32 lastTimerTicks;
-};
-
 enum MidiOpcode
 {
     MIDI_OPCODE_CHANNEL_1 = 0x01,
@@ -96,10 +78,15 @@ struct MidiChannel
     u8 channelVolume;
 };
 
-struct MidiOutput : MidiTimer
+struct MidiOutput
 {
     MidiOutput();
     ~MidiOutput();
+
+    i32 StopTimer();
+    void StartTimer(u32 delay, SDL_TimerCallback cb, void *data);
+
+    static u32 SDLCALL DefaultTimerCallback(u32 interval, MidiOutput *timer);
 
     void OnTimerElapsed();
 
@@ -119,6 +106,9 @@ struct MidiOutput : MidiTimer
     void FadeOutSetVolume(i32 volume);
 
     static u32 ReadVariableLength(u8 **curTrackDataCursor);
+
+    SDL_TimerID timerId;
+    u32 lastTimerTicks;
 
     u8 *midiFileData[32];
     i32 numTracks;

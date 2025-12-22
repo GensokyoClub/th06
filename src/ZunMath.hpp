@@ -6,6 +6,53 @@
 #include <cmath>
 #include <cstring>
 
+#if __cplusplus >= 202002L
+    #include <bit>
+    inline u32 BitCeil(u32 n) { return std::bit_ceil(n); }
+    inline u32 CountrZero(u32 n) { return std::countr_zero(n); }
+#elif defined(__GNUC__)
+    inline u32 BitCeil(u32 n)
+    {
+        // Check if n is a power of 2
+        if (((n - 1) & n) == 0)
+        {
+            return n;
+        }
+
+        u32 highestBit = 31 - __builtin_clz(n);
+
+        return 1 << (highestBit + 1);
+    }
+
+    inline u32 CountrZero(u32 n) { return __builtin_ctz(n); }
+#else
+    // Shamelessly stolen from https://graphics.stanford.edu/%7Eseander/bithacks.html#RoundUpPowerOf2
+    inline u32 BitCeil(u32 n)
+    {
+        n--;
+        n |= n >> 1;
+        n |= n >> 2;
+        n |= n >> 4;
+        n |= n >> 8;
+        n |= n >> 16;
+        n++;
+
+        return n;
+    }
+
+    // https://graphics.stanford.edu/%7Eseander/bithacks.html#ZerosOnRightMultLookup
+    inline u32 CountrZero(u32 n)
+    {
+        static const int multiplyDeBruijnBitPosition[32] = 
+        {
+          0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 
+          31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
+        };
+
+        return multiplyDeBruijnBitPosition[((u32)((n & -n) * 0x077CB531U)) >> 27];
+    }
+#endif
+
 // EoSD makes extensive use of the float versions of math functions made standard in C99
 //   These were mostly added to C++ with C++17, but GNU bikeshedded so hard, they didn't add
 //   them to their headers until 2023. To allow compilation where the older headers are

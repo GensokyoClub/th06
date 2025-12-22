@@ -9,7 +9,6 @@
 #include "i18n.hpp"
 #include "utils.hpp"
 
-#include <bit>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -490,8 +489,8 @@ ZunResult AnmManager::CreateEmptyTexture(i32 textureIdx, u32 width, u32 height, 
     CreateTextureObject();
 
     this->textures[textureIdx].handle = this->currentTextureHandle;
-    this->textures[textureIdx].width = std::bit_ceil(width);
-    this->textures[textureIdx].height = std::bit_ceil(height);
+    this->textures[textureIdx].width = BitCeil(width);
+    this->textures[textureIdx].height = BitCeil(height);
     this->textures[textureIdx].format = textureFormat;
 
     g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, g_TextureFormatGLFormatMapping[textureFormat],
@@ -743,7 +742,7 @@ void AnmManager::UpdateDirtyStates()
 {
     while (this->dirtyFlags != 0)
     {
-        u32 currFlagIndex = std::countr_zero(this->dirtyFlags);
+        u32 currFlagIndex = CountrZero(this->dirtyFlags);
         this->dirtyFlags &= ~(1 << currFlagIndex);
 
         // This would all be nicer if the enum was flag values rather than indices,
@@ -794,7 +793,7 @@ void AnmManager::UpdateDirtyStates()
 
             while (changedAttributes != 0)
             {
-                u8 currBit = std::countr_zero(changedAttributes);
+                u8 currBit = CountrZero(changedAttributes);
                 gfxBackend->ToggleVertexAttribute(changedAttributes & (1 << currBit),
                                                   this->enabledVertexAttributes & (1 << currBit));
                 changedAttributes &= ~(1 << currBit);
@@ -2071,8 +2070,8 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
 
     CreateTextureObject();
 
-    u32 textureWidth = std::bit_ceil((u32)src->w);
-    u32 textureHeight = std::bit_ceil((u32)src->h);
+    u32 textureWidth = BitCeil((u32)src->w);
+    u32 textureHeight = BitCeil((u32)src->h);
 
     g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
                                NULL);

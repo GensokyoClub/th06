@@ -9,8 +9,6 @@
 #include <cstdlib>
 #include <cstring>
 
-namespace th06 {
-
 bool MusicRoom::CheckInputEnable() {
     if (this->waitFramesCount >= 8) {
         this->enableInput = 1;
@@ -385,5 +383,3 @@ bool MusicRoom::DeletedCallback(MusicRoom *musicRoom) {
 
     return true;
 }
-
-} // namespace th06

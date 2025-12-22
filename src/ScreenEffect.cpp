@@ -9,8 +9,6 @@
 #include <SDL2/SDL_video.h>
 #include <cstring>
 
-namespace th06 {
-
 void ScreenEffect::Clear(ZunColor color) {
     f32 a = (color >> 24) / 255.0f;
     f32 r = ((color >> 16) & 0xFF) / 255.0f;
@@ -283,4 +281,3 @@ bool ScreenEffect::DeletedCallback(ScreenEffect *effect) {
 
     return true;
 }
-}; // namespace th06

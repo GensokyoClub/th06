@@ -4,7 +4,6 @@
 #include "ResultScreen.hpp"
 #include "inttypes.hpp"
 
-namespace th06 {
 enum Difficulty {
     EASY,
     NORMAL,
@@ -122,4 +121,3 @@ struct GameManager {
     i32 minRank;
     i32 subRank;
 };
-}; // namespace th06

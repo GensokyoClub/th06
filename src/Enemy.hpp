@@ -10,7 +10,6 @@
 #include "inttypes.hpp"
 #include <cstring>
 
-namespace th06 {
 struct Enemy;
 
 struct EnemyBulletShooter {
@@ -237,4 +236,3 @@ struct Enemy {
     f32 exInsFunc6Angle;
     ZunTimer exInsFunc6Timer;
 };
-}; // namespace th06

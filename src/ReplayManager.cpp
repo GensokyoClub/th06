@@ -13,7 +13,6 @@
 #include "Supervisor.hpp"
 #include "utils.hpp"
 
-namespace th06 {
 ReplayManager *g_ReplayManager;
 
 bool ReplayManager::ValidateReplayData(ReplayHeader *data, i32 fileSize) {
@@ -495,4 +494,3 @@ void ReplayManager::SaveReplay(char *replayPath, char *replayName) {
     }
     return;
 }
-}; // namespace th06

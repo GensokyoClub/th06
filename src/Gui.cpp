@@ -17,7 +17,6 @@
 #include "graphics/GLFunc.hpp"
 #include "utils.hpp"
 
-namespace th06 {
 Gui g_Gui;
 ChainElem g_GuiCalcChain;
 ChainElem g_GuiDrawChain;
@@ -1374,5 +1373,3 @@ void Gui::CutChain() {
     g_Chain.Cut(&g_GuiDrawChain);
     return;
 }
-
-}; // namespace th06

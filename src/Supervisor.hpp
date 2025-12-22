@@ -13,7 +13,6 @@
 #include "ZunMath.hpp"
 #include "inttypes.hpp"
 
-namespace th06 {
 #define GAME_VERSION 0x102
 
 enum GameConfigOptsShifts {
@@ -178,4 +177,3 @@ extern u16 g_CurFrameInput;
 extern u16 g_IsEigthFrameOfHeldInput;
 extern SDL_Surface *g_TextBufferSurface;
 extern u16 g_NumOfFramesInputsWereHeld;
-}; // namespace th06

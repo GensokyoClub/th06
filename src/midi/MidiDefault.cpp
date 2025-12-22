@@ -2,7 +2,6 @@
 #include "GameErrorContext.hpp"
 #include "i18n.hpp"
 
-namespace th06 {
 MidiDevice::MidiDevice() {
     printedWarning = false;
 }
@@ -32,5 +31,3 @@ bool MidiDevice::SendLongMsg(u8 *buf, u32 len) {
 bool MidiDevice::SendShortMsg(u8 midiStatus, u8 firstByte, u8 secondByte) {
     return true;
 }
-
-}; // namespace th06

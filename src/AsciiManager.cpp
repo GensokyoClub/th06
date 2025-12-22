@@ -12,7 +12,6 @@
 #include <cstdio>
 #include <cstring>
 
-namespace th06 {
 AsciiManager g_AsciiManager;
 ChainElem g_AsciiManagerCalcChain;
 ChainElem g_AsciiManagerOnDrawMenusChain;
@@ -786,4 +785,3 @@ void AsciiManager::DrawPopupsWithoutHwVertexProcessing() {
 
     return;
 }
-}; // namespace th06

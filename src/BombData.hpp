@@ -2,7 +2,6 @@
 
 #include "Player.hpp"
 
-namespace th06 {
 struct BombData {
     void (*calc)(Player *p);
     void (*draw)(Player *p);
@@ -18,4 +17,3 @@ struct BombData {
     static void DarkenViewport(Player *player);
 };
 extern BombData g_BombData[4];
-}; // namespace th06

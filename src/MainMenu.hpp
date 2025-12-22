@@ -8,7 +8,6 @@
 #include "ZunColor.hpp"
 #include "inttypes.hpp"
 
-namespace th06 {
 enum GameState {
     STATE_STARTUP,
     STATE_PRE_INPUT,
@@ -117,4 +116,3 @@ struct MainMenu {
 };
 
 extern MainMenu g_MainMenu;
-}; // namespace th06

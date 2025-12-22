@@ -13,7 +13,6 @@
 #include "utils.hpp"
 #include <cstdlib>
 
-namespace th06 {
 i32 Ending::ReadEndFileParameter() {
     i32 readResult;
 
@@ -590,4 +589,3 @@ bool Ending::DeletedCallback(Ending *ending) {
     g_Supervisor.isInEnding = false;
     return true;
 }
-}; // namespace th06

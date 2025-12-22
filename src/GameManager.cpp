@@ -20,10 +20,13 @@
 // #include <d3d8types.h>
 // #include <d3dx8math.h>
 
-namespace th06 {
-
-u32 g_ExtraLivesScores[5] = { 10000000, 20000000, 40000000, 60000000,
-                              1900000000 };
+u32 g_ExtraLivesScores[5] = {
+    10000000,
+    20000000,
+    40000000,
+    60000000,
+    1900000000
+};
 
 const char *g_EclFiles[9] = { "dummy",
                               "data/ecldata1.ecl",
@@ -600,5 +603,3 @@ i32 GameManager::HasReachedMaxClears(i32 character, i32 shottype) {
         this->clrd[shottype + character * 2].difficultyClearedWithRetries[3] ==
             MAX_CLEARS);
 }
-
-}; // namespace th06

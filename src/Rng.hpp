@@ -2,7 +2,6 @@
 
 #include "inttypes.hpp"
 
-namespace th06 {
 struct Rng {
     u16 seed;
     u32 generationCount;
@@ -34,4 +33,3 @@ struct Rng {
 };
 
 extern Rng g_Rng;
-}; // namespace th06

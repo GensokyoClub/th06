@@ -4,7 +4,6 @@
 #include "Chain.hpp"
 #include "inttypes.hpp"
 
-namespace th06 {
 struct TrackDescriptor {
     TrackDescriptor() {
         memset(this, 0, sizeof(TrackDescriptor));
@@ -41,5 +40,3 @@ struct MusicRoom {
     AnmVm titleSprites[32];
     AnmVm descriptionSprites[16];
 };
-
-}; // namespace th06

@@ -5,7 +5,6 @@
 #include "Enemy.hpp"
 #include "inttypes.hpp"
 
-namespace th06 {
 struct RunningSpellcardInfo {
     bool isCapturing;
     u32 isActive;
@@ -44,4 +43,3 @@ struct EnemyManager {
 };
 
 extern EnemyManager g_EnemyManager;
-}; // namespace th06

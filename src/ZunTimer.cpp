@@ -1,8 +1,6 @@
 #include "ZunTimer.hpp"
 #include "Supervisor.hpp"
 
-namespace th06 {
-
 void ZunTimer::Initialize() {
     this->current = 0;
     this->previous = -1;
@@ -59,4 +57,3 @@ i32 ZunTimer::NextTick() {
     this->Tick();
     return this->current;
 }
-}; // namespace th06

@@ -5,7 +5,6 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-namespace th06 {
 struct RawStageHeader {
     i16 nbObjects;
     i16 nbFaces;
@@ -122,4 +121,3 @@ struct Stage {
 };
 
 extern Stage g_Stage;
-}; // namespace th06

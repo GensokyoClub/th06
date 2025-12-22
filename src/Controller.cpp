@@ -9,8 +9,6 @@
 #include "i18n.hpp"
 #include "utils.hpp"
 
-namespace th06 {
-// DIFFABLE_STATIC(JOYCAPSA, g_JoystickCaps)
 u16 g_FocusButtonConflictState;
 u8 *keyboardState;
 
@@ -306,7 +304,7 @@ u32 Controller::SetButtonFromControllerInputs(u16 *outButtons,
 u8 g_ControllerData[SDL_CONTROLLER_BUTTON_MAX];
 
 // This is for rebinding keys
-u8 *th06::Controller::GetControllerState() {
+u8 *Controller::GetControllerState() {
     //    JOYINFOEX joyinfoex;
     //    u32 joyButtonBit;
     //    u32 joyButtonIndex;
@@ -416,4 +414,3 @@ u16 Controller::GetInput(void) {
 void Controller::ResetKeyboard(void) {
     keyboardState = (u8 *)SDL_GetKeyboardState(NULL);
 }
-}; // namespace th06

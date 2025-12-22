@@ -2,8 +2,6 @@
 
 #include "inttypes.hpp"
 
-namespace th06 {
-
 enum ChainCallbackResult {
     CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB = (unsigned int)0,
     CHAIN_CALLBACK_RESULT_CONTINUE = (unsigned int)1,
@@ -57,4 +55,3 @@ class Chain {
 };
 
 extern Chain g_Chain;
-}; // namespace th06

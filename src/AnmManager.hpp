@@ -21,7 +21,6 @@
 #define TEX_FMT_R8G8B8 4
 #define TEX_FMT_A4R4G4B4 5
 
-namespace th06 {
 struct TextureData {
     GLuint handle;
     void *fileData;
@@ -431,4 +430,3 @@ struct AnmManager {
 };
 
 extern AnmManager *g_AnmManager;
-}; // namespace th06

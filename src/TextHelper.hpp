@@ -6,7 +6,6 @@
 
 // #include <d3d8.h>
 
-namespace th06 {
 // struct FormatInfo
 //{
 //     D3DFORMAT format;
@@ -44,4 +43,3 @@ struct TextHelper {
     //    HGDIOBJ gdiObj2;
     u8 *buffer;
 };
-}; // namespace th06

@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include <cstring>
 
-namespace th06 {
 MidiDevice::MidiDevice() {
     this->handle = NULL;
     this->deviceId = 0;
@@ -144,5 +143,3 @@ success:
 
     return true;
 }
-
-}; // namespace th06

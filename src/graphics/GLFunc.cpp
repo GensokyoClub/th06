@@ -2,7 +2,6 @@
 
 #include <SDL2/SDL_video.h>
 
-namespace th06 {
 GLFuncTable g_glFuncTable;
 
 #define TRY_RESOLVE_FUNCTION(func) \
@@ -104,5 +103,3 @@ void GLFuncTable::glDepthRangef(GLclampf near_val, GLclampf far_val) {
         this->glDepthRange(near_val, far_val);
     }
 }
-
-}; // namespace th06

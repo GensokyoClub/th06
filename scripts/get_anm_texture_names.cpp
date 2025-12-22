@@ -21,7 +21,7 @@ int main(int argc, char **argv)
         exit(-1);
     }
 
-    th06::AnmRawEntry entry = {};
+    AnmRawEntry entry = {};
 
     fread(&entry, sizeof(entry), 1, file);
 

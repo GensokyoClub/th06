@@ -1,9 +1,8 @@
 #pragma once
 
-#include "inttypes.hpp"
+#include "../inttypes.hpp"
 #include <alsa/asoundlib.h>
 
-namespace th06 {
 struct MidiDevice {
   public:
     MidiDevice();
@@ -30,4 +29,3 @@ struct MidiDevice {
 
     bool hasConnection;
 };
-}; // namespace th06

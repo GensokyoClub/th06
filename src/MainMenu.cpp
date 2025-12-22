@@ -33,7 +33,6 @@
 #define SWITCH_TH_CONFIG_FILE TH_EN_CONFIG_FILE
 #endif
 
-namespace th06 {
 const char *g_ShortCharacterList[4] = { "ReimuA ", "ReimuB ", "MarisaA",
                                         "MarisaB" };
 const char *g_DifficultyList[5] = { "Easy   ", "Normal ", "Hard   ", "Lunatic",
@@ -2068,4 +2067,3 @@ void MainMenu::ReleaseTitleAnm() {
 }
 
 MainMenu g_MainMenu;
-}; // namespace th06

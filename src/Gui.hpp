@@ -6,7 +6,6 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-namespace th06 {
 enum MsgOps {
     MSG_OPCODE_MSGDELETE,
     MSG_OPCODE_PORTRAITANMSCRIPT,
@@ -180,4 +179,3 @@ struct Gui {
 };
 
 extern Gui g_Gui;
-}; // namespace th06

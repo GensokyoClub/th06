@@ -3,7 +3,6 @@
 #include "Supervisor.hpp"
 #include "inttypes.hpp"
 
-namespace th06 {
 struct ZunTimer {
     i32 previous;
     f32 subFrame;
@@ -71,4 +70,3 @@ struct ZunTimer {
         return this->current != this->previous;
     }
 };
-}; // namespace th06

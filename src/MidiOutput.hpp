@@ -12,7 +12,6 @@
 #include "midi/MidiDefault.hpp"
 #endif
 
-namespace th06 {
 struct MidiTimer {
     MidiTimer();
     ~MidiTimer();
@@ -134,4 +133,3 @@ struct MidiOutput : MidiTimer {
     u64 loopPointMSCount;
     u64 loopPointBaseTicks;
 };
-}; // namespace th06

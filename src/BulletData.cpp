@@ -2,7 +2,6 @@
 #include "Player.hpp"
 #include "SoundPlayer.hpp"
 
-namespace th06 {
 /* ----------ReimuA---------- */
 
 /* ReimuA Rank 1 */
@@ -2325,4 +2324,3 @@ CharacterPowerData g_CharacterPowerDataMarisaB[9] = {
     /* Rank8   */ { 5, 127, g_CharacterPowerBulletDataMarisaBRank8 },
     /* Rank9   */ { 7, 999, g_CharacterPowerBulletDataMarisaBRank9 },
 };
-}; // namespace th06

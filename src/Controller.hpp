@@ -4,7 +4,6 @@
 
 #include <SDL2/SDL_gamecontroller.h>
 
-namespace th06 {
 enum TouhouButton {
     TH_BUTTON_SHOOT = 1 << 0,
     TH_BUTTON_BOMB = 1 << 1,
@@ -36,19 +35,18 @@ enum TouhouButton {
 };
 
 namespace Controller {
-u16 GetJoystickCaps(void);
-u32 SetButtonFromControllerInputs(u16 *outButtons, i16 controllerButtonToTest,
-                                  TouhouButton touhouButton,
-                                  SDL_GameController *controller);
+    u16 GetJoystickCaps(void);
+    u32 SetButtonFromControllerInputs(u16 *outButtons, i16 controllerButtonToTest,
+                                    TouhouButton touhouButton,
+                                    SDL_GameController *controller);
 
-u32 SetButtonFromDirectInputJoystate(u16 *outButtons,
-                                     i16 controllerButtonToTest,
-                                     TouhouButton touhouButton,
-                                     u8 *inputButtons);
+    u32 SetButtonFromDirectInputJoystate(u16 *outButtons,
+                                        i16 controllerButtonToTest,
+                                        TouhouButton touhouButton,
+                                        u8 *inputButtons);
 
-u16 GetControllerInput(u16 buttons);
-u8 *GetControllerState();
-u16 GetInput(void);
-void ResetKeyboard(void);
+    u16 GetControllerInput(u16 buttons);
+    u8 *GetControllerState();
+    u16 GetInput(void);
+    void ResetKeyboard(void);
 }; // namespace Controller
-}; // namespace th06

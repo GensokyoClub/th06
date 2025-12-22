@@ -4,7 +4,6 @@
 #include <mmsystem.h>
 #include <windows.h>
 
-namespace th06 {
 struct MidiDevice {
   public:
     MidiDevice();
@@ -32,4 +31,3 @@ struct MidiDevice {
     MIDIHDR *midiHeaders[32];
     u32 midiHeadersCursor;
 };
-}; // namespace th06

@@ -5,8 +5,6 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-namespace th06 {
-
 enum EndingFadeType {
     ENDING_FADE_TYPE_NO_FADE,
     ENDING_FADE_TYPE_FADE_IN_BLACK,
@@ -83,4 +81,3 @@ struct Ending {
     EndingFadeType fadeType;
     char *endFileDataPtr;
 };
-}; // namespace th06

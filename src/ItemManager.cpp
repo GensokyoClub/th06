@@ -8,12 +8,9 @@
 #include "SoundPlayer.hpp"
 #include "utils.hpp"
 
-namespace th06 {
 ItemManager g_ItemManager;
 
-ItemManager::ItemManager() {
-
-};
+ItemManager::ItemManager() {};
 
 void ItemManager::SpawnItem(ZunVec3 *position, ItemType itemType, i32 state) {
     Item *item;
@@ -374,5 +371,3 @@ void ItemManager::OnDraw() {
     }
     return;
 }
-
-}; // namespace th06

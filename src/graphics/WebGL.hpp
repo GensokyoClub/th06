@@ -3,7 +3,6 @@
 #include "GfxInterface.hpp"
 #include <SDL2/SDL_opengl.h>
 
-namespace th06 {
 enum GlShaderUniform {
     UNIFORM_MODELVIEW,
     UNIFORM_PROJECTION,
@@ -42,4 +41,3 @@ struct WebGL : GfxInterface {
 
     GLint uniforms[UNIFORMS_COUNT];
 };
-}; // namespace th06

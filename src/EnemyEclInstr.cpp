@@ -10,7 +10,6 @@
 #include "Rng.hpp"
 #include "utils.hpp"
 
-namespace th06 {
 namespace EnemyEclInstr {
 #define MAX_BOSS_TIME 7200
 
@@ -1166,4 +1165,3 @@ void ExInsStageXFunc16(Enemy *enemy, EclRawInstr *instr) {
     }
 }
 }; // namespace EnemyEclInstr
-}; // namespace th06

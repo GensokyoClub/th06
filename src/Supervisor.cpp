@@ -25,7 +25,6 @@
 #include <cstring>
 #include <ctime>
 
-namespace th06 {
 Supervisor g_Supervisor;
 ControllerMapping g_ControllerMapping = {
     (i16)SDL_CONTROLLER_BUTTON_A,
@@ -849,5 +848,3 @@ bool Supervisor::FadeOutMusic(f32 fadeOutSeconds) {
 
     return true;
 }
-
-}; // namespace th06

@@ -22,9 +22,14 @@
 #include <ctime>
 #include <filesystem>
 
-namespace th06 {
 
-f32 g_DifficultyWeightsList[5] = { -30.0f, -10.0f, 20.0f, 30.0f, 30.0f };
+f32 g_DifficultyWeightsList[5] = {
+    -30.0f,
+    -10.0f,
+    20.0f,
+    30.0f,
+    30.0f
+};
 
 u32 g_DefaultMagic = 'DMYS';
 
@@ -1553,7 +1558,7 @@ ChainCallbackResult ResultScreen::OnUpdate(ResultScreen *resultScreen) {
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-ChainCallbackResult th06::ResultScreen::OnDraw(ResultScreen *resultScreen) {
+ChainCallbackResult ResultScreen::OnDraw(ResultScreen *resultScreen) {
     // u8 unused[12];
     // u8 unused2;
     // u8 unused3;
@@ -2020,5 +2025,3 @@ bool ResultScreen::DeletedCallback(ResultScreen *resultScreen) {
 
     return true;
 }
-
-}; // namespace th06

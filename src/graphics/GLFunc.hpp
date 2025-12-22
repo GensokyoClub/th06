@@ -2,7 +2,6 @@
 
 #include <SDL2/SDL_opengl.h>
 
-namespace th06 {
 // Function pointers for OpenGL functions used in EoSD. This is necessary
 // because Windows
 //   opengl32 only goes up to OpenGL 1.1 and some of the blending parameters we
@@ -107,4 +106,3 @@ struct GLFuncTable {
 };
 
 extern GLFuncTable g_glFuncTable;
-}; // namespace th06

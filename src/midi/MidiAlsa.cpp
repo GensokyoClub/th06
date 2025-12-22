@@ -2,7 +2,6 @@
 #include "i18n.hpp"
 #include "utils.hpp"
 
-namespace th06 {
 MidiDevice::MidiDevice() {
     this->sequencer = NULL;
     this->encoder = NULL;
@@ -182,5 +181,3 @@ bool MidiDevice::GetDestPort() {
 
     return false;
 }
-
-}; // namespace th06

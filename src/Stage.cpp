@@ -11,7 +11,6 @@
 #include "ZunColor.hpp"
 #include "utils.hpp"
 
-namespace th06 {
 ChainElem g_StageCalcChain;
 ChainElem g_StageOnDrawHighPrioChain;
 ChainElem g_StageOnDrawLowPrioChain;
@@ -709,4 +708,3 @@ bool Stage::RenderObjects(i32 zLevel) {
     }
     return true;
 }
-}; // namespace th06

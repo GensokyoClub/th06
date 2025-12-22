@@ -10,7 +10,6 @@
 #include "FileSystem.hpp"
 #include "utils.hpp"
 
-namespace th06 {
 u32 g_LastFileSize;
 
 FILE *FileSystem::FopenUTF8(const char *filepath, const char *mode) {
@@ -78,4 +77,3 @@ int FileSystem::WriteDataToFile(const char *path, void *data, size_t size) {
         }
     }
 }
-}; // namespace th06

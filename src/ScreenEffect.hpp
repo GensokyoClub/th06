@@ -5,7 +5,6 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-namespace th06 {
 struct ZunRect {
     f32 left;
     f32 top;
@@ -50,4 +49,3 @@ struct ScreenEffect {
     i32 unusedParam;
     ZunTimer timer;
 };
-}; // namespace th06

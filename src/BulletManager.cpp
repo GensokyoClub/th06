@@ -14,7 +14,6 @@
 #include "graphics/GLFunc.hpp"
 #include "utils.hpp"
 
-namespace th06 {
 BulletManager g_BulletManager;
 ChainElem g_BulletManagerCalcChain;
 ChainElem g_BulletManagerDrawChain;
@@ -1347,4 +1346,3 @@ void BulletManager::CutChain() {
     g_Chain.Cut(&g_BulletManagerCalcChain);
     g_Chain.Cut(&g_BulletManagerDrawChain);
 }
-}; // namespace th06

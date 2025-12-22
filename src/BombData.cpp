@@ -9,7 +9,6 @@
 #include "i18n.hpp"
 #include "utils.hpp"
 
-namespace th06 {
 BombData g_BombData[4] = {
     /* ReimuA  */ { BombData::BombReimuACalc, BombData::BombReimuADraw },
     /* ReimuB  */ { BombData::BombReimuBCalc, BombData::BombReimuBDraw },
@@ -546,4 +545,3 @@ void BombData::BombMarisaBDraw(Player *player) {
         bombSprite++;
     }
 }
-}; // namespace th06

@@ -3,7 +3,6 @@
 
 #include <new>
 
-namespace th06 {
 Chain g_Chain;
 
 Chain::~Chain() {
@@ -328,4 +327,3 @@ destroy_elem:
         }
     }
 }
-}; // namespace th06

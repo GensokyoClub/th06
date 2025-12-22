@@ -24,8 +24,6 @@ static const char vertShaderBytes[] = {
 #define TEX_COORDS_ATTRIBUTE_INDEX 1
 #define DIFFUSE_ATTRIBUTE_INDEX 2
 
-namespace th06 {
-
 GLuint createShader(const char *source, GLenum type, const char *descString) {
     const char *fullShaderSource[32];
     GLint getRet = 0;
@@ -290,4 +288,3 @@ void WebGL::SetTransformMatrix(TransformMatrix type, ZunMatrix &matrix) {
 
 void WebGL::Draw() {
 }
-}; // namespace th06

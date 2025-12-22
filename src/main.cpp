@@ -23,8 +23,6 @@
 #include <switch.h>
 #endif
 
-using namespace th06;
-
 // Forward declarations
 static void main_loop();
 static void cleanup();

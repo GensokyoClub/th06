@@ -3,7 +3,6 @@
 #include "AnmVm.hpp"
 #include "inttypes.hpp"
 
-namespace th06 {
 struct EnemyBulletShooter;
 struct EnemyLaserShooter;
 
@@ -111,4 +110,3 @@ struct BulletManager {
 
 extern u32 *g_EffectsColor;
 extern BulletManager g_BulletManager;
-}; // namespace th06

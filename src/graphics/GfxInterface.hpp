@@ -5,7 +5,6 @@
 #include "../inttypes.hpp"
 #include <cstddef>
 
-namespace th06 {
 enum DepthFunc {
     DEPTH_FUNC_LEQUAL,
     DEPTH_FUNC_ALWAYS
@@ -53,4 +52,3 @@ struct GfxInterface {
                                     ZunMatrix &matrix) = 0;
     virtual void Draw() = 0;
 };
-}; // namespace th06

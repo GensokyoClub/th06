@@ -77,7 +77,6 @@ constexpr T bit_ceil(T x) noexcept {
     return x + 1;
 }
 
-namespace th06 {
 VertexTex1Xyzrhw g_PrimitivesToDrawVertexBuf[4];
 VertexTex1DiffuseXyzrhw g_PrimitivesToDrawNoVertexBuf[4];
 VertexTex1DiffuseXyz g_PrimitivesToDrawUnknown[4];
@@ -1771,4 +1770,3 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
 
     originalViewport.Set();
 }
-}; // namespace th06

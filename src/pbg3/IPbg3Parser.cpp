@@ -1,4 +1,5 @@
 #include "pbg3/IPbg3Parser.hpp"
+#include <cstddef>
 
 void IPbg3Parser::Reset()
 {

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "inttypes.hpp"
-#include <filesystem>
 
 class IPbg3Parser
 {

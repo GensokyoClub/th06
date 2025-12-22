@@ -1,5 +1,5 @@
 #include "pbg3/FileAbstraction.hpp"
-#include <FileSystem.hpp>
+#include "FileSystem.hpp"
 
 FileAbstraction::FileAbstraction()
 {
@@ -46,8 +46,6 @@ i32 FileAbstraction::Open(char *filename, char *mode)
     if (this->handle == NULL)
         return 0;
 
-    this->path = new std::filesystem::path(filename);
-
     return 1;
 }
 
@@ -58,7 +56,6 @@ void FileAbstraction::Close()
         std::fclose(this->handle);
         this->handle = NULL;
         this->access = ACCESS_INVALID;
-        delete this->path;
     }
 }
 
@@ -153,7 +150,12 @@ u32 FileAbstraction::GetSize()
         return 0;
     }
 
-    return std::filesystem::file_size(*this->path);
+    long curPos = std::ftell(this->handle);
+    std::fseek(this->handle, 0, SEEK_END);
+    u32 fileLen = (u32)std::ftell(this->handle);
+    std::fseek(this->handle, curPos, SEEK_SET);
+
+    return fileLen;
 }
 
 u8 *FileAbstraction::ReadWholeFile(u32 maxSize)

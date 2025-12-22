@@ -2,8 +2,6 @@
 
 #include "inttypes.hpp"
 #include <cstdio>
-#include <filesystem>
-#include <system_error>
 
 enum AccessMode
 {
@@ -51,7 +49,6 @@ class FileAbstraction : public IFileAbstraction
 
   protected:
     std::FILE *handle;
-    std::filesystem::path *path;
 
   private:
     AccessMode access;

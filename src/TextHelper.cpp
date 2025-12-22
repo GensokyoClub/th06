@@ -316,8 +316,11 @@ void TextHelper::RenderTextToTexture(i32 xPos, i32 yPos, i32 spriteWidth, i32 sp
         SDL_FreeSurface(regularText);
     }
 
-    if (!outTexture->textureData)
+    // Once we get an API abstraction layer for surface operations, this needs to change
+    //   We really shouldn't be clobbering the texture format
+    if (!outTexture->textureData || outTexture->format != TEX_FMT_A8R8G8B8)
     {
+        free(outTexture->textureData);
         outTexture->textureData = (u8 *)malloc(outTexture->width * outTexture->height * 4);
         memset(outTexture->textureData, 0, outTexture->width * outTexture->height * 4);
     }
@@ -341,7 +344,7 @@ void TextHelper::RenderTextToTexture(i32 xPos, i32 yPos, i32 spriteWidth, i32 sp
 
     g_AnmManager->SetCurrentTexture(outTexture->handle);
 
-    g_glFuncTable.glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, outTexture->width, outTexture->height, GL_RGBA,
+    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, outTexture->width, outTexture->height, 0, GL_RGBA,
                                   GL_UNSIGNED_BYTE, outTexture->textureData);
 
     SDL_FreeSurface(textureSurface);

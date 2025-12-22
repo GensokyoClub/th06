@@ -3,8 +3,13 @@
 #include <cstring>
 
 #ifdef _WIN32
-#include <new>
-#include <windows.h>
+    #include <direct.h>
+    #include <new>
+    #include <windows.h>
+#elif __cplusplus >= 201703L
+    #include <filesystem>
+#else // Assume POSIX
+    #include <sys/stat.h>
 #endif
 
 #include "FileSystem.hpp"
@@ -38,6 +43,18 @@ FILE *FileSystem::FopenUTF8(const char *filepath, const char *mode)
     delete[] modeW;
 
     return f;
+#endif
+}
+
+void FileSystem::CreateDir(const char *path)
+{
+#ifdef _WIN32
+    _mkdir(path);
+#elif __cplusplus >= 201703L
+    auto p = std::filesystem::path(path);
+    std::filesystem::create_directory(p);
+#else
+    mkdir(path, 0755);
 #endif
 }
 

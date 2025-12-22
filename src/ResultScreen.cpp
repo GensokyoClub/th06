@@ -20,7 +20,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
-#include <filesystem>
 
 
 f32 g_DifficultyWeightsList[5] = {-30.0f, -10.0f, 20.0f, 30.0f, 30.0f};
@@ -742,8 +741,6 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
     ReplayHeader *replayLoaded;
     i32 idx;
     i32 saveInterrupt;
-    std::filesystem::path dirPath;
-    std::error_code fileError;
     std::time_t time;
     std::tm *tm;
 
@@ -860,8 +857,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
 
         if (this->frameTimer == 0)
         {
-            dirPath = std::filesystem::path("./replay");
-            std::filesystem::create_directory(dirPath, fileError);
+            FileSystem::CreateDir("./replay");
 
             for (idx = 0; idx < ARRAY_SIZE_SIGNED(this->replays); idx++)
             {

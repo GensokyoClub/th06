@@ -2,6 +2,7 @@
 #include "Supervisor.hpp"
 #include "utils.hpp"
 #include <new>
+#include <unordered_set>
 #include <SDL2/SDL.h>
 
 // Provided for anyone who wants to recompile with new shaders without rerunning the premake script
@@ -24,7 +25,8 @@
 #define DIFFUSE_ATTRIBUTE_INDEX 2
 
 
-GLuint createShader(const char *source, GLenum type, const char *descString)
+GLuint createShader(const char *source, GLenum type, const char *descString, 
+                    std::unordered_set<GlShaderUniform> &omittedUniforms)
 {
     const char *fullShaderSource[32];
     GLint getRet = 0;
@@ -41,11 +43,18 @@ GLuint createShader(const char *source, GLenum type, const char *descString)
     if (g_Supervisor.cfg.opts & (1 >> GCOS_DONT_USE_FOG))
     {
         fullShaderSource[shaderSourceIndex++] = "#define NO_FOG\n";
+        omittedUniforms.insert(UNIFORM_FOG_NEAR);
+        omittedUniforms.insert(UNIFORM_FOG_FAR);
+        omittedUniforms.insert(UNIFORM_FOG_COLOR);
     }
 
     if (g_Supervisor.cfg.opts & (1 >> GCOS_DONT_USE_VERTEX_BUF))
     {
         fullShaderSource[shaderSourceIndex++] = "#define NO_VERTEX_BUFFER\n";
+    }
+    else
+    {
+        omittedUniforms.insert(UNIFORM_ENV_DIFFUSE);
     }
 
     fullShaderSource[shaderSourceIndex] = source;
@@ -129,13 +138,17 @@ GfxInterface *WebGL::Create()
 bool WebGL::Init()
 {
     ZunMatrix identityMatrix;
+    std::unordered_set<GlShaderUniform> omittedUniforms;
 
     while (g_glFuncTable.glGetError() != GL_NO_ERROR)
     {
     }
 
-    this->vertexShaderHandle = createShader(vertShaderBytes, GL_VERTEX_SHADER, "vertex");
-    this->fragmentShaderHandle = createShader(fragShaderBytes, GL_FRAGMENT_SHADER, "fragment");
+    // Using a hashset for this is definitely super overkill, but it still feels more right
+    //   than just using a vector or C array
+
+    this->vertexShaderHandle = createShader(vertShaderBytes, GL_VERTEX_SHADER, "vertex", omittedUniforms);
+    this->fragmentShaderHandle = createShader(fragShaderBytes, GL_FRAGMENT_SHADER, "fragment", omittedUniforms);
     this->programHandle = g_glFuncTable.glCreateProgram();
     
     if (this->vertexShaderHandle == 0 || this->fragmentShaderHandle == 0 || this->programHandle == 0)
@@ -172,7 +185,7 @@ bool WebGL::Init()
 
     for (u32 i = 0; i < ARRAY_SIZE(this->uniforms); i++)
     {
-        if (this->uniforms[i] == -1)
+        if (this->uniforms[i] == -1 && omittedUniforms.count((GlShaderUniform) i) != 0)
         {
             utils::DebugPrint("Get uniform %i location failed!", i);
         }

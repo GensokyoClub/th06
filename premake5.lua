@@ -88,11 +88,6 @@ project "th06"
 
   filter {}
 
-  filter { "configurations:debug" }
-      buildoptions { "-fsanitize=undefined" }
-      linkoptions { "-fsanitize=undefined" }
-  filter {}
-
   kind "WindowedApp"
 
   if os.target() == "windows" then
@@ -150,9 +145,6 @@ project "th06"
       "-gsource-map",
       "-O3",
       "-flto",
-      "-sWASM_BIGINT=1",
-      "-sASSERTIONS=0",
-      "-sGL_ASSERTIONS=0",
       "-sFULL_ES2=1",
       "-sINVOKE_RUN=0",
       "-sUSE_SDL=2",

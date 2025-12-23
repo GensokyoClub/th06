@@ -1,9 +1,9 @@
-const CACHE_NAME = 'touhou-eosd-v1';
+const CACHE_NAME = 'eosd-v1';
 const ASSETS = [
-    'th06_release.html',
-    'th06_release.js',
-    'th06_release.wasm',
-    'th06_release.data',
+    'th06_debug.html',
+    'th06_debug.js',
+    'th06_debug.wasm',
+    'th06_debug.data'
 ];
 
 self.addEventListener('install', (event) => {

@@ -39,7 +39,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	th06_nx
 BUILD		:=	build
-SOURCES		:=	src src/graphics/
+SOURCES		:=	src src/graphics/ src/thirdparty/
 # DATA		:=	data
 INCLUDES	:=	src
 # ROMFS		:=	romfs
@@ -63,7 +63,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++20
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:=	`$(PREFIX)pkg-config --libs sdl2 SDL2_mixer SDL2_image SDL2_ttf`
+LIBS	:=	`$(PREFIX)pkg-config --libs sdl2 SDL2_image SDL2_ttf vorbisfile vorbis ogg`
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing

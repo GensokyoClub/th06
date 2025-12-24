@@ -2,6 +2,7 @@ set -e
 
 function make_necessary_dirs {
     mkdir -p data
+    mkdir -p bgm
     cd data
     mkdir -p ascii
     mkdir -p demo
@@ -135,5 +136,14 @@ process_anm_folder "${GAME_LOCATION%/}/data"
 
 echo "Removing alpha-only textures..."
 find "${GAME_LOCATION%/}/data" -type f -name '*_a.png' -delete
+
+echo "Converting WAV files to OGG..."
+for wav_file in ./wav/*.wav; do
+    if [ -f "$wav_file" ]; then
+        ogg_file="${wav_file%.wav}.ogg"
+        ffmpeg -i "$wav_file" -c:a libvorbis -q:a 4 "$ogg_file" -y -loglevel quiet
+        rm "$wav_file"
+    fi
+done
 
 echo "Done!"

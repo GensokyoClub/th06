@@ -1,3 +1,4 @@
+#define MINIAUDIO_IMPLEMENTATION
 #include "SoundPlayer.hpp"
 
 #include "FileSystem.hpp"
@@ -7,11 +8,134 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_timer.h>
+#include <vorbis/vorbisfile.h>
 #include <array>
 #include <cmath>
 #include <cstring>
 #include <new>
 #include <vector>
+
+static ma_result looping_data_source_read(ma_data_source* pDataSource, void* pFramesOut, ma_uint64 frameCount, ma_uint64* pFramesRead) {
+    LoopingDataSource* pSource = (LoopingDataSource*)pDataSource;
+    
+    if (pFramesRead) {
+        *pFramesRead = 0;
+    }
+    
+    ma_uint64 totalFramesRead = 0;
+    ma_uint64 framesToRead = frameCount;
+    
+    while (framesToRead > 0) {
+        ma_uint64 currentPos;
+        if (pSource->pcmData) {
+            currentPos = pSource->totalFrames - (pSource->pcmSize - pSource->cursor) / ma_get_bytes_per_frame(pSource->format, pSource->channels);
+        } else {
+            ma_decoder_get_cursor_in_pcm_frames(pSource->decoder, &currentPos);
+        }
+        
+        ma_uint64 framesUntilLoopEnd = pSource->loopEndFrame - currentPos;
+        if (!pSource->shouldLoop || currentPos >= pSource->loopEndFrame) {
+            framesUntilLoopEnd = pSource->totalFrames - currentPos;
+        }
+        
+        ma_uint64 framesToReadThisTime = framesToRead;
+        if (pSource->shouldLoop && currentPos < pSource->loopEndFrame) {
+            framesToReadThisTime = framesToRead < framesUntilLoopEnd ? framesToRead : framesUntilLoopEnd;
+        }
+        
+        ma_uint64 framesReadThisTime = 0;
+        if (pSource->pcmData) {
+            // Read from buffer
+            ma_uint64 bytesToRead = framesToReadThisTime * ma_get_bytes_per_frame(pSource->format, pSource->channels);
+            ma_uint64 bytesAvailable = pSource->pcmSize - pSource->cursor;
+            ma_uint64 bytesRead = bytesToRead < bytesAvailable ? bytesToRead : bytesAvailable;
+            memcpy(pFramesOut, pSource->pcmData + pSource->cursor, bytesRead);
+            framesReadThisTime = bytesRead / ma_get_bytes_per_frame(pSource->format, pSource->channels);
+            pSource->cursor += bytesRead;
+    } else {
+        ma_result result = ma_decoder_read_pcm_frames(pSource->decoder, 
+            (ma_uint8*)pFramesOut + totalFramesRead * ma_get_bytes_per_frame(pSource->format, pSource->channels), 
+            framesToReadThisTime, &framesReadThisTime);
+            
+        if (result != MA_SUCCESS) {
+            return result;
+        }
+    }        
+        totalFramesRead += framesReadThisTime;
+        framesToRead -= framesReadThisTime;
+        
+        // do we need to loop?
+        if (pSource->shouldLoop && framesReadThisTime > 0) {
+            ma_uint64 newPos;
+            if (pSource->pcmData) {
+                newPos = pSource->cursor / ma_get_bytes_per_frame(pSource->format, pSource->channels);
+            } else {
+                ma_decoder_get_cursor_in_pcm_frames(pSource->decoder, &newPos);
+            }
+            if (newPos >= pSource->loopEndFrame) {
+                if (pSource->pcmData) {
+                    pSource->cursor = pSource->loopStartFrame * ma_get_bytes_per_frame(pSource->format, pSource->channels);
+                } else {
+                    ma_decoder_seek_to_pcm_frame(pSource->decoder, pSource->loopStartFrame);
+                }
+            }
+        }
+        
+        if (framesReadThisTime == 0) {
+            break; // probably EOF
+        }
+    }
+    
+    if (pFramesRead) {
+        *pFramesRead = totalFramesRead;
+    }
+    
+    return MA_SUCCESS;
+}
+
+static ma_result looping_data_source_seek(ma_data_source* pDataSource, ma_uint64 frameIndex) {
+    LoopingDataSource* pSource = (LoopingDataSource*)pDataSource;
+    if (pSource->pcmData) {
+        pSource->cursor = frameIndex * ma_get_bytes_per_frame(pSource->format, pSource->channels);
+        return MA_SUCCESS;
+    } else {
+        return ma_decoder_seek_to_pcm_frame(pSource->decoder, frameIndex);
+    }
+}
+
+static ma_result looping_data_source_get_data_format(ma_data_source* pDataSource, ma_format* pFormat, ma_uint32* pChannels, ma_uint32* pSampleRate, ma_channel* pChannelMap, size_t channelMapCap) {
+    LoopingDataSource* pSource = (LoopingDataSource*)pDataSource;
+    *pFormat = pSource->format;
+    *pChannels = pSource->channels;
+    *pSampleRate = pSource->sampleRate;
+    return MA_SUCCESS;
+}
+
+static ma_result looping_data_source_get_cursor(ma_data_source* pDataSource, ma_uint64* pCursor) {
+    LoopingDataSource* pSource = (LoopingDataSource*)pDataSource;
+    if (pSource->pcmData) {
+        *pCursor = pSource->cursor / ma_get_bytes_per_frame(pSource->format, pSource->channels);
+    } else {
+        return ma_decoder_get_cursor_in_pcm_frames(pSource->decoder, pCursor);
+    }
+    return MA_SUCCESS;
+}
+
+static ma_result looping_data_source_get_length(ma_data_source* pDataSource, ma_uint64* pLength) {
+    LoopingDataSource* pSource = (LoopingDataSource*)pDataSource;
+    *pLength = pSource->totalFrames;
+    return MA_SUCCESS;
+}
+
+static ma_data_source_vtable looping_data_source_vtable = {
+    looping_data_source_read,
+    looping_data_source_seek,
+    looping_data_source_get_data_format,
+    looping_data_source_get_cursor,
+    looping_data_source_get_length,
+    nullptr,  // onSetLooping
+    0 // flags
+};
 
 // This would all be a lot easier with SDL_mixer, but SDL_mixer doesn't permit
 // any way of doing custom
@@ -102,92 +226,74 @@ SoundPlayer::SoundPlayer() {
 }
 
 bool SoundPlayer::InitializeDSound() {
-    SDL_AudioSpec desiredAudio;
-    SDL_AudioSpec obtainedAudio;
+    ma_result result;
+    ma_engine_config engineConfig;
 
-    if (SDL_InitSubSystem(SDL_INIT_AUDIO)) {
+    // Initialize miniaudio context
+    result = ma_context_init(NULL, 0, NULL, &context);
+    if (result != MA_SUCCESS) {
         goto fail;
     }
 
-    desiredAudio.freq = 44100;
-    desiredAudio.format = AUDIO_S16SYS;
-    desiredAudio.channels = 2;
-    desiredAudio.samples = 2048;
-    desiredAudio.padding = 0;
-    desiredAudio.callback = NULL;
-
-    this->audioDev =
-        SDL_OpenAudioDevice(NULL, 0, &desiredAudio, &obtainedAudio, 0);
-
-    if (this->audioDev == 0) {
+    // Initialize miniaudio engine
+    engineConfig = ma_engine_config_init();
+    engineConfig.pContext = &context;
+    result = ma_engine_init(&engineConfig, &engine);
+    if (result != MA_SUCCESS) {
+        ma_context_uninit(&context);
         goto fail;
     }
-
-    this->backgroundMusicThreadHandle =
-        std::thread(&SoundPlayer::BackgroundMusicPlayerThread, this);
 
     GameErrorContext::Log(&g_GameErrorContext, TH_DBG_SOUNDPLAYER_INIT_SUCCESS);
     return true;
 
 fail:
-    GameErrorContext::Log(&g_GameErrorContext,
-                          TH_ERR_SOUNDPLAYER_FAILED_TO_INITIALIZE_OBJECT);
+    GameErrorContext::Log(&g_GameErrorContext, TH_ERR_SOUNDPLAYER_FAILED_TO_INITIALIZE_OBJECT);
     return false;
 }
 
 bool SoundPlayer::Release(void) {
-    this->terminateFlag = true;
-    if (this->backgroundMusicThreadHandle.joinable()) {
-        this->backgroundMusicThreadHandle.join();
-    }
-    this->terminateFlag = false;
-
     StopBGM();
 
     for (int i = 0; i < ARRAY_SIZE_SIGNED(this->soundBuffers); i++) {
-        if (this->soundBuffers[i].samples != NULL) {
-            delete[] this->soundBuffers[i].samples;
-            this->soundBuffers[i].samples = NULL;
-            this->soundBuffers[i].isPlaying = false;
+        if (this->soundBuffers[i].isLoaded) {
+            ma_sound_uninit(&this->soundBuffers[i].sound);
+            this->soundBuffers[i].isLoaded = false;
         }
     }
 
-    if (this->audioDev != 0) {
-        SDL_CloseAudioDevice(this->audioDev);
-        this->audioDev = 0;
-    }
+    ma_engine_uninit(&this->engine);
+    ma_context_uninit(&this->context);
 
     return true;
 }
 
 void SoundPlayer::StopBGM() {
-    if (this->backgroundMusic.srcWav.fileStream != NULL) {
-        this->soundBufMutex.lock();
-        SDL_RWclose(this->backgroundMusic.srcWav.fileStream);
-        this->backgroundMusic.srcWav.fileStream = NULL;
-        this->soundBufMutex.unlock();
-
+    if (this->backgroundMusic.isLoaded) {
+        ma_sound_stop(&this->backgroundMusic.sound);
+        ma_sound_uninit(&this->backgroundMusic.sound);
+        ma_data_source_uninit(&this->backgroundMusic.loopingSource.base);
+        if (this->backgroundMusic.loopingSource.pcmData) {
+            delete[] this->backgroundMusic.loopingSource.pcmData;
+            this->backgroundMusic.loopingSource.pcmData = nullptr;
+        }
+        if (this->backgroundMusic.loopingSource.decoder) {
+            ma_decoder_uninit(this->backgroundMusic.loopingSource.decoder);
+            delete this->backgroundMusic.loopingSource.decoder;
+            this->backgroundMusic.loopingSource.decoder = nullptr;
+        }
+        this->backgroundMusic.isLoaded = false;
         utils::DebugPrint2("stop BGM\n");
     }
 }
 
 void SoundPlayer::FadeOut(f32 seconds) {
-    if (this->backgroundMusic.srcWav.fileStream != NULL) {
-        backgroundMusic.fadeoutLen = seconds * 44100;
-        backgroundMusic.fadeoutProgress = 0;
+    if (this->backgroundMusic.isLoaded) {
+        ma_sound_set_fade_in_milliseconds(&this->backgroundMusic.sound, -1.0f, 0.0f, seconds * 1000.0f);
     }
 }
 
 bool SoundPlayer::LoadWav(char *path) {
-    SDL_RWops *fileStream;
-    char idBuf[4];
-    u32 riffSize;
-    u32 wavDataSize;
-
-    if (this->audioDev == 0) {
-        return false;
-    }
-
     if (g_Supervisor.cfg.playSounds == 0) {
         return false;
     }
@@ -196,119 +302,159 @@ bool SoundPlayer::LoadWav(char *path) {
 
     utils::DebugPrint2("load BGM\n");
 
-    fileStream = SDL_RWFromFile(path, "r");
+    std::string filePath(path);
+    bool isOgg = filePath.find(".ogg") != std::string::npos;
 
-    if (fileStream == NULL) {
-        utils::DebugPrint2("error : wav file load error %s\n", path);
-        return false;
+    if (isOgg) {
+        // Load OGG file using libvorbisfile
+        FILE* file = fopen(path, "rb");
+        if (!file) {
+            utils::DebugPrint2("error : ogg file load error %s\n", path);
+            return false;
+        }
+
+        OggVorbis_File vf;
+        if (ov_open(file, &vf, NULL, 0) < 0) {
+            fclose(file);
+            utils::DebugPrint2("error : ogg file open error %s\n", path);
+            return false;
+        }
+
+        vorbis_info* vi = ov_info(&vf, -1);
+        if (!vi) {
+            ov_clear(&vf);
+            utils::DebugPrint2("error : ogg info error %s\n", path);
+            return false;
+        }
+
+        if (vi->channels != 2 || vi->rate != 44100) {
+            ov_clear(&vf);
+            utils::DebugPrint2("error : format of ogg file not supported %s\n", path);
+            return false;
+        }
+
+        // Decode entire file to PCM
+        std::vector<char> pcmBuffer;
+        char buffer[4096];
+        int current_section;
+        long bytes_read;
+        while ((bytes_read = ov_read(&vf, buffer, sizeof(buffer), 0, 2, 1, &current_section)) > 0) {
+            pcmBuffer.insert(pcmBuffer.end(), buffer, buffer + bytes_read);
+        }
+
+        if (bytes_read < 0) {
+            ov_clear(&vf);
+            utils::DebugPrint2("error : ogg decode error %s\n", path);
+            return false;
+        }
+
+        ov_clear(&vf);
+
+        // Set up LoopingDataSource with PCM data
+        this->backgroundMusic.loopingSource.pcmData = new ma_uint8[pcmBuffer.size()];
+        memcpy(this->backgroundMusic.loopingSource.pcmData, pcmBuffer.data(), pcmBuffer.size());
+        this->backgroundMusic.loopingSource.pcmSize = pcmBuffer.size();
+        this->backgroundMusic.loopingSource.format = ma_format_s16;
+        this->backgroundMusic.loopingSource.channels = 2;
+        this->backgroundMusic.loopingSource.sampleRate = 44100;
+        this->backgroundMusic.loopingSource.totalFrames = pcmBuffer.size() / (2 * sizeof(int16_t));
+        this->backgroundMusic.loopingSource.loopStartFrame = 0;
+        this->backgroundMusic.loopingSource.loopEndFrame = this->backgroundMusic.loopingSource.totalFrames;
+        this->backgroundMusic.loopingSource.shouldLoop = false;
+        this->backgroundMusic.loopingSource.decoder = nullptr;
+        this->backgroundMusic.loopingSource.fileData = nullptr;
+        this->backgroundMusic.loopingSource.cursor = 0;
+
+        // Initialize the data source base
+        ma_data_source_config baseConfig = ma_data_source_config_init();
+        baseConfig.vtable = &looping_data_source_vtable;
+        ma_result result = ma_data_source_init(&baseConfig, &this->backgroundMusic.loopingSource.base);
+        if (result != MA_SUCCESS) {
+            delete[] this->backgroundMusic.loopingSource.pcmData;
+            utils::DebugPrint2("error : data source init error %s\n", path);
+            return false;
+        }
+
+        // Initialize the sound
+        ma_sound_config soundConfig = ma_sound_config_init();
+        soundConfig.pDataSource = &this->backgroundMusic.loopingSource;
+        soundConfig.pEndCallbackUserData = nullptr;
+        result = ma_sound_init_ex(&this->engine, &soundConfig, &this->backgroundMusic.sound);
+        if (result != MA_SUCCESS) {
+            ma_data_source_uninit(&this->backgroundMusic.loopingSource.base);
+            delete[] this->backgroundMusic.loopingSource.pcmData;
+            utils::DebugPrint2("error : sound init error %s\n", path);
+            return false;
+        }
+
+        this->backgroundMusic.isLoaded = true;
+    } else {
+        // Load WAV file using miniaudio decoder
+        ma_decoder_config decoderConfig = ma_decoder_config_init(ma_format_s16, 2, 44100);
+        this->backgroundMusic.loopingSource.decoder = new ma_decoder();
+        ma_result result = ma_decoder_init_file(path, &decoderConfig, this->backgroundMusic.loopingSource.decoder);
+        if (result != MA_SUCCESS) {
+            delete this->backgroundMusic.loopingSource.decoder;
+            utils::DebugPrint2("error : wav decoder init error %s\n", path);
+            return false;
+        }
+
+        // Get length
+        ma_uint64 lengthInFrames;
+        result = ma_decoder_get_length_in_pcm_frames(this->backgroundMusic.loopingSource.decoder, &lengthInFrames);
+        if (result != MA_SUCCESS) {
+            ma_decoder_uninit(this->backgroundMusic.loopingSource.decoder);
+            delete this->backgroundMusic.loopingSource.decoder;
+            utils::DebugPrint2("error : wav get length error %s\n", path);
+            return false;
+        }
+
+        this->backgroundMusic.loopingSource.totalFrames = lengthInFrames;
+        this->backgroundMusic.loopingSource.loopStartFrame = 0;
+        this->backgroundMusic.loopingSource.loopEndFrame = lengthInFrames;
+        this->backgroundMusic.loopingSource.shouldLoop = false;
+        this->backgroundMusic.loopingSource.format = ma_format_s16;
+        this->backgroundMusic.loopingSource.channels = 2;
+        this->backgroundMusic.loopingSource.sampleRate = 44100;
+        this->backgroundMusic.loopingSource.pcmData = nullptr;
+        this->backgroundMusic.loopingSource.pcmSize = 0;
+        this->backgroundMusic.loopingSource.cursor = 0;
+
+        // Initialize the data source base
+        ma_data_source_config baseConfig = ma_data_source_config_init();
+        baseConfig.vtable = &looping_data_source_vtable;
+        result = ma_data_source_init(&baseConfig, &this->backgroundMusic.loopingSource.base);
+        if (result != MA_SUCCESS) {
+            ma_decoder_uninit(this->backgroundMusic.loopingSource.decoder);
+            delete this->backgroundMusic.loopingSource.decoder;
+            this->backgroundMusic.loopingSource.decoder = nullptr;
+            utils::DebugPrint2("error : data source init error %s\n", path);
+            return false;
+        }
+
+        // Initialize the sound
+        ma_sound_config soundConfig = ma_sound_config_init();
+        soundConfig.pDataSource = &this->backgroundMusic.loopingSource;
+        soundConfig.pEndCallbackUserData = nullptr;
+        result = ma_sound_init_ex(&this->engine, &soundConfig, &this->backgroundMusic.sound);
+        if (result != MA_SUCCESS) {
+            ma_data_source_uninit(&this->backgroundMusic.loopingSource.base);
+            ma_decoder_uninit(this->backgroundMusic.loopingSource.decoder);
+            delete this->backgroundMusic.loopingSource.decoder;
+            utils::DebugPrint2("error : sound init error %s\n", path);
+            return false;
+        }
+
+        this->backgroundMusic.isLoaded = true;
     }
-
-    // Minimum size of RIFF header and chunk info preceeding the sample data
-    if (SDL_RWsize(fileStream) < 44) {
-        goto fail;
-    }
-
-    if (SDL_RWread(fileStream, idBuf, 4, 1) != 1 ||
-        std::strncmp(idBuf, "RIFF", 4) != 0) {
-        goto fail;
-    }
-
-    riffSize = SDL_ReadLE32(fileStream);
-
-    // Same bounds check done earlier on the total filesize
-    if (riffSize < 36 || riffSize > SDL_RWsize(fileStream) - 8) {
-        goto fail;
-    }
-
-    if (SDL_RWread(fileStream, idBuf, 4, 1) != 1 ||
-        std::strncmp(idBuf, "WAVE", 4) != 0) {
-        goto fail;
-    }
-
-    // Checks here are quite a bit less flexible than what WAV can represent.
-    // EoSD uses 44.1 kHz, stereo, 16-bit PCM
-    //   so that's what we handle. We also assume that fmt and data are the only
-    //   subchunks, which is definitely not a general guarantee, but it'll work
-    //   fine with EoSD's WAV files.
-
-    if (SDL_RWread(fileStream, idBuf, 4, 1) != 1 ||
-        std::strncmp(idBuf, "fmt ", 4) != 0) {
-        goto fail;
-    }
-
-    // Format subchunk size. Guaranteed 16 for PCM data
-    if (SDL_ReadLE32(fileStream) != 16) {
-        goto fail;
-    }
-
-    // Audio format. 1 represents raw PCM samples
-    if (SDL_ReadLE16(fileStream) != 1) {
-        goto fail;
-    }
-
-    // Number of channels. We expect stereo
-    if (SDL_ReadLE16(fileStream) != BACKGROUND_MUSIC_WAV_NUM_CHANNELS) {
-        goto fail;
-    }
-
-    // Sample frequency rate
-    if (SDL_ReadLE32(fileStream) != BACKGROUND_MUSIC_WAV_SAMPLE_RATE) {
-        goto fail;
-    }
-
-    // Byte rate
-    if (SDL_ReadLE32(fileStream) != BACKGROUND_MUSIC_WAV_BYTE_RATE) {
-        goto fail;
-    }
-
-    // Block alignment
-    if (SDL_ReadLE16(fileStream) != BACKGROUND_MUSIC_WAV_BLOCK_ALIGN) {
-        goto fail;
-    }
-
-    // Bits per sample
-    if (SDL_ReadLE16(fileStream) != BACKGROUND_MUSIC_WAV_BITS_PER_SAMPLE) {
-        goto fail;
-    }
-
-    if (SDL_RWread(fileStream, idBuf, 4, 1) != 1 ||
-        std::strncmp(idBuf, "data", 4) != 0) {
-        goto fail;
-    }
-
-    wavDataSize = SDL_ReadLE32(fileStream);
-
-    if (wavDataSize > riffSize - 44) {
-        goto fail;
-    }
-
-    this->backgroundMusic.srcWav.samples =
-        wavDataSize / BACKGROUND_MUSIC_WAV_BLOCK_ALIGN;
-
-    if (this->backgroundMusic.srcWav.samples == 0) {
-        goto fail;
-    }
-
-    this->backgroundMusic.srcWav.fileStream = fileStream;
-    this->backgroundMusic.srcWav.dataStartOffset = SDL_RWtell(fileStream);
-    this->backgroundMusic.loopStart = 0;
-    this->backgroundMusic.loopEnd = this->backgroundMusic.srcWav.samples;
-    this->backgroundMusic.fadeoutLen = 0;
-    this->backgroundMusic.fadeoutProgress = 0;
-    this->backgroundMusic.pos = 0;
 
     return true;
-
-fail:
-    SDL_RWclose(fileStream);
-    return false;
 }
 
 bool SoundPlayer::LoadPos(char *path) {
     u8 *fileData;
 
-    if (this->audioDev == 0 || g_Supervisor.cfg.playSounds == 0 ||
-        backgroundMusic.srcWav.fileStream == NULL) {
+    if (g_Supervisor.cfg.playSounds == 0 || !this->backgroundMusic.isLoaded) {
         return false;
     }
 
@@ -318,27 +464,27 @@ bool SoundPlayer::LoadPos(char *path) {
         return false;
     }
 
-    this->backgroundMusic.loopStart = SDL_SwapLE32(*((u32 *)fileData));
-    this->backgroundMusic.loopEnd = SDL_SwapLE32(*(u32 *)(fileData + 4));
+    u32 loopStartSamples = SDL_SwapLE32(*((u32 *)fileData));
+    u32 loopEndSamples = SDL_SwapLE32(*(u32 *)(fileData + 4));
 
     free(fileData);
 
-    if (this->backgroundMusic.loopStart >= this->backgroundMusic.loopEnd ||
-        this->backgroundMusic.loopEnd > this->backgroundMusic.srcWav.samples) {
-        this->backgroundMusic.loopStart = 0;
-        this->backgroundMusic.loopEnd = this->backgroundMusic.srcWav.samples;
+    // Loop points are in samples, convert to frames (stereo: 2 samples per frame)
+    this->backgroundMusic.loopingSource.loopStartFrame = loopStartSamples;
+    this->backgroundMusic.loopingSource.loopEndFrame = loopEndSamples;
 
+    if (this->backgroundMusic.loopingSource.loopStartFrame >= this->backgroundMusic.loopingSource.loopEndFrame ||
+        this->backgroundMusic.loopingSource.loopEndFrame > this->backgroundMusic.loopingSource.totalFrames) {
+        this->backgroundMusic.loopingSource.loopStartFrame = 0;
+        this->backgroundMusic.loopingSource.loopEndFrame = this->backgroundMusic.loopingSource.totalFrames;
         return false;
     }
 
+    this->backgroundMusic.loopingSource.shouldLoop = true;
     return true;
 }
 
 bool SoundPlayer::InitSoundBuffers() {
-    if (this->audioDev == 0) {
-        return false;
-    }
-
     std::fill_n(this->soundBuffersToPlay, ARRAY_SIZE(this->soundBuffersToPlay),
                 -1);
 
@@ -361,70 +507,26 @@ bool SoundPlayer::InitSoundBuffers() {
 }
 
 bool SoundPlayer::LoadSound(i32 idx, const char *path, f32 volumeMultiplier) {
-    SDL_AudioCVT sampleConversionDesc;
-    SDL_AudioSpec wavFormat;
-    u8 *wavRawData;
-    u8 *wavRawSamples;
-    u32 wavRawSampleByteCount;
-
     soundBufMutex.lock();
 
-    if (this->soundBuffers[idx].samples != NULL) {
-        delete[] this->soundBuffers[idx].samples;
-        this->soundBuffers[idx].samples = NULL;
+    if (this->soundBuffers[idx].isLoaded) {
+        ma_sound_uninit(&this->soundBuffers[idx].sound);
+        this->soundBuffers[idx].isLoaded = false;
     }
 
-    wavRawData = (u8 *)FileSystem::OpenPath(path);
-
-    if (wavRawData == NULL) {
+    // Load sound file using miniaudio decoder
+    ma_result result = ma_sound_init_from_file(&this->engine, path, 0, NULL, NULL, &this->soundBuffers[idx].sound);
+    if (result != MA_SUCCESS) {
+        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_SOUNDPLAYER_FAILED_TO_LOAD_SOUND_FILE, path);
         goto fail;
     }
 
-    if (SDL_LoadWAV_RW(SDL_RWFromConstMem(wavRawData, g_LastFileSize), 1,
-                       &wavFormat, &wavRawSamples,
-                       &wavRawSampleByteCount) == NULL) {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_NOT_A_WAV_FILE, path);
-        goto fail;
-    }
+    // Set volume
+    ma_sound_set_volume(&this->soundBuffers[idx].sound, volumeMultiplier);
 
-    // EoSD's sound files are all 22050 Hz, and some even use 8-bit samples.
-    // Converting them
-    //   here only uses a few hundred extra kilobytes of RAM compared to the
-    //   original code, but it might be worth looking into avoiding it for
-    //   especially RAM-limited systems
-
-    if (SDL_BuildAudioCVT(&sampleConversionDesc, wavFormat.format,
-                          wavFormat.channels, wavFormat.freq, AUDIO_S16SYS, 1,
-                          44100) == 1) {
-        sampleConversionDesc.len = wavRawSampleByteCount;
-        sampleConversionDesc.buf =
-            new u8[wavRawSampleByteCount * sampleConversionDesc.len_mult];
-        std::memcpy(sampleConversionDesc.buf, wavRawSamples,
-                    wavRawSampleByteCount);
-
-        SDL_ConvertAudio(&sampleConversionDesc);
-
-        this->soundBuffers[idx].len = sampleConversionDesc.len_cvt / 2;
-        this->soundBuffers[idx].samples = new i16[this->soundBuffers[idx].len];
-        std::memcpy(this->soundBuffers[idx].samples, sampleConversionDesc.buf,
-                    sampleConversionDesc.len_cvt);
-
-        delete[] sampleConversionDesc.buf;
-    } else {
-        this->soundBuffers[idx].len = wavRawSampleByteCount / 2;
-        this->soundBuffers[idx].samples = new i16[this->soundBuffers[idx].len];
-        std::memcpy(this->soundBuffers[idx].samples, wavRawSamples,
-                    wavRawSampleByteCount);
-    }
-
-    SDL_FreeWAV(wavRawSamples);
-
-    for (u32 i = 0; i < this->soundBuffers[idx].len; i++) {
-        this->soundBuffers[idx].samples[i] *= volumeMultiplier;
-    }
-
-    this->soundBuffers[idx].pos = 0;
+    this->soundBuffers[idx].isLoaded = true;
     this->soundBuffers[idx].isPlaying = false;
+    this->soundBuffers[idx].pos = 0;
 
     soundBufMutex.unlock();
     return true;
@@ -437,29 +539,15 @@ fail:
 bool SoundPlayer::PlayBGM(bool isLooping) {
     utils::DebugPrint2("play BGM\n");
 
-    if (this->backgroundMusic.srcWav.fileStream == NULL) {
+    if (!this->backgroundMusic.isLoaded) {
         return false;
     }
 
-    //    res = this->backgroundMusic->Reset();
-    //    if (FAILED(res))
-    //    {
-    //        return ZUN_ERROR;
-    //    }
-    //
-    //    buffer = this->backgroundMusic->GetBuffer(0);
-    //    res = this->backgroundMusic->FillBufferWithSound(buffer, isLooping);
-    //    if (FAILED(res))
-    //    {
-    //        return ZUN_ERROR;
-    //    }
-    //    res = this->backgroundMusic->Play(0, DSBPLAY_LOOPING);
-    //    if (FAILED(res))
-    //    {
-    //        return ZUN_ERROR;
-    //    }
-    utils::DebugPrint2("comp\n");
+    this->backgroundMusic.loopingSource.shouldLoop = isLooping;
     this->isLooping = isLooping;
+
+    ma_sound_start(&this->backgroundMusic.sound);
+    utils::DebugPrint2("comp\n");
     return true;
 }
 
@@ -467,7 +555,7 @@ void SoundPlayer::PlaySounds() {
     i32 idx;
     i32 sndBufIdx;
 
-    if (this->audioDev == 0 || !g_Supervisor.cfg.playSounds) {
+    if (!g_Supervisor.cfg.playSounds) {
         return;
     }
 
@@ -481,12 +569,24 @@ void SoundPlayer::PlaySounds() {
         sndBufIdx = this->soundBuffersToPlay[idx];
         this->soundBuffersToPlay[idx] = -1;
 
-        if (this->soundBuffers[sndBufIdx].samples == NULL) {
+        if (!this->soundBuffers[sndBufIdx].isLoaded) {
             continue;
         }
 
-        this->soundBuffers[sndBufIdx].pos = 0;
+        // Start playing the sound
+        ma_sound_start(&this->soundBuffers[sndBufIdx].sound);
         this->soundBuffers[sndBufIdx].isPlaying = true;
+    }
+
+    // Update playing status
+    for (int i = 0; i < 64; i++) {
+        if (this->soundBuffers[i].isLoaded && this->soundBuffers[i].isPlaying) {
+            ma_bool32 isPlaying = ma_sound_is_playing(&this->soundBuffers[i].sound);
+            if (!isPlaying) {
+                this->soundBuffers[i].isPlaying = false;
+                ma_sound_seek_to_pcm_frame(&this->soundBuffers[i].sound, 0); // Reset to beginning
+            }
+        }
     }
 
     soundBufMutex.unlock();
@@ -512,162 +612,4 @@ void SoundPlayer::PlaySoundByIdx(SoundIdx idx) {
     this->soundBuffersToPlay[i] = idx;
 }
 
-void SoundPlayer::MixAudio(u32 samples) {
-    std::vector<i16> finalBuffer(samples);
-    std::vector<i32> mixBuffer(samples);
-    u8 playingChannels = 0;
 
-    soundBufMutex.lock();
-
-    for (int i = 0; i < ARRAY_SIZE_SIGNED(soundBuffers); i++) {
-        if (!soundBuffers[i].isPlaying) {
-            continue;
-        }
-
-        playingChannels++;
-
-        // Sounds are all mono, so we need to duplicate each sample for stereo
-        // output
-        const u32 samplesToMix =
-            std::min(samples / 2, soundBuffers[i].len - soundBuffers[i].pos);
-
-        for (u32 j = 0; j < samplesToMix; j++) {
-            mixBuffer[j * 2] +=
-                soundBuffers[i].samples[soundBuffers[i].pos + j];
-            mixBuffer[j * 2 + 1] +=
-                soundBuffers[i].samples[soundBuffers[i].pos + j];
-        }
-
-        soundBuffers[i].pos += samplesToMix;
-
-        if (soundBuffers[i].pos == soundBuffers[i].len) {
-            soundBuffers[i].isPlaying = false;
-        }
-    }
-
-    if (backgroundMusic.srcWav.fileStream != NULL) {
-        u32 samplesMixed = 0;
-        f32 fadeoutMult;
-
-        if (backgroundMusic.fadeoutLen != 0) {
-            f32 fadeoutInterp = mapRange(backgroundMusic.fadeoutProgress, 0,
-                                         backgroundMusic.fadeoutLen, 0, 5);
-            fadeoutMult = 1.0f / ZUN_POWF(10.0f, fadeoutInterp / 2.0f);
-        } else {
-            fadeoutMult = 1.0f;
-        }
-
-        while (samplesMixed < samples / 2) {
-            const u32 samplesToMix =
-                std::min((samples / 2) - samplesMixed,
-                         backgroundMusic.loopEnd - backgroundMusic.pos);
-
-            for (u32 j = 0; j < samplesToMix; j++) {
-                u32 samplePair =
-                    SDL_ReadLE32(backgroundMusic.srcWav.fileStream);
-                // Splits a 32 bit read into two 16 bit samples for left and
-                // right.
-                mixBuffer[samplesMixed + j * 2] +=
-                    (i16)(samplePair & 0xFFFF) * fadeoutMult;
-                mixBuffer[samplesMixed + j * 2 + 1] +=
-                    (i16)(samplePair >> 16) * fadeoutMult;
-            }
-
-            backgroundMusic.pos += samplesToMix;
-            samplesMixed += samplesToMix;
-
-            if (backgroundMusic.pos == backgroundMusic.loopEnd) {
-                if (this->isLooping) {
-                    backgroundMusic.pos = backgroundMusic.loopStart;
-                    SDL_RWseek(backgroundMusic.srcWav.fileStream,
-                               backgroundMusic.srcWav.dataStartOffset +
-                                   backgroundMusic.pos * 4,
-                               SEEK_SET);
-                } else {
-                    SDL_RWclose(backgroundMusic.srcWav.fileStream);
-                    backgroundMusic.srcWav.fileStream = NULL;
-
-                    break;
-                }
-            }
-        }
-
-        if (backgroundMusic.fadeoutLen != 0) {
-            backgroundMusic.fadeoutProgress += samplesMixed;
-
-            if (backgroundMusic.fadeoutProgress >= backgroundMusic.fadeoutLen) {
-                SDL_RWclose(backgroundMusic.srcWav.fileStream);
-                backgroundMusic.srcWav.fileStream = NULL;
-            }
-        }
-
-        playingChannels++;
-    }
-
-    soundBufMutex.unlock();
-
-    // DirectSound supports playing from an arbitrary number of buffers at once,
-    // but that's kind of
-    //   difficult to get right as it turns out. Instead we use 8 as an
-    //   assumption of the max number of channels that could possibly be playing
-    //   at once. If more channels end up in use, the input volume of each
-    //   channel will start scaling down, which isn't correct, but would likely
-    //   be imperceptible with that many channels anyway.
-
-    const int mixDivisor = std::max(8, (int)playingChannels);
-
-    for (u32 i = 0; i < samples; i++) {
-        // Integer division like this doesn't get optimized at all by the
-        // compiler. If it becomes
-        //   a problem, it could be a good idea to convert to float, or to do
-        //   the division as fixed point multiplication by the inverse of
-        //   mixDivisor, depending on what's faster on any particular platform
-        finalBuffer[i] = mixBuffer[i] / mixDivisor;
-    }
-
-    SDL_QueueAudio(audioDev, finalBuffer.data(), samples * 2);
-}
-
-// EoSD originally just used this function to manage the streaming of the music
-// WAV file.
-//   We also use it to mix and queue audio, since we have to do that manually
-//   and doing it in a thread keeps sound running continuously, even if the main
-//   thread runs into lag
-void SoundPlayer::BackgroundMusicPlayerThread() {
-    SDL_PauseAudioDevice(this->audioDev, 0);
-
-    u32 latencyLimit = 14'700;
-    u64 samplesSent = 0;
-    u64 startTick = SDL_GetTicks64();
-
-    while (1) {
-        u64 curTicks = SDL_GetTicks64();
-
-        // Keep slightly more than 1 frame's worth of samples in the audio
-        // buffer at all times
-        i32 targetSamples = (curTicks - startTick) * 44.100 - samplesSent + 1024;
-
-        if (SDL_GetQueuedAudioSize(this->audioDev) > latencyLimit)
-        {
-            latencyLimit += 2'940; // 1 frame
-            samplesSent += targetSamples;
-            targetSamples = 0;
-        }
-        else if (targetSamples > 1024)
-        {
-            samplesSent += targetSamples - 1024;
-            targetSamples = 1024;
-        }
-
-        if (targetSamples > 0) {
-            this->MixAudio(targetSamples * 2);
-            samplesSent += targetSamples;
-        }
-
-        if (this->terminateFlag) {
-            return;
-        }
-
-        SDL_Delay(5);
-    }
-}

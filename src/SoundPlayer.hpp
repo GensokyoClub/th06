@@ -1,8 +1,9 @@
 #pragma once
 
 #include "inttypes.hpp"
-#include <SDL2/SDL_audio.h>
 #include <SDL2/SDL_rwops.h>
+#include <SDL2/SDL_audio.h>
+#include "thirdparty/miniaudio.h"
 #include <atomic>
 #include <mutex>
 #include <thread>
@@ -49,25 +50,32 @@ struct SoundBufferIdxVolume {
 };
 
 struct SoundData {
-    i16 *samples;
-    u32 pos;
-    u32 len;
+    ma_sound sound;
+    bool isLoaded;
     bool isPlaying;
+    ma_uint64 pos;
 };
 
-struct WavData {
-    SDL_RWops *fileStream;
-    u32 dataStartOffset;
-    u32 samples;
+struct LoopingDataSource {
+    ma_data_source_base base;
+    ma_decoder* decoder;
+    ma_uint64 loopStartFrame;
+    ma_uint64 loopEndFrame;
+    ma_uint64 totalFrames;
+    bool shouldLoop;
+    ma_format format;
+    ma_uint32 channels;
+    ma_uint32 sampleRate;
+    void* fileData;
+    ma_uint8* pcmData;
+    ma_uint64 pcmSize;
+    ma_uint64 cursor;
 };
 
 struct MusicStream {
-    WavData srcWav;
-    u32 pos;
-    u32 loopStart;
-    u32 loopEnd;
-    u32 fadeoutLen;
-    u32 fadeoutProgress;
+    LoopingDataSource loopingSource;
+    ma_sound sound;
+    bool isLoaded;
 };
 
 struct SoundPlayer {
@@ -86,18 +94,17 @@ struct SoundPlayer {
 
     bool LoadWav(char *path);
     bool LoadPos(char *path);
-
-    void BackgroundMusicPlayerThread();
-    void MixAudio(u32 samples);
+    void StopLooping();
 
     SoundData soundBuffers[64];
     std::mutex soundBufMutex;
-    SDL_AudioDeviceID audioDev;
-    std::thread backgroundMusicThreadHandle;
+    ma_engine engine;
+    ma_context context;
     std::atomic_bool terminateFlag;
-    i32 soundBuffersToPlay[3];
     MusicStream backgroundMusic;
     bool isLooping;
+    i32 soundBuffersToPlay[64];
+    SDL_AudioDeviceID audioDev;
 };
 
 extern SoundBufferIdxVolume g_SoundBufferIdxVol[32];

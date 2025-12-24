@@ -122,7 +122,7 @@ project "th06"
     local sdl2_libs   = os.outputof("sdl2-config --libs")   or ""
     if #sdl2_cflags > 0 then buildoptions { sdl2_cflags } end
     if #sdl2_libs   > 0 then linkoptions  { sdl2_libs }   end
-    links { "SDL2_image", "SDL2_ttf", "m" }
+    links { "SDL2_image", "SDL2_ttf", "m", "vorbisfile", "vorbis", "ogg" }
   filter {}
 
   filter "system:emscripten"
@@ -135,10 +135,11 @@ project "th06"
       "-sUSE_SDL=2",
       "-sUSE_SDL_IMAGE=2",
       "-sUSE_SDL_TTF=2",
+      "-sUSE_VORBIS=1",
       "-sUSE_PTHREADS=1 -pthread"
     }
 
-    buildoptions { "-Wall", "-Wextra", "-Wpedantic", "-Wno-gnu-anonymous-struct", "-Wno-unused-parameter", "-Wno-unused-but-set-variable", "-Wno-unused-variable", "-Wno-nontrivial-memcall", "-Wno-c99-extensions", "-Wno-switch", "-Wno-c++11-narrowing" }
+    buildoptions { "-Wall", "-Wextra", "-Wpedantic", "-Wno-gnu-anonymous-struct", "-Wno-unused-parameter", "-Wno-unused-but-set-variable", "-Wno-unused-variable", "-Wno-nontrivial-memcall", "-Wno-c99-extensions", "-Wno-switch", "-Wno-c++11-narrowing", "-Wno-dollar-in-identifier-extension" }
 
     linkoptions {
       "-sUSE_PTHREADS=1 -pthread",
@@ -147,10 +148,13 @@ project "th06"
       "-flto",
       "-sFULL_ES2=1",
       "-sINVOKE_RUN=0",
+      -- Libraries
       "-sUSE_SDL=2",
       "-sUSE_SDL_IMAGE=2",
       '-sSDL2_IMAGE_FORMATS=["png","jpg"]',
       "-sUSE_SDL_TTF=2",
+      "-sUSE_VORBIS=1",
+
       -- TODO: Emscripten dies on the credits without this! Aborted(OOM).
       "-sALLOW_MEMORY_GROWTH=1",
       --
@@ -176,7 +180,7 @@ project "th06"
 
   filter { "system:windows", "action:vs*" }
     warnings "Extra"
-    links { "SDL2", "SDL2main", "SDL2_image", "SDL2_ttf", "iconv" }
+    links { "SDL2", "SDL2main", "SDL2_image", "SDL2_ttf", "iconv", "vorbisfile", "vorbis", "ogg" }
 
     local SDL2_DIR       = os.getenv("SDL2_DIR")
     local SDL2_IMAGE_DIR = os.getenv("SDL2_IMAGE_DIR")
@@ -204,8 +208,8 @@ project "th06"
     end
 
   filter { "system:windows", "action:not vs*" }
-    local pc_cflags = os.outputof("pkg-config --cflags sdl2 SDL2_image SDL2_ttf iconv") or ""
-    local pc_libs   = os.outputof("pkg-config --libs   sdl2 SDL2_image SDL2_ttf iconv") or ""
+    local pc_cflags = os.outputof("pkg-config --cflags sdl2 SDL2_image SDL2_ttf iconv vorbisfile vorbis ogg") or ""
+    local pc_libs   = os.outputof("pkg-config --libs   sdl2 SDL2_image SDL2_ttf iconv vorbisfile vorbis ogg") or ""
     if #pc_cflags > 0 then buildoptions { pc_cflags } end
     if #pc_libs   > 0 then linkoptions  { pc_libs }   end
   filter {}

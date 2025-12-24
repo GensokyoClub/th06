@@ -5,13 +5,11 @@
 #include "i18n.hpp"
 
 #include <SDL2/SDL_ttf.h>
-#include <algorithm>
+
 #include <cstring>
-#include <iconv.h>
+#include "thirdparty/sjis_converter.h"
 
 TTF_Font *g_Font;
-
-iconv_t g_Iconv = (iconv_t)-1;
 
 TextHelper::TextHelper() {
     //    this->format = (D3DFORMAT)-1;
@@ -68,15 +66,7 @@ bool TextHelper::CreateTextBuffer() {
         return false;
     }
 
-    g_Iconv = iconv_open("UTF-8", "CP932");
-
-    if (g_Iconv == (iconv_t)-1) {
-        GameErrorContext::Fatal(&g_GameErrorContext, TH_ERR_ICONV_INIT_FAILED);
-        return false;
-    }
-
-    g_TextBufferSurface = SDL_CreateRGBSurfaceWithFormat(
-        0, GAME_WINDOW_WIDTH, TEXT_BUFFER_HEIGHT, 32, SDL_PIXELFORMAT_RGBA32);
+    g_TextBufferSurface = SDL_CreateRGBSurfaceWithFormat(0, GAME_WINDOW_WIDTH, TEXT_BUFFER_HEIGHT, 32, SDL_PIXELFORMAT_RGBA32);
 
     SDL_SetSurfaceBlendMode(g_TextBufferSurface, SDL_BLENDMODE_NONE);
 
@@ -234,27 +224,11 @@ void TextHelper::RenderTextToTexture(i32 xPos, i32 yPos, i32 spriteWidth,
     SDL_Rect textRect;
 
     if (!isUTF8Encoded(string)) {
-        // Standard doesn't specify what happens with the length fields during
-        // state reset, so give a value to be safe
-        size_t outBytes = 1024;
-        size_t stringBytes = 1024;
-
-        iconv(g_Iconv, NULL, &stringBytes, NULL,
-              &outBytes); // Resets iconv state
-
-        stringBytes = std::strlen(string);
-        outBytes = sizeof(convertedText) - 1;
-        char *convEnd = convertedText;
-
-        if (iconv(g_Iconv, (char **)&string, &stringBytes, &convEnd,
-                  &outBytes) == (size_t)-1) {
-            // Just don't render text in case of error
-            return;
-        }
-
-        *convEnd = '\0';
+        char* utf8 = sjis2utf8(string);
+        strcpy(convertedText, utf8);
+        free(utf8);
     } else {
-        std::strcpy(convertedText, string);
+        strcpy(convertedText, string);
     }
 
     TTF_SetFontSize(g_Font, fontHeight * 2);
@@ -353,10 +327,10 @@ void TextHelper::ReleaseTextBuffer() {
         g_Font = NULL;
     }
 
-    if (g_Iconv != (iconv_t)-1) {
-        iconv_close(g_Iconv);
-        g_Iconv = (iconv_t)-1;
-    }
+    // if (g_Iconv != (iconv_t)-1) {
+    //     iconv_close(g_Iconv);
+    //     g_Iconv = (iconv_t)-1;
+    // }
 
     if (g_TextBufferSurface != NULL) {
         SDL_FreeSurface(g_TextBufferSurface);

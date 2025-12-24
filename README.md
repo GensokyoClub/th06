@@ -24,7 +24,6 @@ EoSD-remastered has the following dependencies:
 - `SDL2_image`
 - `SDL2_ttf`
 - `libasound` (Optional and Linux-only, enables MIDI support. This will almost always be present as part of a desktop distro.)
-- `libiconv` (Windows-only)
 
 In addition, building uses [`premake5`](https://premake.github.io/download) and a compiler that supports C++20.
 

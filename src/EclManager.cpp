@@ -50,17 +50,13 @@ ExInsn g_EclExInsn[17] = {
     EnemyEclInstr::ExInsStageXFunc16
 };
 
-const char *map_files[] = {
-    "th06.eclm",
-};
-
 bool EclManager::Load(const char *eclPath) {
     i32 idx;
 
     char *output_path = strdup(eclPath);
     output_path[strlen(output_path) - 4] = '\0';
 
-    truth_compile_ecl("6", eclPath, output_path, map_files, ARRAY_SIZE(map_files));
+    truth_compile_ecl("6", eclPath, output_path, "th06.eclm");
 
     this->eclFile = (EclRawHeader *)FileSystem::OpenPath(output_path);
 

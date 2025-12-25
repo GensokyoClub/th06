@@ -52,17 +52,17 @@ static ma_result looping_data_source_read(ma_data_source* pDataSource, void* pFr
             memcpy(pFramesOut, pSource->pcmData + pSource->cursor, bytesRead);
             framesReadThisTime = bytesRead / ma_get_bytes_per_frame(pSource->format, pSource->channels);
             pSource->cursor += bytesRead;
-    } else {
-        ma_result result = ma_decoder_read_pcm_frames(
-            pSource->decoder,
-            (ma_uint8*)pFramesOut + totalFramesRead * ma_get_bytes_per_frame(pSource->format, pSource->channels),
-            framesToReadThisTime, &framesReadThisTime
-        );
+        } else {
+            ma_result result = ma_decoder_read_pcm_frames(
+                pSource->decoder,
+                (ma_uint8*)pFramesOut + totalFramesRead * ma_get_bytes_per_frame(pSource->format, pSource->channels),
+                framesToReadThisTime, &framesReadThisTime
+            );
 
-        if (result != MA_SUCCESS) {
-            return result;
+            if (result != MA_SUCCESS) {
+                return result;
+            }
         }
-    }
         totalFramesRead += framesReadThisTime;
         framesToRead -= framesReadThisTime;
 
@@ -138,20 +138,6 @@ static ma_data_source_vtable looping_data_source_vtable = {
     nullptr,  // onSetLooping
     0 // flags
 };
-
-// This would all be a lot easier with SDL_mixer, but SDL_mixer doesn't permit
-// any way of doing custom
-//   loop points that would be accurate to the sample like EoSD needs. So
-//   instead we get to read WAVs and mix everything by hand. Yay
-
-#define BACKGROUND_MUSIC_WAV_NUM_CHANNELS 2
-#define BACKGROUND_MUSIC_WAV_SAMPLE_RATE 44100
-#define BACKGROUND_MUSIC_WAV_BITS_PER_SAMPLE 16
-#define BACKGROUND_MUSIC_WAV_BLOCK_ALIGN        \
-    (BACKGROUND_MUSIC_WAV_BITS_PER_SAMPLE / 8 * \
-     BACKGROUND_MUSIC_WAV_NUM_CHANNELS)
-#define BACKGROUND_MUSIC_WAV_BYTE_RATE \
-    (BACKGROUND_MUSIC_WAV_BLOCK_ALIGN * BACKGROUND_MUSIC_WAV_SAMPLE_RATE)
 
 // DirectSound deals with volume by subtracting a number measured in hundredths
 // of decibels from the source sound.
@@ -302,18 +288,17 @@ bool SoundPlayer::LoadWav(char *path) {
 
     utils::DebugPrint2("load BGM\n");
 
-    std::string filePath(path);
-    bool isOgg = filePath.find(".ogg") != std::string::npos;
+    FILE* file = fopen(path, "rb");
+    if (!file) {
+        utils::DebugPrint2("error : file load error %s\n", path);
+        return false;
+    }
 
+    OggVorbis_File vf;
+
+    bool isOgg = ov_test(file, &vf, 0, 0) == 0;
     if (isOgg) {
-        FILE* file = fopen(path, "rb");
-        if (!file) {
-            utils::DebugPrint2("error : ogg file load error %s\n", path);
-            return false;
-        }
-
-        OggVorbis_File vf;
-        if (ov_open(file, &vf, NULL, 0) < 0) {
+        if (ov_test_open(&vf) < 0) {
             fclose(file);
             utils::DebugPrint2("error : ogg file open error %s\n", path);
             return false;
@@ -350,25 +335,28 @@ bool SoundPlayer::LoadWav(char *path) {
 
         this->backgroundMusic.loopingSource.pcmData = new ma_uint8[pcmBuffer.size()];
         memcpy(this->backgroundMusic.loopingSource.pcmData, pcmBuffer.data(), pcmBuffer.size());
-        this->backgroundMusic.loopingSource.pcmSize = pcmBuffer.size();
-        this->backgroundMusic.loopingSource.format = ma_format_s16;
-        this->backgroundMusic.loopingSource.channels = 2;
-        this->backgroundMusic.loopingSource.sampleRate = 44100;
-        this->backgroundMusic.loopingSource.totalFrames = pcmBuffer.size() / (2 * sizeof(int16_t));
-        this->backgroundMusic.loopingSource.loopStartFrame = 0;
-        this->backgroundMusic.loopingSource.loopEndFrame = this->backgroundMusic.loopingSource.totalFrames;
-        this->backgroundMusic.loopingSource.shouldLoop = false;
-        this->backgroundMusic.loopingSource.decoder = nullptr;
-        this->backgroundMusic.loopingSource.fileData = nullptr;
-        this->backgroundMusic.loopingSource.cursor = 0;
+        this->backgroundMusic.loopingSource = {
+            .base = {},
+            .decoder = nullptr,
+            .loopStartFrame = 0,
+            .loopEndFrame = this->backgroundMusic.loopingSource.totalFrames,
+            .totalFrames = pcmBuffer.size() / (2 * sizeof(int16_t)),
+            .shouldLoop = false,
+            .format = ma_format_s16,
+            .channels = 2,
+            .sampleRate = 44100,
+            .fileData = nullptr,
+            .pcmData = this->backgroundMusic.loopingSource.pcmData,
+            .pcmSize = pcmBuffer.size(),
+            .cursor = 0
+        };
 
         ma_data_source_config baseConfig = ma_data_source_config_init();
         baseConfig.vtable = &looping_data_source_vtable;
         ma_result result = ma_data_source_init(&baseConfig, &this->backgroundMusic.loopingSource.base);
         if (result != MA_SUCCESS) {
-            delete[] this->backgroundMusic.loopingSource.pcmData;
             utils::DebugPrint2("error : data source init error %s\n", path);
-            return false;
+            goto fail;
         }
 
         ma_sound_config soundConfig = ma_sound_config_init();
@@ -376,10 +364,9 @@ bool SoundPlayer::LoadWav(char *path) {
         soundConfig.pEndCallbackUserData = nullptr;
         result = ma_sound_init_ex(&this->engine, &soundConfig, &this->backgroundMusic.sound);
         if (result != MA_SUCCESS) {
-            ma_data_source_uninit(&this->backgroundMusic.loopingSource.base);
-            delete[] this->backgroundMusic.loopingSource.pcmData;
             utils::DebugPrint2("error : sound init error %s\n", path);
-            return false;
+            ma_data_source_uninit(&this->backgroundMusic.loopingSource.base);
+            goto fail;
         }
 
         this->backgroundMusic.isLoaded = true;
@@ -388,18 +375,16 @@ bool SoundPlayer::LoadWav(char *path) {
         this->backgroundMusic.loopingSource.decoder = new ma_decoder();
         ma_result result = ma_decoder_init_file(path, &decoderConfig, this->backgroundMusic.loopingSource.decoder);
         if (result != MA_SUCCESS) {
-            delete this->backgroundMusic.loopingSource.decoder;
             utils::DebugPrint2("error : wav decoder init error %s\n", path);
-            return false;
+            goto fail;
         }
 
         ma_uint64 lengthInFrames;
         result = ma_decoder_get_length_in_pcm_frames(this->backgroundMusic.loopingSource.decoder, &lengthInFrames);
         if (result != MA_SUCCESS) {
-            ma_decoder_uninit(this->backgroundMusic.loopingSource.decoder);
-            delete this->backgroundMusic.loopingSource.decoder;
             utils::DebugPrint2("error : wav get length error %s\n", path);
-            return false;
+            ma_decoder_uninit(this->backgroundMusic.loopingSource.decoder);
+            goto fail;
         }
 
         this->backgroundMusic.loopingSource.totalFrames = lengthInFrames;
@@ -418,11 +403,9 @@ bool SoundPlayer::LoadWav(char *path) {
         baseConfig.vtable = &looping_data_source_vtable;
         result = ma_data_source_init(&baseConfig, &this->backgroundMusic.loopingSource.base);
         if (result != MA_SUCCESS) {
-            ma_decoder_uninit(this->backgroundMusic.loopingSource.decoder);
-            delete this->backgroundMusic.loopingSource.decoder;
-            this->backgroundMusic.loopingSource.decoder = nullptr;
             utils::DebugPrint2("error : data source init error %s\n", path);
-            return false;
+            ma_decoder_uninit(this->backgroundMusic.loopingSource.decoder);
+            goto fail;
         }
 
         // Initialize the sound
@@ -431,17 +414,20 @@ bool SoundPlayer::LoadWav(char *path) {
         soundConfig.pEndCallbackUserData = nullptr;
         result = ma_sound_init_ex(&this->engine, &soundConfig, &this->backgroundMusic.sound);
         if (result != MA_SUCCESS) {
+            utils::DebugPrint2("error : sound init error %s\n", path);
             ma_data_source_uninit(&this->backgroundMusic.loopingSource.base);
             ma_decoder_uninit(this->backgroundMusic.loopingSource.decoder);
-            delete this->backgroundMusic.loopingSource.decoder;
-            utils::DebugPrint2("error : sound init error %s\n", path);
-            return false;
+            goto fail;
         }
 
         this->backgroundMusic.isLoaded = true;
     }
 
     return true;
+
+    fail:
+        delete this->backgroundMusic.loopingSource.decoder;
+        return false;
 }
 
 bool SoundPlayer::LoadPos(char *path) {
@@ -478,17 +464,11 @@ bool SoundPlayer::LoadPos(char *path) {
 }
 
 bool SoundPlayer::InitSoundBuffers() {
-    std::fill_n(this->soundBuffersToPlay, ARRAY_SIZE(this->soundBuffersToPlay),
-                -1);
+    std::fill_n(this->soundBuffersToPlay, ARRAY_SIZE(this->soundBuffersToPlay), -1);
 
     for (int idx = 0; idx < ARRAY_SIZE_SIGNED(g_SoundBufferIdxVol); idx++) {
-        if (!this->LoadSound(
-                idx, g_SFXList[g_SoundBufferIdxVol[idx].bufferIdx],
-                1.0f / std::powf(10.0f, (float)g_SoundBufferIdxVol[idx].volume /
-                                            -2000))) {
-            GameErrorContext::Log(&g_GameErrorContext,
-                                  TH_ERR_SOUNDPLAYER_FAILED_TO_LOAD_SOUND_FILE,
-                                  g_SFXList[idx]);
+        if (!this->LoadSound(idx, g_SFXList[g_SoundBufferIdxVol[idx].bufferIdx], 1.0f / std::powf(10.0f, (float)g_SoundBufferIdxVol[idx].volume / -2000))) {
+            GameErrorContext::Log(&g_GameErrorContext, TH_ERR_SOUNDPLAYER_FAILED_TO_LOAD_SOUND_FILE, g_SFXList[idx]);
             return false;
         }
 
@@ -576,7 +556,7 @@ void SoundPlayer::PlaySounds() {
             ma_bool32 isPlaying = ma_sound_is_playing(&this->soundBuffers[i].sound);
             if (!isPlaying) {
                 this->soundBuffers[i].isPlaying = false;
-                ma_sound_seek_to_pcm_frame(&this->soundBuffers[i].sound, 0); // Reset to beginning
+                ma_sound_seek_to_pcm_frame(&this->soundBuffers[i].sound, 0);
             }
         }
     }

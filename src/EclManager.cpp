@@ -14,6 +14,8 @@
 #include "utils.hpp"
 #include <cstdlib>
 
+#include "thirdparty/truth.h"
+
 i32 g_SpellcardScore[64] = {
     200000, 200000, 200000, 200000, 200000, 200000, 200000, 250000,
     250000, 250000, 250000, 250000, 250000, 250000, 300000, 300000,
@@ -46,25 +48,25 @@ ExInsn g_EclExInsn[17] = {
     EnemyEclInstr::ExInsStageXFunc16
 };
 
+const char *map_files[] = {
+    "th06.eclm",
+};
+
 bool EclManager::Load(const char *eclPath) {
     i32 idx;
 
-#ifdef WEIRD_ECL_EXPERIMENTS
-    auto rawEcl = FileSystem::OpenPath(eclPath);
-    char buf[256];
 
-    snprintf(buf, sizeof(buf), "truecl c %s.out -g 6 -o %s", eclPath, eclPath);
+    char *output_path = strdup(eclPath);
+    output_path[strlen(output_path) - 4] = '\0';
 
-    utils::DebugPrint2("%s", buf);
+    printf("%s\n", output_path);
 
-    system(buf);
-#endif
+    truth_compile_ecl("6", eclPath, output_path, map_files, ARRAY_SIZE(map_files));
 
-    this->eclFile = (EclRawHeader *)FileSystem::OpenPath(eclPath);
+    this->eclFile = (EclRawHeader *)FileSystem::OpenPath(output_path);
 
     if (this->eclFile == NULL) {
-        GameErrorContext::Log(&g_GameErrorContext,
-                              TH_ERR_ECLMANAGER_ENEMY_DATA_CORRUPT);
+        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_ECLMANAGER_ENEMY_DATA_CORRUPT);
         return false;
     }
 

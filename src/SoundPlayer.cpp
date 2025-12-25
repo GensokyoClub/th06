@@ -9,22 +9,23 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_timer.h>
 #include <vorbis/vorbisfile.h>
-#include <array>
+
 #include <cmath>
 #include <cstring>
 #include <new>
+#include <string>
 #include <vector>
 
 static ma_result looping_data_source_read(ma_data_source* pDataSource, void* pFramesOut, ma_uint64 frameCount, ma_uint64* pFramesRead) {
     LoopingDataSource* pSource = (LoopingDataSource*)pDataSource;
-    
+
     if (pFramesRead) {
         *pFramesRead = 0;
     }
-    
+
     ma_uint64 totalFramesRead = 0;
     ma_uint64 framesToRead = frameCount;
-    
+
     while (framesToRead > 0) {
         ma_uint64 currentPos;
         if (pSource->pcmData) {
@@ -32,20 +33,19 @@ static ma_result looping_data_source_read(ma_data_source* pDataSource, void* pFr
         } else {
             ma_decoder_get_cursor_in_pcm_frames(pSource->decoder, &currentPos);
         }
-        
+
         ma_uint64 framesUntilLoopEnd = pSource->loopEndFrame - currentPos;
         if (!pSource->shouldLoop || currentPos >= pSource->loopEndFrame) {
             framesUntilLoopEnd = pSource->totalFrames - currentPos;
         }
-        
+
         ma_uint64 framesToReadThisTime = framesToRead;
         if (pSource->shouldLoop && currentPos < pSource->loopEndFrame) {
             framesToReadThisTime = framesToRead < framesUntilLoopEnd ? framesToRead : framesUntilLoopEnd;
         }
-        
+
         ma_uint64 framesReadThisTime = 0;
         if (pSource->pcmData) {
-            // Read from buffer
             ma_uint64 bytesToRead = framesToReadThisTime * ma_get_bytes_per_frame(pSource->format, pSource->channels);
             ma_uint64 bytesAvailable = pSource->pcmSize - pSource->cursor;
             ma_uint64 bytesRead = bytesToRead < bytesAvailable ? bytesToRead : bytesAvailable;
@@ -53,17 +53,19 @@ static ma_result looping_data_source_read(ma_data_source* pDataSource, void* pFr
             framesReadThisTime = bytesRead / ma_get_bytes_per_frame(pSource->format, pSource->channels);
             pSource->cursor += bytesRead;
     } else {
-        ma_result result = ma_decoder_read_pcm_frames(pSource->decoder, 
-            (ma_uint8*)pFramesOut + totalFramesRead * ma_get_bytes_per_frame(pSource->format, pSource->channels), 
-            framesToReadThisTime, &framesReadThisTime);
-            
+        ma_result result = ma_decoder_read_pcm_frames(
+            pSource->decoder,
+            (ma_uint8*)pFramesOut + totalFramesRead * ma_get_bytes_per_frame(pSource->format, pSource->channels),
+            framesToReadThisTime, &framesReadThisTime
+        );
+
         if (result != MA_SUCCESS) {
             return result;
         }
-    }        
+    }
         totalFramesRead += framesReadThisTime;
         framesToRead -= framesReadThisTime;
-        
+
         // do we need to loop?
         if (pSource->shouldLoop && framesReadThisTime > 0) {
             ma_uint64 newPos;
@@ -80,16 +82,16 @@ static ma_result looping_data_source_read(ma_data_source* pDataSource, void* pFr
                 }
             }
         }
-        
+
         if (framesReadThisTime == 0) {
             break; // probably EOF
         }
     }
-    
+
     if (pFramesRead) {
         *pFramesRead = totalFramesRead;
     }
-    
+
     return MA_SUCCESS;
 }
 
@@ -229,13 +231,11 @@ bool SoundPlayer::InitializeDSound() {
     ma_result result;
     ma_engine_config engineConfig;
 
-    // Initialize miniaudio context
     result = ma_context_init(NULL, 0, NULL, &context);
     if (result != MA_SUCCESS) {
         goto fail;
     }
 
-    // Initialize miniaudio engine
     engineConfig = ma_engine_config_init();
     engineConfig.pContext = &context;
     result = ma_engine_init(&engineConfig, &engine);
@@ -306,7 +306,6 @@ bool SoundPlayer::LoadWav(char *path) {
     bool isOgg = filePath.find(".ogg") != std::string::npos;
 
     if (isOgg) {
-        // Load OGG file using libvorbisfile
         FILE* file = fopen(path, "rb");
         if (!file) {
             utils::DebugPrint2("error : ogg file load error %s\n", path);
@@ -333,7 +332,6 @@ bool SoundPlayer::LoadWav(char *path) {
             return false;
         }
 
-        // Decode entire file to PCM
         std::vector<char> pcmBuffer;
         char buffer[4096];
         int current_section;
@@ -350,7 +348,6 @@ bool SoundPlayer::LoadWav(char *path) {
 
         ov_clear(&vf);
 
-        // Set up LoopingDataSource with PCM data
         this->backgroundMusic.loopingSource.pcmData = new ma_uint8[pcmBuffer.size()];
         memcpy(this->backgroundMusic.loopingSource.pcmData, pcmBuffer.data(), pcmBuffer.size());
         this->backgroundMusic.loopingSource.pcmSize = pcmBuffer.size();
@@ -365,7 +362,6 @@ bool SoundPlayer::LoadWav(char *path) {
         this->backgroundMusic.loopingSource.fileData = nullptr;
         this->backgroundMusic.loopingSource.cursor = 0;
 
-        // Initialize the data source base
         ma_data_source_config baseConfig = ma_data_source_config_init();
         baseConfig.vtable = &looping_data_source_vtable;
         ma_result result = ma_data_source_init(&baseConfig, &this->backgroundMusic.loopingSource.base);
@@ -375,7 +371,6 @@ bool SoundPlayer::LoadWav(char *path) {
             return false;
         }
 
-        // Initialize the sound
         ma_sound_config soundConfig = ma_sound_config_init();
         soundConfig.pDataSource = &this->backgroundMusic.loopingSource;
         soundConfig.pEndCallbackUserData = nullptr;
@@ -389,7 +384,6 @@ bool SoundPlayer::LoadWav(char *path) {
 
         this->backgroundMusic.isLoaded = true;
     } else {
-        // Load WAV file using miniaudio decoder
         ma_decoder_config decoderConfig = ma_decoder_config_init(ma_format_s16, 2, 44100);
         this->backgroundMusic.loopingSource.decoder = new ma_decoder();
         ma_result result = ma_decoder_init_file(path, &decoderConfig, this->backgroundMusic.loopingSource.decoder);
@@ -399,7 +393,6 @@ bool SoundPlayer::LoadWav(char *path) {
             return false;
         }
 
-        // Get length
         ma_uint64 lengthInFrames;
         result = ma_decoder_get_length_in_pcm_frames(this->backgroundMusic.loopingSource.decoder, &lengthInFrames);
         if (result != MA_SUCCESS) {
@@ -573,12 +566,11 @@ void SoundPlayer::PlaySounds() {
             continue;
         }
 
-        // Start playing the sound
+        ma_sound_seek_to_pcm_frame(&this->soundBuffers[sndBufIdx].sound, 0);
         ma_sound_start(&this->soundBuffers[sndBufIdx].sound);
         this->soundBuffers[sndBufIdx].isPlaying = true;
     }
 
-    // Update playing status
     for (int i = 0; i < 64; i++) {
         if (this->soundBuffers[i].isLoaded && this->soundBuffers[i].isPlaying) {
             ma_bool32 isPlaying = ma_sound_is_playing(&this->soundBuffers[i].sound);
@@ -599,10 +591,6 @@ void SoundPlayer::PlaySoundByIdx(SoundIdx idx) {
         if (this->soundBuffersToPlay[i] < 0) {
             break;
         }
-
-        if (this->soundBuffersToPlay[i] == idx) {
-            return;
-        }
     }
 
     if (i >= 3) {
@@ -611,5 +599,3 @@ void SoundPlayer::PlaySoundByIdx(SoundIdx idx) {
 
     this->soundBuffersToPlay[i] = idx;
 }
-
-

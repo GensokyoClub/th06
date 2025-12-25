@@ -125,7 +125,10 @@ project "th06"
     local sdl2_libs   = os.outputof("sdl2-config --libs")   or ""
     if #sdl2_cflags > 0 then buildoptions { sdl2_cflags } end
     if #sdl2_libs   > 0 then linkoptions  { sdl2_libs }   end
-    links { "SDL2_image", "SDL2_ttf", "m", "vorbisfile", "vorbis", "ogg" }
+
+    linkoptions { "-Wl,-rpath,'$ORIGIN./'" }
+    libdirs { "external" }
+    links { "SDL2_image", "SDL2_ttf", "m", "vorbisfile", "vorbis", "ogg", "truth_ffi" }
   filter {}
 
   filter "system:emscripten"

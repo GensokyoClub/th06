@@ -137,6 +137,13 @@ process_anm_folder "${GAME_LOCATION%/}/data"
 echo "Removing alpha-only textures..."
 find "${GAME_LOCATION%/}/data" -type f -name '*_a.png' -delete
 
+echo "Decompiling ECL files..."
+for ecl_file in "${GAME_LOCATION%/}/data"/*.ecl; do
+    ecl_path="${ecl_file}.txt"
+    printf "Decompiling %s...\n" "$ecl_path"
+    truecl d "$ecl_file" -g 6 -m ${GAME_LOCATION%/}/th06.eclm > "$ecl_path"
+done
+
 echo "Converting WAV files to OGG..."
 for wav_file in ./wav/*.wav; do
     if [ -f "$wav_file" ]; then

@@ -19,6 +19,8 @@
     (WAS_PRESSED(key) ||          \
      (((g_CurFrameInput & (key)) != 0) && (g_IsEigthFrameOfHeldInput != 0)))
 
+#define HAS_OPTION(option) ((g_Supervisor.cfg.opts >> option) & 1)
+
 namespace utils {
     void DebugPrint(const char *fmt, ...);
     void DebugPrint2(const char *fmt, ...);

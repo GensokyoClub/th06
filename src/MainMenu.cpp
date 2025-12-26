@@ -33,19 +33,13 @@
 #define SWITCH_TH_CONFIG_FILE TH_EN_CONFIG_FILE
 #endif
 
-const char *g_ShortCharacterList[4] = { "ReimuA ", "ReimuB ", "MarisaA",
-                                        "MarisaB" };
-const char *g_DifficultyList[5] = { "Easy   ", "Normal ", "Hard   ", "Lunatic",
-                                    "Extra  " };
-const char *g_StageList[7] = { "Stage1", "Stage2", "Stage3", "Stage4",
-                               "Stage5", "Stage6", "Extra " };
+const char *g_ShortCharacterList[4] = { "ReimuA ", "ReimuB ", "MarisaA", "MarisaB" };
+const char *g_DifficultyList[5] = { "Easy   ", "Normal ", "Hard   ", "Lunatic", "Extra  " };
+const char *g_StageList[7] = { "Stage1", "Stage2", "Stage3", "Stage4", "Stage5", "Stage6", "Extra " };
 
 i16 g_LastJoystickInput;
 
-MainMenu::MainMenu() {
-    // what?
-    // int waste1, waste2, waste3, waste4;
-}
+MainMenu::MainMenu() {}
 
 ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
     i32 i;
@@ -76,8 +70,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
             menu->lastFrameTime = SDL_GetTicks();
         }
         time = SDL_GetTicks();
-        menu->frameCountForRefreshRateCalc =
-            menu->frameCountForRefreshRateCalc + 1;
+        menu->frameCountForRefreshRateCalc = menu->frameCountForRefreshRateCalc + 1;
         deltaTime = time - menu->lastFrameTime;
         if (deltaTime >= 700) {
             menu->lastFrameTime = time;
@@ -85,11 +78,9 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
         } else {
             if (500 <= deltaTime) {
                 deltaTimeAsMs = deltaTime / 1000.f;
-                deltaTimeAsFrames =
-                    menu->frameCountForRefreshRateCalc * 1000.f / deltaTime;
+                deltaTimeAsFrames = menu->frameCountForRefreshRateCalc * 1000.f / deltaTime;
                 if (deltaTimeAsFrames >= 57.f) {
-                    menu->timeRelatedArr[menu->timeRelatedArrSize] =
-                        deltaTimeAsFrames;
+                    menu->timeRelatedArr[menu->timeRelatedArrSize] = deltaTimeAsFrames;
                     menu->timeRelatedArrSize = menu->timeRelatedArrSize + 1;
                 }
                 menu->lastFrameTime = time;
@@ -121,13 +112,12 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
         }
         menu->idleFrames = menu->idleFrames + 1;
         if (720 <= menu->idleFrames) {
-        load_menu_rpy:
+    load_menu_rpy:
             g_GameManager.isInReplay = 1;
             g_GameManager.demoMode = 1;
             g_GameManager.demoFrames = 0;
             g_Supervisor.framerateMultiplier = 1.0;
-            std::strcpy((char *)g_GameManager.replayFile,
-                        "data/demo/demo00.rpy");
+            std::strcpy((char *)g_GameManager.replayFile, "data/demo/demo00.rpy");
             g_GameManager.currentStage = 3;
             g_GameManager.difficulty = LUNATIC;
             g_Supervisor.curState = SUPERVISOR_STATE_GAMEMANAGER;
@@ -151,8 +141,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
         MoveCursor(menu, 11);
         vmList = &menu->vm[34];
         for (i = 0; i < 11; i++, vmList++) {
-            DrawMenuItem(vmList, i, menu->cursor, menu->color2, menu->color1,
-                         0x73);
+            DrawMenuItem(vmList, i, menu->cursor, menu->color2, menu->color1, 0x73);
         }
         for (i = 0; i < 9; i++, vmList++) {
             if (menu->controlMapping[i] < 0) {
@@ -160,8 +149,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
                 continue;
             }
             vmList->flags.flag1 = 1;
-            DrawMenuItem(vmList, i, menu->cursor, menu->color2, menu->color1,
-                         0x73);
+            DrawMenuItem(vmList, i, menu->cursor, menu->color2, menu->color1, 0x73);
         }
         for (i = 0; i < 18; i++, vmList++) {
             if (menu->controlMapping[i / 2] < 0) {
@@ -171,15 +159,12 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
             vmList->flags.flag1 = 1;
             mapping = menu->controlMapping[i / 2];
             if (i % 2 == 0) {
-                g_AnmManager->SetActiveSprite(
-                    vmList, mapping / 10 + ANM_SPRITE_TITLE01_START);
+                g_AnmManager->SetActiveSprite(vmList, mapping / 10 + ANM_SPRITE_TITLE01_START);
             } else {
-                g_AnmManager->SetActiveSprite(
-                    vmList, mapping % 10 + ANM_SPRITE_TITLE01_START);
+                g_AnmManager->SetActiveSprite(vmList, mapping % 10 + ANM_SPRITE_TITLE01_START);
             }
             vmList->baseSpriteIndex = vmList->activeSpriteIndex;
-            DrawMenuItem(vmList, i / 2, menu->cursor, menu->color2,
-                         menu->color1, 0x7a);
+            DrawMenuItem(vmList, i / 2, menu->cursor, menu->color2, menu->color1, 0x7a);
         }
         if (32 <= menu->stateTimer) {
             controllerData = Controller::GetControllerState();
@@ -187,8 +172,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
                 if ((controllerData[sVar1] & 0x80) != 0)
                     break;
             }
-            if (sVar1 < SDL_CONTROLLER_BUTTON_MAX &&
-                g_LastJoystickInput != sVar1) {
+            if (sVar1 < SDL_CONTROLLER_BUTTON_MAX && g_LastJoystickInput != sVar1) {
                 g_SoundPlayer.PlaySoundByIdx(SOUND_SELECT);
                 switch (menu->cursor) {
                 case 0:
@@ -231,33 +215,29 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
             g_LastJoystickInput = sVar1;
             if (WAS_PRESSED(TH_BUTTON_SELECTMENU)) {
                 switch (menu->cursor) {
-                case 9:
-                    mappingData.shootButton = 0;
-                    mappingData.bombButton = 1;
-                    mappingData.focusButton = 0;
-                    mappingData.menuButton = 0xffff;
-                    mappingData.upButton = 0xffff;
-                    mappingData.downButton = 0xffff;
-                    mappingData.leftButton = 0xffff;
-                    mappingData.rightButton = 0xffff;
-                    mappingData.skipButton = 0xffff;
-                    memcpy(menu->controlMapping, &mappingData,
-                           sizeof(ControllerMapping));
-                    break;
-                case 10:
-                    menu->gameState = STATE_OPTIONS;
-                    menu->stateTimer = 0;
-                    for (sVar1 = 0; sVar1 < ARRAY_SIZE_SIGNED(menu->vm);
-                         sVar1++) {
-                        menu->vm[sVar1].pendingInterrupt = 3;
-                    }
-                    menu->cursor = 7;
-                    g_SoundPlayer.PlaySoundByIdx(SOUND_BACK);
-                    memcpy(&g_ControllerMapping, menu->controlMapping,
-                           sizeof(ControllerMapping));
-                    memcpy(&g_Supervisor.cfg.controllerMapping,
-                           menu->controlMapping, sizeof(ControllerMapping));
-                    break;
+                    case 9:
+                        mappingData.shootButton = 0;
+                        mappingData.bombButton = 1;
+                        mappingData.focusButton = 0;
+                        mappingData.menuButton = 0xffff;
+                        mappingData.upButton = 0xffff;
+                        mappingData.downButton = 0xffff;
+                        mappingData.leftButton = 0xffff;
+                        mappingData.rightButton = 0xffff;
+                        mappingData.skipButton = 0xffff;
+                        memcpy(menu->controlMapping, &mappingData, sizeof(ControllerMapping));
+                        break;
+                    case 10:
+                        menu->gameState = STATE_OPTIONS;
+                        menu->stateTimer = 0;
+                        for (sVar1 = 0; sVar1 < ARRAY_SIZE_SIGNED(menu->vm); sVar1++) {
+                            menu->vm[sVar1].pendingInterrupt = 3;
+                        }
+                        menu->cursor = 7;
+                        g_SoundPlayer.PlaySoundByIdx(SOUND_BACK);
+                        memcpy(&g_ControllerMapping, menu->controlMapping, sizeof(ControllerMapping));
+                        memcpy(&g_Supervisor.cfg.controllerMapping, menu->controlMapping, sizeof(ControllerMapping));
+                        break;
                 }
             }
         }
@@ -265,9 +245,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
     case STATE_DIFFICULTY_LOAD:
         if (menu->stateTimer == 60) {
             if (!LoadDiffCharSelect(menu)) {
-                GameErrorContext::Log(
-                    &g_GameErrorContext,
-                    TH_ERR_MAINMENU_LOAD_SELECT_SCREEN_FAILED);
+                GameErrorContext::Log(&g_GameErrorContext, TH_ERR_MAINMENU_LOAD_SELECT_SCREEN_FAILED);
                 g_Supervisor.curState = SUPERVISOR_STATE_EXITSUCCESS;
                 return CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB;
             }
@@ -301,9 +279,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
             MoveCursor(menu, 4);
             for (i = 0; i < 4; i++, vmList++) {
                 if (i != menu->cursor) {
-                    if (((g_Supervisor.cfg.opts >>
-                          GCOS_USE_D3D_HW_TEXTURE_BLENDING) &
-                         1) == 0) {
+                    if (((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING) & 1) == 0) {
                         vmList->color = 0x60000000;
                     } else {
                         vmList->color = 0x60ffffff;
@@ -314,9 +290,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
                     std::memcpy(&vmList->posOffset, &pos1, sizeof(ZunVec3));
                     vmList->alphaInterpEndTime = 0;
                 } else {
-                    if (((g_Supervisor.cfg.opts >>
-                          GCOS_USE_D3D_HW_TEXTURE_BLENDING) &
-                         1) == 0) {
+                    if (((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING) & 1) == 0) {
                         vmList->color = COLOR_BLACK;
                     } else {
                         vmList->color = COLOR_WHITE;
@@ -333,9 +307,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
                 vmList->flags.flag1 = 0;
             }
             for (i = 4; i < 5; i++, vmList++) {
-                if (((g_Supervisor.cfg.opts >>
-                      GCOS_USE_D3D_HW_TEXTURE_BLENDING) &
-                     1) == 0) {
+                if (((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING) & 1) == 0) {
                     vmList->color = COLOR_BLACK;
                 } else {
                     vmList->color = COLOR_WHITE;
@@ -380,10 +352,8 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
                 vmList = &menu->vm[85];
                 vmList->pendingInterrupt = 8;
                 g_GameManager.difficulty = EXTRA;
-                if (g_GameManager.HasReachedMaxClears(g_GameManager.character,
-                                                      0) ||
-                    g_GameManager.HasReachedMaxClears(g_GameManager.character,
-                                                      1)) {
+                if (g_GameManager.HasReachedMaxClears(g_GameManager.character, 0) ||
+                    g_GameManager.HasReachedMaxClears(g_GameManager.character, 1)) {
                     menu->cursor = g_GameManager.character;
                 } else {
                     menu->cursor = 1 - g_GameManager.character;
@@ -503,8 +473,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
             if (g_GameManager.difficulty < 4) {
                 menu->cursor = g_GameManager.shotType;
             } else {
-                if (g_GameManager.HasReachedMaxClears(
-                        g_GameManager.character, g_GameManager.shotType) != 0) {
+                if (g_GameManager.HasReachedMaxClears(g_GameManager.character, g_GameManager.shotType) != 0) {
                     menu->cursor = g_GameManager.shotType;
                 } else {
                     menu->cursor = 1 - g_GameManager.shotType;
@@ -516,8 +485,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
     case STATE_SHOT_SELECT:
         MoveCursor(menu, 2);
         if (g_GameManager.difficulty == EXTRA &&
-            g_GameManager.HasReachedMaxClears(g_GameManager.character,
-                                              menu->cursor) == 0) {
+            g_GameManager.HasReachedMaxClears(g_GameManager.character, menu->cursor) == 0) {
             menu->cursor = 1 - menu->cursor;
         }
         vmList = &menu->vm[92];
@@ -529,9 +497,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
             vmList->flags.colorOp = AnmVmColorOp_Add;
             vmList->flags.isVisible = 1;
             if (i != menu->cursor) {
-                if (((g_Supervisor.cfg.opts >>
-                      GCOS_USE_D3D_HW_TEXTURE_BLENDING) &
-                     1) == 0) {
+                if (((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING) & 1) == 0) {
                     vmList->color = 0xa0000000;
                 } else {
                     vmList->color = 0xa0d0d0d0;
@@ -541,9 +507,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
                 pos4.z = 0.0;
                 memcpy(&vmList->posOffset, &pos4, sizeof(ZunVec3));
             } else {
-                if (((g_Supervisor.cfg.opts >>
-                      GCOS_USE_D3D_HW_TEXTURE_BLENDING) &
-                     1) == 0) {
+                if (((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING) & 1) == 0) {
                     vmList->color = 0xff202020;
                 } else {
                     vmList->color = 0xffffffff;
@@ -659,15 +623,9 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
                 }
             }
             menu->cursor = g_GameManager.menuCursorBackup;
-            local_4c =
-                g_GameManager.clrd[g_GameManager.CharacterShotType()]
-                            .difficultyClearedWithoutRetries[g_GameManager
-                                                                 .difficulty] >
-                        6
-                    ? 6
-                    : g_GameManager.clrd[g_GameManager.CharacterShotType()]
-                          .difficultyClearedWithoutRetries[g_GameManager
-                                                               .difficulty];
+
+            auto &cleared_without_retries = g_GameManager.clrd[g_GameManager.CharacterShotType()].difficultyClearedWithoutRetries[g_GameManager.difficulty];
+            local_4c = cleared_without_retries > 6 ? 6 : cleared_without_retries;
             if (g_GameManager.difficulty == EASY && local_4c == 6) {
                 local_4c = 5;
             }
@@ -676,15 +634,9 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
             }
         }
         break;
-    case STATE_PRACTICE_LVL_SELECT:
-        chosenStage =
-            g_GameManager.clrd[g_GameManager.CharacterShotType()]
-                        .difficultyClearedWithoutRetries[g_GameManager
-                                                             .difficulty] > 6
-                ? 6
-                : g_GameManager.clrd[g_GameManager.CharacterShotType()]
-                      .difficultyClearedWithoutRetries[g_GameManager
-                                                           .difficulty];
+    case STATE_PRACTICE_LVL_SELECT: {
+        auto &cleared_without_retries = g_GameManager.clrd[g_GameManager.CharacterShotType()].difficultyClearedWithoutRetries[g_GameManager.difficulty];
+        chosenStage = cleared_without_retries > 6 ? 6 : cleared_without_retries;
         if (g_GameManager.difficulty == EASY && chosenStage == 6) {
             chosenStage = 5;
         }
@@ -723,6 +675,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
             goto something;
         }
         break;
+    }
     case STATE_QUIT:
         if (60 <= menu->stateTimer) {
             g_Supervisor.curState = SUPERVISOR_STATE_EXITSUCCESS;
@@ -750,8 +703,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu) {
         } else if (vm->sprite->sourceFileIndex < 0) {
             hasLoadedSprite = false;
         } else {
-            hasLoadedSprite =
-                g_AnmManager->textures[vm->sprite->sourceFileIndex].handle != 0;
+            hasLoadedSprite = g_AnmManager->textures[vm->sprite->sourceFileIndex].handle != 0;
         }
         if (hasLoadedSprite) {
             g_AnmManager->ExecuteScript(&menu->vm[i]);
@@ -788,8 +740,7 @@ CursorMovement MainMenu::MoveCursor(MainMenu *menu, i32 menuLength) {
     return CURSOR_DONT_MOVE;
 }
 
-void MainMenu::SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping,
-                           bool unk) {
+void MainMenu::SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, bool unk) {
     if (unk == 0 && menu->controlMapping[0] == btnPressed) {
         menu->controlMapping[0] = oldMapping;
     }
@@ -819,9 +770,7 @@ void MainMenu::SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping,
     }
 }
 
-void MainMenu::DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor,
-                            ZunColor currentItemColor, ZunColor otherItemColor,
-                            i32 vm_amount) {
+void MainMenu::DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor, ZunColor currentItemColor, ZunColor otherItemColor, i32 vm_amount) {
     ZunVec3 otherItemPos;
     ZunVec3 currentItemPos;
 
@@ -830,8 +779,7 @@ void MainMenu::DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor,
             vm->color = currentItemColor;
         } else {
             g_AnmManager->SetActiveSprite(vm, vm->baseSpriteIndex + vm_amount);
-            vm->color = (currentItemColor & COLOR_BLACK) |
-                        COLOR_RGB_MASK; // just... why?
+            vm->color = (currentItemColor & COLOR_BLACK) | COLOR_RGB_MASK; // just... why?
         }
 
         currentItemPos.x = -4.0f;
@@ -845,8 +793,7 @@ void MainMenu::DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor,
 
         else {
             g_AnmManager->SetActiveSprite(vm, vm->baseSpriteIndex);
-            vm->color =
-                (otherItemColor & COLOR_BLACK) | COLOR_RGB_MASK; // again, why?
+            vm->color = (otherItemColor & COLOR_BLACK) | COLOR_RGB_MASK; // again, why?
         }
         otherItemPos.x = 0.0f;
         otherItemPos.y = 0.0f;
@@ -866,8 +813,7 @@ bool MainMenu::BeginStartup() {
     }
     if (g_Supervisor.startupTimeBeforeMenuMusic > 0) {
         time = SDL_GetTicks();
-        while ((time - g_Supervisor.startupTimeBeforeMenuMusic >= 0) &&
-               (500 > time - g_Supervisor.startupTimeBeforeMenuMusic)) {
+        while ((time - g_Supervisor.startupTimeBeforeMenuMusic >= 0) && (500 > time - g_Supervisor.startupTimeBeforeMenuMusic)) {
             time = SDL_GetTicks();
         }
         g_Supervisor.startupTimeBeforeMenuMusic = 0;
@@ -876,8 +822,7 @@ bool MainMenu::BeginStartup() {
     for (i = 0; i < ARRAY_SIZE_SIGNED(this->vm); i++) {
         this->vm[i].pendingInterrupt = 1;
         this->vm[i].flags.colorOp = AnmVmColorOp_Add;
-        if ((g_Supervisor.cfg.opts & (1 << GCOS_USE_D3D_HW_TEXTURE_BLENDING)) ==
-            0) {
+        if ((g_Supervisor.cfg.opts & (1 << GCOS_USE_D3D_HW_TEXTURE_BLENDING)) == 0) {
             this->vm[i].color = COLOR_BLACK;
         } else {
             this->vm[i].color = COLOR_WHITE;
@@ -899,8 +844,7 @@ bool MainMenu::WeirdSecondInputCheck() {
         return true;
     }
 
-    if (!WAS_PRESSED_PERIODIC(TH_BUTTON_SELECTMENU | TH_BUTTON_BOMB |
-                              TH_BUTTON_MENU | TH_BUTTON_Q | TH_BUTTON_S)) {
+    if (!WAS_PRESSED_PERIODIC(TH_BUTTON_SELECTMENU | TH_BUTTON_BOMB | TH_BUTTON_MENU | TH_BUTTON_Q | TH_BUTTON_S)) {
         return true;
     }
 
@@ -929,6 +873,7 @@ bool MainMenu::WeirdSecondInputCheck() {
 bool MainMenu::DrawStartMenu(void) {
     i32 i;
     i = MoveCursor(this, 8);
+    // :(
     if ((this->cursor == 1) && !g_GameManager.HasReachedMaxClears(0, 0) &&
         !g_GameManager.HasReachedMaxClears(0, 1) &&
         !g_GameManager.HasReachedMaxClears(1, 0) &&
@@ -937,8 +882,7 @@ bool MainMenu::DrawStartMenu(void) {
     }
     AnmVm *drawVm = this->vm;
     for (i = 0; i < 8; i++, drawVm++ /* zun why */) {
-        DrawMenuItem(drawVm, i, this->cursor, COLOR_RED,
-                     COLOR_START_MENU_ITEM_INACTIVE, 122);
+        DrawMenuItem(drawVm, i, this->cursor, COLOR_RED, COLOR_START_MENU_ITEM_INACTIVE, 122);
     }
     if (this->stateTimer >= 0x14) {
         if (WAS_PRESSED(TH_BUTTON_SELECTMENU)) {
@@ -1076,12 +1020,9 @@ bool MainMenu::DrawStartMenu(void) {
 i32 MainMenu::ReplayHandling() {
     AnmVm *anmVm;
     i32 cur;
-    //    HANDLE replayFileHandle;
     u32 replayFileIdx;
     ReplayHeader *replayData;
     char replayFilePath[32];
-    //    WIN32_FIND_DATA replayFileInfo;
-    // u8 padding[0x20]; // idk
 
     switch (this->gameState) {
     case STATE_REPLAY_LOAD:
@@ -1094,64 +1035,22 @@ i32 MainMenu::ReplayHandling() {
                 replayFileIdx = 0;
                 for (cur = 0; cur < 15; cur++) {
 #ifdef __EMSCRIPTEN__
-                    std::sprintf(replayFilePath,
-                                 "/persistent/replay/th6_%.2d.rpy", cur + 1);
+                    std::sprintf(replayFilePath, "/persistent/replay/th6_%.2d.rpy", cur + 1);
 #else
-                    std::sprintf(replayFilePath, "./replay/th6_%.2d.rpy",
-                                 cur + 1);
+                    std::sprintf(replayFilePath, "./replay/th6_%.2d.rpy", cur + 1);
 #endif
-
-                    replayData =
-                        (ReplayHeader *)FileSystem::OpenPath(replayFilePath);
+                    replayData = (ReplayHeader *)FileSystem::OpenPath(replayFilePath);
                     if (replayData == NULL) {
                         std::free(replayData);
                         continue;
                     }
-                    if (ReplayManager::ValidateReplayData(replayData,
-                                                          g_LastFileSize)) {
+                    if (ReplayManager::ValidateReplayData(replayData, g_LastFileSize)) {
                         this->replayFileData[replayFileIdx].header = replayData;
-                        std::strcpy(this->replayFilePaths[replayFileIdx],
-                                    replayFilePath);
-                        std::sprintf(this->replayFileName[replayFileIdx],
-                                     "No.%.2d", cur + 1);
+                        std::strcpy(this->replayFilePaths[replayFileIdx], replayFilePath);
+                        std::sprintf(this->replayFileName[replayFileIdx], "No.%.2d", cur + 1);
                         replayFileIdx++;
                     }
                 }
-                //                _mkdir("./replay");
-                //                _chdir("./replay");
-                //                replayFileHandle =
-                //                FindFirstFileA("th6_ud????.rpy",
-                //                &replayFileInfo); if (replayFileHandle !=
-                //                INVALID_HANDLE_VALUE)
-                //                {
-                //                    for (cur = 0; cur < 0x2d; cur++)
-                //                    {
-                //                        replayData = (ReplayData
-                //                        *)FileSystem::OpenPath(replayFilePath,
-                //                        1); if (replayData == NULL)
-                //                        {
-                //                            continue;
-                //                        }
-                //                        if
-                //                        (!ReplayManager::ValidateReplayData(replayData,
-                //                        g_LastFileSize))
-                //                        {
-                //                            this->replayFileData[replayFileIdx]
-                //                            = *replayData;
-                //                            sprintf(this->replayFilePaths[replayFileIdx],
-                //                            "./replay/%s",
-                //                            replayFileInfo.cFileName);
-                //                            sprintf(this->replayFileName[replayFileIdx],
-                //                            "User "); replayFileIdx++;
-                //                        }
-                //                        free(replayData);
-                //                        if (!FindNextFileA(replayFileHandle,
-                //                        &replayFileInfo))
-                //                            break;
-                //                    }
-                //                }
-                //                FindClose(replayFileHandle);
-                //                _chdir("../");
                 this->replayFilesNum = replayFileIdx;
                 this->minimumOpacity = 0;
                 this->framesInactive = this->framesActive;
@@ -1192,35 +1091,23 @@ i32 MainMenu::ReplayHandling() {
                 this->stateTimer = 0;
                 this->cursor = 0;
                 g_SoundPlayer.PlaySoundByIdx(SOUND_SELECT);
-                this->currentReplay =
-                    (ReplayData *)std::malloc(sizeof(ReplayData));
-                this->currentReplay->header =
-                    (ReplayHeader *)FileSystem::OpenPath(
-                        this->replayFilePaths[this->chosenReplay]);
-                ReplayManager::ValidateReplayData(this->currentReplay->header,
-                                                  g_LastFileSize);
-                for (cur = 0; cur < ARRAY_SIZE_SIGNED(
-                                        this->currentReplay->stageReplayData);
-                     cur++) {
-                    if (this->currentReplay->header
-                            ->stageReplayDataOffsets[cur] != 0) {
-                        this->currentReplay->stageReplayData[cur] =
-                            (StageReplayData
-                                 *)(((u8 *)this->currentReplay->header) +
-                                    (this->currentReplay->header
-                                         ->stageReplayDataOffsets[cur]));
+                this->currentReplay = (ReplayData *)std::malloc(sizeof(ReplayData));
+                this->currentReplay->header = (ReplayHeader *)FileSystem::OpenPath(this->replayFilePaths[this->chosenReplay]);
+                auto &rpyHeader = this->currentReplay->header;
+
+                ReplayManager::ValidateReplayData(this->currentReplay->header, g_LastFileSize);
+                for (cur = 0; cur < ARRAY_SIZE_SIGNED(this->currentReplay->stageReplayData); cur++) {
+                    if (rpyHeader->stageReplayDataOffsets[cur] != 0) {
+                        this->currentReplay->stageReplayData[cur] = (StageReplayData*)((rpyHeader) + (rpyHeader->stageReplayDataOffsets[cur]));
                     } else {
                         this->currentReplay->stageReplayData[cur] = NULL;
                     }
                 }
 
-                while (this->replayFileData[this->chosenReplay]
-                           .header->stageReplayDataOffsets[this->cursor] == 0) {
+                while (this->replayFileData[this->chosenReplay].header->stageReplayDataOffsets[this->cursor] == 0) {
                     this->cursor = this->cursor + 1;
 
-                    if ((int)this->cursor >=
-                        ARRAY_SIZE_SIGNED(
-                            this->currentReplay->stageReplayData)) {
+                    if ((i32)this->cursor >= ARRAY_SIZE_SIGNED(this->currentReplay->stageReplayData)) {
                         return true;
                     }
                 }
@@ -1243,41 +1130,34 @@ i32 MainMenu::ReplayHandling() {
         }
         cur = MoveCursor(this, 7);
         if (cur < 0) {
-            while (this->replayFileData[this->chosenReplay]
-                       .header->stageReplayDataOffsets[this->cursor] == 0) {
+            while (this->replayFileData[this->chosenReplay].header->stageReplayDataOffsets[this->cursor] == 0) {
                 this->cursor--;
                 if (this->cursor < 0) {
                     this->cursor = 6;
                 }
             }
         } else if (cur > 0) {
-            while (this->replayFileData[this->chosenReplay]
-                       .header->stageReplayDataOffsets[this->cursor] == 0) {
+            while (this->replayFileData[this->chosenReplay].header->stageReplayDataOffsets[this->cursor] == 0) {
                 this->cursor++;
                 if (this->cursor >= 7) {
                     this->cursor = 0;
                 }
             }
         }
-        if (WAS_PRESSED(TH_BUTTON_SELECTMENU) /* && this->currentReplay[this->cursor].header->stageReplayDataOffsets */) {
+        if (WAS_PRESSED(TH_BUTTON_SELECTMENU)) {
             g_GameManager.isInReplay = 1;
             g_Supervisor.framerateMultiplier = 1.0;
-            std::strcpy((char *)g_GameManager.replayFile,
-                        this->replayFilePaths[this->chosenReplay]);
-            g_GameManager.difficulty =
-                (Difficulty)this->currentReplay->header->difficulty;
-            g_GameManager.character =
-                this->currentReplay->header->shottypeChara / 2;
-            g_GameManager.shotType =
-                this->currentReplay->header->shottypeChara % 2;
+            std::strcpy((char *)g_GameManager.replayFile, this->replayFilePaths[this->chosenReplay]);
+            g_GameManager.difficulty = (Difficulty)this->currentReplay->header->difficulty;
+            g_GameManager.character = this->currentReplay->header->shottypeChara / 2;
+            g_GameManager.shotType = this->currentReplay->header->shottypeChara % 2;
             cur = 0;
             while (this->currentReplay->stageReplayData[cur] == NULL) {
                 cur++;
             }
-            g_GameManager.livesRemaining =
-                this->currentReplay->stageReplayData[cur]->livesRemaining;
-            g_GameManager.bombsRemaining =
-                this->currentReplay->stageReplayData[cur]->bombsRemaining;
+            auto &stageRpyData = this->currentReplay->stageReplayData[cur];
+            g_GameManager.livesRemaining = stageRpyData->livesRemaining;
+            g_GameManager.bombsRemaining = stageRpyData->bombsRemaining;
             std::free(this->currentReplay->header);
             std::free(this->currentReplay);
             this->currentReplay = NULL;
@@ -1297,8 +1177,7 @@ i32 MainMenu::ReplayHandling() {
             g_SoundPlayer.PlaySoundByIdx(SOUND_BACK);
             this->gameState = STATE_REPLAY_ANIM;
             anmVm = this->vm;
-            for (cur = 0; cur < ARRAY_SIZE_SIGNED(this->vm);
-                 cur += 1, anmVm++) {
+            for (cur = 0; cur < ARRAY_SIZE_SIGNED(this->vm); cur += 1, anmVm++) {
                 anmVm->pendingInterrupt = 0xf;
             }
             this->cursor = this->chosenReplay;
@@ -1315,11 +1194,9 @@ bool MainMenu::DrawReplayMenu() {
     bool isSelected2;
 
     vmRef = &this->vm[98];
-    g_AsciiManager.AddFormatText(&vmRef->pos,
-                                 "No.   Name      Date     Player   Rank");
+    g_AsciiManager.AddFormatText(&vmRef->pos, "No.   Name      Date     Player   Rank");
 
-    for (i = this->chosenReplay - this->chosenReplay % 15, replayAmount = i;
-         i < replayAmount + 15; i++) {
+    for (i = this->chosenReplay - this->chosenReplay % 15, replayAmount = i; i < replayAmount + 15; i++) {
         if (i >= this->replayFilesNum) {
             break;
         }
@@ -1346,15 +1223,15 @@ bool MainMenu::DrawReplayMenu() {
             this->replayFileData[i].header->name,
             this->replayFileData[i].header->date,
             g_ShortCharacterList[this->replayFileData[i].header->shottypeChara],
-            g_DifficultyList[this->replayFileData[i].header->difficulty]);
+            g_DifficultyList[this->replayFileData[i].header->difficulty]
+        );
     }
     if (this->gameState == STATE_REPLAY_SELECT && this->currentReplay) {
         g_AsciiManager.color = COLOR_WHITE;
         g_AsciiManager.isSelected = false;
 
         vmRef = &this->vm[97];
-        g_AsciiManager.AddFormatText(&vmRef->pos, "       %2.3f%%",
-                                     this->currentReplay->header->slowdownRate);
+        g_AsciiManager.AddFormatText(&vmRef->pos, "       %2.3f%%", this->currentReplay->header->slowdownRate);
 
         vmRef = &this->vm[114];
         g_AsciiManager.AddFormatText(&vmRef->pos, "Stage  LastScore");
@@ -1377,12 +1254,10 @@ bool MainMenu::DrawReplayMenu() {
                 }
             }
             if (this->currentReplay->stageReplayData[i]) {
-                g_AsciiManager.AddFormatText(
-                    &vmRef->pos, "%s %9d", g_StageList[i],
-                    this->currentReplay->stageReplayData[i]->score);
+                g_AsciiManager.AddFormatText(&vmRef->pos, "%s %9d", g_StageList[i], this->currentReplay->stageReplayData[i]->score
+                );
             } else {
-                g_AsciiManager.AddFormatText(&vmRef->pos, "%s ---------",
-                                             g_StageList[i]);
+                g_AsciiManager.AddFormatText(&vmRef->pos, "%s ---------", g_StageList[i]);
             }
         }
     }
@@ -1391,8 +1266,7 @@ bool MainMenu::DrawReplayMenu() {
     return true;
 }
 
-void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem,
-                             i32 subItemSelected) {
+void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelected) {
     if (subItem != subItemSelected) {
         if (!g_Supervisor.cfg.IsSoftwareTexturing()) {
             vm->color = COLOR_MENU_ITEM_DEFAULT;
@@ -1406,20 +1280,15 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem,
         if (!g_Supervisor.cfg.IsSoftwareTexturing()) {
             vm->color = COLOR_MENU_ITEM_HIGHLIGHT;
         } else if (vm->baseSpriteIndex < ANM_OFFSET_TITLE04) {
-            g_AnmManager->SetActiveSprite(
-                vm, vm->baseSpriteIndex +
-                        (ANM_OFFSET_TITLE01S - ANM_OFFSET_TITLE01));
+            g_AnmManager->SetActiveSprite(vm, vm->baseSpriteIndex + (ANM_OFFSET_TITLE01S - ANM_OFFSET_TITLE01));
         } else {
-            g_AnmManager->SetActiveSprite(
-                vm, vm->baseSpriteIndex +
-                        (ANM_OFFSET_TITLE04S - ANM_OFFSET_TITLE04));
+            g_AnmManager->SetActiveSprite(vm, vm->baseSpriteIndex + (ANM_OFFSET_TITLE04S - ANM_OFFSET_TITLE04));
         }
         vm->posOffset = ZunVec3(-2.0, -2.0, 0.0);
     }
 
     if (item != this->cursor) {
-        if ((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING & 1) ==
-            0) {
+        if ((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING & 1) == 0) {
             vm->color = COLOR_SET_ALPHA2(vm->color, 128);
         } else {
             vm->color = COLOR_SET_ALPHA2(vm->color, 128);
@@ -1427,8 +1296,7 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem,
 
         vm->posOffset += ZunVec3(0.0, 0.0, 0.0);
     } else {
-        if ((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING & 1) ==
-            0) {
+        if ((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING & 1) == 0) {
             vm->color = COLOR_SET_ALPHA2(vm->color, 255);
         } else {
             vm->color = COLOR_SET_ALPHA2(vm->color, 255);
@@ -1439,7 +1307,6 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem,
 }
 
 u32 MainMenu::OnUpdateOptionsMenu() {
-
     AnmVm *optionsVm;
     i32 i;
 
@@ -1455,38 +1322,30 @@ u32 MainMenu::OnUpdateOptionsMenu() {
     }
 
     for (i = 0; i < 5; i++, optionsVm++) {
-        this->ColorMenuItem(optionsVm, CURSOR_OPTIONS_POS_LIFECOUNT, i,
-                            g_Supervisor.cfg.lifeCount);
+        this->ColorMenuItem(optionsVm, CURSOR_OPTIONS_POS_LIFECOUNT, i, g_Supervisor.cfg.lifeCount);
     }
 
     for (i = 0; i < 4; i++, optionsVm++) {
-        this->ColorMenuItem(optionsVm, CURSOR_OPTIONS_POS_BOMBCOUNT, i,
-                            g_Supervisor.cfg.bombCount);
+        this->ColorMenuItem(optionsVm, CURSOR_OPTIONS_POS_BOMBCOUNT, i, g_Supervisor.cfg.bombCount);
     }
     for (i = 0; i < 2; i++, optionsVm++) {
-        this->ColorMenuItem(optionsVm, CURSOR_OPTIONS_POS_COLORMODE, i,
-                            g_Supervisor.cfg.colorMode16bit);
+        this->ColorMenuItem(optionsVm, CURSOR_OPTIONS_POS_COLORMODE, i, g_Supervisor.cfg.colorMode16bit);
     }
     for (i = 0; i < 2; i++, optionsVm++) {
-        this->ColorMenuItem(optionsVm, CURSOR_OPTIONS_POS_PLAYSOUNDS, i,
-                            g_Supervisor.cfg.playSounds);
+        this->ColorMenuItem(optionsVm, CURSOR_OPTIONS_POS_PLAYSOUNDS, i, g_Supervisor.cfg.playSounds);
     }
     optionsVm = &this->vm[77];
-
     for (i = 0; i < 3; i++, optionsVm++) {
-        this->ColorMenuItem(optionsVm, CURSOR_OPTIONS_POS_MUSICMODE, i,
-                            g_Supervisor.cfg.musicMode);
+        this->ColorMenuItem(optionsVm, CURSOR_OPTIONS_POS_MUSICMODE, i, g_Supervisor.cfg.musicMode);
     }
     optionsVm = &this->vm[75];
     for (i = 0; i < 2; i++, optionsVm++) {
-        this->ColorMenuItem(optionsVm, CURSOR_OPTIONS_POS_SCREENMODE, i,
-                            this->windowed);
+        this->ColorMenuItem(optionsVm, CURSOR_OPTIONS_POS_SCREENMODE, i, this->windowed);
     }
     if (this->stateTimer >= 32) {
         if (WAS_PRESSED_PERIODIC(TH_BUTTON_LEFT)) {
             switch (this->cursor) {
             case CURSOR_OPTIONS_POS_LIFECOUNT:
-
                 g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
                 if (g_Supervisor.cfg.lifeCount <= 0) {
                     g_Supervisor.cfg.lifeCount = 5;
@@ -1495,7 +1354,6 @@ u32 MainMenu::OnUpdateOptionsMenu() {
                 break;
 
             case CURSOR_OPTIONS_POS_BOMBCOUNT:
-
                 g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
                 if (g_Supervisor.cfg.bombCount <= 0) {
                     g_Supervisor.cfg.bombCount = 4;
@@ -1504,7 +1362,6 @@ u32 MainMenu::OnUpdateOptionsMenu() {
                 break;
 
             case CURSOR_OPTIONS_POS_COLORMODE:
-
                 g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
                 if (g_Supervisor.cfg.colorMode16bit <= 0) {
                     g_Supervisor.cfg.colorMode16bit = 2;
@@ -1513,7 +1370,6 @@ u32 MainMenu::OnUpdateOptionsMenu() {
                 break;
 
             case CURSOR_OPTIONS_POS_MUSICMODE:
-
                 g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
                 g_Supervisor.StopAudio();
                 if (g_Supervisor.cfg.musicMode <= OFF) {
@@ -1524,7 +1380,6 @@ u32 MainMenu::OnUpdateOptionsMenu() {
                 break;
 
             case CURSOR_OPTIONS_POS_PLAYSOUNDS:
-
                 g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
                 if (g_Supervisor.cfg.playSounds <= 0) {
                     g_Supervisor.cfg.playSounds = 2;
@@ -1533,7 +1388,6 @@ u32 MainMenu::OnUpdateOptionsMenu() {
                 break;
 
             case CURSOR_OPTIONS_POS_SCREENMODE:
-
                 g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
                 if (this->windowed <= 0) {
                     this->windowed = 2;
@@ -1548,62 +1402,55 @@ u32 MainMenu::OnUpdateOptionsMenu() {
         }
         if (WAS_PRESSED_PERIODIC(TH_BUTTON_RIGHT)) {
             switch (this->cursor) {
-            case CURSOR_OPTIONS_POS_LIFECOUNT:
-
-                g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
-                g_Supervisor.cfg.lifeCount += 1;
-                if (g_Supervisor.cfg.lifeCount >= 5) {
-                    g_Supervisor.cfg.lifeCount = 0;
-                }
-                break;
-            case CURSOR_OPTIONS_POS_BOMBCOUNT:
-
-                g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
-                g_Supervisor.cfg.bombCount += 1;
-                if (g_Supervisor.cfg.bombCount >= 4) {
-                    g_Supervisor.cfg.bombCount = 0;
-                }
-                break;
-            case CURSOR_OPTIONS_POS_COLORMODE:
-
-                g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
-                g_Supervisor.cfg.colorMode16bit += 1;
-                if (g_Supervisor.cfg.colorMode16bit >= 2) {
-                    g_Supervisor.cfg.colorMode16bit = 0;
-                }
-                break;
-            case CURSOR_OPTIONS_POS_MUSICMODE:
-
-                g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
-                g_Supervisor.StopAudio();
-                g_Supervisor.cfg.musicMode += 1;
-                if (g_Supervisor.cfg.musicMode >= MIDI + 1) {
-                    g_Supervisor.cfg.musicMode = OFF;
-                }
-                g_Supervisor.PlayAudio("bgm/th06_01.mid");
-                break;
-            case CURSOR_OPTIONS_POS_PLAYSOUNDS:
-
-                g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
-                g_Supervisor.cfg.playSounds += 1;
-                if (g_Supervisor.cfg.playSounds >= 2) {
-                    g_Supervisor.cfg.playSounds = 0;
-                }
-                break;
-            case CURSOR_OPTIONS_POS_SCREENMODE:
-
-                g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
-                this->windowed += 1;
-                if (this->windowed >= 2) {
-                    this->windowed = 0;
-                }
-                break;
+                case CURSOR_OPTIONS_POS_LIFECOUNT:
+                    g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
+                    g_Supervisor.cfg.lifeCount += 1;
+                    if (g_Supervisor.cfg.lifeCount >= 5) {
+                        g_Supervisor.cfg.lifeCount = 0;
+                    }
+                    break;
+                case CURSOR_OPTIONS_POS_BOMBCOUNT:
+                    g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
+                    g_Supervisor.cfg.bombCount += 1;
+                    if (g_Supervisor.cfg.bombCount >= 4) {
+                        g_Supervisor.cfg.bombCount = 0;
+                    }
+                    break;
+                case CURSOR_OPTIONS_POS_COLORMODE:
+                    g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
+                    g_Supervisor.cfg.colorMode16bit += 1;
+                    if (g_Supervisor.cfg.colorMode16bit >= 2) {
+                        g_Supervisor.cfg.colorMode16bit = 0;
+                    }
+                    break;
+                case CURSOR_OPTIONS_POS_MUSICMODE:
+                    g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
+                    g_Supervisor.StopAudio();
+                    g_Supervisor.cfg.musicMode += 1;
+                    if (g_Supervisor.cfg.musicMode >= MIDI + 1) {
+                        g_Supervisor.cfg.musicMode = OFF;
+                    }
+                    g_Supervisor.PlayAudio("bgm/th06_01.mid");
+                    break;
+                case CURSOR_OPTIONS_POS_PLAYSOUNDS:
+                    g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
+                    g_Supervisor.cfg.playSounds += 1;
+                    if (g_Supervisor.cfg.playSounds >= 2) {
+                        g_Supervisor.cfg.playSounds = 0;
+                    }
+                    break;
+                case CURSOR_OPTIONS_POS_SCREENMODE:
+                    g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
+                    this->windowed += 1;
+                    if (this->windowed >= 2) {
+                        this->windowed = 0;
+                    }
+                    break;
             }
         }
         if (WAS_PRESSED(TH_BUTTON_SELECTMENU)) {
             switch (this->cursor) {
             case CURSOR_OPTIONS_POS_KEYCONFIG:
-
                 this->gameState = STATE_KEYCONFIG;
                 this->stateTimer = 0;
                 for (i = 0; i < ARRAY_SIZE_SIGNED(this->vm); i++) {
@@ -1612,15 +1459,13 @@ u32 MainMenu::OnUpdateOptionsMenu() {
                 this->cursor = 0;
                 g_SoundPlayer.PlaySoundByIdx(SOUND_SELECT);
 
-                memcpy(this->controlMapping, &g_ControllerMapping,
-                       sizeof(ControllerMapping));
+                memcpy(this->controlMapping, &g_ControllerMapping, sizeof(ControllerMapping));
 
                 g_ControllerMapping.upButton = -1;
                 g_ControllerMapping.downButton = -1;
                 break;
 
             case CURSOR_OPTIONS_POS_SETDEFAULT:
-
                 g_Supervisor.StopAudio();
                 g_Supervisor.cfg.lifeCount = 2;
                 g_Supervisor.cfg.bombCount = 3;
@@ -1634,17 +1479,12 @@ u32 MainMenu::OnUpdateOptionsMenu() {
 
             case CURSOR_OPTIONS_POS_EXIT:
 #ifdef __EMSCRIPTEN__
-                FileSystem::WriteDataToFile(EM_TH_CONFIG_FILE,
-                                            &g_Supervisor.cfg,
-                                            sizeof(g_Supervisor.cfg));
+                FileSystem::WriteDataToFile(EM_TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
 #else
 #ifdef __SWITCH__
-                FileSystem::WriteDataToFile(SWITCH_TH_CONFIG_FILE,
-                                            &g_Supervisor.cfg,
-                                            sizeof(g_Supervisor.cfg));
+                FileSystem::WriteDataToFile(SWITCH_TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
 #else
-                FileSystem::WriteDataToFile(TH_CONFIG_FILE, &g_Supervisor.cfg,
-                                            sizeof(g_Supervisor.cfg));
+                FileSystem::WriteDataToFile(TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
 #endif
 #endif
                 this->gameState = STATE_MAIN_MENU;
@@ -1673,17 +1513,10 @@ u32 MainMenu::OnUpdateOptionsMenu() {
 bool MainMenu::ChoosePracticeLevel() {
     if (this->gameState == STATE_PRACTICE_LVL_SELECT) {
         ZunVec3 textPos(320.0, 200.0, 0.0);
-        u32 color =
-            (this->stateTimer < 30) ? this->stateTimer * 0xFF / 30 : 0xff;
-        i32 charShotType =
-            (g_GameManager.character << 1) + g_GameManager.shotType;
-        i32 selectedStage =
-            (g_GameManager.clrd[charShotType]
-                 .difficultyClearedWithoutRetries[g_GameManager.difficulty] > 6)
-                ? 6
-                : g_GameManager.clrd[charShotType]
-                      .difficultyClearedWithoutRetries[g_GameManager
-                                                           .difficulty];
+        u32 color = (this->stateTimer < 30) ? this->stateTimer * 0xFF / 30 : 0xff;
+        i32 charShotType = (g_GameManager.character << 1) + g_GameManager.shotType;
+        auto &difficulties_cleared = g_GameManager.clrd[charShotType].difficultyClearedWithoutRetries[g_GameManager.difficulty];
+        i32 selectedStage = (difficulties_cleared > 6) ? 6 : difficulties_cleared;
 
         if (g_GameManager.difficulty == EASY && selectedStage == 6) {
             selectedStage = 5;
@@ -1696,11 +1529,7 @@ bool MainMenu::ChoosePracticeLevel() {
             } else {
                 g_AsciiManager.color = (color >> 1) << 0x18 | 0x0080C0C0;
             }
-            g_AsciiManager.AddFormatText(
-                &textPos, "STAGE %d  %.9d", stageNum + 1,
-                g_GameManager
-                    .pscr[charShotType][stageNum][g_GameManager.difficulty]
-                    .score);
+            g_AsciiManager.AddFormatText(&textPos, "STAGE %d  %.9d", stageNum + 1, g_GameManager.pscr[charShotType][stageNum][g_GameManager.difficulty].score);
             textPos.y += 24;
         }
         g_AsciiManager.color = 0xFFFFFFFF;
@@ -1737,24 +1566,18 @@ ChainCallbackResult MainMenu::OnDraw(MainMenu *menu) {
         if (menu->numFramesSinceActive < (i32)menu->framesActive) {
             menu->numFramesSinceActive += 1;
         }
-        targetOpacity = COLOR_ALPHA(menu->menuTextColor) -
-                        COLOR_ALPHA(menu->minimumOpacity);
+        targetOpacity = COLOR_ALPHA(menu->menuTextColor) - COLOR_ALPHA(menu->minimumOpacity);
         ScreenEffect::DrawSquare(
             &window,
-            COLOR_SET_ALPHA(menu->menuTextColor,
-                            targetOpacity * menu->numFramesSinceActive /
-                                    menu->framesActive +
-                                COLOR_ALPHA(menu->minimumOpacity)));
+            COLOR_SET_ALPHA(menu->menuTextColor, targetOpacity * menu->numFramesSinceActive / menu->framesActive + COLOR_ALPHA(menu->minimumOpacity))
+        );
     } else if (menu->numFramesSinceActive != 0) {
         menu->numFramesSinceActive -= 1;
-        targetOpacity = COLOR_ALPHA(menu->menuTextColor) -
-                        COLOR_ALPHA(menu->minimumOpacity);
+        targetOpacity = COLOR_ALPHA(menu->menuTextColor) - COLOR_ALPHA(menu->minimumOpacity);
         ScreenEffect::DrawSquare(
             &window,
-            COLOR_SET_ALPHA(menu->menuTextColor,
-                            targetOpacity * menu->numFramesSinceActive /
-                                    menu->framesInactive +
-                                COLOR_ALPHA(menu->minimumOpacity)));
+            COLOR_SET_ALPHA(menu->menuTextColor, targetOpacity * menu->numFramesSinceActive / menu->framesInactive + COLOR_ALPHA(menu->minimumOpacity))
+        );
     }
     for (vmIdx = 0; vmIdx < 98; vmIdx++, curVm++) {
         if (curVm->sprite == NULL) {
@@ -1762,9 +1585,7 @@ ChainCallbackResult MainMenu::OnDraw(MainMenu *menu) {
         } else if (curVm->sprite->sourceFileIndex < 0) {
             shouldDraw = false;
         } else {
-            shouldDraw =
-                g_AnmManager->textures[curVm->sprite->sourceFileIndex].handle !=
-                0;
+            shouldDraw = g_AnmManager->textures[curVm->sprite->sourceFileIndex].handle != 0;
         }
         if (shouldDraw) {
             std::memcpy(&posBackup, &curVm->pos, sizeof(ZunVec3));
@@ -1778,49 +1599,40 @@ ChainCallbackResult MainMenu::OnDraw(MainMenu *menu) {
         }
     }
     switch (menu->gameState) {
-    case STATE_REPLAY_ANIM:
-    case STATE_REPLAY_UNLOAD:
-    case STATE_REPLAY_SELECT:
-        menu->DrawReplayMenu();
-    default:
-        menu->ChoosePracticeLevel();
-    }
-    return CHAIN_CALLBACK_RESULT_CONTINUE;
+        case STATE_REPLAY_ANIM:
+        case STATE_REPLAY_UNLOAD:
+        case STATE_REPLAY_SELECT:
+            menu->DrawReplayMenu();
+        default:
+            menu->ChoosePracticeLevel();
+        }
+        return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
 bool MainMenu::LoadTitleAnm(MainMenu *menu) {
-    i32 i;
-
-    // g_Supervisor.LoadPbg3(3, TH_TL_DAT_FILE);
-    for (i = ANM_FILE_SELECT01; i <= ANM_FILE_REPLAY; i++) {
+    for (i32 i = ANM_FILE_SELECT01; i <= ANM_FILE_REPLAY; i++) {
         g_AnmManager->ReleaseAnm(i);
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE01, "data/title01.anm",
-                               ANM_OFFSET_TITLE01)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE01, "data/title01.anm", ANM_OFFSET_TITLE01)) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE02, "data/title02.anm",
-                               ANM_OFFSET_TITLE02)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE02, "data/title02.anm", ANM_OFFSET_TITLE02)) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE03, "data/title03.anm",
-                               ANM_OFFSET_TITLE03)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE03, "data/title03.anm", ANM_OFFSET_TITLE03)) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE04, "data/title04.anm",
-                               ANM_OFFSET_TITLE04)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE04, "data/title04.anm", ANM_OFFSET_TITLE04)) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE01S, "data/title01s.anm",
-                               ANM_OFFSET_TITLE01S)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE01S, "data/title01s.anm", ANM_OFFSET_TITLE01S)) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE04S, "data/title04s.anm",
-                               ANM_OFFSET_TITLE04S)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_TITLE04S, "data/title04s.anm", ANM_OFFSET_TITLE04S)) {
         return false;
     }
 
-    for (i = 0; i < 80; i++) {
+    for (i32 i = 0; i < 80; i++) {
         g_AnmManager->ExecuteAnmIdx(&menu->vm[i], ANM_SCRIPT_TITLE01_START + i);
         menu->vm[i].flags.isVisible = 0;
         menu->vm[i].baseSpriteIndex = menu->vm[i].activeSpriteIndex;
@@ -1844,49 +1656,38 @@ bool MainMenu::LoadDiffCharSelect(MainMenu *menu) {
     if (!g_AnmManager->LoadSurface(0, "data/title/select00.jpg")) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_SELECT01, "data/select01.anm",
-                               ANM_OFFSET_SELECT01)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SELECT01, "data/select01.anm", ANM_OFFSET_SELECT01)) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_SELECT02, "data/select02.anm",
-                               ANM_OFFSET_SELECT02)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SELECT02, "data/select02.anm", ANM_OFFSET_SELECT02)) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_SELECT03, "data/select03.anm",
-                               ANM_OFFSET_SELECT03)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SELECT03, "data/select03.anm", ANM_OFFSET_SELECT03)) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_SELECT04, "data/select04.anm",
-                               ANM_OFFSET_SELECT04)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SELECT04, "data/select04.anm", ANM_OFFSET_SELECT04)) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_SELECT05, "data/select05.anm",
-                               ANM_OFFSET_SELECT05)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SELECT05, "data/select05.anm", ANM_OFFSET_SELECT05)) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_SLPL00A, "data/slpl00a.anm",
-                               ANM_OFFSET_SLPL00A)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SLPL00A, "data/slpl00a.anm", ANM_OFFSET_SLPL00A)) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_SLPL00B, "data/slpl00b.anm",
-                               ANM_OFFSET_SLPL00B)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SLPL00B, "data/slpl00b.anm", ANM_OFFSET_SLPL00B)) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_SLPL01A, "data/slpl01a.anm",
-                               ANM_OFFSET_SLPL01A)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SLPL01A, "data/slpl01a.anm", ANM_OFFSET_SLPL01A)) {
         return false;
     }
-    if (!g_AnmManager->LoadAnm(ANM_FILE_SLPL01B, "data/slpl01b.anm",
-                               ANM_OFFSET_SLPL01B)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_SLPL01B, "data/slpl01b.anm", ANM_OFFSET_SLPL01B)) {
         return false;
     }
-    for (vm = &menu->vm[0x50], i = ANM_SCRIPT_SELECT01_START;
-         i <= ANM_SCRIPT_SELECT01_END; i++, vm++) {
+    for (vm = &menu->vm[0x50], i = ANM_SCRIPT_SELECT01_START; i <= ANM_SCRIPT_SELECT01_END; i++, vm++) {
         g_AnmManager->ExecuteAnmIdx(vm, i);
         vm->flags.isVisible = 0;
         vm->flags.colorOp = AnmVmColorOp_Add;
-        if (((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING) & 1) ==
-            0) {
+        if (((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING) & 1) == 0) {
             vm->color = COLOR_BLACK;
         } else {
             vm->color = COLOR_WHITE;
@@ -1910,20 +1711,17 @@ bool MainMenu::LoadReplayMenu(MainMenu *menu) {
         return false;
     }
 
-    if (!g_AnmManager->LoadAnm(ANM_FILE_REPLAY, "data/replay00.anm",
-                               ANM_OFFSET_REPLAY)) {
+    if (!g_AnmManager->LoadAnm(ANM_FILE_REPLAY, "data/replay00.anm", ANM_OFFSET_REPLAY)) {
         return false;
     }
 
     vm = &menu->vm[96];
-    for (fileIdx = ANM_SCRIPT_REPLAY_START; fileIdx <= ANM_SCRIPT_REPLAY_END;
-         fileIdx++, vm++) {
+    for (fileIdx = ANM_SCRIPT_REPLAY_START; fileIdx <= ANM_SCRIPT_REPLAY_END; fileIdx++, vm++) {
         g_AnmManager->ExecuteAnmIdx(vm, fileIdx);
         vm->flags.isVisible = 0;
         vm->flags.colorOp = AnmVmColorOp_Add;
 
-        if ((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING & 1) ==
-            0) {
+        if ((g_Supervisor.cfg.opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING & 1) == 0) {
             vm->color = COLOR_BLACK;
         } else {
             vm->color = COLOR_WHITE;
@@ -1944,10 +1742,8 @@ bool MainMenu::RegisterChain(u32 isDemo) {
     g_Supervisor.framerateMultiplier = 0.0;
     menu->chainCalc = g_Chain.CreateElem((ChainCallback)MainMenu::OnUpdate);
     menu->chainCalc->arg = menu;
-    menu->chainCalc->addedCallback =
-        (ChainAddedCallback)MainMenu::AddedCallback;
-    menu->chainCalc->deletedCallback =
-        (ChainDeletedCallback)MainMenu::DeletedCallback;
+    menu->chainCalc->addedCallback = (ChainAddedCallback)MainMenu::AddedCallback;
+    menu->chainCalc->deletedCallback = (ChainDeletedCallback)MainMenu::DeletedCallback;
     menu->stateTimer = 0;
     if (!g_Chain.AddToCalcChain(menu->chainCalc, TH_CHAIN_PRIO_CALC_MAINMENU)) {
         return false;
@@ -2020,11 +1816,9 @@ bool MainMenu::AddedCallback(MainMenu *m) {
     if (g_GameManager.demoMode == 0) {
         if (g_Supervisor.startupTimeBeforeMenuMusic == 0) {
             g_Supervisor.PlayAudio("bgm/th06_01.mid");
-            ScreenEffect::RegisterChain(SCREEN_EFFECT_FADE_IN, 120, 0xffffff, 0,
-                                        0);
+            ScreenEffect::RegisterChain(SCREEN_EFFECT_FADE_IN, 120, 0xffffff, 0, 0);
         } else {
-            ScreenEffect::RegisterChain(SCREEN_EFFECT_FADE_IN, 200, 0xffffff, 0,
-                                        0);
+            ScreenEffect::RegisterChain(SCREEN_EFFECT_FADE_IN, 200, 0xffffff, 0, 0);
         }
     }
     g_GameManager.demoMode = 0;
@@ -2043,8 +1837,7 @@ bool MainMenu::DeletedCallback(MainMenu *menu) {
     }
     g_AnmManager->ReleaseSurface(0);
 
-    // TODO: Inline function, but when inlining it, I lose control over the
-    // stack slots, and it stops matching.
+    // TODO: Inline function, but when inlining it, I lose control over the stack slots, and it stops matching.
     mgr = g_AnmManager;
     for (i2 = 0; i2 < ANM_OFFSET_TITLE01S - ANM_OFFSET_TITLE01; i2++) {
         mgr->scripts[ANM_OFFSET_TITLE01 + i2] = NULL;

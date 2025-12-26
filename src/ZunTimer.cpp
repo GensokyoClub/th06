@@ -21,8 +21,7 @@ void ZunTimer::Increment(i32 value) {
     }
 
     this->previous = this->current;
-    this->subFrame = g_Supervisor.effectiveFramerateMultiplier * (float)value +
-                     this->subFrame;
+    this->subFrame = g_Supervisor.effectiveFramerateMultiplier * (float)value + this->subFrame;
 
     while (this->subFrame >= 1.0f) {
         this->current++;
@@ -44,8 +43,7 @@ void ZunTimer::Decrement(i32 value) {
     }
 
     this->previous = this->current;
-    this->subFrame = this->subFrame -
-                     g_Supervisor.effectiveFramerateMultiplier * (float)value;
+    this->subFrame = this->subFrame - g_Supervisor.effectiveFramerateMultiplier * (float)value;
 
     while (this->subFrame < 0.0f) {
         this->current--;

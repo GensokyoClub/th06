@@ -2,7 +2,6 @@
 
 #include "AnmVm.hpp"
 #include "Chain.hpp"
-#include "Enemy.hpp"
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 

@@ -6,7 +6,8 @@
 
 /* ReimuA Rank 1 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank1[1] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -16,12 +17,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank1[1] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
+      SOUND_SHOOT
+    },
 };
 
 /* ReimuA Rank 2 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank2[3] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -31,8 +34,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank2[3] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 30,
+      SOUND_SHOOT
+    },
+    {
+      30,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -42,8 +47,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank2[3] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -53,12 +60,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank2[3] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* ReimuA Rank 3 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank3[4] = {
-    { 5,
+    {
+      5,
       0,
       { -4.0, 0.0 },
       { 12.0, 12.0 },
@@ -68,8 +77,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank3[4] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 4.0, 0.0 },
       { 12.0, 12.0 },
@@ -79,8 +90,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank3[4] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -90,8 +103,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank3[4] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -101,12 +116,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank3[4] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* ReimuA Rank 4 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank4[5] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -116,8 +133,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank4[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -127,8 +146,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank4[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -138,8 +159,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank4[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -149,8 +172,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank4[5] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -160,12 +185,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank4[5] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* ReimuA Rank 5 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank5[5] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -175,8 +202,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank5[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -186,8 +215,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank5[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -197,8 +228,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank5[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -208,8 +241,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank5[5] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -219,12 +254,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank5[5] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* ReimuA Rank 6 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank6[7] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -234,8 +271,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank6[7] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -245,8 +284,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank6[7] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -256,8 +297,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank6[7] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -267,8 +310,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank6[7] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -278,8 +323,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank6[7] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -289,8 +336,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank6[7] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -300,12 +349,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank6[7] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* ReimuA Rank 7 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank7[9] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -315,8 +366,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank7[9] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -326,8 +379,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank7[9] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -337,8 +392,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank7[9] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -348,8 +405,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank7[9] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -359,8 +418,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank7[9] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       10,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -370,8 +431,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank7[9] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       10,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -381,8 +444,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank7[9] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       20,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -392,8 +457,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank7[9] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       20,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -403,12 +470,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank7[9] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* ReimuA Rank 8 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank8[9] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -419,7 +488,8 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank8[9] = {
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
       SOUND_SHOOT },
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -429,8 +499,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank8[9] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -440,8 +512,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank8[9] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -451,8 +525,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank8[9] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -462,8 +538,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank8[9] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       5,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -473,8 +551,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank8[9] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       5,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -484,8 +564,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank8[9] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       10,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -495,8 +577,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank8[9] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       10,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -506,12 +590,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank8[9] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* ReimuA Rank 9 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank9[12] = {
-    { 5,
+    {
+      5,
       0,
       { -8.0, 0.0 },
       { 12.0, 12.0 },
@@ -521,8 +607,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank9[12] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { -8.0, 0.0 },
       { 12.0, 12.0 },
@@ -532,8 +620,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank9[12] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 8.0, 0.0 },
       { 12.0, 12.0 },
@@ -543,8 +633,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank9[12] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 8.0, 0.0 },
       { 12.0, 12.0 },
@@ -554,8 +646,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank9[12] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 16,
+      NO_SOUND
+    },
+    {
+      16,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -565,8 +659,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank9[12] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 16,
+      NO_SOUND
+    },
+    {
+      16,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -576,8 +672,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank9[12] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 16,
+      NO_SOUND
+    },
+    {
+      16,
       4,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -587,8 +685,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank9[12] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 16,
+      NO_SOUND
+    },
+    {
+      16,
       4,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -598,8 +698,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank9[12] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 16,
+      NO_SOUND
+    },
+    {
+      16,
       8,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -609,8 +711,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank9[12] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 16,
+      NO_SOUND
+    },
+    {
+      16,
       8,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -620,8 +724,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank9[12] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 16,
+      NO_SOUND
+    },
+    {
+      16,
       12,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -631,8 +737,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank9[12] = {
       1,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND },
-    { 16,
+      NO_SOUND
+    },
+    {
+      16,
       12,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -642,7 +750,8 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank9[12] = {
       2,
       BULLET_TYPE_1,
       ANM_SCRIPT_PLAYER_REIMU_A_ORB_BULLET,
-      NO_SOUND }, /*IEE-754 moment*/
+      NO_SOUND
+    }, /*IEE-754 moment*/
 };
 
 CharacterPowerData g_CharacterPowerDataReimuA[9] = {
@@ -661,7 +770,8 @@ CharacterPowerData g_CharacterPowerDataReimuA[9] = {
 
 /* ReimuB Rank 1 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank1[1] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -671,12 +781,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank1[1] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
+      SOUND_SHOOT
+    },
 };
 
 /* ReimuB Rank 2 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank2[3] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -686,8 +798,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank2[3] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 15,
+      SOUND_SHOOT
+    },
+    {
+      15,
       0,
       { 0.0, -16.0 },
       { 12.0, 40.0 },
@@ -697,8 +811,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank2[3] = {
       1,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       0,
       { 0.0, -16.0 },
       { 12.0, 40.0 },
@@ -708,12 +824,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank2[3] = {
       2,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* ReimuB Rank 3 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank3[4] = {
-    { 5,
+    {
+      5,
       0,
       { -4.0, 0.0 },
       { 12.0, 12.0 },
@@ -723,8 +841,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank3[4] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 4.0, 0.0 },
       { 12.0, 12.0 },
@@ -734,8 +854,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank3[4] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       0,
       { 0.0, -16.0 },
       { 12.0, 40.0 },
@@ -745,8 +867,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank3[4] = {
       1,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       0,
       { 0.0, -16.0 },
       { 12.0, 40.0 },
@@ -756,12 +880,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank3[4] = {
       2,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* ReimuB Rank 4 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank4[4] = {
-    { 5,
+    {
+      5,
       0,
       { -4.0, 0.0 },
       { 12.0, 12.0 },
@@ -771,8 +897,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank4[4] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 4.0, 0.0 },
       { 12.0, 12.0 },
@@ -782,8 +910,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank4[4] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 8,
+      NO_SOUND
+    },
+    {
+      8,
       0,
       { 0.0, -16.0 },
       { 12.0, 40.0 },
@@ -793,8 +923,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank4[4] = {
       1,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
-    { 8,
+      NO_SOUND
+    },
+    {
+      8,
       0,
       { 0.0, -16.0 },
       { 12.0, 40.0 },
@@ -804,12 +936,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank4[4] = {
       2,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* ReimuB Rank 5 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank5[5] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -819,8 +953,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank5[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -830,8 +966,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank5[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -841,8 +979,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank5[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 8,
+      NO_SOUND
+    },
+    {
+      8,
       0,
       { 0.0, -16.0 },
       { 12.0, 40.0 },
@@ -852,8 +992,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank5[5] = {
       1,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
-    { 8,
+      NO_SOUND
+    },
+    {
+      8,
       0,
       { 0.0, -16.0 },
       { 12.0, 40.0 },
@@ -863,12 +1005,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank5[5] = {
       2,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* ReimuB Rank 6 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank6[7] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -878,8 +1022,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank6[7] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -889,8 +1035,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank6[7] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -900,8 +1048,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank6[7] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 8.0, -16.0 },
       { 12.0, 40.0 },
@@ -911,8 +1061,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank6[7] = {
       1,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 8.0, -16.0 },
       { 12.0, 40.0 },
@@ -922,8 +1074,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank6[7] = {
       2,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
-    { 8,
+      NO_SOUND
+    },
+    {
+      8,
       0,
       { -8.0, -16.0 },
       { 12.0, 40.0 },
@@ -933,8 +1087,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank6[7] = {
       1,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
-    { 8,
+      NO_SOUND
+    },
+    {
+      8,
       0,
       { -8.0, -16.0 },
       { 12.0, 40.0 },
@@ -944,12 +1100,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank6[7] = {
       2,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* ReimuB Rank 7 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank7[7] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -960,7 +1118,8 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank7[7] = {
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
       SOUND_SHOOT },
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -971,7 +1130,8 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank7[7] = {
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
       NO_SOUND },
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -982,7 +1142,8 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank7[7] = {
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
       NO_SOUND },
-    { 3,
+    {
+      3,
       0,
       { 8.0, -16.0 },
       { 12.0, 40.0 },
@@ -992,8 +1153,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank7[7] = {
       1,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      SOUND_SHOOT },
-    { 3,
+      SOUND_SHOOT
+    },
+    {
+      3,
       0,
       { 8.0, -16.0 },
       { 12.0, 40.0 },
@@ -1004,7 +1167,8 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank7[7] = {
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
       NO_SOUND },
-    { 5,
+    {
+      5,
       0,
       { -8.0, -16.0 },
       { 12.0, 40.0 },
@@ -1015,7 +1179,8 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank7[7] = {
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
       NO_SOUND },
-    { 5,
+    {
+      5,
       0,
       { -8.0, -16.0 },
       { 12.0, 40.0 },
@@ -1025,12 +1190,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank7[7] = {
       2,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* ReimuB Rank 8 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank8[11] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1040,8 +1207,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank8[11] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1051,8 +1220,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank8[11] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1062,8 +1233,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank8[11] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1073,8 +1246,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank8[11] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1084,8 +1259,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank8[11] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 3,
+      NO_SOUND
+    },
+    {
+      3,
       0,
       { 12.0, -16.0 },
       { 12.0, 40.0 },
@@ -1095,8 +1272,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank8[11] = {
       1,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      SOUND_SHOOT },
-    { 3,
+      SOUND_SHOOT
+    },
+    {
+      3,
       0,
       { 12.0, -16.0 },
       { 12.0, 40.0 },
@@ -1106,8 +1285,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank8[11] = {
       2,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { -12.0, -16.0 },
       { 12.0, 40.0 },
@@ -1117,8 +1298,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank8[11] = {
       1,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { -12.0, -16.0 },
       { 12.0, 40.0 },
@@ -1128,8 +1311,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank8[11] = {
       2,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       0,
       { 0.0, -16.0 },
       { 12.0, 40.0 },
@@ -1139,8 +1324,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank8[11] = {
       1,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       0,
       { 0.0, -16.0 },
       { 12.0, 40.0 },
@@ -1150,12 +1337,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank8[11] = {
       2,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* ReimuB Rank 9 */
 CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank9[11] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1165,8 +1354,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank9[11] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1176,8 +1367,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank9[11] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1187,8 +1380,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank9[11] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1198,8 +1393,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank9[11] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1209,8 +1406,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank9[11] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 3,
+      NO_SOUND
+    },
+    {
+      3,
       0,
       { 12.0, -16.0 },
       { 12.0, 40.0 },
@@ -1220,8 +1419,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank9[11] = {
       1,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      SOUND_SHOOT },
-    { 3,
+      SOUND_SHOOT
+    },
+    {
+      3,
       0,
       { 12.0, -16.0 },
       { 12.0, 40.0 },
@@ -1231,8 +1432,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank9[11] = {
       2,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
-    { 3,
+      NO_SOUND
+    },
+    {
+      3,
       0,
       { -12.0, -16.0 },
       { 12.0, 40.0 },
@@ -1242,8 +1445,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank9[11] = {
       1,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
-    { 3,
+      NO_SOUND
+    },
+    {
+      3,
       0,
       { -12.0, -16.0 },
       { 12.0, 40.0 },
@@ -1253,8 +1458,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank9[11] = {
       2,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, -16.0 },
       { 12.0, 40.0 },
@@ -1264,8 +1471,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank9[11] = {
       1,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, -16.0 },
       { 12.0, 40.0 },
@@ -1275,7 +1484,8 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank9[11] = {
       2,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_REIMU_B_ORB_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 CharacterPowerData g_CharacterPowerDataReimuB[9] = {
@@ -1294,7 +1504,8 @@ CharacterPowerData g_CharacterPowerDataReimuB[9] = {
 
 /* MarisaA Rank 1 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank1[1] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, -8.0 },
       { 12.0, 24.0 },
@@ -1304,12 +1515,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank1[1] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
+      SOUND_SHOOT
+    },
 };
 
 /* MarisaA Rank 2 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank2[3] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, -8.0 },
       { 12.0, 24.0 },
@@ -1319,8 +1532,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank2[3] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 30,
+      SOUND_SHOOT
+    },
+    {
+      30,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1330,8 +1545,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank2[3] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1341,12 +1558,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank2[3] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* MarisaA Rank 3 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank3[5] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, -8.0 },
       { 12.0, 24.0 },
@@ -1356,8 +1575,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank3[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 30,
+      SOUND_SHOOT
+    },
+    {
+      30,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1367,8 +1588,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank3[5] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1378,8 +1601,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank3[5] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       15,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1389,8 +1614,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank3[5] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1,
-      NO_SOUND },
-    { 30,
+      NO_SOUND
+    },
+    {
+      30,
       15,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1400,12 +1627,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank3[5] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* MarisaA Rank 4 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank4[5] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, -8.0 },
       { 12.0, 24.0 },
@@ -1415,8 +1644,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank4[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 15,
+      SOUND_SHOOT
+    },
+    {
+      15,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1426,8 +1657,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank4[5] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1437,8 +1670,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank4[5] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       15,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1448,8 +1683,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank4[5] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       15,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1459,12 +1696,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank4[5] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* MarisaA Rank 5 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank5[5] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, -8.0 },
       { 12.0, 24.0 },
@@ -1474,8 +1713,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank5[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 15,
+      SOUND_SHOOT
+    },
+    {
+      15,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1485,8 +1726,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank5[5] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1496,8 +1739,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank5[5] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       20,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1507,8 +1752,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank5[5] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       20,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1518,12 +1765,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank5[5] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* MarisaA Rank 6 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank6[6] = {
-    { 5,
+    {
+      5,
       0,
       { -8.0, -8.0 },
       { 12.0, 24.0 },
@@ -1533,8 +1782,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank6[6] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 8.0, -8.0 },
       { 12.0, 24.0 },
@@ -1544,8 +1795,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank6[6] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1555,8 +1808,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank6[6] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1566,8 +1821,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank6[6] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       5,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1577,8 +1834,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank6[6] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       5,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1588,12 +1847,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank6[6] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* MarisaA Rank 7 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank7[6] = {
-    { 5,
+    {
+      5,
       0,
       { -8.0, -8.0 },
       { 12.0, 24.0 },
@@ -1603,8 +1864,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank7[6] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 8.0, -8.0 },
       { 12.0, 24.0 },
@@ -1614,8 +1877,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank7[6] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1625,8 +1890,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank7[6] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1636,8 +1903,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank7[6] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       5,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1647,8 +1916,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank7[6] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       5,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1658,12 +1929,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank7[6] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* MarisaA Rank 8 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank8[9] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1674,7 +1947,8 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank8[9] = {
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
       SOUND_SHOOT },
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1685,7 +1959,8 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank8[9] = {
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
       NO_SOUND },
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1696,7 +1971,8 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank8[9] = {
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
       NO_SOUND },
-    { 10,
+    {
+      10,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1707,7 +1983,8 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank8[9] = {
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3,
       NO_SOUND },
-    { 10,
+    {
+      10,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1717,8 +1994,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank8[9] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       5,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1728,8 +2007,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank8[9] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       5,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1739,8 +2020,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank8[9] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1750,8 +2033,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank8[9] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3,
-      NO_SOUND },
-    { 15,
+      NO_SOUND
+    },
+    {
+      15,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1761,12 +2046,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank8[9] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* MarisaA Rank 9 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank9[9] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1776,8 +2063,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank9[9] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1787,8 +2076,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank9[9] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1798,8 +2089,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank9[9] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1809,8 +2102,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank9[9] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_4,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1820,8 +2115,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank9[9] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_4,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       5,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1831,8 +2128,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank9[9] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_4,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       5,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1842,8 +2141,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank9[9] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_4,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1853,8 +2154,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank9[9] = {
       1,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_4,
-      NO_SOUND },
-    { 10,
+      NO_SOUND
+    },
+    {
+      10,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -1864,7 +2167,8 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank9[9] = {
       2,
       BULLET_TYPE_2,
       ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_4,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 CharacterPowerData g_CharacterPowerDataMarisaA[9] = {
@@ -1883,7 +2187,8 @@ CharacterPowerData g_CharacterPowerDataMarisaA[9] = {
 
 /* MarisaB Rank 1 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank1[1] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, -8.0 },
       { 12.0, 24.0 },
@@ -1893,12 +2198,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank1[1] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
+      SOUND_SHOOT
+    },
 };
 
 /* MarisaB Rank 2 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank2[3] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, -8.0 },
       { 12.0, 24.0 },
@@ -1908,8 +2215,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank2[3] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 120,
+      SOUND_SHOOT
+    },
+    {
+      120,
       0,
       { 0.0, 0.0 },
       { 10.0, 480.0 },
@@ -1919,8 +2228,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank2[3] = {
       1,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_1,
-      NO_SOUND },
-    { 120,
+      NO_SOUND
+    },
+    {
+      120,
       1,
       { 0.0, 0.0 },
       { 10.0, 480.0 },
@@ -1930,12 +2241,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank2[3] = {
       2,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_1,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* MarisaB Rank 3 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank3[3] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, -8.0 },
       { 12.0, 24.0 },
@@ -1945,8 +2258,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank3[3] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 170,
+      SOUND_SHOOT
+    },
+    {
+      170,
       0,
       { 0.0, 0.0 },
       { 10.0, 480.0 },
@@ -1956,8 +2271,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank3[3] = {
       1,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_1,
-      NO_SOUND },
-    { 170,
+      NO_SOUND
+    },
+    {
+      170,
       1,
       { 0.0, 0.0 },
       { 10.0, 480.0 },
@@ -1967,12 +2284,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank3[3] = {
       2,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_1,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* MarisaB Rank 4 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank4[4] = {
-    { 5,
+    {
+      5,
       0,
       { -8.0, -8.0 },
       { 12.0, 24.0 },
@@ -1982,8 +2301,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank4[4] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 8.0, -8.0 },
       { 12.0, 24.0 },
@@ -1993,8 +2314,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank4[4] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 200,
+      NO_SOUND
+    },
+    {
+      200,
       0,
       { 0.0, 0.0 },
       { 10.0, 480.0 },
@@ -2004,8 +2327,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank4[4] = {
       1,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_1,
-      NO_SOUND },
-    { 200,
+      NO_SOUND
+    },
+    {
+      200,
       1,
       { 0.0, 0.0 },
       { 10.0, 480.0 },
@@ -2015,12 +2340,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank4[4] = {
       2,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_1,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* MarisaB Rank 5 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank5[4] = {
-    { 5,
+    {
+      5,
       0,
       { -8.0, -8.0 },
       { 12.0, 24.0 },
@@ -2030,8 +2357,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank5[4] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 8.0, -8.0 },
       { 12.0, 24.0 },
@@ -2041,7 +2370,8 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank5[4] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
+      NO_SOUND
+    },
     { 210,
       0,
       { 0.0, 0.0 },
@@ -2052,8 +2382,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank5[4] = {
       1,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_2,
-      NO_SOUND },
-    { 210,
+      NO_SOUND
+    },
+    {
+      210,
       1,
       { 0.0, 0.0 },
       { 10.0, 480.0 },
@@ -2063,12 +2395,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank5[4] = {
       2,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_2,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* MarisaB Rank 6 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank6[4] = {
-    { 5,
+    {
+      5,
       0,
       { -8.0, -8.0 },
       { 12.0, 24.0 },
@@ -2078,8 +2412,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank6[4] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 8.0, -8.0 },
       { 12.0, 24.0 },
@@ -2089,8 +2425,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank6[4] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 230,
+      NO_SOUND
+    },
+    {
+      230,
       0,
       { 0.0, 0.0 },
       { 15.0, 480.0 },
@@ -2100,8 +2438,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank6[4] = {
       1,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_2,
-      NO_SOUND },
-    { 230,
+      NO_SOUND
+    },
+    {
+      230,
       1,
       { 0.0, 0.0 },
       { 15.0, 480.0 },
@@ -2111,12 +2451,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank6[4] = {
       2,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_2,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* MarisaB Rank 7 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank7[5] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -2126,8 +2468,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank7[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -2137,8 +2481,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank7[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -2148,8 +2494,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank7[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 250,
+      NO_SOUND
+    },
+    {
+      250,
       0,
       { 0.0, 0.0 },
       { 15.0, 480.0 },
@@ -2159,8 +2507,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank7[5] = {
       1,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_2,
-      NO_SOUND },
-    { 250,
+      NO_SOUND
+    },
+    {
+      250,
       1,
       { 0.0, 0.0 },
       { 15.0, 480.0 },
@@ -2170,12 +2520,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank7[5] = {
       2,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_2,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* MarisaB Rank 8 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank8[5] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -2185,8 +2537,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank8[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -2196,8 +2550,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank8[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -2207,8 +2563,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank8[5] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 270,
+      NO_SOUND
+    },
+    {
+      270,
       0,
       { 0.0, 0.0 },
       { 20.0, 480.0 },
@@ -2218,8 +2576,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank8[5] = {
       1,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_3,
-      NO_SOUND },
-    { 270,
+      NO_SOUND
+    },
+    {
+      270,
       1,
       { 0.0, 0.0 },
       { 20.0, 480.0 },
@@ -2229,12 +2589,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank8[5] = {
       2,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_3,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 /* MarisaB Rank 9 */
 CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank9[7] = {
-    { 5,
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -2244,8 +2606,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank9[7] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      SOUND_SHOOT },
-    { 5,
+      SOUND_SHOOT
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -2255,8 +2619,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank9[7] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -2266,8 +2632,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank9[7] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -2277,8 +2645,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank9[7] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 5,
+      NO_SOUND
+    },
+    {
+      5,
       0,
       { 0.0, 0.0 },
       { 12.0, 12.0 },
@@ -2288,8 +2658,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank9[7] = {
       0,
       BULLET_TYPE_0,
       ANM_SCRIPT_PLAYER_BULLET,
-      NO_SOUND },
-    { 330,
+      NO_SOUND
+    },
+    {
+      330,
       0,
       { 0.0, 0.0 },
       { 20.0, 480.0 },
@@ -2299,8 +2671,10 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank9[7] = {
       1,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_3,
-      NO_SOUND },
-    { 330,
+      NO_SOUND
+    },
+    {
+      330,
       1,
       { 0.0, 0.0 },
       { 20.0, 480.0 },
@@ -2310,7 +2684,8 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank9[7] = {
       2,
       BULLET_TYPE_LASER,
       ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_3,
-      NO_SOUND },
+      NO_SOUND
+    },
 };
 
 CharacterPowerData g_CharacterPowerDataMarisaB[9] = {

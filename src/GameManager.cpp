@@ -30,13 +30,13 @@ u32 g_ExtraLivesScores[5] = {
 
 const char *g_EclFiles[9] = {
     "dummy",
-    "data/ecldata1.ecl.txt",
-    "data/ecldata2.ecl.txt",
-    "data/ecldata3.ecl.txt",
-    "data/ecldata4.ecl.txt",
-    "data/ecldata5.ecl.txt",
-    "data/ecldata6.ecl.txt",
-    "data/ecldata7.ecl.txt",
+    "data/ecldata1.ecl",
+    "data/ecldata2.ecl",
+    "data/ecldata3.ecl",
+    "data/ecldata4.ecl",
+    "data/ecldata5.ecl",
+    "data/ecldata6.ecl",
+    "data/ecldata7.ecl",
     NULL
 };
 

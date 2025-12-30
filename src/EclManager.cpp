@@ -50,15 +50,22 @@ ExInsn g_EclExInsn[17] = {
     EnemyEclInstr::ExInsStageXFunc16
 };
 
+#define TRUTH_FFI_INTEGRATION
+
 bool EclManager::Load(const char *eclPath) {
     i32 idx;
 
-    char *output_path = strdup(eclPath);
-    output_path[strlen(output_path) - 4] = '\0';
+#ifdef TRUTH_FFI_INTEGRATION
+    size_t len = strlen(eclPath);
+    char *raw_path = (char*)malloc(len + 4 + 1); // .txt + \0
+    if (!raw_path) return false;
+    memcpy(raw_path, eclPath, len);
+    memcpy(raw_path + len, ".txt", 5);
 
-    truth_compile_ecl("6", eclPath, output_path, "th06.eclm");
+    truth_compile_ecl("6", raw_path, eclPath, "th06.eclm");
+#endif
 
-    this->eclFile = (EclRawHeader *)FileSystem::OpenPath(output_path);
+    this->eclFile = (EclRawHeader *)FileSystem::OpenPath(eclPath);
 
     if (this->eclFile == NULL) {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_ECLMANAGER_ENEMY_DATA_CORRUPT);

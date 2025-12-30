@@ -29,13 +29,8 @@ merge_from_list() {
         [[ "$line" =~ ^alpha:\ (.*) ]] && alpha="${BASH_REMATCH[1]}"
 
         if [[ -n "$color" && -n "$alpha" ]]; then
-            # echo "Merging:"
-            # echo "  Color: $color"
-            # echo "  Alpha: $alpha"
-
             out="${color%.png}_merged.png"
 
-            # Safe merge (no background bleed, consistent)
             magick "$color" -alpha off "$alpha" -compose CopyOpacity -composite "$out"
 
             mv "$out" "$color"
@@ -65,12 +60,17 @@ if [ -z "$GAME_LOCATION" ]; then
     exit 1
 fi
 
-# Check for the existence of the get_anm_texture_names script
 if [ ! -x "$INVOCATION_LOCATION/scripts/get_anm_texture_names" ]; then
     echo "Error: get_anm_texture_names script not found or not executable! Attempting to compile it now.."
 
+    CC=clang
+
+    if [ -z "$CC" ]; then
+        CC=gcc
+    fi
+
     cd "$INVOCATION_LOCATION/scripts"
-    clang get_anm_texture_names.cpp -o get_anm_texture_names
+    $CC get_anm_texture_names.cpp -o get_anm_texture_names
     cd "$INVOCATION_LOCATION"
 
     if [ ! -x "$INVOCATION_LOCATION/scripts/get_anm_texture_names" ]; then

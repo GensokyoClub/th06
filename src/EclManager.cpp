@@ -50,8 +50,6 @@ ExInsn g_EclExInsn[17] = {
     EnemyEclInstr::ExInsStageXFunc16
 };
 
-#define TRUTH_FFI_INTEGRATION
-
 bool EclManager::Load(const char *eclPath) {
     i32 idx;
 

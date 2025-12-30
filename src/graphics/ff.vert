@@ -8,16 +8,22 @@ uniform mat4 modelviewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 textureMatrix;
 
-varying vec2 interpTexCoords;
-varying vec4 interpDiffuse;
-varying float viewZ;
+uniform float fogNear;
+uniform float fogFar;
 
-void main() {
+varying mediump vec2 interpTexCoords;
+varying lowp vec4 interpDiffuse;
+varying mediump float fogCoeff;
+
+void main()
+{
     interpTexCoords = (textureMatrix * vec4(texCoords, 1.0, 1.0)).xy;
     interpDiffuse = diffuse;
 
-    vec4 viewCoordinates = modelviewMatrix * vec4(position, 1.0);
-    viewZ = viewCoordinates.z;
+    vec4 viewPos = modelviewMatrix * vec4(position, 1.0);
 
-    gl_Position = projectionMatrix * viewCoordinates;
+    fogCoeff = (fogFar - viewPos.z) / (fogFar - fogNear);
+    fogCoeff = clamp(fogCoeff, 0.0, 1.0);
+
+    gl_Position = projectionMatrix * viewPos;
 }

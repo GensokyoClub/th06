@@ -248,3 +248,56 @@ project "th06"
     symbols "Off"
 
   filter {}
+
+project "th06_config"
+  language "C++"
+  cppdialect "C++20"
+  kind "WindowedApp"
+
+  targetdir "."
+  objdir "obj/config/%{cfg.buildcfg}/"
+
+  files {
+    "src/Config/config.cpp",
+  }
+
+  includedirs { "src" }
+
+  filter "toolset:gcc or toolset:clang"
+    buildoptions {
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-fdiagnostics-absolute-paths",
+      "-Wno-unused-parameter"
+    }
+  filter {}
+
+  filter "system:linux"
+    local sdl2_cflags = os.outputof("sdl2-config --cflags") or ""
+    local sdl2_libs   = os.outputof("sdl2-config --libs")   or ""
+
+    if #sdl2_cflags > 0 then buildoptions { sdl2_cflags } end
+    if #sdl2_libs   > 0 then linkoptions  { sdl2_libs }   end
+
+    links {
+      "SDL2_ttf",
+      "SDL2_image",
+      "m"
+    }
+  filter {}
+
+  filter "system:windows"
+    links { "SDL2", "SDL2main", "SDL2_ttf", "SDL2_image" }
+  filter {}
+
+  filter "configurations:Debug"
+    defines { "DEBUG" }
+    targetname "config_debug"
+    symbols "On"
+    optimize "Off"
+
+  filter "configurations:Release"
+    defines { "NDEBUG" }
+    targetname "config"
+    optimize "Speed"

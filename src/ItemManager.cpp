@@ -393,4 +393,3 @@ void ItemManager::OnDraw()
     }
     return;
 }
-

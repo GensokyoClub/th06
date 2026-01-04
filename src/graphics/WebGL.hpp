@@ -19,11 +19,11 @@ enum GlShaderUniform
     UNIFORMS_COUNT
 };
 
-struct WebGL : GfxInterface 
+struct WebGL : GfxInterface
 {
     static void SetContextFlags();
     static GfxInterface *Create();
-    
+
     bool Init();
 
     virtual void SetFogRange(f32 nearPlane, f32 farPlane);
@@ -35,11 +35,10 @@ struct WebGL : GfxInterface
     virtual void SetTransformMatrix(TransformMatrix type, ZunMatrix &matrix);
     virtual void Draw();
 
-private:
+  private:
     GLuint fragmentShaderHandle;
     GLuint vertexShaderHandle;
     GLuint programHandle;
 
     GLint uniforms[UNIFORMS_COUNT];
 };
-

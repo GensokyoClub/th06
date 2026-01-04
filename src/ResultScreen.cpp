@@ -21,7 +21,6 @@
 #include <cstring>
 #include <ctime>
 
-
 f32 g_DifficultyWeightsList[5] = {-30.0f, -10.0f, 20.0f, 30.0f, 30.0f};
 
 u32 g_DefaultMagic = 'DMYS';
@@ -2179,4 +2178,3 @@ ZunResult ResultScreen::DeletedCallback(ResultScreen *resultScreen)
 
     return ZUN_SUCCESS;
 }
-

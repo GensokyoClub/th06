@@ -7,7 +7,6 @@
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-
 enum ParticleEffects
 {
     PARTICLE_EFFECT_UNK_0,

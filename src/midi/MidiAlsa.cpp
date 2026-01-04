@@ -17,7 +17,7 @@ MidiDevice::~MidiDevice()
 
 bool MidiDevice::OpenDevice(u32 uDeviceId)
 {
-    (void) uDeviceId;
+    (void)uDeviceId;
 
     this->Reset();
 
@@ -35,25 +35,24 @@ bool MidiDevice::OpenDevice(u32 uDeviceId)
 
     if (this->sourcePort < 0)
     {
-        this->sourcePort = snd_seq_create_simple_port(this->sequencer, "TH06 MIDI Out",
-            SND_SEQ_PORT_CAP_WRITE, SND_SEQ_PORT_TYPE_MIDI_GENERIC);
-        
+        this->sourcePort = snd_seq_create_simple_port(this->sequencer, "TH06 MIDI Out", SND_SEQ_PORT_CAP_WRITE,
+                                                      SND_SEQ_PORT_TYPE_MIDI_GENERIC);
+
         if (this->sourcePort < 0)
         {
             goto fail;
         }
     }
 
-    if(!this->GetDestPort())
+    if (!this->GetDestPort())
     {
         goto fail;
     }
 
     // Failing to open a connection here isn't necessarily a failure, but may cause issues
     //   with playback for certain clients. We still treat it as a success, in case the
-    //   client we're outputting to can work without a connection without issues. 
-    this->hasConnection = 
-        snd_seq_connect_to(this->sequencer, this->sourcePort, this->destClient, this->destPort) == 0;
+    //   client we're outputting to can work without a connection without issues.
+    this->hasConnection = snd_seq_connect_to(this->sequencer, this->sourcePort, this->destClient, this->destPort) == 0;
 
     this->encoderBufferSize = 1024;
 
@@ -184,7 +183,7 @@ bool MidiDevice::GetDestPort()
             this->destPort = snd_seq_port_info_get_port(portInfo);
 
             utils::DebugPrint2("Playing midi on address %i:%i (%s : %s)", this->destClient, this->destPort,
-                snd_seq_client_info_get_name(clientInfo), snd_seq_port_info_get_name(portInfo));
+                               snd_seq_client_info_get_name(clientInfo), snd_seq_port_info_get_name(portInfo));
 
             return true;
         }
@@ -192,4 +191,3 @@ bool MidiDevice::GetDestPort()
 
     return false;
 }
-

@@ -9,7 +9,6 @@
 #include <cstdlib>
 #include <cstring>
 
-
 ZunResult MusicRoom::CheckInputEnable()
 {
     if (this->waitFramesCount >= 8)

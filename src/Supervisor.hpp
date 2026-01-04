@@ -1,9 +1,5 @@
 #pragma once
 
-// #include <d3d8.h>
-// #include <d3dx8math.h>
-// #include <dinput.h>
-
 #include <SDL2/SDL_gamecontroller.h>
 #include <SDL2/SDL_video.h>
 

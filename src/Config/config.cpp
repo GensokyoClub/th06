@@ -10,56 +10,13 @@
 #include <utility>
 #include <vector>
 
+#include "../Supervisor.hpp"
 #include "../inttypes.hpp"
 #include "Widgets.hpp"
 
-#define GAME_VERSION 0x102
-
 constexpr SDL_Color kBackgroundColor{43, 43, 43, 255};
 
-enum GameConfigOptsShifts {
-    GCOS_USE_D3D_HW_TEXTURE_BLENDING = 0x0,
-    GCOS_DONT_USE_VERTEX_BUF        = 0x1,
-    GCOS_FORCE_16BIT_COLOR_MODE     = 0x2,
-    GCOS_CLEAR_BACKBUFFER_ON_REFRESH= 0x3,
-    GCOS_DISPLAY_MINIMUM_GRAPHICS   = 0x4,
-    GCOS_SUPPRESS_USE_OF_GOROUD_SHADING = 0x5,
-    GCOS_TURN_OFF_DEPTH_TEST        = 0x6,
-    GCOS_FORCE_60FPS                = 0x7,
-    GCOS_NO_COLOR_COMP              = 0x8,
-    GCOS_REFERENCE_RASTERIZER_MODE  = 0x9,
-    GCOS_DONT_USE_FOG               = 0xa,
-    GCOS_NO_DIRECTINPUT_PAD         = 0xb,
-};
 
-struct ControllerMapping {
-    i16 shootButton;
-    i16 bombButton;
-    i16 focusButton;
-    i16 menuButton;
-    i16 upButton;
-    i16 downButton;
-    i16 leftButton;
-    i16 rightButton;
-    i16 skipButton;
-};
-
-struct GameConfiguration {
-    ControllerMapping controllerMapping;
-    i32 version;
-    u8 lifeCount;
-    u8 bombCount;
-    u8 colorMode16bit;
-    u8 musicMode;
-    u8 playSounds;
-    u8 defaultDifficulty;
-    u8 windowed;
-    u8 frameskipConfig;
-    i16 padXAxis;
-    i16 padYAxis;
-    i8 unk[16];
-    u32 opts;
-};
 
 namespace FileSystem {
 unsigned char* OpenPath(const char *filepath) {

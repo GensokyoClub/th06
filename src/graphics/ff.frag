@@ -63,10 +63,18 @@ void main()
     fragColor.rgb = mix(fogColor.rgb, fragColor.rgb, fogCoefficient);
 #endif
 
+#ifndef USE_FRAG_DEPTH
     if (fragColor.a < alphaThreshold)
     {
         discard;
     }
+#else
+    if (fragColor.a < alphaThreshold)
+    {
+        fragColor.a = 0.0;
+        gl_FragDepthEXT = 1.0;
+    }
+#endif
 
     gl_FragColor = fragColor;
 }

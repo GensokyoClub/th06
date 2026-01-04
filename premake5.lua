@@ -259,6 +259,7 @@ project "th06_config"
 
   files {
     "src/Config/config.cpp",
+    "src/Config/Widgets.cpp",
   }
 
   includedirs { "src" }
@@ -266,8 +267,6 @@ project "th06_config"
   filter "toolset:gcc or toolset:clang"
     buildoptions {
       "-Wall",
-      "-Wextra",
-      "-Wpedantic",
       "-fdiagnostics-absolute-paths",
       "-Wno-unused-parameter"
     }

@@ -209,13 +209,12 @@ project "th06_config"
 
     links {
       "SDL2_ttf",
-      "SDL2_image",
       "m"
     }
   filter {}
 
   filter "system:windows"
-    links { "SDL2", "SDL2main", "SDL2_ttf", "SDL2_image" }
+    links { "SDL2", "SDL2main", "SDL2_ttf" }
   filter {}
 
   filter "configurations:Debug"

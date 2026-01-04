@@ -16,7 +16,7 @@ ItemManager::ItemManager() {
 
 };
 
-void ItemManager::SpawnItem(ZunVec3 *position, ItemType itemType, int state)
+void ItemManager::SpawnItem(ZunVec3 *position, ItemType itemType, i32 state)
 {
     Item *item;
     i32 idx;

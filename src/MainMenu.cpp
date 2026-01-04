@@ -955,8 +955,8 @@ void MainMenu::SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, bool 
     }
 }
 
-void MainMenu::DrawMenuItem(AnmVm *vm, int itemNumber, int cursor, ZunColor currentItemColor, ZunColor otherItemColor,
-                            int vm_amount)
+void MainMenu::DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor, ZunColor currentItemColor, ZunColor otherItemColor,
+                            i32 vm_amount)
 {
     ZunVec3 otherItemPos;
     ZunVec3 currentItemPos;

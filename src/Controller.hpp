@@ -39,8 +39,8 @@ u16 GetJoystickCaps(void);
 u32 SetButtonFromControllerInputs(u16 *outButtons, i16 controllerButtonToTest, enum TouhouButton touhouButton,
                                   SDL_GameController *controller);
 
-unsigned int SetButtonFromDirectInputJoystate(u16 *outButtons, i16 controllerButtonToTest,
-                                              enum TouhouButton touhouButton, u8 *inputButtons);
+u32 SetButtonFromDirectInputJoystate(u16 *outButtons, i16 controllerButtonToTest, enum TouhouButton touhouButton,
+                                     u8 *inputButtons);
 
 u16 GetControllerInput(u16 buttons);
 u8 *GetControllerState();

@@ -45,4 +45,3 @@ struct MusicRoom
     AnmVm titleSprites[32];
     AnmVm descriptionSprites[16];
 };
-

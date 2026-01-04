@@ -1,6 +1,6 @@
 #include "MidiDefault.hpp"
-#include "i18n.hpp"
 #include "GameErrorContext.hpp"
+#include "i18n.hpp"
 
 MidiDevice::MidiDevice()
 {
@@ -13,9 +13,9 @@ MidiDevice::~MidiDevice()
 
 bool MidiDevice::OpenDevice(u32 uDeviceId)
 {
-    (void) uDeviceId;
+    (void)uDeviceId;
 
-    if(!printedWarning)
+    if (!printedWarning)
     {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_NO_MIDI_SUPPORT);
         printedWarning = true;
@@ -38,4 +38,3 @@ bool MidiDevice::SendShortMsg(u8 midiStatus, u8 firstByte, u8 secondByte)
 {
     return true;
 }
-

@@ -95,7 +95,6 @@ struct MidiOutput
     void ClearTracks();
     ZunResult ReadFileData(u32 idx, char *path);
     void ReleaseFileData(u32 idx);
-    void ParseFile(u32 idx);
     void ProcessMsg(MidiTrack *track);
 
     ZunResult ParseFile(i32 idx);

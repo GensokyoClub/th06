@@ -529,4 +529,3 @@ void MidiOutput::FadeOutSetVolume(i32 volume)
         this->midiOutDev.SendShortMsg(MIDI_OPCODE_MODE_CHANGE | idx, 7, volumeClamped);
     }
 }
-

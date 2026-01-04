@@ -1,9 +1,9 @@
 #pragma once
 
-#include <cstddef>
-#include "inttypes.hpp"
 #include "ZunColor.hpp"
 #include "ZunMath.hpp"
+#include "inttypes.hpp"
+#include <cstddef>
 
 enum DepthFunc
 {
@@ -46,7 +46,7 @@ enum TransformMatrix
     MATRIX_TEXTURE
 };
 
-struct GfxInterface 
+struct GfxInterface
 {
     virtual void SetFogRange(f32 nearPlane, f32 farPlane) = 0;
     virtual void SetFogColor(ZunColor color) = 0;

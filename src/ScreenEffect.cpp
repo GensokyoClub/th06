@@ -9,7 +9,6 @@
 #include <SDL2/SDL_video.h>
 #include <cstring>
 
-
 void ScreenEffect::Clear(ZunColor color)
 {
     f32 a = (color >> 24) / 255.0f;

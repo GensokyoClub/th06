@@ -111,4 +111,3 @@ void GLFuncTable::glDepthRangef(GLclampf near_val, GLclampf far_val)
         this->glDepthRange(near_val, far_val);
     }
 }
-

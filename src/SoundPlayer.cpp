@@ -17,7 +17,6 @@
 //   loop points that would be accurate to the sample like EoSD needs. So instead we get to read WAVs and
 //   mix everything by hand. Yay
 
-
 #define BACKGROUND_MUSIC_WAV_NUM_CHANNELS 2
 #define BACKGROUND_MUSIC_WAV_SAMPLE_RATE 44100
 #define BACKGROUND_MUSIC_WAV_BITS_PER_SAMPLE 16

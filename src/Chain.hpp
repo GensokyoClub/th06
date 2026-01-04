@@ -3,7 +3,6 @@
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-
 enum ChainCallbackResult
 {
     CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB = (unsigned int)0,

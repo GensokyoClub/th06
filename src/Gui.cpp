@@ -1429,4 +1429,3 @@ void Gui::CutChain()
     g_Chain.Cut(&g_GuiDrawChain);
     return;
 }
-

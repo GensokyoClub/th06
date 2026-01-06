@@ -530,7 +530,12 @@ bool AnmManager::CreateEmptyTexture(i32 textureIdx, u32 width, u32 height, i32 t
 
 bool AnmManager::LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset) {
     this->ReleaseAnm(anmIdx);
-    this->anmFiles[anmIdx] = (AnmRawEntry *)FileSystem::OpenPath(path);
+    #ifdef TRUTH_FFI_INTEGRATION
+        this->truthBuffers[anmIdx] = truth_compile_anm("6", path, "th06.anmm");
+        this->anmFiles[anmIdx] = (AnmRawEntry *)this->truthBuffers[anmIdx].data;
+    #else
+        this->anmFiles[anmIdx] = (AnmRawEntry *)FileSystem::OpenPath(path);
+    #endif
 
     AnmRawEntry *anm = this->anmFiles[anmIdx];
 
@@ -619,8 +624,12 @@ void AnmManager::ReleaseAnm(i32 anmIdx) {
         this->anmFilesSpriteIndexOffsets[anmIdx] = 0;
         AnmRawEntry *entry = this->anmFiles[anmIdx];
         this->ReleaseTexture(entry->textureIdx);
-        AnmRawEntry *anmFilePtr = this->anmFiles[anmIdx];
-        free(anmFilePtr);
+        #ifdef TRUTH_FFI_INTEGRATION
+                truth_buffer_free(this->truthBuffers[anmIdx]);
+                this->truthBuffers[anmIdx] = {};
+        #else
+                free(this->anmFiles[anmIdx]);
+        #endif
         this->anmFiles[anmIdx] = 0;
         this->currentBlendMode = 0xff;
         this->currentTextureHandle = 0;

@@ -14,6 +14,12 @@ typedef struct {
     int diff_switches;
 } DecompileOptionsC;
 
+typedef struct {
+    unsigned char* data;
+    size_t len;
+    size_t capacity;
+} TruthBuffer;
+
 /**
  * Get the last error message.
  * Returns a null-terminated string, or NULL if no error.
@@ -22,14 +28,28 @@ typedef struct {
 const char* truth_get_error(void);
 
 /**
- * Compile an ECL script.
+ * Release memory owned by a TruthBuffer previously returned by this API.
+ * Passing a buffer with NULL data is a no-op.
+ */
+void truth_buffer_free(TruthBuffer buffer);
+
+/**
+ * Compile an ANM file into an in-memory buffer.
+ * @param game_str The game identifier, e.g. "th10"
+ * @param input_path Path to the input ANM file
+ * @param mapfile_path Path to the mapfile
+ * @return A TruthBuffer containing the compiled data, or an empty buffer on error (check truth_get_error()). Free with truth_buffer_free().
+ */
+TruthBuffer truth_compile_anm(const char* game_str, const char* input_path, const char *mapfile_path);
+
+/**
+ * Compile an ECL script into an in-memory buffer.
  * @param game_str The game identifier, e.g. "th10"
  * @param input_path Path to the input script file
- * @param output_path Path to the output ECL file
  * @param mapfile_path Path to the mapfile
- * @return 0 on success, 1 on error (check truth_get_error())
+ * @return A TruthBuffer containing the compiled data, or an empty buffer on error (check truth_get_error()). Free with truth_buffer_free().
  */
-int truth_compile_ecl(const char* game_str, const char* input_path, const char* output_path, const char *mapfile_path);
+TruthBuffer truth_compile_ecl(const char* game_str, const char* input_path, const char *mapfile_path);
 
 /**
  * Decompile an ECL file.

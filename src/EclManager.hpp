@@ -6,6 +6,10 @@
 #include "ZunMath.hpp"
 #include "inttypes.hpp"
 
+#ifdef TRUTH_FFI_INTEGRATION
+#include "thirdparty/truth.h"
+#endif
+
 // Forward declaration to avoid include loop.
 struct Enemy;
 struct EnemyEclContext;
@@ -447,6 +451,9 @@ struct EclManager {
     bool RunEcl(Enemy *enemy);
     bool CallEclSub(EnemyEclContext *enemyEcl, i16 subId);
 
+#ifdef TRUTH_FFI_INTEGRATION
+    TruthBuffer truthBuffer;
+#endif
     EclRawHeader *eclFile;
     EclTimelineInstr *timelinePtrs[3];
     EclRawInstr **subTable;

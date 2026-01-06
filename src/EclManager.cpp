@@ -14,10 +14,6 @@
 #include "utils.hpp"
 #include <cstdlib>
 
-#ifdef TRUTH_FFI_INTEGRATION
-#include "thirdparty/truth.h"
-#endif
-
 i32 g_SpellcardScore[64] = {
     200000, 200000, 200000, 200000, 200000, 200000, 200000, 250000,
     250000, 250000, 250000, 250000, 250000, 250000, 300000, 300000,
@@ -56,16 +52,11 @@ bool EclManager::Load(const char *eclPath) {
     i32 idx;
 
 #ifdef TRUTH_FFI_INTEGRATION
-    size_t len = strlen(eclPath);
-    char *raw_path = (char*)malloc(len + 4 + 1); // .txt + \0
-    if (!raw_path) return false;
-    memcpy(raw_path, eclPath, len);
-    memcpy(raw_path + len, ".txt", 5);
-
-    truth_compile_ecl("6", raw_path, eclPath, "th06.eclm");
-#endif
-
+    this->truthBuffer = truth_compile_ecl("6", eclPath, "th06.eclm");
+    this->eclFile = (EclRawHeader *)this->truthBuffer.data;
+#else
     this->eclFile = (EclRawHeader *)FileSystem::OpenPath(eclPath);
+#endif
 
     if (this->eclFile == NULL) {
         GameErrorContext::Log(&g_GameErrorContext, TH_ERR_ECLMANAGER_ENEMY_DATA_CORRUPT);
@@ -87,8 +78,14 @@ bool EclManager::Load(const char *eclPath) {
 void EclManager::Unload() {
     EclRawHeader *file;
 
-    free(this->eclFile);
-    this->eclFile = NULL;
+    #ifdef TRUTH_FFI_INTEGRATION
+        truth_buffer_free(this->truthBuffer);
+        this->truthBuffer = {};
+        this->eclFile = NULL;
+    #else
+        free(this->eclFile);
+        this->eclFile = NULL;
+    #endif
 
     free(this->subTable);
     this->subTable = NULL;

@@ -14,6 +14,10 @@
 #include "graphics/GfxInterface.hpp"
 #include "inttypes.hpp"
 
+#ifdef TRUTH_FFI_INTEGRATION
+#include "thirdparty/truth.h"
+#endif
+
 #define TEX_FMT_UNKNOWN 0
 #define TEX_FMT_A8R8G8B8 1
 #define TEX_FMT_A1R5G5B5 2
@@ -384,6 +388,9 @@ struct AnmManager {
     i32 maybeLoadedSpriteCount;
     AnmRawInstr *scripts[2048];
     i32 spriteIndices[2048];
+#ifdef TRUTH_FFI_INTEGRATION
+    TruthBuffer truthBuffers[128]{};
+#endif
     AnmRawEntry *anmFiles[128];
     u32 anmFilesSpriteIndexOffsets[128];
     SDL_Surface *surfaces[32];

@@ -49,7 +49,7 @@ void main()
     fragColor.rgb = mix(fogColor.rgb, fragColor.rgb, fogCoeff);
 #endif
 
-    fragColor.a *= float((fragColor.a > alphaThreshold);
+    fragColor.a *= float(fragColor.a > alphaThreshold);
 
     gl_FragColor = fragColor;
 }

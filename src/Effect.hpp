@@ -13,6 +13,7 @@ enum EffectCallbackResult {
 struct Effect;
 
 typedef i32 (*EffectUpdateCallback)(Effect *);
+
 struct Effect {
     AnmVm vm;
     ZunVec3 pos1;

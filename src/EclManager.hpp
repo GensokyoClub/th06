@@ -61,15 +61,13 @@ struct EclTimelineInstr {
 };
 
 union EclRawInstrArg {
-    struct
-    {
+    struct {
         i8 a;
         i8 b;
         i8 c;
         i8 d;
     } by;
-    struct
-    {
+    struct {
         i16 lo;
         i16 hi;
     } sh;

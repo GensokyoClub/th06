@@ -1,7 +1,6 @@
 #include "ZunTimer.hpp"
 #include "Supervisor.hpp"
 
-
 void ZunTimer::Initialize()
 {
     this->current = 0;

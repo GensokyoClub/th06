@@ -5,7 +5,6 @@
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-
 #define TH6K_MAGIC 'K6HT'
 #define HSCR_MAGIC 'RCSH'
 #define CLRD_MAGIC 'DRLC'

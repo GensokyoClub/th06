@@ -161,7 +161,7 @@ i32 *GetVar(Enemy *enemy, EclVarId *eclVarId, EclValueType *valueType)
     case ECL_VAR_DIFFICULTY:
         if (valueType != NULL)
             *valueType = ECL_VALUE_TYPE_READONLY;
-        return (int *)&g_GameManager.difficulty;
+        return (i32 *)&g_GameManager.difficulty;
 
     case ECL_VAR_RANK:
         if (valueType != NULL)

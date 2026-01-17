@@ -10,7 +10,6 @@
 #include "Rng.hpp"
 #include "utils.hpp"
 
-
 #define ITEM_SPAWNS 3
 #define ITEM_TABLES 8
 

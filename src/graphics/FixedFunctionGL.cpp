@@ -88,9 +88,8 @@ void FixedFunctionGL::SetFogRange(f32 nearPlane, f32 farPlane)
 
 void FixedFunctionGL::SetFogColor(ZunColor color)
 {
-    GLfloat normalizedFogColor[4] = {
-        ((color >> 16) & 0xFF) / 255.0f, ((color >> 8) & 0xFF) / 255.0f,
-        (color & 0xFF) / 255.0f, ((color >> 24) & 0xFF) / 255.0f};
+    GLfloat normalizedFogColor[4] = {((color >> 16) & 0xFF) / 255.0f, ((color >> 8) & 0xFF) / 255.0f,
+                                     (color & 0xFF) / 255.0f, ((color >> 24) & 0xFF) / 255.0f};
 
     g_glFuncTable.glFogfv(GL_FOG_COLOR, normalizedFogColor);
 }
@@ -146,22 +145,21 @@ void FixedFunctionGL::SetAttributePointer(VertexAttributeArrays attr, std::size_
 void FixedFunctionGL::SetColorOp(TextureOpComponent component, ColorOp op)
 {
     const GLenum opEnums[3] = {GL_MODULATE, GL_ADD, GL_REPLACE};
-    
+
     if (component > COMPONENT_ALPHA || op > COLOR_OP_REPLACE)
     {
         return;
     }
 
     GLenum componentEnum = component == COMPONENT_ALPHA ? GL_COMBINE_ALPHA : GL_COMBINE_RGB;
-    
+
     g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, componentEnum, opEnums[op]);
 }
 
 void FixedFunctionGL::SetTextureFactor(ZunColor factor)
 {
-    GLfloat tfactorColor[4] = {
-        ((factor >> 16) & 0xFF) / 255.0f, ((factor >> 8) & 0xFF) / 255.0f,
-        (factor & 0xFF) / 255.0f, ((factor >> 24) & 0xFF) / 255.0f};
+    GLfloat tfactorColor[4] = {((factor >> 16) & 0xFF) / 255.0f, ((factor >> 8) & 0xFF) / 255.0f,
+                               (factor & 0xFF) / 255.0f, ((factor >> 24) & 0xFF) / 255.0f};
 
     g_glFuncTable.glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, tfactorColor);
 }
@@ -172,10 +170,9 @@ void FixedFunctionGL::SetTransformMatrix(TransformMatrix type, ZunMatrix &matrix
     GLenum matrixEnum[4] = {GL_MODELVIEW, GL_MODELVIEW, GL_PROJECTION, GL_TEXTURE};
 
     g_glFuncTable.glMatrixMode(matrixEnum[type]);
-    g_glFuncTable.glLoadMatrixf((GLfloat *) &matrix);
+    g_glFuncTable.glLoadMatrixf((GLfloat *)&matrix);
 }
 
 void FixedFunctionGL::Draw()
 {
-
 }

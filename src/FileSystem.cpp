@@ -3,13 +3,13 @@
 #include <cstring>
 
 #ifdef _WIN32
-    #include <direct.h>
-    #include <new>
-    #include <windows.h>
+#include <direct.h>
+#include <new>
+#include <windows.h>
 #elif __cplusplus >= 201703L
-    #include <filesystem>
+#include <filesystem>
 #else // Assume POSIX
-    #include <sys/stat.h>
+#include <sys/stat.h>
 #endif
 
 #include "FileSystem.hpp"

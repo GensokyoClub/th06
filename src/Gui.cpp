@@ -292,6 +292,43 @@ ZunResult Gui::ActualAddedCallback()
             }
             break;
         }
+        switch (g_GameManager.character2)
+        {
+        case CHARA_REIMU:
+            if (g_AnmManager->LoadAnm(ANM_FILE_FACE_CHARA_A2, "data/face00a.anm", ANM_OFFSET_FACE_CHARA_A2) !=
+                ZUN_SUCCESS)
+            {
+                return ZUN_ERROR;
+            }
+            if (g_AnmManager->LoadAnm(ANM_FILE_FACE_CHARA_B2, "data/face00b.anm", ANM_OFFSET_FACE_CHARA_B2) !=
+                ZUN_SUCCESS)
+            {
+                return ZUN_ERROR;
+            }
+            if (g_AnmManager->LoadAnm(ANM_FILE_FACE_CHARA_C2, "data/face00c.anm", ANM_OFFSET_FACE_CHARA_C2) !=
+                ZUN_SUCCESS)
+            {
+                return ZUN_ERROR;
+            }
+            break;
+        case CHARA_MARISA:
+            if (g_AnmManager->LoadAnm(ANM_FILE_FACE_CHARA_A2, "data/face01a.anm", ANM_OFFSET_FACE_CHARA_A2) !=
+                ZUN_SUCCESS)
+            {
+                return ZUN_ERROR;
+            }
+            if (g_AnmManager->LoadAnm(ANM_FILE_FACE_CHARA_B2, "data/face01b.anm", ANM_OFFSET_FACE_CHARA_B2) !=
+                ZUN_SUCCESS)
+            {
+                return ZUN_ERROR;
+            }
+            if (g_AnmManager->LoadAnm(ANM_FILE_FACE_CHARA_C2, "data/face01c.anm", ANM_OFFSET_FACE_CHARA_C2) !=
+                ZUN_SUCCESS)
+            {
+                return ZUN_ERROR;
+            }
+            break;
+        }
     }
     else
     {

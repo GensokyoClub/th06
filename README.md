@@ -1,4 +1,4 @@
-# 東方紅魔郷　～ the Embodiment of Scarlet Devil
+# 東方紅魔郷　～ the Embodiment of Scarlet Devil [Multiplayer]
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="resources/progress_dark.svg">
@@ -10,7 +10,17 @@
 [discord]: https://discord.gg/VyGwAjrh9a
 [discord-badge]: https://img.shields.io/discord/1147558514840064030?color=%237289DA&logo=discord&logoColor=%23FFFFFF
 
-This project aims to perfectly reconstruct the source code of [Touhou Koumakyou ~ the Embodiment of Scarlet Devil 1.02h](https://en.touhouwiki.net/wiki/Embodiment_of_Scarlet_Devil) by Team Shanghai Alice.
+This project aims to make multiplayer from reconstructed source code of [Touhou Koumakyou ~ the Embodiment of Scarlet Devil 1.02h](https://en.touhouwiki.net/wiki/Embodiment_of_Scarlet_Devil) by Team Shanghai Alice.
+
+## Targets
+
+-2 player controls (done)<br>
+-different character (done)<br>
+-replay (done)<br>
+-provoke enemy by player (done)<br>
+-player 2 custom shot type (todo)<br>
+-netplay (todo)<br>
+-new demo gameplay (todo)<br>
 
 ## Installation
 

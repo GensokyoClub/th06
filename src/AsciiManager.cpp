@@ -406,7 +406,7 @@ i32 StageMenu::OnUpdateGameMenu()
         this->numFrames = 0;
         this->menuBackground.pendingInterrupt = 1;
     }
-    if (WAS_PRESSED(TH_BUTTON_Q))
+    if (WAS_PRESSED(TH_BUTTON_BOMB2))
     {
         this->curState = GAME_MENU_QUIT_SELECTED_YES;
         for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites); vmIdx++)

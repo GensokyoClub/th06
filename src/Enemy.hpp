@@ -40,6 +40,7 @@ struct EnemyBulletShooter
     u16 aimMode;
     u16 unk_4a;
     u32 flags;
+    u8 provokedPlayer;
     SoundIdx sfx;
 };
 ZUN_ASSERT_SIZE(EnemyBulletShooter, 0x54);
@@ -70,6 +71,7 @@ struct EnemyLaserShooter
     u16 type;
     u32 flags;
     u32 unk_50;
+    u8 provokedPlayer;
 };
 ZUN_ASSERT_SIZE(EnemyLaserShooter, 0x54);
 
@@ -253,6 +255,7 @@ struct Enemy
     i32 timerCallbackSub;
     f32 exInsFunc6Angle;
     ZunTimer exInsFunc6Timer;
+    u8 provokedPlayer;
 };
 ZUN_ASSERT_SIZE(Enemy, 0xec8);
 }; // namespace th06

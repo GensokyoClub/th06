@@ -34,7 +34,14 @@ void BombData::BombReimuACalc(Player *player)
     }
     if (player->bombInfo.timer.HasTicked() && player->bombInfo.timer == 0)
     {
-        g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT, TH_REIMU_A_BOMB_NAME);
+        if (player->playerType == 1)
+        {
+            g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT, TH_REIMU_A_BOMB_NAME);
+        }
+        else
+        {
+            g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT2, TH_REIMU_A_BOMB_NAME);
+        }
         player->bombInfo.duration = 300;
         player->invulnerabilityTimer.SetCurrent(360);
 
@@ -71,7 +78,14 @@ void BombData::BombReimuACalc(Player *player)
 
             for (bombSprite = &player->bombInfo.sprites[0][i * 4], bombIdx = 0; bombIdx < 4; bombIdx++, bombSprite++)
             {
-                g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_REIMU_A_BOMB_ARRAY + bombIdx);
+                if (player->playerType == 1)
+                {
+                    g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_REIMU_A_BOMB_ARRAY + bombIdx);
+                }
+                else
+                {
+                    g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_REIMU_A_BOMB_ARRAY2 + bombIdx);
+                }
             }
             g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB_REIMU_A, 0);
         }
@@ -267,14 +281,28 @@ void BombData::BombReimuBCalc(Player *player)
     if (player->bombInfo.timer.HasTicked() && player->bombInfo.timer == 0)
     {
         g_ItemManager.RemoveAllItems();
-        g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT, TH_REIMU_B_BOMB_NAME);
+        if (player->playerType == 1)
+        {
+            g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT, TH_REIMU_B_BOMB_NAME);
+        }
+        else
+        {
+            g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT2, TH_REIMU_B_BOMB_NAME);
+        }
         player->bombInfo.duration = 140;
         player->invulnerabilityTimer.SetCurrent(200);
         bombSprite = player->bombInfo.sprites[0];
 
         for (i = 0; i < 4; i++, bombSprite++)
         {
-            g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_REIMU_B_BOMB_ARRAY + i);
+            if (player->playerType == 1)
+            {
+                g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_REIMU_B_BOMB_ARRAY + i);
+            }
+            else
+            {
+                g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_REIMU_B_BOMB_ARRAY2 + i);
+            }
         }
 
         g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB_REIMARI, 0);
@@ -367,14 +395,28 @@ void BombData::BombMarisaACalc(Player *player)
     if (player->bombInfo.timer.HasTicked() && player->bombInfo.timer == 0)
     {
         g_ItemManager.RemoveAllItems();
-        g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT, TH_MARISA_A_BOMB_NAME);
+        if (player->playerType == 1)
+        {
+            g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT, TH_MARISA_A_BOMB_NAME);
+        }
+        else
+        {
+            g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT2, TH_MARISA_A_BOMB_NAME);
+        }
         player->bombInfo.duration = 250;
         player->invulnerabilityTimer.SetCurrent(300);
 
         starSprite = player->bombInfo.sprites[0];
         for (i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.sprites); i++, starSprite++)
         {
-            g_AnmManager->ExecuteAnmIdx(starSprite, ANM_SCRIPT_PLAYER_MARISA_A_BLUE_STAR + i % 3);
+            if (player->playerType == 1)
+            {
+                g_AnmManager->ExecuteAnmIdx(starSprite, ANM_SCRIPT_PLAYER_MARISA_A_BLUE_STAR + i % 3);
+            }
+            else
+            {
+                g_AnmManager->ExecuteAnmIdx(starSprite, ANM_SCRIPT_PLAYER_MARISA_A_BLUE_STAR2 + i % 3);
+            }
             player->bombInfo.bombRegionPositions[i] = player->positionCenter;
 
             starAngle = i * ZUN_2PI / 8.0f;
@@ -478,13 +520,27 @@ void BombData::BombMarisaBCalc(Player *player)
     if (player->bombInfo.timer.HasTicked() && player->bombInfo.timer == 0)
     {
         g_ItemManager.RemoveAllItems();
-        g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT, TH_MARISA_B_BOMB_NAME);
+        if (player->playerType == 1)
+        {
+            g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT, TH_MARISA_B_BOMB_NAME);
+        }
+        else
+        {
+            g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT2, TH_MARISA_B_BOMB_NAME);
+        }
         player->bombInfo.duration = 300;
         player->invulnerabilityTimer.SetCurrent(360);
         bombSprite = player->bombInfo.sprites[0];
         for (i = 0; i < 4; i++, bombSprite++)
         {
-            g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_MARISA_B_MASTER_SPARK + i);
+            if (player->playerType == 1)
+            {
+                g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_MARISA_B_MASTER_SPARK + i);
+            }
+            else
+            {
+                g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_MARISA_B_MASTER_SPARK2 + i);
+            }
             player->bombInfo.bombRegionPositions[i] = player->positionCenter;
         }
         g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB_MARISA_B, 0);

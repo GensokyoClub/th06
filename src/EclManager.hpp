@@ -492,6 +492,7 @@ struct EclManager
     void Unload();
     ZunResult RunEcl(Enemy *enemy);
     ZunResult CallEclSub(EnemyEclContext *enemyEcl, i16 subId);
+    f32 AngleProvokedPlayer(D3DXVECTOR3 *pos, u8 playerType);
 
     EclRawHeader *eclFile;
     EclRawInstr **subTable;

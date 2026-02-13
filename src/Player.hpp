@@ -196,6 +196,7 @@ struct Player
 
     f32 AngleFromPlayer(D3DXVECTOR3 *pos);
     f32 AngleToPlayer(D3DXVECTOR3 *pos);
+    f32 RangeToPlayer(D3DXVECTOR3 *pos);
     i32 CheckGraze(D3DXVECTOR3 *center, D3DXVECTOR3 *size);
     i32 CalcKillBoxCollision(D3DXVECTOR3 *bulletCenter, D3DXVECTOR3 *bulletSize);
     i32 CalcLaserHitbox(D3DXVECTOR3 *laserCenter, D3DXVECTOR3 *laserSize, D3DXVECTOR3 *rotation, f32 angle,
@@ -227,6 +228,7 @@ struct Player
     i32 respawnTimer;
     i32 bulletGracePeriod;
     i8 playerState;
+    i8 playerType;
     u8 unk_9e1;
     i8 orbState;
     i8 isFocus;
@@ -258,4 +260,5 @@ struct Player
 ZUN_ASSERT_SIZE(Player, 0x98f0);
 
 DIFFABLE_EXTERN(Player, g_Player);
+DIFFABLE_EXTERN(Player, g_Player2);
 }; // namespace th06

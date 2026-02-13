@@ -1,6 +1,6 @@
 #pragma once
 
-#define TH_LANG TH_JP
+#define TH_LANG TH_EN
 
 // JP
 #define TH_JP_CONFIG_FILE "東方紅魔郷.cfg"
@@ -188,12 +188,12 @@
 
 #define TH_EN_UNKNOWN_SPELLCARD "??????"
 
-#define TH_EN_CM_DAT_FILE "KOUMAKYO_CM.dat"
-#define TH_EN_ED_DAT_FILE "KOUMAKYO_ED.dat"
-#define TH_EN_IN_DAT_FILE "KOUMAKYO_IN.dat"
-#define TH_EN_MD_DAT_FILE "KOUMAKYO_MD.dat"
-#define TH_EN_ST_DAT_FILE "KOUMAKYO_ST.dat"
-#define TH_EN_TL_DAT_FILE "KOUMAKYO_TL.dat"
+#define TH_EN_CM_DAT_FILE "TOLOL_CM.dat"
+#define TH_EN_ED_DAT_FILE "TOLOL_ED.dat"
+#define TH_EN_IN_DAT_FILE "TOLOL_IN.dat"
+#define TH_EN_MD_DAT_FILE "TOLOL_MD.dat"
+#define TH_EN_ST_DAT_FILE "TOLOL_ST.dat"
+#define TH_EN_TL_DAT_FILE "TOLOL_TL.dat"
 #define TH_CONCAT_HELPER(x, y) x##y
 
 #define TH_MAKE_LANG_STR(lang, id) TH_CONCAT_HELPER(lang, id)

@@ -31,6 +31,7 @@ struct ReplayData
     char magic[4];
     u16 version;
     u8 shottypeChara;
+    u8 shottypeChara2;
     u8 difficulty;
     i32 checksum;
     u8 rngValue1;

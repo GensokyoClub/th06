@@ -576,6 +576,14 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
                 }
             }
             g_GameManager.character = menu->cursor;
+            if (g_GameManager.character == 0)
+            {
+                g_GameManager.character2 = 1;
+            }
+            if (g_GameManager.character == 1)
+            {
+                g_GameManager.character2 = 0;
+            }
             if (g_GameManager.difficulty < 4)
             {
                 menu->cursor = g_GameManager.shotType;
@@ -667,6 +675,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
             vmList->pendingInterrupt = 0;
             g_SoundPlayer.PlaySoundByIdx(SOUND_BACK, 0);
             g_GameManager.shotType = menu->cursor;
+            g_GameManager.shotType2 = menu->cursor;
             menu->cursor = g_GameManager.character;
             vmList = &menu->vm[86];
             for (i = 0; i < 2; i++, vmList += 2)
@@ -682,6 +691,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
         else if (WAS_PRESSED(TH_BUTTON_SELECTMENU))
         {
             g_GameManager.shotType = menu->cursor;
+            g_GameManager.shotType2 = menu->cursor;
             if (g_GameManager.isInPracticeMode == 0)
             {
                 if (g_GameManager.difficulty < 4)
@@ -1059,7 +1069,7 @@ ZunBool MainMenu::WeirdSecondInputCheck()
         return true;
     }
 
-    if (!WAS_PRESSED_WEIRD(TH_BUTTON_SELECTMENU | TH_BUTTON_BOMB | TH_BUTTON_MENU | TH_BUTTON_Q | TH_BUTTON_S))
+    if (!WAS_PRESSED_WEIRD(TH_BUTTON_SELECTMENU | TH_BUTTON_BOMB | TH_BUTTON_MENU))
     {
         return true;
     }
@@ -1238,7 +1248,7 @@ ZunResult MainMenu::DrawStartMenu(void)
                 break;
             }
         }
-        if (WAS_PRESSED(TH_BUTTON_Q))
+        if (WAS_PRESSED(TH_BUTTON_BOMB2))
         {
             this->gameState = STATE_QUIT;
             this->stateTimer = 0;
@@ -1443,7 +1453,16 @@ i32 MainMenu::ReplayHandling()
             strcpy(g_GameManager.replayFile, this->replayFilePaths[this->chosenReplay]);
             g_GameManager.difficulty = (Difficulty)this->currentReplay->difficulty;
             g_GameManager.character = this->currentReplay->shottypeChara / 2;
+            if (g_GameManager.character == 1)
+            {
+                g_GameManager.character2 = 0;
+            }
+            else
+            {
+                g_GameManager.character2 = 1;
+            }
             g_GameManager.shotType = this->currentReplay->shottypeChara % 2;
+            g_GameManager.shotType2 = this->currentReplay->shottypeChara % 2;
             cur = 0;
             while (this->currentReplay->stageReplayData[cur] == NULL)
             {

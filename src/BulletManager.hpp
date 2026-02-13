@@ -62,6 +62,7 @@ struct Bullet
     u16 unk_5c0;
     u8 unk_5c2;
     u8 isGrazed;
+    u8 provokedPlayer;
 };
 ZUN_ASSERT_SIZE(Bullet, 0x5c4);
 
@@ -86,6 +87,7 @@ struct Laser
     u16 flags;
     i16 color;
     u8 state;
+    u8 provokedPlayer;
 };
 ZUN_ASSERT_SIZE(Laser, 0x270);
 
@@ -108,6 +110,7 @@ struct BulletManager
     void TurnAllBulletsIntoPoints();
 
     i32 DespawnBullets(i32 maxBonusScore, ZunBool awardPoints);
+    f32 AngleProvokedPlayer(D3DXVECTOR3 *pos, u8 playerType);
     ZunResult SpawnBulletPattern(EnemyBulletShooter *bulletProps);
     Laser *SpawnLaserPattern(EnemyLaserShooter *bulletProps);
     u32 SpawnSingleBullet(EnemyBulletShooter *bulletProps, i32 bulletIdx1, i32 bulletIdx2, f32 angle);

@@ -1551,7 +1551,7 @@ ChainCallbackResult ResultScreen::OnUpdate(ResultScreen *resultScreen)
 
             if (resultScreen->cheatCodeStep < 5)
             {
-                if (WAS_PRESSED(TH_BUTTON_HOME))
+                if (WAS_PRESSED(TH_BUTTON_DOWN2))
                 {
                     resultScreen->cheatCodeStep++;
                 }
@@ -1562,7 +1562,7 @@ ChainCallbackResult ResultScreen::OnUpdate(ResultScreen *resultScreen)
             }
             else if (resultScreen->cheatCodeStep < 7)
             {
-                if (WAS_PRESSED(TH_BUTTON_Q))
+                if (WAS_PRESSED(TH_BUTTON_DOWN2))
                 {
 
                     resultScreen->cheatCodeStep++;
@@ -1574,7 +1574,7 @@ ChainCallbackResult ResultScreen::OnUpdate(ResultScreen *resultScreen)
             }
             else if (resultScreen->cheatCodeStep < 10)
             {
-                if (WAS_PRESSED(TH_BUTTON_S))
+                if (WAS_PRESSED(TH_BUTTON_DOWN2))
                 {
                     resultScreen->cheatCodeStep++;
                 }

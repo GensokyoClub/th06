@@ -173,6 +173,7 @@ u32 BulletManager::SpawnSingleBullet(EnemyBulletShooter *bulletProps, i32 bullet
     bullet->speed = bulletSpeed;
     bullet->angle = utils::AddNormalizeAngle(bulletAngle, 0.0f);
     bullet->pos = bulletProps->position;
+    bullet->provokedPlayer = bulletProps->provokedPlayer;
     bullet->pos.z = 0.1f;
     sincosmul(&bullet->velocity, bullet->angle, bulletSpeed);
     bullet->exFlags = bulletProps->flags;
@@ -531,12 +532,21 @@ i32 BulletManager::DespawnBullets(i32 maxBonusScore, ZunBool awardPoints)
     return totalBonusScore;
 }
 
+f32 BulletManager::AngleProvokedPlayer(D3DXVECTOR3 *pos, u8 playerType)
+{
+    if (playerType == 2)
+    {
+        return g_Player2.AngleToPlayer(pos);
+    }
+    return g_Player.AngleToPlayer(pos);
+}
+
 ZunResult BulletManager::SpawnBulletPattern(EnemyBulletShooter *bulletProps)
 {
     i32 idx1, idx2;
     f32 angle;
 
-    angle = g_Player.AngleToPlayer(&bulletProps->position);
+    angle = this->AngleProvokedPlayer(&bulletProps->position, bulletProps->provokedPlayer);
     for (idx1 = 0; idx1 < bulletProps->count2; idx1++)
     {
         for (idx2 = 0; idx2 < bulletProps->count1; idx2++)
@@ -578,13 +588,14 @@ Laser *BulletManager::SpawnLaserPattern(EnemyLaserShooter *bulletProps)
 
         laser->vm1.flags.blendMode = AnmVmBlendMode_One;
         laser->pos = bulletProps->position;
+        laser->provokedPlayer = bulletProps->provokedPlayer;
         laser->color = bulletProps->spriteOffset;
         laser->inUse = true;
         laser->angle = bulletProps->angle;
 
         if (bulletProps->type == 0)
         {
-            laser->angle += g_Player.AngleToPlayer(&bulletProps->position);
+            laser->angle += this->AngleProvokedPlayer(&bulletProps->position, bulletProps->provokedPlayer);
         }
 
         laser->flags = bulletProps->flags;
@@ -813,8 +824,15 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                         {
                             curBullet->exFlags &= ~0x80;
                         }
+                        if (curBullet->provokedPlayer == 2)
+                        {
+                            curBullet->angle = g_Player2.AngleToPlayer(&curBullet->pos);
+                        }
+                        else
+                        {
+                            curBullet->angle = g_Player.AngleToPlayer(&curBullet->pos);
+                        }
 
-                        curBullet->angle = g_Player.AngleToPlayer(&curBullet->pos) + curBullet->dirChangeRotation;
                         curBullet->speed = curBullet->dirChangeSpeed;
                         bulletSpeed = curBullet->speed;
                     }
@@ -916,22 +934,38 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
 
             if (curBullet->isGrazed == 0)
             {
-                grazeState = g_Player.CheckGraze(&curBullet->pos, &curBullet->sprites.grazeSize);
+                {
+                    grazeState = g_Player.CheckGraze(&curBullet->pos, &curBullet->sprites.grazeSize);
 
-                if (grazeState == 1)
-                {
-                    curBullet->isGrazed = 1;
-                    goto bulletGrazed;
+                    if (grazeState == 1)
+                    {
+                        curBullet->isGrazed = 1;
+                        goto bulletGrazed;
+                    }
+                    else if (grazeState == 2)
+                    {
+                        curBullet->state = 5;
+                        g_ItemManager.SpawnItem(&curBullet->pos, ITEM_POINT_BULLET, 1);
+                    }
                 }
-                else if (grazeState == 2)
                 {
-                    curBullet->state = 5;
-                    g_ItemManager.SpawnItem(&curBullet->pos, ITEM_POINT_BULLET, 1);
+                    grazeState = g_Player2.CheckGraze(&curBullet->pos, &curBullet->sprites.grazeSize);
+
+                    if (grazeState == 1)
+                    {
+                        curBullet->isGrazed = 1;
+                        goto bulletGrazed;
+                    }
+                    else if (grazeState == 2)
+                    {
+                        curBullet->state = 5;
+                        g_ItemManager.SpawnItem(&curBullet->pos, ITEM_POINT_BULLET, 1);
+                    }
                 }
             }
             else if (curBullet->isGrazed == 1)
             {
-            bulletGrazed:
+            bulletGrazed: {
                 grazeState = g_Player.CalcKillBoxCollision(&curBullet->pos, &curBullet->sprites.grazeSize);
                 if (grazeState != 0)
                 {
@@ -939,6 +973,18 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                     if (grazeState == 2)
                     {
                         g_ItemManager.SpawnItem(&curBullet->pos, ITEM_POINT_BULLET, 1);
+                    }
+                }
+            }
+                {
+                    grazeState = g_Player2.CalcKillBoxCollision(&curBullet->pos, &curBullet->sprites.grazeSize);
+                    if (grazeState != 0)
+                    {
+                        curBullet->state = 5;
+                        if (grazeState == 2)
+                        {
+                            g_ItemManager.SpawnItem(&curBullet->pos, ITEM_POINT_BULLET, 1);
+                        }
                     }
                 }
             }
@@ -1022,6 +1068,8 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
             {
                 g_Player.CalcLaserHitbox(&laserCenter, &laserSize, &curLaser->pos, curLaser->angle,
                                          curLaser->timer.AsFrames() % 12 == 0);
+                g_Player2.CalcLaserHitbox(&laserCenter, &laserSize, &curLaser->pos, curLaser->angle,
+                                          curLaser->timer.AsFrames() % 12 == 0);
             }
 
             if ((ZunBool)(curLaser->timer.current < curLaser->startTime))
@@ -1034,6 +1082,8 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
         case 1:
             g_Player.CalcLaserHitbox(&laserCenter, &laserSize, &curLaser->pos, curLaser->angle,
                                      curLaser->timer.AsFrames() % 12 == 0);
+            g_Player2.CalcLaserHitbox(&laserCenter, &laserSize, &curLaser->pos, curLaser->angle,
+                                      curLaser->timer.AsFrames() % 12 == 0);
 
             if ((ZunBool)(curLaser->timer.current < curLaser->duration))
             {
@@ -1079,6 +1129,8 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
             {
                 g_Player.CalcLaserHitbox(&laserCenter, &laserSize, &curLaser->pos, curLaser->angle,
                                          curLaser->timer.AsFrames() % 12 == 0);
+                g_Player2.CalcLaserHitbox(&laserCenter, &laserSize, &curLaser->pos, curLaser->angle,
+                                          curLaser->timer.AsFrames() % 12 == 0);
             }
 
             if ((ZunBool)(curLaser->timer.current < curLaser->despawnDuration))

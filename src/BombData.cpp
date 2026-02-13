@@ -34,9 +34,12 @@ void BombData::BombReimuACalc(Player *player)
     }
     if (player->bombInfo.timer.HasTicked() && player->bombInfo.timer == 0)
     {
-        if(player->playerType==1){
+        if (player->playerType == 1)
+        {
             g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT, TH_REIMU_A_BOMB_NAME);
-        }else{
+        }
+        else
+        {
             g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT2, TH_REIMU_A_BOMB_NAME);
         }
         player->bombInfo.duration = 300;
@@ -75,9 +78,12 @@ void BombData::BombReimuACalc(Player *player)
 
             for (bombSprite = &player->bombInfo.sprites[0][i * 4], bombIdx = 0; bombIdx < 4; bombIdx++, bombSprite++)
             {
-                if(player->playerType==1){
+                if (player->playerType == 1)
+                {
                     g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_REIMU_A_BOMB_ARRAY + bombIdx);
-                }else{
+                }
+                else
+                {
                     g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_REIMU_A_BOMB_ARRAY2 + bombIdx);
                 }
             }
@@ -275,9 +281,12 @@ void BombData::BombReimuBCalc(Player *player)
     if (player->bombInfo.timer.HasTicked() && player->bombInfo.timer == 0)
     {
         g_ItemManager.RemoveAllItems();
-        if(player->playerType==1){
+        if (player->playerType == 1)
+        {
             g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT, TH_REIMU_B_BOMB_NAME);
-        }else{
+        }
+        else
+        {
             g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT2, TH_REIMU_B_BOMB_NAME);
         }
         player->bombInfo.duration = 140;
@@ -286,9 +295,12 @@ void BombData::BombReimuBCalc(Player *player)
 
         for (i = 0; i < 4; i++, bombSprite++)
         {
-            if(player->playerType==1){
+            if (player->playerType == 1)
+            {
                 g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_REIMU_B_BOMB_ARRAY + i);
-            }else{
+            }
+            else
+            {
                 g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_REIMU_B_BOMB_ARRAY2 + i);
             }
         }
@@ -383,9 +395,12 @@ void BombData::BombMarisaACalc(Player *player)
     if (player->bombInfo.timer.HasTicked() && player->bombInfo.timer == 0)
     {
         g_ItemManager.RemoveAllItems();
-        if(player->playerType==1){
+        if (player->playerType == 1)
+        {
             g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT, TH_MARISA_A_BOMB_NAME);
-        }else{
+        }
+        else
+        {
             g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT2, TH_MARISA_A_BOMB_NAME);
         }
         player->bombInfo.duration = 250;
@@ -394,9 +409,12 @@ void BombData::BombMarisaACalc(Player *player)
         starSprite = player->bombInfo.sprites[0];
         for (i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.sprites); i++, starSprite++)
         {
-            if(player->playerType==1){
+            if (player->playerType == 1)
+            {
                 g_AnmManager->ExecuteAnmIdx(starSprite, ANM_SCRIPT_PLAYER_MARISA_A_BLUE_STAR + i % 3);
-            }else{
+            }
+            else
+            {
                 g_AnmManager->ExecuteAnmIdx(starSprite, ANM_SCRIPT_PLAYER_MARISA_A_BLUE_STAR2 + i % 3);
             }
             player->bombInfo.bombRegionPositions[i] = player->positionCenter;
@@ -502,9 +520,12 @@ void BombData::BombMarisaBCalc(Player *player)
     if (player->bombInfo.timer.HasTicked() && player->bombInfo.timer == 0)
     {
         g_ItemManager.RemoveAllItems();
-        if(player->playerType==1){
+        if (player->playerType == 1)
+        {
             g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT, TH_MARISA_B_BOMB_NAME);
-        }else{
+        }
+        else
+        {
             g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT2, TH_MARISA_B_BOMB_NAME);
         }
         player->bombInfo.duration = 300;
@@ -512,9 +533,12 @@ void BombData::BombMarisaBCalc(Player *player)
         bombSprite = player->bombInfo.sprites[0];
         for (i = 0; i < 4; i++, bombSprite++)
         {
-            if(player->playerType==1){
+            if (player->playerType == 1)
+            {
                 g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_MARISA_B_MASTER_SPARK + i);
-            }else{
+            }
+            else
+            {
                 g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_MARISA_B_MASTER_SPARK2 + i);
             }
             player->bombInfo.bombRegionPositions[i] = player->positionCenter;

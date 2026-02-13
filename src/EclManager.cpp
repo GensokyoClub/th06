@@ -78,12 +78,12 @@ ZunResult EclManager::CallEclSub(EnemyEclContext *ctx, i16 subId)
 
 f32 EclManager::AngleProvokedPlayer(D3DXVECTOR3 *pos, u8 playerType)
 {
-    if(playerType==2){
+    if (playerType == 2)
+    {
         return g_Player2.AngleToPlayer(pos);
     }
     return g_Player.AngleToPlayer(pos);
 }
-
 
 #pragma var_order(local_8, local_14, local_18, args, instruction, local_24, local_28, local_2c, local_30, local_34,    \
                   local_38, local_3c, local_40, local_44, local_48, local_4c, local_50, local_54, local_58, local_5c,  \
@@ -125,11 +125,14 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
             }
 
             args = &instruction->args;
-            if(enemy->provokedPlayer==0){
-                if(g_Player.RangeToPlayer(&enemy->position) > g_Player2.RangeToPlayer(&enemy->position)){
-                    enemy->provokedPlayer=2;
-                }{
-                    enemy->provokedPlayer=1;
+            if (enemy->provokedPlayer == 0)
+            {
+                if (g_Player.RangeToPlayer(&enemy->position) > g_Player2.RangeToPlayer(&enemy->position))
+                {
+                    enemy->provokedPlayer = 2;
+                }
+                {
+                    enemy->provokedPlayer = 1;
                 }
             }
 
@@ -350,7 +353,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                 break;
             case ECL_OPCODE_MOVEATPLAYER:
                 local_8 = instruction->args.move.pos;
-                enemy->angle = this->AngleProvokedPlayer(&enemy->position,enemy->provokedPlayer) + local_8.x;
+                enemy->angle = this->AngleProvokedPlayer(&enemy->position, enemy->provokedPlayer) + local_8.x;
                 enemy->speed = *EnemyEclInstr::GetVarFloat(enemy, &local_8.y, NULL);
                 enemy->flags.unk1 = 1;
                 break;
@@ -508,7 +511,8 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                 if (enemy->lasers[instruction->args.laserOp.laserIdx] != NULL)
                 {
                     enemy->lasers[instruction->args.laserOp.laserIdx]->angle =
-                        this->AngleProvokedPlayer(&enemy->lasers[instruction->args.laserOp.laserIdx]->pos,enemy->provokedPlayer) +
+                        this->AngleProvokedPlayer(&enemy->lasers[instruction->args.laserOp.laserIdx]->pos,
+                                                  enemy->provokedPlayer) +
                         *EnemyEclInstr::GetVarFloat(enemy, &instruction->args.laserOp.arg1.x, NULL);
                 }
                 break;

@@ -576,10 +576,12 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
                 }
             }
             g_GameManager.character = menu->cursor;
-            if(g_GameManager.character==0){
+            if (g_GameManager.character == 0)
+            {
                 g_GameManager.character2 = 1;
             }
-            if(g_GameManager.character==1){
+            if (g_GameManager.character == 1)
+            {
                 g_GameManager.character2 = 0;
             }
             if (g_GameManager.difficulty < 4)
@@ -1451,9 +1453,12 @@ i32 MainMenu::ReplayHandling()
             strcpy(g_GameManager.replayFile, this->replayFilePaths[this->chosenReplay]);
             g_GameManager.difficulty = (Difficulty)this->currentReplay->difficulty;
             g_GameManager.character = this->currentReplay->shottypeChara / 2;
-            if(g_GameManager.character==1){
+            if (g_GameManager.character == 1)
+            {
                 g_GameManager.character2 = 0;
-            }else{
+            }
+            else
+            {
                 g_GameManager.character2 = 1;
             }
             g_GameManager.shotType = this->currentReplay->shottypeChara % 2;

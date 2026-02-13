@@ -602,15 +602,17 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
             if (curEnemy->flags.unk6 != 0)
             {
                 damage = g_Player.CalcDamageToEnemy(&curEnemy->position, &curEnemy->hitboxDimensions, &local_8);
-                if(damage>0){
-                    curEnemy->provokedPlayer=1;
+                if (damage > 0)
+                {
+                    curEnemy->provokedPlayer = 1;
                 }
                 damage2 = g_Player2.CalcDamageToEnemy(&curEnemy->position, &curEnemy->hitboxDimensions, &local_8);
-                if(damage2>0){
-                    curEnemy->provokedPlayer=2;
+                if (damage2 > 0)
+                {
+                    curEnemy->provokedPlayer = 2;
                 }
 
-                damage+=damage2;
+                damage += damage2;
                 if (70 <= damage)
                 {
                     damage = 70;
@@ -647,7 +649,8 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
                 }
                 if (curEnemy->flags.unk10 != 0)
                 {
-                    if(curEnemy->flags.isBoss){
+                    if (curEnemy->flags.isBoss)
+                    {
                         damage *= 0.75;
                     }
                     curEnemy->life -= damage;

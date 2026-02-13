@@ -340,7 +340,7 @@ u16 Controller::GetInput(void)
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_MENU, VK_ESCAPE);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_SKIP, VK_CONTROL);
 
-        //Player 2
+        // Player 2
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP2, 'I');
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN2, 'K');
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_LEFT2, 'J');
@@ -348,7 +348,6 @@ u16 Controller::GetInput(void)
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_SHOOT2, 'F');
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_BOMB2, 'G');
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_FOCUS2, 'D');
-
     }
     else
     {
@@ -383,7 +382,7 @@ u16 Controller::GetInput(void)
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_SKIP, DIK_LCONTROL);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_SKIP, DIK_RCONTROL);
 
-        //Player 2
+        // Player 2
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP2, DIK_I);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN2, DIK_K);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_LEFT2, DIK_J);
@@ -391,7 +390,6 @@ u16 Controller::GetInput(void)
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_SHOOT2, DIK_F);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_BOMB2, DIK_G);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_FOCUS2, DIK_D);
-
     }
 
     return Controller::GetControllerInput(buttons);

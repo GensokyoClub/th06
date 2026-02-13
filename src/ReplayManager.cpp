@@ -133,7 +133,8 @@ ZunResult ReplayManager::RegisterChain(i32 isDemo, char *replayFile)
 }
 
 #define TH_BUTTON_REPLAY_CAPTURE                                                                                       \
-    (TH_BUTTON_SHOOT | TH_BUTTON_BOMB | TH_BUTTON_FOCUS | TH_BUTTON_SKIP | TH_BUTTON_DIRECTION | TH_BUTTON_SHOOT2 | TH_BUTTON_BOMB2 | TH_BUTTON_FOCUS2 | TH_BUTTON_DIRECTION2)
+    (TH_BUTTON_SHOOT | TH_BUTTON_BOMB | TH_BUTTON_FOCUS | TH_BUTTON_SKIP | TH_BUTTON_DIRECTION | TH_BUTTON_SHOOT2 |    \
+     TH_BUTTON_BOMB2 | TH_BUTTON_FOCUS2 | TH_BUTTON_DIRECTION2)
 
 ChainCallbackResult ReplayManager::OnUpdate(ReplayManager *mgr)
 {

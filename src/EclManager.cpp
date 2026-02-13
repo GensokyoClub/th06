@@ -125,6 +125,14 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
             }
 
             args = &instruction->args;
+            if(enemy->provokedPlayer==0){
+                if(g_Player.RangeToPlayer(&enemy->position) > g_Player2.RangeToPlayer(&enemy->position)){
+                    enemy->provokedPlayer=2;
+                }{
+                    enemy->provokedPlayer=1;
+                }
+            }
+
             switch (instruction->opCode)
             {
             case ECL_OPCODE_UNIMP:

@@ -108,12 +108,6 @@ Enemy *EnemyManager::SpawnEnemy(i32 eclSubId, D3DXVECTOR3 *pos, i16 life, i16 it
 
         newEnemy->position = *pos;
 
-        if(g_Player.RangeToPlayer(pos) > g_Player2.RangeToPlayer(pos)){
-            newEnemy->provokedPlayer=2;
-        }
-        newEnemy->provokedPlayer=1;
-
-
         g_EclManager.CallEclSub(&newEnemy->currentContext, eclSubId);
         g_EclManager.RunEcl(newEnemy);
         newEnemy->color = newEnemy->primaryVm.color;

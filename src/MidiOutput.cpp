@@ -230,7 +230,7 @@ ZunResult MidiOutput::ReadFileData(u32 idx, char *path)
 
     if (this->midiFileData[idx] == (byte *)0x0)
     {
-        g_GameErrorContext.Log(&g_GameErrorContext, TH_ERR_MIDI_FAILED_TO_READ_FILE, path);
+        g_GameErrorContext.Log(TH_ERR_MIDI_FAILED_TO_READ_FILE, path);
         return ZUN_ERROR;
     }
 

@@ -1258,7 +1258,8 @@ f32 Player::AngleToPlayer(D3DXVECTOR3 *pos)
 
 f32 Player::RangeToPlayer(D3DXVECTOR3 *pos)
 {
-    return sqrt(pow(pos->x - this->positionCenter.x, 2) + pow(pos->y - this->positionCenter.y, 2));
+    D3DXVECTOR3 vecToPlayer(pos->x - this->positionCenter.x, pos->y - this->positionCenter.y, 0.0f);
+    return D3DXVec3LengthSq(&vecToPlayer);
 }
 
 #pragma var_order(idx, curBulletIdx, curBullet, bulletResult)
@@ -1380,7 +1381,7 @@ FireBulletResult Player::FireSingleBullet(Player *player, PlayerBullet *bullet, 
         bullet->unk_140.InitializeForPopup();
 
         bullet->bulletType = bulletData->bulletType;
-        bullet->damage = bulletData->unk_1c;
+        bullet->damage = bulletData->damage;
         if (bulletData->bulletSoundIdx >= 0)
         {
             g_SoundPlayer.PlaySoundByIdx((SoundIdx)bulletData->bulletSoundIdx, 0);

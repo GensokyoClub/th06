@@ -149,7 +149,7 @@ struct CharacterPowerBulletData
     ZunVec2 size;
     f32 direction;
     f32 velocity;
-    u16 unk_1c;
+    u16 damage;
     u8 spawnPositionIdx;
     u8 bulletType;
     i16 anmFileIdx;

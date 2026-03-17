@@ -1,3 +1,4 @@
+#include "Connection.hpp"
 #include "Supervisor.hpp"
 #include "AnmManager.hpp"
 #include "AsciiManager.hpp"
@@ -21,6 +22,21 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <map>
+extern std::map<int,Bits<16> > g_ctrl_bits_self;
+extern std::map<int,Bits<16> > g_ctrl_bits_rcved;
+extern std::map<int,int> g_ctrl_rng_rcved;
+extern std::map<int,int> g_ctrl_rng_self;
+
+extern bool g_is_connected;
+extern bool g_is_sync;
+extern bool g_istry_to_reconnect;
+extern Host g_host;
+extern Guest g_guest;
+extern int g_delay;
+extern bool g_is_host;
+extern bool g_is_host_p1;
+extern bool g_is_single_mode;
 
 namespace th06
 {
@@ -40,7 +56,38 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
         g_SoundPlayer.backgroundMusic->UpdateFadeOut();
     }
     g_LastFrameInput = g_CurFrameInput;
-    g_CurFrameInput = Controller::GetInput();
+
+    if(g_is_single_mode)
+    {
+        g_CurFrameInput = Controller::GetInput();
+    }else{
+        D3DXVECTOR3 pos;
+        pos.x=0;
+        pos.y=0;
+        pos.z=0;
+        if(g_istry_to_reconnect)  {
+            g_AsciiManager.AddFormatText(&pos, "try to reconnect...");
+            Controller::SendKeys(s->calcCount);
+            if(Controller::RcvPacks())
+            {
+                g_Rng.seed = 0;
+                g_is_connected = true;
+                g_istry_to_reconnect = false;
+                s->calcCount = 0;
+                g_ctrl_bits_self.clear();
+                g_ctrl_bits_rcved.clear();
+                g_ctrl_rng_rcved.clear();
+                g_ctrl_rng_self.clear();
+            }
+        }else{
+            g_AsciiManager.AddFormatText(&pos, "%s %s(%d)",g_is_connected?"connected":"disconnected",g_is_sync?"sync":"desynced",s->calcCount);
+        }
+
+        bool is_in_UI = (s->curState != SUPERVISOR_STATE_GAMEMANAGER);
+        g_CurFrameInput = Controller::GetInput_Net(s->calcCount, is_in_UI);
+    }
+   
+
     g_IsEigthFrameOfHeldInput = 0;
     if (g_LastFrameInput == g_CurFrameInput)
     {
@@ -64,6 +111,12 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
 
     if (s->wantedState != s->curState)
     {
+        s->calcCount = 0;
+        g_ctrl_bits_self.clear();
+        g_ctrl_bits_rcved.clear();
+        g_ctrl_rng_rcved.clear();
+        g_ctrl_rng_self.clear();
+
         s->wantedState2 = s->wantedState;
         switch (s->wantedState)
         {
@@ -327,7 +380,8 @@ ZunResult Supervisor::AddedCallback(Supervisor *s)
 
     s->midiOutput = new MidiOutput();
 
-    g_Rng.Initialize(timeGetTime());
+    // g_Rng.Initialize(timeGetTime());
+    g_Rng.Initialize(0);
 
     g_SoundPlayer.InitSoundBuffers();
     if (g_AnmManager->LoadAnm(ANM_FILE_TEXT, "data/text.anm", ANM_OFFSET_TEXT) != 0)
@@ -688,6 +742,10 @@ ZunResult Supervisor::LoadConfig(char *path)
             g_Supervisor.cfg.opts |= (1 << GCOS_USE_D3D_HW_TEXTURE_BLENDING);
             g_GameErrorContext.Log(TH_ERR_CONFIG_CORRUPTED);
         }
+        g_Supervisor.cfg.lifeCount = 2;
+        g_Supervisor.cfg.bombCount = 3;
+        g_Supervisor.cfg.frameskipConfig = 0;
+        // force 2-3
         g_ControllerMapping = g_Supervisor.cfg.controllerMapping;
         free(data);
     }

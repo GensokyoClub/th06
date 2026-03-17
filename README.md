@@ -12,6 +12,43 @@
 
 This project aims to make multiplayer from reconstructed source code of [Touhou Koumakyou ~ the Embodiment of Scarlet Devil 1.02h](https://en.touhouwiki.net/wiki/Embodiment_of_Scarlet_Devil) by Team Shanghai Alice.
 
+## Targets 2
+-netplay (done?) <br>
+
+
+## NetPlay
+
+### 1. Host Side
+* Click **"as host"** directly.
+* Wait for the guest's response.
+
+### 2. Guest Side
+* Enter the Host's IP address.
+* Click **"as guest"**.
+* Wait for the connection to be established.
+
+---
+
+### Network & Port Settings
+* **General:** If you are not using NAT traversal (tunneling), you generally don't need to change the host port. If you do, ensure the guest's **host port** matches the host's **listen port**.
+* **NAT Traversal (Tunneling):**
+    * Select **UDP** as the tunnel type.
+    * **Host:** Set the mapping port in your tunneling software equal to the **listen port**.
+    * **Guest:** Set the **host port** to the external port provided by the tunneling service.
+    * **Recommendation:** When using tunneling, it is recommended to set **target delay >= 2**, otherwise the game will be very laggy.
+
+---
+
+### After Connection
+* The Host can choose whether to be **1P** and set the **target delay**.
+* **Note:** A higher target delay allows the game to handle network latency better, but the input lag will also increase.
+* Click **"start game"** to begin.
+
+---
+
+### Troubleshooting & Additional Info
+* **Disconnection:** There is a 5-second timeout if the connection drops. If it doesn't reconnect within this time, you can try returning to **"start game"** in the main menu to reconnect (though this is not guaranteed to work).
+
 ## Targets
 
 -2 player controls (done)<br>
@@ -19,7 +56,6 @@ This project aims to make multiplayer from reconstructed source code of [Touhou 
 -replay (done)<br>
 -provoke enemy by player (done)<br>
 -player 2 custom shot type (todo)<br>
--netplay (todo)<br>
 -new demo gameplay (todo)<br>
 
 ## Installation

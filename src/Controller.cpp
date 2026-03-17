@@ -1,9 +1,26 @@
+#include "Connection.hpp"
 #include "Controller.hpp"
 
 #include "GameErrorContext.hpp"
 #include "Supervisor.hpp"
 #include "i18n.hpp"
 #include "utils.hpp"
+#include "Rng.hpp"
+#include <map>
+std::map<int,Bits<16> > g_ctrl_bits_self;
+std::map<int,Bits<16> > g_ctrl_bits_rcved;
+std::map<int,int> g_ctrl_rng_rcved;
+std::map<int,int> g_ctrl_rng_self;
+
+extern Host g_host;
+extern Guest g_guest;
+extern int g_delay;
+extern bool g_is_host;
+extern bool g_is_host_p1;
+extern bool g_is_connected;
+bool g_is_sync = true;
+extern bool g_istry_to_reconnect;
+extern bool g_is_single_mode;
 
 namespace th06
 {
@@ -311,9 +328,12 @@ u8 *th06::Controller::GetControllerState()
     }
 }
 
+
 u16 Controller::GetInput(void)
 {
     u8 keyboardState[256];
+    memset(keyboardState,0,sizeof(keyboardState));
+
     u16 buttons;
 
     buttons = 0;
@@ -326,35 +346,45 @@ u16 Controller::GetInput(void)
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN, VK_DOWN);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_LEFT, VK_LEFT);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_RIGHT, VK_RIGHT);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP, VK_NUMPAD8);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN, VK_NUMPAD2);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_LEFT, VK_NUMPAD4);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_RIGHT, VK_NUMPAD6);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP_LEFT, VK_NUMPAD7);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP_RIGHT, VK_NUMPAD9);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN_LEFT, VK_NUMPAD1);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN_RIGHT, VK_NUMPAD3);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP, VK_NUMPAD8);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN, VK_NUMPAD2);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_LEFT, VK_NUMPAD4);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_RIGHT, VK_NUMPAD6);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP_LEFT, VK_NUMPAD7);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP_RIGHT, VK_NUMPAD9);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN_LEFT, VK_NUMPAD1);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN_RIGHT, VK_NUMPAD3);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_SHOOT, 'Z');
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_BOMB, 'X');
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_FOCUS, VK_SHIFT);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_MENU, VK_ESCAPE);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_SKIP, VK_CONTROL);
 
+
         // Player 2
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP2, 'I');
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN2, 'K');
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_LEFT2, 'J');
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_RIGHT2, 'L');
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_SHOOT2, 'F');
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_BOMB2, 'G');
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_FOCUS2, 'D');
+        if(g_is_single_mode)
+        {
+            buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP2, 'I');
+            buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN2, 'K');
+            buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_LEFT2, 'J');
+            buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_RIGHT2, 'L');
+            buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_SHOOT2, 'F');
+            buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_BOMB2, 'G');
+            buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_FOCUS2, 'D');
+        }
+
     }
     else
     {
         HRESULT res = g_Supervisor.keyboard->GetDeviceState(sizeof(keyboardState), keyboardState);
-
+        if(res!=0)
+        {
+            g_Supervisor.keyboard->Acquire();
+            res = g_Supervisor.keyboard->GetDeviceState(sizeof(keyboardState), keyboardState);
+            if (res !=0)
+                return Controller::GetControllerInput(buttons);
+        }
         buttons = 0;
-
         if (res == DIERR_INPUTLOST)
         {
             g_Supervisor.keyboard->Acquire();
@@ -366,32 +396,36 @@ u16 Controller::GetInput(void)
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN, DIK_DOWN);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_LEFT, DIK_LEFT);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_RIGHT, DIK_RIGHT);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP, DIK_NUMPAD8);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN, DIK_NUMPAD2);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_LEFT, DIK_NUMPAD4);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_RIGHT, DIK_NUMPAD6);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP_LEFT, DIK_NUMPAD7);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP_RIGHT, DIK_NUMPAD9);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN_LEFT, DIK_NUMPAD1);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN_RIGHT, DIK_NUMPAD3);
+
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP, DIK_NUMPAD8);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN, DIK_NUMPAD2);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_LEFT, DIK_NUMPAD4);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_RIGHT, DIK_NUMPAD6);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP_LEFT, DIK_NUMPAD7);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP_RIGHT, DIK_NUMPAD9);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN_LEFT, DIK_NUMPAD1);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN_RIGHT, DIK_NUMPAD3);
+
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_SHOOT, DIK_Z);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_BOMB, DIK_X);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_FOCUS, DIK_LSHIFT);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_FOCUS, DIK_RSHIFT);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_MENU, DIK_ESCAPE);
         buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_SKIP, DIK_LCONTROL);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_SKIP, DIK_RCONTROL);
+        // buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_SKIP, DIK_RCONTROL);
 
+        if(g_is_single_mode)
+        {
         // Player 2
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP2, DIK_I);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN2, DIK_K);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_LEFT2, DIK_J);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_RIGHT2, DIK_L);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_SHOOT2, DIK_F);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_BOMB2, DIK_G);
-        buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_FOCUS2, DIK_D);
+            buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_UP2, DIK_I);
+            buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_DOWN2, DIK_K);
+            buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_LEFT2, DIK_J);
+            buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_RIGHT2, DIK_L);
+            buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_SHOOT2, DIK_F);
+            buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_BOMB2, DIK_G);
+            buttons |= KEYBOARD_KEY_PRESSED(TH_BUTTON_FOCUS2, DIK_D);
+        }
     }
-
     return Controller::GetControllerInput(buttons);
 }
 
@@ -406,4 +440,227 @@ void Controller::ResetKeyboard(void)
     }
     SetKeyboardState(key_states);
 }
+
+bool Controller::RcvPacks()
+{
+    bool hasdata_all = false;
+    bool hasdata;
+    do
+    {
+        Pack pack;
+        if(g_is_host) {
+            g_host.PollReceive(pack,hasdata);
+        } else {
+            g_guest.PollReceive(pack,hasdata);
+        }
+        hasdata_all |= hasdata;
+        if(!hasdata)
+            return hasdata_all;
+        if(pack.ctrl.ctrl_type == Ctrl_Key) 
+        {
+            int frame = pack.ctrl.frame;
+            for(int i=0;i<KeyPackFrameNum;i++){
+                g_ctrl_bits_rcved[frame - i] = pack.ctrl.keys[i];
+                g_ctrl_rng_rcved[frame - i] = pack.ctrl.rng_seed[i];
+            }
+        }
+    } while (hasdata);
+    return hasdata_all;
+}
+
+void Controller::SendKeys(int frame)
+{
+    Pack pack;
+    pack.echoTick = 0;
+    pack.sendTick = 0;
+    pack.seq = 0;
+    pack.type = 4;
+    
+    pack.ctrl.ctrl_type = Ctrl_Key;
+    pack.ctrl.frame = frame;
+    for(int i=0;i<KeyPackFrameNum;i++)
+    {
+        std::map<int,Bits<16> >::iterator find_res = g_ctrl_bits_self.find(frame - i);
+        if(find_res==g_ctrl_bits_self.end())
+            ReadFromInt(pack.ctrl.keys[i],0);
+        else
+            pack.ctrl.keys[i] = find_res->second;
+
+        std::map<int,int>::iterator find_res2 = g_ctrl_rng_self.find(frame - i);
+        if(find_res2==g_ctrl_rng_self.end())
+            pack.ctrl.rng_seed[i] = 0;
+        else
+            pack.ctrl.rng_seed[i] = find_res2->second;
+    }
+    if(g_is_host)
+    {
+        g_host.SendPack(pack);
+    }else{
+        g_guest.SendPack(pack);
+    }
+}
+
+#define TH_ISDOWN(a,mask,b) ((a)&(mask)?(b):0)
+
+u16 GetKeys(int frame,bool is_in_UI)
+{
+    if(frame-g_delay<0)
+        return 0;
+
+    u16 self_key = 0;
+    std::map<int,Bits<16> >::iterator res = g_ctrl_bits_self.find(frame-g_delay);
+    if(res!=g_ctrl_bits_self.end())
+        WriteToInt(res->second,self_key);
+
+    u16 rcv_key = 0;
+    res = g_ctrl_bits_rcved.find(frame-g_delay);
+    if(res != g_ctrl_bits_rcved.end())
+    {
+        WriteToInt(res->second,rcv_key);
+        if(g_ctrl_rng_rcved[frame-g_delay] != g_ctrl_rng_self[frame-g_delay])
+        {
+            g_is_sync = false;
+        }else
+        {
+            g_is_sync = true;
+        }
+    }else{
+        static bool inited = false;
+        static LARGE_INTEGER freq;
+        LARGE_INTEGER cur;
+        LARGE_INTEGER max_wait_to_time;
+        if(!inited) {
+            inited=true;
+            QueryPerformanceFrequency(&freq);
+        }
+        QueryPerformanceCounter(&cur);
+        max_wait_to_time.QuadPart = cur.QuadPart + freq.QuadPart*5.0; // 5.0s
+        while(true)
+        {
+            Controller::RcvPacks();
+            res = g_ctrl_bits_rcved.find(frame-g_delay);
+            if(res!=g_ctrl_bits_rcved.end())
+            {
+                WriteToInt(res->second,rcv_key);
+                if(g_ctrl_rng_rcved[frame-g_delay] != g_ctrl_rng_self[frame-g_delay])
+                {
+                    g_is_sync = false;
+                }else
+                {
+                    g_is_sync = true;
+                }
+                break;
+            }
+            Sleep(1);
+            QueryPerformanceCounter(&cur);
+            if(cur.QuadPart>max_wait_to_time.QuadPart)
+            {
+                rcv_key = 0;
+                self_key = 0;
+                g_is_connected = false;
+                g_istry_to_reconnect = false;
+                break;
+            }
+        }
+    }
+    if(is_in_UI)
+        return self_key|rcv_key;
+    u16 finres = 0;
+    if(g_is_host)
+    {
+        if(g_is_host_p1)
+        {
+            finres = self_key;
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_LEFT ,TH_BUTTON_LEFT2 );
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_RIGHT,TH_BUTTON_RIGHT2);
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_UP   ,TH_BUTTON_UP2   );
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_DOWN ,TH_BUTTON_DOWN2 );
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_SHOOT,TH_BUTTON_SHOOT2);
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_BOMB ,TH_BUTTON_BOMB2 );
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_FOCUS,TH_BUTTON_FOCUS2);
+
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_MENU,TH_BUTTON_MENU);
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_SKIP,TH_BUTTON_SKIP);
+        }else{
+            finres = rcv_key;
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_LEFT ,TH_BUTTON_LEFT2 );
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_RIGHT,TH_BUTTON_RIGHT2);
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_UP   ,TH_BUTTON_UP2   );
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_DOWN ,TH_BUTTON_DOWN2 );
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_SHOOT,TH_BUTTON_SHOOT2);
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_BOMB ,TH_BUTTON_BOMB2 );
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_FOCUS,TH_BUTTON_FOCUS2);
+
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_MENU,TH_BUTTON_MENU);
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_SKIP,TH_BUTTON_SKIP);
+        }
+    }else{
+        if(g_is_host_p1)
+        {
+            finres = rcv_key;
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_LEFT ,TH_BUTTON_LEFT2 );
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_RIGHT,TH_BUTTON_RIGHT2);
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_UP   ,TH_BUTTON_UP2   );
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_DOWN ,TH_BUTTON_DOWN2 );
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_SHOOT,TH_BUTTON_SHOOT2);
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_BOMB ,TH_BUTTON_BOMB2 );
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_FOCUS,TH_BUTTON_FOCUS2);
+
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_MENU,TH_BUTTON_MENU);
+            finres |= TH_ISDOWN(self_key,TH_BUTTON_SKIP,TH_BUTTON_SKIP);
+        }else{
+            finres = self_key;
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_LEFT ,TH_BUTTON_LEFT2 );
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_RIGHT,TH_BUTTON_RIGHT2);
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_UP   ,TH_BUTTON_UP2   );
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_DOWN ,TH_BUTTON_DOWN2 );
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_SHOOT,TH_BUTTON_SHOOT2);
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_BOMB ,TH_BUTTON_BOMB2 );
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_FOCUS,TH_BUTTON_FOCUS2);
+
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_MENU,TH_BUTTON_MENU);
+            finres |= TH_ISDOWN(rcv_key,TH_BUTTON_SKIP,TH_BUTTON_SKIP);
+        }
+    }
+    return finres;
+}
+
+u16 Controller::GetInput_Net(int frame,bool is_in_UI)
+{
+    if(!g_is_connected){
+        return GetInput();
+    }
+    u16 btn = GetInput();
+    Bits<16> cur_btn_bits;
+    ReadFromInt(cur_btn_bits,btn);
+    g_ctrl_bits_self[frame] = cur_btn_bits;
+    g_ctrl_rng_self[frame] = g_Rng.seed;
+
+    // remove frames
+    int frame_rem = 80;
+    std::map<int,Bits<16> >::iterator last_res = g_ctrl_bits_self.find(frame-frame_rem);
+    if(last_res!=g_ctrl_bits_self.end())
+        g_ctrl_bits_self.erase(last_res);
+
+    last_res = g_ctrl_bits_rcved.find(frame-frame_rem);
+    if(last_res!=g_ctrl_bits_rcved.end())
+        g_ctrl_bits_rcved.erase(last_res);
+
+    std::map<int,int >::iterator last_res_seed = g_ctrl_rng_rcved.find(frame-frame_rem);
+    if(last_res_seed!=g_ctrl_rng_rcved.end())
+        g_ctrl_rng_rcved.erase(last_res_seed);
+    last_res_seed = g_ctrl_rng_self.find(frame-frame_rem);
+    if(last_res_seed!=g_ctrl_rng_self.end())
+        g_ctrl_rng_self.erase(last_res_seed);
+    
+    Controller::SendKeys(frame);
+    RcvPacks();
+
+    u16 res = GetKeys(frame,is_in_UI);
+    return res;
+}
+
+
+
+
 }; // namespace th06

@@ -57,5 +57,9 @@ u16 GetControllerInput(u16 buttons);
 u8 *GetControllerState();
 u16 GetInput(void);
 void ResetKeyboard(void);
+
+bool RcvPacks();
+void SendKeys(int frame);
+u16 GetInput_Net(int frame,bool is_in_UI);
 }; // namespace Controller
 }; // namespace th06

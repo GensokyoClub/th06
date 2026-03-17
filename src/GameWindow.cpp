@@ -10,11 +10,138 @@
 
 namespace th06
 {
+    bool g_force_wind = false;
 DIFFABLE_STATIC(GameWindow, g_GameWindow)
 DIFFABLE_STATIC(i32, g_TickCountToEffectiveFramerate)
 DIFFABLE_STATIC(f64, g_LastFrameTime)
 
 #define FRAME_TIME (1000. / 60.)
+
+
+class Limiter {
+public:
+	static void Initialize();
+	static void Tick();
+
+	static bool SetGameFPS(int fps);
+
+private:
+	static bool UpdateTargetFPS();
+
+	
+	static LARGE_INTEGER start_time;
+	static unsigned int frame_num;
+	static LARGE_INTEGER wait_amount;
+	static LARGE_INTEGER last_wait_amount;
+	static LARGE_INTEGER blt_prepare_time;
+	static LARGE_INTEGER perf_freq;
+	static LARGE_INTEGER frame_start;
+	static LARGE_INTEGER frame_end;
+public:
+    static bool initialized;
+    static UINT GameFPS;
+    static UINT BltPrepareTime;
+};
+
+bool Limiter::initialized = false;
+LARGE_INTEGER Limiter::start_time;
+unsigned int Limiter::frame_num = 0;
+LARGE_INTEGER Limiter::wait_amount;
+LARGE_INTEGER Limiter::last_wait_amount;
+LARGE_INTEGER Limiter::blt_prepare_time;
+LARGE_INTEGER Limiter::perf_freq;
+LARGE_INTEGER Limiter::frame_start;
+LARGE_INTEGER Limiter::frame_end;
+
+UINT Limiter::BltPrepareTime=0;
+UINT Limiter::GameFPS=60;
+
+// Initializes the limiter's timers, settings, etc
+void Limiter::Initialize() {
+	QueryPerformanceFrequency(&perf_freq);
+	QueryPerformanceCounter(&start_time);
+
+	last_wait_amount.QuadPart = 0;
+	frame_start.QuadPart = 0;
+	frame_end.QuadPart = 0;
+
+	initialized = true;
+}
+
+// Updates the limiter's parameters to reflect things such as replay skipping or external FPS changes via the API
+// Returns true if the player is skipping or slowing down a replay
+bool Limiter::UpdateTargetFPS() {
+	UINT target = Limiter::GameFPS;
+	wait_amount.QuadPart = (LONGLONG)((double)perf_freq.QuadPart / (double)target);
+	blt_prepare_time.QuadPart = min(wait_amount.QuadPart / 2, perf_freq.QuadPart / 1000 * (LONGLONG)Limiter::BltPrepareTime);
+	return target != Limiter::GameFPS;
+}
+
+// Exposed function for outside tools such as thprac to set the framerate
+bool Limiter::SetGameFPS(int fps) {
+	if (!initialized)
+		return false;
+	if (fps <= 0)
+		return false;
+	Limiter::GameFPS = fps;
+	return true;
+}
+
+// Simple spinwait function
+// As precise as possible, but eats up lots of CPU
+inline void spin_wait(__int64 target) {
+	LARGE_INTEGER cur_time;
+	QueryPerformanceCounter(&cur_time);
+	while (cur_time.QuadPart < target)
+		QueryPerformanceCounter(&cur_time);
+}
+
+// Half-spinwait, half-timer wait from vpatch
+// Creates a waitable timer until 1 ms before the target, then spins for the rest
+// Timer accuracy check not included
+bool half_spin_wait_inited = false;
+__int64 timer_1ms = 0; // 1 ms relative to the performance counter frequency
+double timer_freq_scale = 0; // Used for converting from performance counter -> FILETIME
+HANDLE waitable_timer = NULL;
+
+// Performs the actual frame limiting
+void Limiter::Tick() {
+	if (!initialized)
+		MessageBoxA(NULL,"Tried to tick the limiter before initialization.","",0);
+
+	// Calculate how much time it took for the game to process this frame
+	__int64 frame_elapsed = 0;
+	if (frame_start.QuadPart != 0) {
+		LARGE_INTEGER frame_end;
+		QueryPerformanceCounter(&frame_end);
+		frame_elapsed = frame_end.QuadPart - frame_start.QuadPart;
+
+	}
+	// Set up the target time before returning
+	bool temp_fps_change = UpdateTargetFPS();
+	__int64 target = start_time.QuadPart + ++frame_num * wait_amount.QuadPart;
+	if (!temp_fps_change) // Don't care about input latency if skipping/slowing down a replay
+		target -= blt_prepare_time.QuadPart;
+
+	// Perform the frame limiting
+	LARGE_INTEGER cur_time;
+	QueryPerformanceCounter(&cur_time);
+
+	// Only resync the timer if a full frame has been skipped
+	if (target + wait_amount.QuadPart >= cur_time.QuadPart && last_wait_amount.QuadPart == wait_amount.QuadPart) {
+		spin_wait(target);
+	} else {
+		last_wait_amount.QuadPart = wait_amount.QuadPart;
+		// if (Config::D3D9Ex && d3d9_device && !temp_fps_change)
+		// 	((IDirect3DDevice9Ex*)d3d9_device)->WaitForVBlank(0);
+		QueryPerformanceCounter(&cur_time);
+		start_time.QuadPart = cur_time.QuadPart;
+		frame_num = 0;
+	}
+
+	// Record the frame start time
+	QueryPerformanceCounter(&frame_start);
+}
 
 #pragma var_order(res, viewport, slowdown, local_34, delta, curtime)
 RenderResult GameWindow::Render()
@@ -26,129 +153,38 @@ RenderResult GameWindow::Render()
     u32 curtime;
     f64 local_34;
 
-    if (this->lastActiveAppValue == 0)
+    // if (this->lastActiveAppValue == 0)
+    // {
+    //     return RENDER_RESULT_KEEP_RUNNING;
+    // }
+
+    if(!Limiter::initialized)
     {
-        return RENDER_RESULT_KEEP_RUNNING;
+        Limiter::Initialize();
+        Limiter::SetGameFPS(60);
     }
 
-    if (this->curFrame == 0)
+    Limiter::Tick();
+    g_Supervisor.viewport.X = 0;
+    g_Supervisor.viewport.Y = 0;
+    g_Supervisor.viewport.Width = 640;
+    g_Supervisor.viewport.Height = 480;
+    g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
+    res = g_Chain.RunCalcChain();
+    g_SoundPlayer.PlaySounds();
+    if (res == 0)  return RENDER_RESULT_EXIT_SUCCESS;
+    if (res == -1) return RENDER_RESULT_EXIT_ERROR;
+    if (g_Supervisor.d3dDevice->BeginScene() >= 0)
     {
-    LOOP_USING_GOTO_BECAUSE_WHY_NOT:
-        if (g_Supervisor.cfg.frameskipConfig <= this->curFrame)
-        {
-            if (g_Supervisor.IsUnknown())
-            {
-                viewport.X = 0;
-                viewport.Y = 0;
-                viewport.Width = 640;
-                viewport.Height = 480;
-                viewport.MinZ = 0.0;
-                viewport.MaxZ = 1.0;
-                g_Supervisor.d3dDevice->SetViewport(&viewport);
-                g_Supervisor.d3dDevice->Clear(0, NULL, 3, g_Stage.skyFog.color, 1.0, 0);
-                g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
-            }
-            g_Supervisor.d3dDevice->BeginScene();
-            g_Chain.RunDrawChain();
-            g_Supervisor.d3dDevice->EndScene();
-            g_Supervisor.d3dDevice->SetTexture(0, NULL);
-        }
-
-        g_Supervisor.viewport.X = 0;
-        g_Supervisor.viewport.Y = 0;
-        g_Supervisor.viewport.Width = 640;
-        g_Supervisor.viewport.Height = 480;
-        g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
-        res = g_Chain.RunCalcChain();
-        g_SoundPlayer.PlaySounds();
-        if (res == 0)
-        {
-            return RENDER_RESULT_EXIT_SUCCESS;
-        }
-        if (res == -1)
-        {
-            return RENDER_RESULT_EXIT_ERROR;
-        }
-        this->curFrame++;
+        g_Chain.RunDrawChain();
+        g_Supervisor.d3dDevice->EndScene();
+        g_Supervisor.d3dDevice->SetTexture(0, NULL);
     }
-
-    if (g_Supervisor.cfg.windowed != false || g_Supervisor.ShouldRunAt60Fps())
-    {
-        if (this->curFrame != 0)
-        {
-            g_Supervisor.framerateMultiplier = 1.0;
-            timeBeginPeriod(1);
-            slowdown = timeGetTime();
-            if (slowdown < g_LastFrameTime)
-            {
-                g_LastFrameTime = slowdown;
-            }
-            local_34 = fabs(slowdown - g_LastFrameTime);
-            timeEndPeriod(1);
-            if (local_34 >= FRAME_TIME)
-            {
-                do
-                {
-                    g_LastFrameTime += FRAME_TIME;
-                    local_34 -= FRAME_TIME;
-                } while (local_34 >= FRAME_TIME);
-
-                if (g_Supervisor.cfg.frameskipConfig < this->curFrame)
-                    goto I_HAVE_NO_CLUE_WHY_BUT_I_MUST_JUMP_HERE;
-                goto LOOP_USING_GOTO_BECAUSE_WHY_NOT;
-            }
-        }
-    }
-
-    if (g_Supervisor.cfg.windowed == false && !g_Supervisor.ShouldRunAt60Fps())
-    {
-
-        if (g_Supervisor.cfg.frameskipConfig >= this->curFrame)
-        {
-            Present();
-            goto LOOP_USING_GOTO_BECAUSE_WHY_NOT;
-        }
-
-    I_HAVE_NO_CLUE_WHY_BUT_I_MUST_JUMP_HERE:
-        Present();
-        if (g_Supervisor.framerateMultiplier == 0.f)
-        {
-            if (2 <= g_TickCountToEffectiveFramerate)
-            {
-                timeBeginPeriod(1);
-                curtime = timeGetTime();
-                if (curtime < g_Supervisor.lastFrameTime)
-                {
-                    g_Supervisor.lastFrameTime = curtime;
-                }
-                delta = curtime - g_Supervisor.lastFrameTime;
-                delta = (delta * 60.) / 2. / 1000.;
-                delta /= (g_Supervisor.cfg.frameskipConfig + 1);
-                if (delta >= .865)
-                {
-                    delta = 1.0;
-                }
-                else if (delta >= .6)
-                {
-                    delta = 0.8;
-                }
-                else
-                {
-                    delta = 0.5;
-                }
-                g_Supervisor.effectiveFramerateMultiplier = delta;
-                g_Supervisor.lastFrameTime = curtime;
-                timeEndPeriod(1);
-                g_TickCountToEffectiveFramerate = 0;
-            }
-        }
-        else
-        {
-            g_Supervisor.effectiveFramerateMultiplier = g_Supervisor.framerateMultiplier;
-        }
-        this->curFrame = 0;
-        g_TickCountToEffectiveFramerate = g_TickCountToEffectiveFramerate + 1;
-    }
+    
+    Present();
+    g_Supervisor.effectiveFramerateMultiplier = 1.0f;
+    this->curFrame = 0; 
+    g_TickCountToEffectiveFramerate++;
     return RENDER_RESULT_KEEP_RUNNING;
 }
 
@@ -172,6 +208,9 @@ void GameWindow::Present()
 
 i32 GameWindow::InitD3dInterface(void)
 {
+    if(g_force_wind)
+        g_Supervisor.cfg.windowed = true; 
+
     g_Supervisor.d3dIface = Direct3DCreate8(D3D_SDK_VERSION);
 
     if (g_Supervisor.d3dIface == NULL)
@@ -200,15 +239,15 @@ void GameWindow::CreateGameWindow(HINSTANCE hInstance)
     RegisterClass(&base_class);
     if (g_Supervisor.cfg.windowed == 0)
     {
-        width = GAME_WINDOW_WIDTH;
-        height = GAME_WINDOW_HEIGHT;
+        width = GAME_WINDOW_WIDTH*2;
+        height = GAME_WINDOW_HEIGHT*2;
         g_GameWindow.window =
             CreateWindowEx(0, "BASE", TH_WINDOW_TITLE, WS_OVERLAPPEDWINDOW, 0, 0, width, height, 0, 0, hInstance, 0);
     }
     else
     {
-        width = GetSystemMetrics(SM_CXFIXEDFRAME) * 2 + GAME_WINDOW_WIDTH;
-        height = GAME_WINDOW_HEIGHT + GetSystemMetrics(SM_CYFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION);
+        width = GetSystemMetrics(SM_CXFIXEDFRAME) * 2 + GAME_WINDOW_WIDTH*2;
+        height = GAME_WINDOW_HEIGHT*2 + GetSystemMetrics(SM_CYFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION);
         g_GameWindow.window = CreateWindowEx(0, "BASE", TH_WINDOW_TITLE, WS_VISIBLE | WS_MINIMIZEBOX | WS_SYSMENU,
                                              CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, hInstance, 0);
     }
@@ -255,7 +294,6 @@ LRESULT __stdcall GameWindow::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
             SetCursor(LoadCursorA(NULL, IDC_ARROW));
             ShowCursor(1);
         }
-
         return 1;
     case WM_CLOSE:
         g_GameWindow.isAppClosing = 1;

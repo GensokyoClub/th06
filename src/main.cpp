@@ -1,5 +1,7 @@
-#define _WIN32_WINNT 0x0500
 
+#define _WIN32_WINNT 0x0500
+#include "Connection.hpp"
+#include "ConnectionUI.hpp"
 #include <windows.h>
 
 #include <D3DX8.h>
@@ -19,6 +21,14 @@
 
 using namespace th06;
 
+Host g_host;
+Guest g_guest;
+int g_delay = 1;
+bool g_is_host = false;
+bool g_is_host_p1 = false;
+bool g_is_connected = false;
+bool g_is_single_mode = false;
+
 #pragma var_order(renderResult, testCoopLevelRes, msg, testResetRes, waste1, waste2, waste3, waste4, waste5, waste6)
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
@@ -28,12 +38,28 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     MSG msg;
     i32 waste1, waste2, waste3, waste4, waste5, waste6;
 
-    if (utils::CheckForRunningGameInstance())
-    {
-        g_GameErrorContext.Flush();
-
+    ConnectionUI ui(g_host,g_guest);
+    ui.Show();
+    g_delay = ui.GetDelay();
+    g_is_host = ui.IsHost();
+    g_is_host_p1 = ui.GetIsHostP1();
+    if(!ui.IsGameStarted())
         return 1;
+    if(!ui.IsConnected())
+    {
+        g_is_connected=false;
+        g_is_single_mode = true;
+    }else{
+        g_is_connected = true;
+        g_is_single_mode = false;
     }
+    //g_is_connected = false;
+
+     //if (utils::CheckForRunningGameInstance())
+     //{
+     //    g_GameErrorContext.Flush();
+     //    return 1;
+     //}
 
     g_Supervisor.hInstance = hInstance;
 
@@ -64,7 +90,6 @@ restart:
         g_GameErrorContext.Flush();
         return 1;
     }
-
     g_SoundPlayer.InitializeDSound(g_GameWindow.window);
     Controller::GetJoystickCaps();
     Controller::ResetKeyboard();

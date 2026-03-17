@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(Windows) 启动游戏进行调试",
+            "type": "cppvsdbg", 
+            "request": "launch",
+            "program": "C:/disk/touhou/TH/mods/EoSD_multi/th06/build/th06e.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "C:/disk/touhou/TH/mods/EoSD_multi/th06/build/",
+            "environment": [],
+            "console": "integratedTerminal",
+            "symbolSearchPath": "C:/disk/touhou/TH/mods/EoSD_multi/th06/build/" // PDB 符号文件所在路径
+        }
+    ]
+}

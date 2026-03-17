@@ -1,0 +1,25 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Conda Build Task",
+            "type": "shell",
+            "windows": {
+                "command": "cmd.exe",
+                "args": [
+                    "/C",
+                    "C:\\Users\\rue\\miniconda3\\Scripts\\activate.bat eosdm && cd .. && python ./scripts/build.py"
+                ]
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        }
+    ]
+}

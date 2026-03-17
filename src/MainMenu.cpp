@@ -20,7 +20,8 @@
 #include "ZunColor.hpp"
 #include "i18n.hpp"
 #include "utils.hpp"
-
+bool g_istry_to_reconnect = false;
+extern bool g_is_connected;
 namespace th06
 {
 DIFFABLE_STATIC_ARRAY_ASSIGN(char *, 4, g_ShortCharacterList) = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
@@ -118,13 +119,21 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
             break;
         menu->idleFrames = 0;
     case STATE_MAIN_MENU:
+        {
+            if(menu->cursor==0 && !g_is_connected)
+            {
+                g_istry_to_reconnect = true;
+            }else{
+                g_istry_to_reconnect = false;
+            }
+        }
         menu->DrawStartMenu();
         if ((g_CurFrameInput & 0xffff) != 0)
         {
             menu->idleFrames = 0;
         }
         menu->idleFrames = menu->idleFrames + 1;
-        if (720 <= menu->idleFrames)
+        if (2147483640 <= menu->idleFrames) // disable demo rpy
         {
         load_menu_rpy:
             g_GameManager.isInReplay = 1;

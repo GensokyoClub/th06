@@ -1,9 +1,9 @@
-#include "Connection.hpp"
 #include "Supervisor.hpp"
 #include "AnmManager.hpp"
 #include "AsciiManager.hpp"
 #include "Chain.hpp"
 #include "ChainPriorities.hpp"
+#include "Connection.hpp"
 #include "Ending.hpp"
 #include "FileSystem.hpp"
 #include "GameErrorContext.hpp"
@@ -20,13 +20,13 @@
 #include "inttypes.hpp"
 #include "utils.hpp"
 
+#include <map>
 #include <stdio.h>
 #include <string.h>
-#include <map>
-extern std::map<int,Bits<16> > g_ctrl_bits_self;
-extern std::map<int,Bits<16> > g_ctrl_bits_rcved;
-extern std::map<int,int> g_ctrl_rng_rcved;
-extern std::map<int,int> g_ctrl_rng_self;
+extern std::map<int, Bits<16>> g_ctrl_bits_self;
+extern std::map<int, Bits<16>> g_ctrl_bits_rcved;
+extern std::map<int, int> g_ctrl_rng_rcved;
+extern std::map<int, int> g_ctrl_rng_self;
 
 extern bool g_is_connected;
 extern bool g_is_sync;
@@ -57,18 +57,21 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
     }
     g_LastFrameInput = g_CurFrameInput;
 
-    if(g_is_single_mode)
+    if (g_is_single_mode)
     {
         g_CurFrameInput = Controller::GetInput();
-    }else{
+    }
+    else
+    {
         D3DXVECTOR3 pos;
-        pos.x=0;
-        pos.y=0;
-        pos.z=0;
-        if(g_istry_to_reconnect)  {
+        pos.x = 0;
+        pos.y = 0;
+        pos.z = 0;
+        if (g_istry_to_reconnect)
+        {
             g_AsciiManager.AddFormatText(&pos, "try to reconnect...");
             Controller::SendKeys(s->calcCount);
-            if(Controller::RcvPacks())
+            if (Controller::RcvPacks())
             {
                 g_Rng.seed = 0;
                 g_is_connected = true;
@@ -79,14 +82,16 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
                 g_ctrl_rng_rcved.clear();
                 g_ctrl_rng_self.clear();
             }
-        }else{
-            g_AsciiManager.AddFormatText(&pos, "%s %s(%d)",g_is_connected?"connected":"disconnected",g_is_sync?"sync":"desynced",s->calcCount);
+        }
+        else
+        {
+            g_AsciiManager.AddFormatText(&pos, "%s %s(%d)", g_is_connected ? "connected" : "disconnected",
+                                         g_is_sync ? "sync" : "desynced", s->calcCount);
         }
 
         bool is_in_UI = (s->curState != SUPERVISOR_STATE_GAMEMANAGER);
         g_CurFrameInput = Controller::GetInput_Net(s->calcCount, is_in_UI);
     }
-   
 
     g_IsEigthFrameOfHeldInput = 0;
     if (g_LastFrameInput == g_CurFrameInput)

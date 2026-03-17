@@ -118,15 +118,16 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
         if (menu->WeirdSecondInputCheck())
             break;
         menu->idleFrames = 0;
-    case STATE_MAIN_MENU:
+    case STATE_MAIN_MENU: {
+        if (menu->cursor == 0 && !g_is_connected)
         {
-            if(menu->cursor==0 && !g_is_connected)
-            {
-                g_istry_to_reconnect = true;
-            }else{
-                g_istry_to_reconnect = false;
-            }
+            g_istry_to_reconnect = true;
         }
+        else
+        {
+            g_istry_to_reconnect = false;
+        }
+    }
         menu->DrawStartMenu();
         if ((g_CurFrameInput & 0xffff) != 0)
         {

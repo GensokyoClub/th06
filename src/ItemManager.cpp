@@ -61,6 +61,13 @@ void ItemManager::SpawnItem(D3DXVECTOR3 *position, ItemType itemType, int state)
             item->targetPosition.z = 0.0;
             item->startPosition = item->currentPosition;
         }
+        if (state == 3 || state == 4)// throw up
+        {
+            item->targetPosition.x = position->x;
+            item->targetPosition.y = position->y - 60.0f;
+            item->targetPosition.z = 0.0;
+            item->startPosition = item->currentPosition;
+        }
         g_AnmManager->SetAndExecuteScriptIdx(&item->sprite, ANM_SCRIPT_BULLET3_ITEMS_START + itemType);
         item->sprite.color = COLOR_WHITE;
         item->unk_142 = 1;
@@ -123,6 +130,18 @@ void ItemManager::OnUpdate()
             else if ((i32)(curItem->timer.current == 60))
             {
                 curItem->startPosition = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+                curItem->state=0;
+            }
+        }else if(curItem->state == 3 || curItem->state == 4)
+        {
+            if ((i32)(20 > curItem->timer.current)){
+                float t = curItem->timer.AsFramesFloat() / 20.0f;
+                float yt = 1.0f-powf(1.0f-t,1.5f);
+                curItem->currentPosition = yt * curItem->targetPosition + curItem->startPosition * (1.0f - yt);
+                goto yolo;
+            }else if ((i32)(curItem->timer.current == 20))  {
+                curItem->startPosition = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+                curItem->state=0;
             }
         }
         else
@@ -183,6 +202,10 @@ void ItemManager::OnUpdate()
     yolo:
         bool hit_player1 = g_Player.CalcItemBoxCollision(&curItem->currentPosition, &g_ItemSize);
         bool hit_player2 = g_Player2.CalcItemBoxCollision(&curItem->currentPosition, &g_ItemSize);
+        if(curItem->timer.current<20 && (curItem->state==3 || curItem->state==4))
+        {
+            hit_player1=hit_player2=false;
+        }
         if (hit_player1 || hit_player2)
         {
             // only one can hit item

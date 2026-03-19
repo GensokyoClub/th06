@@ -206,7 +206,13 @@ ZunResult Player::AddedCallback(Player *p)
         }
         
     }
-    p->positionCenter.x = g_GameManager.arcadeRegionSize.x / 2.0f;
+    if(p->playerType==1)
+    {
+        p->positionCenter.x = g_GameManager.arcadeRegionSize.x / 2.0f - 32.0f;
+    }else
+    {
+        p->positionCenter.x = g_GameManager.arcadeRegionSize.x / 2.0f + 32.0f;
+    }
     p->positionCenter.y = g_GameManager.arcadeRegionSize.y - 64.0f;
     p->positionCenter.z = 0.49;
     p->orbsPosition[0].z = 0.49;
@@ -270,6 +276,8 @@ ZunResult Player::AddedCallback(Player *p)
     p->verticalMovementSpeedMultiplierDuringBomb = 1.0;
     p->horizontalMovementSpeedMultiplierDuringBomb = 1.0;
     p->respawnTimer = 8;
+    p->hitboxTime = 0;
+    p->lifegiveTime = 0;
     return ZUN_SUCCESS;
 }
 
@@ -295,11 +303,34 @@ ChainCallbackResult Player::OnUpdate(Player *p)
     f32 scaleFactor1, scaleFactor2;
     i32 idx;
     D3DXVECTOR3 lastEnemyHit;
-
     if (g_GameManager.isTimeStopped)
     {
         return CHAIN_CALLBACK_RESULT_CONTINUE;
     }
+
+    float dx = g_Player2.positionCenter.x - g_Player.positionCenter.x;
+    float dy = g_Player2.positionCenter.y - g_Player.positionCenter.y;
+    float dist = sqrtf(dx*dx+dy*dy);
+    // hit(just for fun)
+    // {
+    //     if(dist<150.0f)
+    //     {
+    //         float velx = 0.0f;
+    //         float vely = 0.0f;
+    //         float k = 200.0f;
+    //         if(p->playerType==1) {
+    //             velx = k*dx/(dist*dist*dist+2.0f);
+    //             vely = k*dy/(dist*dist*dist+2.0f);
+    //         }else{
+    //             velx = -k*dx/(dist*dist*dist+2.0f);
+    //             vely = -k*dy/(dist*dist*dist+2.0f);
+    //         }
+    //         p->positionCenter.x-=velx;
+    //         p->positionCenter.y-=vely;
+    //     }
+    // }
+
+
     for (idx = 0; idx < ARRAY_SIZE_SIGNED(p->bombRegionSizes); idx++)
     {
         p->bombRegionSizes[idx].x = 0.0;
@@ -394,7 +425,13 @@ ChainCallbackResult Player::OnUpdate(Player *p)
             if (p->invulnerabilityTimer.AsFrames() >= 30)
             {
                 p->playerState = PLAYER_STATE_SPAWNING;
-                p->positionCenter.x = g_GameManager.arcadeRegionSize.x / 2.0f;
+                if(p->playerType==1)
+                {
+                    p->positionCenter.x = g_GameManager.arcadeRegionSize.x / 2.0f - 32.0f;
+                }else
+                {
+                    p->positionCenter.x = g_GameManager.arcadeRegionSize.x / 2.0f + 32.0f;
+                }
                 p->positionCenter.y = g_GameManager.arcadeRegionSize.y - 64.0f;
                 p->positionCenter.z = 0.2;
                 p->invulnerabilityTimer.SetCurrent(0);
@@ -408,7 +445,7 @@ ChainCallbackResult Player::OnUpdate(Player *p)
                 {
                     g_AnmManager->SetAndExecuteScriptIdx(&p->playerSprite, ANM_SCRIPT_PLAYER_IDLE2);
                 }
-                if (g_GameManager.livesRemaining <= 0 || g_GameManager.livesRemaining2 <= 0)
+                if ((g_GameManager.livesRemaining <= 0 && p->playerType==1) || (g_GameManager.livesRemaining2 <= 0 && p->playerType!=1))
                 {
                     g_GameManager.isInRetryMenu = 1;
                 }
@@ -510,14 +547,43 @@ ChainCallbackResult Player::OnUpdate(Player *p)
     p->positionOfLastEnemyHit = lastEnemyHit;
     Player::UpdateFireBulletsTimer(p);
 
+    
+    Player* another = g_is_host ? (&g_Player2) : (&g_Player);
+    Player* cur = g_is_host ? (&g_Player) : (&g_Player2);
+    if (
+        (p->isFocus)  && 
+        dist<=20.0f && 
+        (   (p->playerType==1 && (!IS_PRESSED(TH_BUTTON_SHOOT))) || (p->playerType!=1 && (!IS_PRESSED(TH_BUTTON_SHOOT2))))
+    )
+    {
+        p->lifegiveTime++;
+    }else{
+        p->lifegiveTime = 0;
+    }
+    if(p->lifegiveTime >= 90)
+    {
+        p->lifegiveTime = 0;
+        if(p->playerType==1 && g_GameManager.livesRemaining>=1 && g_GameManager.livesRemaining2<8) {
+            g_Gui.flags.flag0 = 2;
+            g_GameManager.livesRemaining--;
+            D3DXVECTOR3 p1 = p->positionCenter;
+            g_ItemManager.SpawnItem(&p1, ITEM_LIFE, 3);
+            //g_GameManager.livesRemaining2++;
+            //g_SoundPlayer.PlaySoundByIdx(SOUND_F, 0);
+        }
+        else if(p->playerType!=1 && g_GameManager.livesRemaining2>=1 && g_GameManager.livesRemaining<8) {
+            g_Gui.flags.flag0 = 2;
+            g_GameManager.livesRemaining2--;
+            D3DXVECTOR3 p1 = p->positionCenter;
+            g_ItemManager.SpawnItem(&p1, ITEM_LIFE, 4);
+            //g_GameManager.livesRemaining++;
+            //g_SoundPlayer.PlaySoundByIdx(SOUND_F, 0);
+        }
+    }
+
     if(!g_is_single_mode){
-        Player* another = g_is_host ? (&g_Player2) : (&g_Player);
-        Player* cur = g_is_host ? (&g_Player) : (&g_Player2);
         if(p == another)
         {
-            float dx = another->positionCenter.x - cur->positionCenter.x;
-            float dy = another->positionCenter.y - cur->positionCenter.y;
-            float dist = sqrtf(dx*dx+dy*dy);
             if(dist < 50.0f)
                 dist = 50.0f;
             if(dist<100.0f) {

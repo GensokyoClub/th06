@@ -24,6 +24,7 @@ bool g_istry_to_reconnect = false;
 extern bool g_is_connected;
 extern bool g_restart_flag;
 extern bool g_is_host;
+extern bool g_is_single_mode;
 
 int g_last_in_practice_mode_stage = -1;
 
@@ -1421,10 +1422,18 @@ ZunResult MainMenu::DrawStartMenu(void)
     {
         this->cursor += i;
     }
+    // disable replay when is muiltiplayer mode
+    if (this->cursor == 3 && !g_is_single_mode)
+    {
+        this->cursor += i;
+    }
     AnmVm *drawVm = this->vm;
     for (i = 0; i < 8; i++, drawVm++ /* zun why */)
     {
-        DrawMenuItem(drawVm, i, this->cursor, COLOR_RED, COLOR_START_MENU_ITEM_INACTIVE, 122);
+        if(i==3 && !g_is_single_mode)
+            DrawMenuItem(drawVm, i, this->cursor, COLOR_RED, 0x30000000, 122);
+        else
+            DrawMenuItem(drawVm, i, this->cursor, COLOR_RED, COLOR_START_MENU_ITEM_INACTIVE, 122);
     }
     if (this->stateTimer >= 0x14)
     {

@@ -57,6 +57,13 @@ This project aims to make multiplayer from reconstructed source code of [Touhou 
 * The description files for these are stored in `player00b.anm` and `player01b.anm` respectively.
 * hitbox is added in 3.7.1, if want to change, unpack `TOTOL_CM.dat`，including `hitbox.png`,`hitbox_a.png`,`mod_anm.anm`'.
 
+## 3.8
+- Adjusted score rewards (extend thresholds) to be more balanced (10, 20, 40, 60, 100, 150, 200, 250M).
+- When one is not shooting and overlaps with the other, holding the Focus button for 1.5s will transfer a life to the other player.
+- Disabled replay playback in multiplayer mode (replays can still be played in single-player). The connection will automatically disconnect upon entering the score screen and will only automatically reconnect once you return to the title screen (not the title menu).
+- Fixed a bug where a Game Over would be triggered if either player missed while at 0 lives.
+- Fixed GUI issues when entering player signatures.
+
 ### 3.7.1 Updates
 - hitbox when focusing
 - fix a 0.5px texture offset

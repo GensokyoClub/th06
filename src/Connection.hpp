@@ -1,6 +1,6 @@
 #pragma once
-#define MULTI_NET_VER 3710
-#define MULTI_NET_VER_S "3.7.1"
+#define MULTI_NET_VER 3800
+#define MULTI_NET_VER_S "3.8.0"
 
 #include <winsock2.h>
 #include <Ws2tcpip.h>

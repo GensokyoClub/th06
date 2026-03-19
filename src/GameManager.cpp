@@ -37,19 +37,15 @@ bool g_restart_flag = false;
 namespace th06
 {
 
-DIFFABLE_STATIC_ARRAY_ASSIGN(u32, 13, g_ExtraLivesScores) = {
+DIFFABLE_STATIC_ARRAY_ASSIGN(u32, 9, g_ExtraLivesScores) = {
     10000000, 
     20000000, 
-    30000000, 
     40000000, 
-    50000000, 
     60000000, 
-    80000000, 
    100000000, 
-   125000000,
-   150000000,
-   200000000,
-   250000000,
+   150000000, 
+   200000000, 
+   250000000, 
   1900000000};
 
 DIFFABLE_STATIC_ARRAY_ASSIGN(char *, 9, g_EclFiles) = {"dummy",

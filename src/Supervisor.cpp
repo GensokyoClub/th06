@@ -74,7 +74,6 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
         g_cur_ctrl = IGC_NONE;
     }
     last_frame_a = frame_a;
-
     // if(s->calcCount % 300 == 299)
     // {
     //     LARGE_INTEGER q;
@@ -135,11 +134,12 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
             }
         }
         int cur_ctrl_i;
-        if(g_Supervisor.curState != SUPERVISOR_STATE_RESULTSCREEN)
-        {
+        if(g_Supervisor.curState != SUPERVISOR_STATE_RESULTSCREEN && g_Supervisor.curState!=SUPERVISOR_STATE_RESULTSCREEN_FROMGAME){
             g_CurFrameInput = Controller::GetInput_Net(frame_a, is_in_UI,cur_ctrl_i);
         }else{
-            g_CurFrameInput = 0;
+            // disconnect for a while
+            g_is_connected = false;
+            g_CurFrameInput = Controller::GetInput_Net(frame_a, is_in_UI,cur_ctrl_i);
         }
         g_cur_ctrl = (InGameCtrlType)cur_ctrl_i;
         g_change_delay_cd--;
@@ -222,7 +222,6 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
     {
         g_NumOfFramesInputsWereHeld = 0;
     }
-
     if (s->wantedState != s->curState)
     {
         g_ctrl_bits_rcved.clear();

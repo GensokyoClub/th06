@@ -253,6 +253,7 @@ struct Player
     
     AnmVm hitboxSprite;
     int hitboxTime;
+    int lifegiveTime;
 
 #pragma var_order(x, y)
     void inline SetToTopLeftPos(AnmVm *sprite)

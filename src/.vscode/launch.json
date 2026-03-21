@@ -3,7 +3,7 @@
     "configurations": [
         {
             "name": "(Windows) 启动游戏进行调试",
-            "type": "cppvsdbg",
+            "type": "cppvsdbg", 
             "request": "launch",
             "program": "C:/disk/touhou/TH/mods/EoSD_multi/th06/build/th06e.exe",
             "args": [],

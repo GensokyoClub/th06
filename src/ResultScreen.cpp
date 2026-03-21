@@ -27,16 +27,12 @@ DIFFABLE_STATIC_ASSIGN(u32, g_DefaultMagic) = 'DMYS';
 
 DIFFABLE_STATIC_ASSIGN(char *, g_AlphabetList) =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ.,:;~@abcdefghijklmnopqrstuvwxyz+-/*=%0123456789(){}[]<>#!?'\"$      --";
-//ABCDEFGHIJKLMNOP
-//QRSTUVWXYZ.,:;･@
-//abcdefghijklmnop
-//qrstuvwxyz+-/*=%
-//0123456789(){}[]
+// ABCDEFGHIJKLMNOP
+// QRSTUVWXYZ.,:;･@
+// abcdefghijklmnop
+// qrstuvwxyz+-/*=%
+// 0123456789(){}[]
 //<>#!?'"$      --
-
-
-
-
 
 DIFFABLE_STATIC_ARRAY_ASSIGN(char *, 6, g_CharacterList) = {TH_HAKUREI_REIMU_SPIRIT,  TH_HAKUREI_REIMU_DREAM,
                                                             TH_KIRISAME_MARISA_DEVIL, TH_KIRISAME_MARISA_LOVE,
@@ -1978,8 +1974,8 @@ ChainCallbackResult th06::ResultScreen::OnDraw(ResultScreen *resultScreen)
                 strPos.x += charPos.y;
                 strPos.y += charPos.x;
                 keyboardCharacter[0] = g_AlphabetList[row * RESULT_KEYBOARD_COLUMNS + column];
-                if(keyboardCharacter[0]=='~')
-                    keyboardCharacter[0]=0xA5;// red slash
+                if (keyboardCharacter[0] == '~')
+                    keyboardCharacter[0] = 0xA5; // red slash
                 keyboardCharacter[1] = '\0';
 
                 if (row == 5)

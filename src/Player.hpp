@@ -251,11 +251,10 @@ struct Player
     ChainElem *chainDraw1;
     ChainElem *chainDraw2;
 
-    
     AnmVm hitboxSprite;
     int hitboxTime;
     int lifegiveTime;
-    
+
     D3DXVECTOR3 spiritModeSpeed;
 #pragma var_order(x, y)
     void inline SetToTopLeftPos(AnmVm *sprite)

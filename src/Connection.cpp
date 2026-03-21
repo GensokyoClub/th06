@@ -7,11 +7,17 @@
 bool ConnectionBase::s_winsockInited = false;
 int ConnectionBase::s_refCount = 0;
 
-void PrintError(char* msg){}
-void PrintError(char* msg, int err){}
-void PrintLog(char* msg){}
+void PrintError(char *msg)
+{
+}
+void PrintError(char *msg, int err)
+{
+}
+void PrintLog(char *msg)
+{
+}
 
-bool MyInetPton(int family, const char* src, void* dst)
+bool MyInetPton(int family, const char *src, void *dst)
 {
     if (src == NULL || dst == NULL)
         return false;
@@ -25,7 +31,7 @@ bool MyInetPton(int family, const char* src, void* dst)
                 return false;
         }
 
-        ((in_addr*)dst)->s_addr = addr;
+        ((in_addr *)dst)->s_addr = addr;
         return true;
     }
     else if (family == AF_INET6)
@@ -36,10 +42,10 @@ bool MyInetPton(int family, const char* src, void* dst)
 
         int saLen = sizeof(sa6);
 
-        char buf[128] = { 0 };
+        char buf[128] = {0};
         strncpy(buf, src, sizeof(buf) - 1);
 
-        int ret = WSAStringToAddressA(buf, AF_INET6, NULL, (sockaddr*)&sa6, &saLen);
+        int ret = WSAStringToAddressA(buf, AF_INET6, NULL, (sockaddr *)&sa6, &saLen);
         if (ret != 0)
             return false;
 
@@ -50,7 +56,7 @@ bool MyInetPton(int family, const char* src, void* dst)
     return false;
 }
 
-const char* MyInetNtop(int family, const void* src, char* dst, size_t size)
+const char *MyInetNtop(int family, const void *src, char *dst, size_t size)
 {
     if (src == NULL || dst == NULL || size == 0)
         return NULL;
@@ -60,7 +66,7 @@ const char* MyInetNtop(int family, const void* src, char* dst, size_t size)
         in_addr addr4;
         memcpy(&addr4, src, sizeof(in_addr));
 
-        const char* p = inet_ntoa(addr4);
+        const char *p = inet_ntoa(addr4);
         if (p == NULL)
             return NULL;
 
@@ -76,7 +82,7 @@ const char* MyInetNtop(int family, const void* src, char* dst, size_t size)
         memcpy(&sa6.sin6_addr, src, sizeof(in6_addr));
 
         DWORD outLen = (DWORD)size;
-        int ret = WSAAddressToStringA((sockaddr*)&sa6, sizeof(sa6), NULL, dst, &outLen);
+        int ret = WSAAddressToStringA((sockaddr *)&sa6, sizeof(sa6), NULL, dst, &outLen);
         if (ret != 0)
             return NULL;
 
@@ -153,7 +159,7 @@ bool ConnectionBase::CreateUdpSocket(int family)
     if (family == AF_INET6)
     {
         DWORD off = 0;
-        if (setsockopt(m_socket, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&off, sizeof(off)) == SOCKET_ERROR)
+        if (setsockopt(m_socket, IPPROTO_IPV6, IPV6_V6ONLY, (char *)&off, sizeof(off)) == SOCKET_ERROR)
         {
             PrintError("setsockopt IPV6_V6ONLY failed", WSAGetLastError());
             // continue
@@ -176,7 +182,7 @@ bool ConnectionBase::SetNonBlocking()
     return true;
 }
 
-bool ConnectionBase::BindSocket(const std::string& bindIp, int port, int family)
+bool ConnectionBase::BindSocket(const std::string &bindIp, int port, int family)
 {
     sockaddr_storage localAddr;
     int localAddrLen = 0;
@@ -187,7 +193,7 @@ bool ConnectionBase::BindSocket(const std::string& bindIp, int port, int family)
         return false;
     }
 
-    if (bind(m_socket, (sockaddr*)&localAddr, localAddrLen) == SOCKET_ERROR)
+    if (bind(m_socket, (sockaddr *)&localAddr, localAddrLen) == SOCKET_ERROR)
     {
         PrintError("bind failed", WSAGetLastError());
         return false;
@@ -196,7 +202,7 @@ bool ConnectionBase::BindSocket(const std::string& bindIp, int port, int family)
     return true;
 }
 
-bool ConnectionBase::SendPackTo(const Pack& pack, const std::string& ip, int port)
+bool ConnectionBase::SendPackTo(const Pack &pack, const std::string &ip, int port)
 {
     if (m_socket == INVALID_SOCKET)
     {
@@ -223,13 +229,7 @@ bool ConnectionBase::SendPackTo(const Pack& pack, const std::string& ip, int por
         return false;
     }
 
-    int ret = sendto(
-        m_socket,
-        (const char*)&pack,
-        sizeof(Pack),
-        0,
-        (sockaddr*)&remoteAddr,
-        remoteAddrLen);
+    int ret = sendto(m_socket, (const char *)&pack, sizeof(Pack), 0, (sockaddr *)&remoteAddr, remoteAddrLen);
 
     if (ret == SOCKET_ERROR)
     {
@@ -241,7 +241,7 @@ bool ConnectionBase::SendPackTo(const Pack& pack, const std::string& ip, int por
     return true;
 }
 
-bool ConnectionBase::ReceiveOnePack(Pack& outPack, std::string& fromIp, int& fromPort, bool& hasData)
+bool ConnectionBase::ReceiveOnePack(Pack &outPack, std::string &fromIp, int &fromPort, bool &hasData)
 {
     hasData = false;
     fromIp.clear();
@@ -257,13 +257,7 @@ bool ConnectionBase::ReceiveOnePack(Pack& outPack, std::string& fromIp, int& fro
     int fromLen = sizeof(fromAddr);
     memset(&fromAddr, 0, sizeof(fromAddr));
 
-    int ret = recvfrom(
-        m_socket,
-        (char*)&outPack,
-        sizeof(Pack),
-        0,
-        (sockaddr*)&fromAddr,
-        &fromLen);
+    int ret = recvfrom(m_socket, (char *)&outPack, sizeof(Pack), 0, (sockaddr *)&fromAddr, &fromLen);
 
     if (ret == SOCKET_ERROR)
     {
@@ -278,7 +272,7 @@ bool ConnectionBase::ReceiveOnePack(Pack& outPack, std::string& fromIp, int& fro
         return false;
     }
 
-    if (!SockAddrToIpPort((sockaddr*)&fromAddr, fromLen, fromIp, fromPort))
+    if (!SockAddrToIpPort((sockaddr *)&fromAddr, fromLen, fromIp, fromPort))
     {
         PrintError("SockAddrToIpPort failed");
         return false;
@@ -288,18 +282,13 @@ bool ConnectionBase::ReceiveOnePack(Pack& outPack, std::string& fromIp, int& fro
     return true;
 }
 
-bool ConnectionBase::IpPortToSockAddr(
-    const std::string& ip,
-    int port,
-    sockaddr_storage& addr,
-    int& addrLen,
-    int family)
+bool ConnectionBase::IpPortToSockAddr(const std::string &ip, int port, sockaddr_storage &addr, int &addrLen, int family)
 {
     memset(&addr, 0, sizeof(addr));
 
     if (family == AF_INET)
     {
-        sockaddr_in* addr4 = (sockaddr_in*)&addr;
+        sockaddr_in *addr4 = (sockaddr_in *)&addr;
         addr4->sin_family = AF_INET;
         addr4->sin_port = htons((u_short)port);
 
@@ -318,7 +307,7 @@ bool ConnectionBase::IpPortToSockAddr(
     }
     else if (family == AF_INET6)
     {
-        sockaddr_in6* addr6 = (sockaddr_in6*)&addr;
+        sockaddr_in6 *addr6 = (sockaddr_in6 *)&addr;
         addr6->sin6_family = AF_INET6;
         addr6->sin6_port = htons((u_short)port);
 
@@ -339,22 +328,18 @@ bool ConnectionBase::IpPortToSockAddr(
     return false;
 }
 
-bool ConnectionBase::SockAddrToIpPort(
-    const sockaddr* addr,
-    int addrLen,
-    std::string& ip,
-    int& port)
+bool ConnectionBase::SockAddrToIpPort(const sockaddr *addr, int addrLen, std::string &ip, int &port)
 {
-    char ipStr[128] = { 0 };
+    char ipStr[128] = {0};
 
     if (addr == NULL)
         return false;
 
     if (addr->sa_family == AF_INET)
     {
-        const sockaddr_in* addr4 = (const sockaddr_in*)addr;
+        const sockaddr_in *addr4 = (const sockaddr_in *)addr;
 
-        if (MyInetNtop(AF_INET, (void*)&addr4->sin_addr, ipStr, sizeof(ipStr)) == NULL)
+        if (MyInetNtop(AF_INET, (void *)&addr4->sin_addr, ipStr, sizeof(ipStr)) == NULL)
             return false;
 
         ip = ipStr;
@@ -363,9 +348,9 @@ bool ConnectionBase::SockAddrToIpPort(
     }
     else if (addr->sa_family == AF_INET6)
     {
-        const sockaddr_in6* addr6 = (const sockaddr_in6*)addr;
+        const sockaddr_in6 *addr6 = (const sockaddr_in6 *)addr;
 
-        if (MyInetNtop(AF_INET6, (void*)&addr6->sin6_addr, ipStr, sizeof(ipStr)) == NULL)
+        if (MyInetNtop(AF_INET6, (void *)&addr6->sin6_addr, ipStr, sizeof(ipStr)) == NULL)
             return false;
 
         ip = ipStr;
@@ -391,7 +376,7 @@ Host::~Host()
 {
 }
 
-bool Host::Start(const std::string& bindIp, int port, int family)
+bool Host::Start(const std::string &bindIp, int port, int family)
 {
     Reset();
     if (!InitWinsock())
@@ -411,7 +396,7 @@ bool Host::Start(const std::string& bindIp, int port, int family)
     return true;
 }
 
-bool Host::PollReceive(Pack& outPack, bool& hasData)
+bool Host::PollReceive(Pack &outPack, bool &hasData)
 {
     std::string fromIp;
     int fromPort = 0;
@@ -428,7 +413,7 @@ bool Host::PollReceive(Pack& outPack, bool& hasData)
     return true;
 }
 
-bool Host::SendPack(const Pack& pack)
+bool Host::SendPack(const Pack &pack)
 {
     if (m_guestIp.empty() || m_guestPort <= 0)
     {
@@ -494,7 +479,7 @@ Guest::~Guest()
 {
 }
 
-bool Guest::Start(const std::string& hostIp, int hostPort, int localPort, int family)
+bool Guest::Start(const std::string &hostIp, int hostPort, int localPort, int family)
 {
     Reset();
     if (!InitWinsock())
@@ -517,7 +502,7 @@ bool Guest::Start(const std::string& hostIp, int hostPort, int localPort, int fa
     return true;
 }
 
-bool Guest::PollReceive(Pack& outPack, bool& hasData)
+bool Guest::PollReceive(Pack &outPack, bool &hasData)
 {
     std::string fromIp;
     int fromPort = 0;
@@ -528,7 +513,7 @@ bool Guest::PollReceive(Pack& outPack, bool& hasData)
     return true;
 }
 
-bool Guest::SendPack(const Pack& pack)
+bool Guest::SendPack(const Pack &pack)
 {
     if (m_hostIp.empty() || m_hostPort <= 0)
     {
@@ -563,7 +548,6 @@ int Guest::GetLocalPort() const
 {
     return m_localPort;
 }
-
 
 void ConnectionBase::Reset()
 {

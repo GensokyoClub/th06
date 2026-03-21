@@ -24,7 +24,7 @@ struct StageReplayData
     u8 power2;
     i8 livesRemaining2;
     i8 bombsRemaining2;
-    //i8 padding[3];
+    // i8 padding[3];
     ReplayDataInput replayInputs[53998];
 };
 ZUN_ASSERT_SIZE(StageReplayData, 0x69780);

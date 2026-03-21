@@ -37,27 +37,29 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     MSG msg;
     i32 waste1, waste2, waste3, waste4, waste5, waste6;
 
-    ConnectionUI ui(g_host,g_guest);
+    ConnectionUI ui(g_host, g_guest);
     ui.Show();
     g_delay = ui.GetDelay();
     g_is_host = ui.IsHost();
-    if(!ui.IsGameStarted())
+    if (!ui.IsGameStarted())
         return 1;
-    if(!ui.IsConnected())
+    if (!ui.IsConnected())
     {
-        g_is_connected=false;
+        g_is_connected = false;
         g_is_single_mode = true;
-    }else{
+    }
+    else
+    {
         g_is_connected = true;
         g_is_single_mode = false;
     }
-    //g_is_connected = false;
+    // g_is_connected = false;
 
-    //if (utils::CheckForRunningGameInstance())
+    // if (utils::CheckForRunningGameInstance())
     //{
-    //    g_GameErrorContext.Flush();
-    //    return 1;
-    //}
+    //     g_GameErrorContext.Flush();
+    //     return 1;
+    // }
 
     g_Supervisor.hInstance = hInstance;
 

@@ -167,8 +167,8 @@ void EnemyManager::RunEclTimeline()
         subrankIncreaseFrame = 10 * 4 * 60;
         subrankIncreaseFrame -= g_GameManager.livesRemaining * 4 * 60;
         subrankIncreaseFrame -= g_GameManager.livesRemaining2 * 4 * 60;
-        if(subrankIncreaseFrame<=0)
-            subrankIncreaseFrame=1;
+        if (subrankIncreaseFrame <= 0)
+            subrankIncreaseFrame = 1;
         if (this->timelineTime.HasTicked() && this->timelineTime.AsFrames() % subrankIncreaseFrame == 0)
         {
             g_GameManager.IncreaseSubrank(100);

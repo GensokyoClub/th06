@@ -205,10 +205,10 @@ i32 *GetVar(Enemy *enemy, EclVarId *eclVarId, EclValueType *valueType)
         return (i32 *)&g_Player.positionCenter.z;
 
     case ECL_VAR_PLAYER_ANGLE:
-        if(g_Player.playerState==PLAYER_STATE_SPIRIT) 
-             g_PlayerAngle = g_Player2.AngleToPlayer(&enemy->position);
-        else if(g_Player2.playerState==PLAYER_STATE_SPIRIT)
-             g_PlayerAngle = g_Player.AngleToPlayer(&enemy->position);
+        if (g_Player.playerState == PLAYER_STATE_SPIRIT)
+            g_PlayerAngle = g_Player2.AngleToPlayer(&enemy->position);
+        else if (g_Player2.playerState == PLAYER_STATE_SPIRIT)
+            g_PlayerAngle = g_Player.AngleToPlayer(&enemy->position);
         else if (g_Player.RangeToPlayer(&enemy->position) > g_Player2.RangeToPlayer(&enemy->position))
             g_PlayerAngle = g_Player2.AngleToPlayer(&enemy->position);
         else
@@ -224,9 +224,9 @@ i32 *GetVar(Enemy *enemy, EclVarId *eclVarId, EclValueType *valueType)
         return &enemy->bossTimer.current;
 
     case ECL_VAR_PLAYER_DISTANCE:
-        if(g_Player.playerState==PLAYER_STATE_SPIRIT) 
+        if (g_Player.playerState == PLAYER_STATE_SPIRIT)
             g_PlayerDistance = D3DXVec3Length(&(g_Player2.positionCenter - enemy->position));
-        else if(g_Player2.playerState==PLAYER_STATE_SPIRIT)
+        else if (g_Player2.playerState == PLAYER_STATE_SPIRIT)
             g_PlayerDistance = D3DXVec3Length(&(g_Player.positionCenter - enemy->position));
         else if (g_Player.RangeToPlayer(&enemy->position) > g_Player2.RangeToPlayer(&enemy->position))
             g_PlayerDistance = D3DXVec3Length(&(g_Player2.positionCenter - enemy->position));
@@ -702,18 +702,16 @@ void ExInsStage5Func5(Enemy *enemy, EclRawInstr *instr)
         bulletProps.flags = 0;
 
         matrixOutSeed = 0.5f - patternPosition * 0.5f / 9.0f;
-        
-        if(g_Player.playerState==PLAYER_STATE_SPIRIT) 
+
+        if (g_Player.playerState == PLAYER_STATE_SPIRIT)
             matrixOut = g_Player2.positionCenter - enemy->position;
-        else if(g_Player2.playerState==PLAYER_STATE_SPIRIT)
+        else if (g_Player2.playerState == PLAYER_STATE_SPIRIT)
             matrixOut = g_Player.positionCenter - enemy->position;
         else if (g_Player.RangeToPlayer(&enemy->position) > g_Player2.RangeToPlayer(&enemy->position))
             matrixOut = g_Player2.positionCenter - enemy->position;
         else
             matrixOut = g_Player.positionCenter - enemy->position;
-            
 
-        
         D3DXVec3Normalize(&matrixIn, &matrixOut);
         if ((patternPosition & 1) != 0)
         {

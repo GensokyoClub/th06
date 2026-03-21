@@ -268,7 +268,7 @@ ZunResult ReplayManager::AddedCallback(ReplayManager *mgr)
     stageReplayData->livesRemaining2 = g_GameManager.livesRemaining2;
     stageReplayData->bombsRemaining2 = g_GameManager.bombsRemaining2;
     stageReplayData->power2 = g_GameManager.currentPower2;
-    
+
     stageReplayData->rank = g_GameManager.rank;
     stageReplayData->pointItemsCollected = g_GameManager.pointItemsCollected;
     stageReplayData->randomSeed = g_GameManager.randomSeed;

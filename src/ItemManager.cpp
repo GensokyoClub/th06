@@ -61,7 +61,7 @@ void ItemManager::SpawnItem(D3DXVECTOR3 *position, ItemType itemType, int state)
             item->targetPosition.z = 0.0;
             item->startPosition = item->currentPosition;
         }
-        if (state == 3 || state == 4)// throw up
+        if (state == 3 || state == 4) // throw up
         {
             item->targetPosition.x = position->x;
             item->targetPosition.y = position->y - 60.0f;
@@ -89,9 +89,9 @@ i32 __inline calculatePointScore(Item *curItem, i32 scoreAcquiredItemTop, i32 sc
                : (scoreAcquiredItemBottom - (((i32)curItem->currentPosition.y - 128) * posMultiplier));
 }
 
-float hypotsqf(float a,float b)
+float hypotsqf(float a, float b)
 {
-    return a*a+b*b;
+    return a * a + b * b;
 }
 
 #pragma var_order(idx, itemScore, playerAngle, itemAcquired, curItem, fVar5, idx2, iVar8, idx3, iVar9)
@@ -130,49 +130,59 @@ void ItemManager::OnUpdate()
             else if ((i32)(curItem->timer.current == 60))
             {
                 curItem->startPosition = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-                curItem->state=0;
+                curItem->state = 0;
             }
-        }else if(curItem->state == 3 || curItem->state == 4)
+        }
+        else if (curItem->state == 3 || curItem->state == 4)
         {
-            if ((i32)(20 > curItem->timer.current)){
+            if ((i32)(20 > curItem->timer.current))
+            {
                 float t = curItem->timer.AsFramesFloat() / 20.0f;
-                float yt = 1.0f-powf(1.0f-t,1.5f);
+                float yt = 1.0f - powf(1.0f - t, 1.5f);
                 curItem->currentPosition = yt * curItem->targetPosition + curItem->startPosition * (1.0f - yt);
                 goto yolo;
-            }else if ((i32)(curItem->timer.current == 20))  {
+            }
+            else if ((i32)(curItem->timer.current == 20))
+            {
                 curItem->startPosition = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-                curItem->state=0;
+                curItem->state = 0;
             }
         }
         else
         {
-            if(curItem->state == 1)
+            if (curItem->state == 1)
             {
-                float dis1 = hypotsqf(curItem->currentPosition.x-g_Player.positionCenter.x,
-                    curItem->currentPosition.y-g_Player.positionCenter.y);
+                float dis1 = hypotsqf(curItem->currentPosition.x - g_Player.positionCenter.x,
+                                      curItem->currentPosition.y - g_Player.positionCenter.y);
 
-                float dis2 = hypotsqf(curItem->currentPosition.x-g_Player2.positionCenter.x,
-                    curItem->currentPosition.y-g_Player2.positionCenter.y);
-                if(g_Player.playerState == PLAYER_STATE_SPIRIT)
+                float dis2 = hypotsqf(curItem->currentPosition.x - g_Player2.positionCenter.x,
+                                      curItem->currentPosition.y - g_Player2.positionCenter.y);
+                if (g_Player.playerState == PLAYER_STATE_SPIRIT)
                     dis1 = 1e6;
-                if(g_Player2.playerState == PLAYER_STATE_SPIRIT)
+                if (g_Player2.playerState == PLAYER_STATE_SPIRIT)
                     dis2 = 1e6;
                 // spirit mode do not eat items
-                if(dis1<dis2)
+                if (dis1 < dis2)
                 {
                     playerAngle = g_Player.AngleToPlayer(&curItem->currentPosition);
-                }else{
+                }
+                else
+                {
                     playerAngle = g_Player2.AngleToPlayer(&curItem->currentPosition);
                 }
                 sincosmul(&curItem->startPosition, playerAngle, 8.0f);
-            }else{
-                if ((0 <= g_GameManager.currentPower && g_Player.positionCenter.y < 128.0f && g_Player.playerState!=PLAYER_STATE_SPIRIT))
+            }
+            else
+            {
+                if ((0 <= g_GameManager.currentPower && g_Player.positionCenter.y < 128.0f &&
+                     g_Player.playerState != PLAYER_STATE_SPIRIT))
                 {
                     playerAngle = g_Player.AngleToPlayer(&curItem->currentPosition);
                     sincosmul(&curItem->startPosition, playerAngle, 8.0f);
                     curItem->state = 1;
                 }
-                else if ((0 <= g_GameManager.currentPower2 && g_Player2.positionCenter.y < 128.0f && g_Player2.playerState!=PLAYER_STATE_SPIRIT))
+                else if ((0 <= g_GameManager.currentPower2 && g_Player2.positionCenter.y < 128.0f &&
+                          g_Player2.playerState != PLAYER_STATE_SPIRIT))
                 {
                     playerAngle = g_Player2.AngleToPlayer(&curItem->currentPosition);
                     sincosmul(&curItem->startPosition, playerAngle, 8.0f);
@@ -207,33 +217,33 @@ void ItemManager::OnUpdate()
     yolo:
         bool hit_player1 = g_Player.CalcItemBoxCollision(&curItem->currentPosition, &g_ItemSize);
         bool hit_player2 = g_Player2.CalcItemBoxCollision(&curItem->currentPosition, &g_ItemSize);
-        if(g_Player.playerState == PLAYER_STATE_SPIRIT)
+        if (g_Player.playerState == PLAYER_STATE_SPIRIT)
             hit_player1 = 0;
-        if(g_Player2.playerState == PLAYER_STATE_SPIRIT)
+        if (g_Player2.playerState == PLAYER_STATE_SPIRIT)
             hit_player2 = 0;
-        if(curItem->timer.current<20 && (curItem->state==3 || curItem->state==4))
+        if (curItem->timer.current < 20 && (curItem->state == 3 || curItem->state == 4))
         {
-            hit_player1=hit_player2=false;
+            hit_player1 = hit_player2 = false;
         }
         if (hit_player1 || hit_player2)
         {
             // only one can hit item
-            if(hit_player1 && hit_player2)
+            if (hit_player1 && hit_player2)
             {
-                float dist1 = hypotsqf(curItem->currentPosition.x-g_Player.positionCenter.x,
-                        curItem->currentPosition.y-g_Player.positionCenter.y);
-                float dist2 = hypotsqf(curItem->currentPosition.x-g_Player2.positionCenter.x,
-                    curItem->currentPosition.y-g_Player2.positionCenter.y);
-                if(dist1<dist2)
-                    hit_player2=false;
+                float dist1 = hypotsqf(curItem->currentPosition.x - g_Player.positionCenter.x,
+                                       curItem->currentPosition.y - g_Player.positionCenter.y);
+                float dist2 = hypotsqf(curItem->currentPosition.x - g_Player2.positionCenter.x,
+                                       curItem->currentPosition.y - g_Player2.positionCenter.y);
+                if (dist1 < dist2)
+                    hit_player2 = false;
                 else
-                    hit_player1=false;
+                    hit_player1 = false;
             }
 
             switch (curItem->itemType)
             {
             case ITEM_POWER_SMALL:
-                if(hit_player1)
+                if (hit_player1)
                 {
                     if (g_GameManager.currentPower >= 128)
                     {
@@ -244,7 +254,8 @@ void ItemManager::OnUpdate()
                         }
                         itemScore = g_PowerItemScore[g_GameManager.powerItemCountForScore];
                         g_GameManager.AddScore(itemScore);
-                        g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore, itemScore >= 12800 ? -256 : -1);
+                        g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore,
+                                                    itemScore >= 12800 ? -256 : -1);
                     }
                     else
                     {
@@ -278,7 +289,9 @@ void ItemManager::OnUpdate()
                             g_AsciiManager.CreatePopup1(&curItem->currentPosition, 10, COLOR_WHITE);
                         }
                     }
-                }else{
+                }
+                else
+                {
                     if (g_GameManager.currentPower2 >= 128)
                     {
                         g_GameManager.powerItemCountForScore++;
@@ -288,7 +301,8 @@ void ItemManager::OnUpdate()
                         }
                         itemScore = g_PowerItemScore[g_GameManager.powerItemCountForScore];
                         g_GameManager.AddScore(itemScore);
-                        g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore, itemScore >= 12800 ? -256 : -1);
+                        g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore,
+                                                    itemScore >= 12800 ? -256 : -1);
                     }
                     else
                     {
@@ -360,7 +374,7 @@ void ItemManager::OnUpdate()
                 }
                 break;
             case ITEM_POWER_BIG:
-                if(hit_player1)
+                if (hit_player1)
                 {
                     if (g_GameManager.currentPower >= 128)
                     {
@@ -371,7 +385,8 @@ void ItemManager::OnUpdate()
                         }
                         itemScore = g_PowerItemScore[g_GameManager.powerItemCountForScore];
                         g_GameManager.score += itemScore;
-                        g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore, itemScore >= 12800 ? -256 : -1);
+                        g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore,
+                                                    itemScore >= 12800 ? -256 : -1);
                     }
                     else
                     {
@@ -404,7 +419,9 @@ void ItemManager::OnUpdate()
                             g_AsciiManager.CreatePopup1(&curItem->currentPosition, 10, COLOR_WHITE);
                         }
                     }
-                }else{
+                }
+                else
+                {
                     if (g_GameManager.currentPower2 >= 128)
                     {
                         g_GameManager.powerItemCountForScore += 8;
@@ -414,7 +431,8 @@ void ItemManager::OnUpdate()
                         }
                         itemScore = g_PowerItemScore[g_GameManager.powerItemCountForScore];
                         g_GameManager.score += itemScore;
-                        g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore, itemScore >= 12800 ? -256 : -1);
+                        g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore,
+                                                    itemScore >= 12800 ? -256 : -1);
                     }
                     else
                     {
@@ -450,20 +468,26 @@ void ItemManager::OnUpdate()
                 }
                 break;
             case ITEM_BOMB:
-                if (hit_player1 && g_GameManager.bombsRemaining < 8){
+                if (hit_player1 && g_GameManager.bombsRemaining < 8)
+                {
                     g_GameManager.bombsRemaining++;
                     g_Gui.flags.flag1 = 2;
-                }else if(hit_player2 && g_GameManager.bombsRemaining2 < 8){
+                }
+                else if (hit_player2 && g_GameManager.bombsRemaining2 < 8)
+                {
                     g_GameManager.bombsRemaining2++;
                     g_Gui.flags.flag1 = 2;
                 }
                 g_GameManager.IncreaseSubrank(5);
                 break;
             case ITEM_LIFE:
-                if (hit_player1 && g_GameManager.livesRemaining < 8){
+                if (hit_player1 && g_GameManager.livesRemaining < 8)
+                {
                     g_GameManager.livesRemaining++;
                     g_Gui.flags.flag0 = 2;
-                }else if(hit_player2 && g_GameManager.livesRemaining2 < 8){
+                }
+                else if (hit_player2 && g_GameManager.livesRemaining2 < 8)
+                {
                     g_GameManager.livesRemaining2++;
                     g_Gui.flags.flag0 = 2;
                 }
@@ -471,7 +495,7 @@ void ItemManager::OnUpdate()
                 g_SoundPlayer.PlaySoundByIdx(SOUND_1UP, 0);
                 break;
             case ITEM_FULL_POWER:
-                if(hit_player1)
+                if (hit_player1)
                 {
                     if (g_GameManager.currentPower < 128)
                     {
@@ -484,7 +508,8 @@ void ItemManager::OnUpdate()
                     g_GameManager.AddScore(1000);
                     g_AsciiManager.CreatePopup1(&curItem->currentPosition, 1000, COLOR_WHITE);
                     g_Gui.flags.flag2 = 2;
-                }else
+                }
+                else
                 {
                     if (g_GameManager.currentPower2 < 128)
                     {
@@ -498,7 +523,7 @@ void ItemManager::OnUpdate()
                     g_AsciiManager.CreatePopup1(&curItem->currentPosition, 1000, COLOR_WHITE);
                     g_Gui.flags.flag2 = 2;
                 }
-                    
+
                 break;
             case ITEM_POINT_BULLET:
                 itemScore = (g_GameManager.grazeInStage / 3) * 10 + 500;

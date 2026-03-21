@@ -27,12 +27,17 @@ namespace th06
 {
 float MInterpolation(float t, float a, float b)
 {
-    if (t < 0.0f) {
+    if (t < 0.0f)
+    {
         return a;
-    } else if (t < 0.5) {
+    }
+    else if (t < 0.5)
+    {
         float k = (b - a) * 2.0f;
         return k * t * t + a;
-    } else if (t < 1.0f) {
+    }
+    else if (t < 1.0f)
+    {
         float k = (b - a) * 2.0f;
         t = t - 1.0f;
         return -k * t * t + b;
@@ -127,13 +132,12 @@ ZunResult Player::AddedCallback(Player *p)
     i32 idx;
 
     if ((i32)(g_Supervisor.curState != SUPERVISOR_STATE_GAMEMANAGER_REINIT) &&
-                g_AnmManager->LoadAnm(ANM_FILE_MOD_ANM, "data/mod_anm.anm", ANM_OFFSET_MOD_ANM) != ZUN_SUCCESS)
+        g_AnmManager->LoadAnm(ANM_FILE_MOD_ANM, "data/mod_anm.anm", ANM_OFFSET_MOD_ANM) != ZUN_SUCCESS)
     {
         return ZUN_ERROR;
     }
     g_AnmManager->SetAndExecuteScriptIdx(&p->hitboxSprite, ANM_SCRIPT_HITBOX);
 
-    
     if (p->playerType == 1)
     {
         switch (g_GameManager.character)
@@ -159,8 +163,8 @@ ZunResult Player::AddedCallback(Player *p)
     }
     else
     {
-        
-        if(g_GameManager.character==g_GameManager.character2)
+
+        if (g_GameManager.character == g_GameManager.character2)
         {
             switch (g_GameManager.character2)
             {
@@ -182,7 +186,9 @@ ZunResult Player::AddedCallback(Player *p)
                 g_AnmManager->SetAndExecuteScriptIdx(&p->playerSprite, ANM_SCRIPT_PLAYER_IDLE2);
                 break;
             }
-        }else{
+        }
+        else
+        {
             switch (g_GameManager.character2)
             {
             case CHARA_REIMU:
@@ -204,12 +210,12 @@ ZunResult Player::AddedCallback(Player *p)
                 break;
             }
         }
-        
     }
-    if(p->playerType==1)
+    if (p->playerType == 1)
     {
         p->positionCenter.x = g_GameManager.arcadeRegionSize.x / 2.0f - 32.0f;
-    }else
+    }
+    else
     {
         p->positionCenter.x = g_GameManager.arcadeRegionSize.x / 2.0f + 32.0f;
     }
@@ -310,7 +316,7 @@ ChainCallbackResult Player::OnUpdate(Player *p)
 
     float dx = g_Player2.positionCenter.x - g_Player.positionCenter.x;
     float dy = g_Player2.positionCenter.y - g_Player.positionCenter.y;
-    float dist = sqrtf(dx*dx+dy*dy);
+    float dist = sqrtf(dx * dx + dy * dy);
     // hit(just for fun)
     // {
     //     if(dist<150.0f)
@@ -330,7 +336,6 @@ ChainCallbackResult Player::OnUpdate(Player *p)
     //     }
     // }
 
-
     for (idx = 0; idx < ARRAY_SIZE_SIGNED(p->bombRegionSizes); idx++)
     {
         p->bombRegionSizes[idx].x = 0.0;
@@ -343,14 +348,13 @@ ChainCallbackResult Player::OnUpdate(Player *p)
     {
         p->bombInfo.calc(p);
     }
-    else if (!g_Gui.HasCurrentMsgIdx() && p->respawnTimer != 0  &&
-             ((p->playerType == 1 && WAS_PRESSED(TH_BUTTON_BOMB) && 0 < g_GameManager.bombsRemaining) ||  
-             (p->playerType == 2 && WAS_PRESSED(TH_BUTTON_BOMB2) && 0 < g_GameManager.bombsRemaining2)
-            ) 
-              && p->bombInfo.calc != NULL)
+    else if (!g_Gui.HasCurrentMsgIdx() && p->respawnTimer != 0 &&
+             ((p->playerType == 1 && WAS_PRESSED(TH_BUTTON_BOMB) && 0 < g_GameManager.bombsRemaining) ||
+              (p->playerType == 2 && WAS_PRESSED(TH_BUTTON_BOMB2) && 0 < g_GameManager.bombsRemaining2)) &&
+             p->bombInfo.calc != NULL)
     {
         g_GameManager.bombsUsed++;
-        if(p->playerType==1)
+        if (p->playerType == 1)
             g_GameManager.bombsRemaining--;
         else
             g_GameManager.bombsRemaining2--;
@@ -371,8 +375,10 @@ ChainCallbackResult Player::OnUpdate(Player *p)
             if (p->respawnTimer == 0)
             {
                 g_GameManager.powerItemCountForScore = 0;
-                if (!((g_GameManager.livesRemaining <= 0 && p->playerType==1 && g_Player2.playerState == PLAYER_STATE_SPIRIT)// P1 in sprit mode and P2 died
-                || (g_GameManager.livesRemaining2 <= 0 && p->playerType!=1 && g_Player.playerState == PLAYER_STATE_SPIRIT)))// P2 in sprit mode and P1 died
+                if (!((g_GameManager.livesRemaining <= 0 && p->playerType == 1 &&
+                       g_Player2.playerState == PLAYER_STATE_SPIRIT) // P1 in sprit mode and P2 died
+                      || (g_GameManager.livesRemaining2 <= 0 && p->playerType != 1 &&
+                          g_Player.playerState == PLAYER_STATE_SPIRIT))) // P2 in sprit mode and P1 died
                 // all died
                 {
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_BIG, 2);
@@ -381,19 +387,21 @@ ChainCallbackResult Player::OnUpdate(Player *p)
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, 2);
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, 2);
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, 2);
-                    if(p->playerType==1)
+                    if (p->playerType == 1)
                     {
                         if (g_GameManager.currentPower <= 16)
                             g_GameManager.currentPower = 0;
                         else
                             g_GameManager.currentPower -= 16;
-                    }else{
+                    }
+                    else
+                    {
                         if (g_GameManager.currentPower2 <= 16)
                             g_GameManager.currentPower2 = 0;
                         else
                             g_GameManager.currentPower2 -= 16;
                     }
-                    
+
                     g_Gui.flags.flag2 = 2;
                 }
                 else
@@ -403,9 +411,12 @@ ChainCallbackResult Player::OnUpdate(Player *p)
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, 2);
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, 2);
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, 2);
-                    if(p->playerType==1){
+                    if (p->playerType == 1)
+                    {
                         g_GameManager.currentPower = 0;
-                    }else{
+                    }
+                    else
+                    {
                         g_GameManager.currentPower2 = 0;
                     }
                     g_Gui.flags.flag2 = 2;
@@ -435,48 +446,53 @@ ChainCallbackResult Player::OnUpdate(Player *p)
                 {
                     g_AnmManager->SetAndExecuteScriptIdx(&p->playerSprite, ANM_SCRIPT_PLAYER_IDLE2);
                 }
-                if ((g_GameManager.livesRemaining <= 0 && p->playerType==1 && g_Player2.playerState == PLAYER_STATE_SPIRIT)// P1 in sprit mode and P2 died
-                || (g_GameManager.livesRemaining2 <= 0 && p->playerType!=1 && g_Player.playerState == PLAYER_STATE_SPIRIT))// P2 in sprit mode and P1 died
+                if ((g_GameManager.livesRemaining <= 0 && p->playerType == 1 &&
+                     g_Player2.playerState == PLAYER_STATE_SPIRIT) // P1 in sprit mode and P2 died
+                    || (g_GameManager.livesRemaining2 <= 0 && p->playerType != 1 &&
+                        g_Player.playerState == PLAYER_STATE_SPIRIT)) // P2 in sprit mode and P1 died
                 // all died
                 {
                     g_Player2.playerState = PLAYER_STATE_SPAWNING;
                     g_Player.playerState = PLAYER_STATE_SPAWNING;
                     g_GameManager.isInRetryMenu = 1;
-                }else if (g_GameManager.livesRemaining <= 0 && p->playerType==1)
+                }
+                else if (g_GameManager.livesRemaining <= 0 && p->playerType == 1)
                 // P1 died but no P2
                 {
                     g_Gui.flags.flag0 = 2;
                     g_Gui.flags.flag1 = 2;
                     g_GameManager.bombsRemaining = 3;
                     p->playerState = PLAYER_STATE_SPIRIT;
-                    float angle = (g_Rng.GetRandomU16() % 4)*(3.1415926f/2)+3.1415926f/4;
-                    p->spiritModeSpeed.x = cos(angle)*0.8;
-                    p->spiritModeSpeed.y = sin(angle)*0.8;
-                    g_ItemManager.SpawnItem(&p->positionCenter,ITEM_LIFE,3);
+                    float angle = (g_Rng.GetRandomU16() % 4) * (3.1415926f / 2) + 3.1415926f / 4;
+                    p->spiritModeSpeed.x = cos(angle) * 0.8;
+                    p->spiritModeSpeed.y = sin(angle) * 0.8;
+                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_LIFE, 3);
                     p->isFocus = false;
                     p->bulletGracePeriod = 10;
                     goto spirit;
-                }else if(g_GameManager.livesRemaining2 <= 0 && p->playerType!=1)
+                }
+                else if (g_GameManager.livesRemaining2 <= 0 && p->playerType != 1)
                 // P2 died but no P1
                 {
                     g_Gui.flags.flag0 = 2;
                     g_Gui.flags.flag1 = 2;
                     g_GameManager.bombsRemaining2 = 3;
                     p->playerState = PLAYER_STATE_SPIRIT;
-                    float angle = (g_Rng.GetRandomU16() % 4)*(3.1415926f/2)+3.1415926f/4;
-                    p->spiritModeSpeed.x = cos(angle)*0.8;
-                    p->spiritModeSpeed.y = sin(angle)*0.8;
-                    g_ItemManager.SpawnItem(&p->positionCenter,ITEM_LIFE,4);
+                    float angle = (g_Rng.GetRandomU16() % 4) * (3.1415926f / 2) + 3.1415926f / 4;
+                    p->spiritModeSpeed.x = cos(angle) * 0.8;
+                    p->spiritModeSpeed.y = sin(angle) * 0.8;
+                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_LIFE, 4);
                     p->isFocus = false;
                     p->bulletGracePeriod = 10;
                     goto spirit;
                 }
                 else
                 {
-                    if(p->playerType==1)
+                    if (p->playerType == 1)
                     {
                         p->positionCenter.x = g_GameManager.arcadeRegionSize.x / 2.0f - 32.0f;
-                    }else
+                    }
+                    else
                     {
                         p->positionCenter.x = g_GameManager.arcadeRegionSize.x / 2.0f + 32.0f;
                     }
@@ -485,7 +501,7 @@ ChainCallbackResult Player::OnUpdate(Player *p)
                     p->invulnerabilityTimer.SetCurrent(0);
                     p->playerSprite.scaleX = 3.0;
                     p->playerSprite.scaleY = 3.0;
-                    if(p->playerType==1)
+                    if (p->playerType == 1)
                         g_GameManager.livesRemaining--;
                     else
                         g_GameManager.livesRemaining2--;
@@ -493,14 +509,14 @@ ChainCallbackResult Player::OnUpdate(Player *p)
                     g_Gui.flags.flag0 = 2;
                     if (g_GameManager.difficulty < 4 && g_GameManager.isInPracticeMode == 0)
                     {
-                        if(p->playerType==1)
+                        if (p->playerType == 1)
                             g_GameManager.bombsRemaining = g_Supervisor.defaultConfig.bombCount;
                         else
                             g_GameManager.bombsRemaining2 = g_Supervisor.defaultConfig.bombCount;
                     }
                     else
                     {
-                        if(p->playerType==1)
+                        if (p->playerType == 1)
                             g_GameManager.bombsRemaining = 3;
                         else
                             g_GameManager.bombsRemaining2 = 3;
@@ -533,7 +549,8 @@ ChainCallbackResult Player::OnUpdate(Player *p)
             p->invulnerabilityTimer.SetCurrent(240);
             p->respawnTimer = 6;
         }
-    }else if(p->playerState == PLAYER_STATE_SPIRIT)
+    }
+    else if (p->playerState == PLAYER_STATE_SPIRIT)
     {
     spirit:
         p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, 80);
@@ -541,7 +558,8 @@ ChainCallbackResult Player::OnUpdate(Player *p)
         p->positionCenter.y += p->spiritModeSpeed.y;
         if (p->positionCenter.x < g_GameManager.playerMovementAreaTopLeftPos.x)
             p->spiritModeSpeed.x *= -1.0f;
-        else if (g_GameManager.playerMovementAreaTopLeftPos.x + g_GameManager.playerMovementAreaSize.x < p->positionCenter.x)
+        else if (g_GameManager.playerMovementAreaTopLeftPos.x + g_GameManager.playerMovementAreaSize.x <
+                 p->positionCenter.x)
             p->spiritModeSpeed.x *= -1.0f;
 
         if (p->positionCenter.y < g_GameManager.playerMovementAreaTopLeftPos.y + 300.0f)
@@ -549,7 +567,8 @@ ChainCallbackResult Player::OnUpdate(Player *p)
             if (p->spiritModeSpeed.y < 0.0f)
                 p->spiritModeSpeed.y *= -1.0f;
         }
-        else if (g_GameManager.playerMovementAreaTopLeftPos.y + g_GameManager.playerMovementAreaSize.y - 32.0f < p->positionCenter.y)
+        else if (g_GameManager.playerMovementAreaTopLeftPos.y + g_GameManager.playerMovementAreaSize.y - 32.0f <
+                 p->positionCenter.y)
         {
             if (p->spiritModeSpeed.y > 0.0f)
                 p->spiritModeSpeed.y *= -1.0f;
@@ -585,7 +604,8 @@ ChainCallbackResult Player::OnUpdate(Player *p)
     {
         p->invulnerabilityTimer.Tick();
     }
-    if (p->playerState != PLAYER_STATE_DEAD && p->playerState != PLAYER_STATE_SPAWNING && p->playerState != PLAYER_STATE_SPIRIT)
+    if (p->playerState != PLAYER_STATE_DEAD && p->playerState != PLAYER_STATE_SPAWNING &&
+        p->playerState != PLAYER_STATE_SPIRIT)
     {
         p->HandlePlayerInputs();
     }
@@ -602,82 +622,98 @@ ChainCallbackResult Player::OnUpdate(Player *p)
     p->positionOfLastEnemyHit = lastEnemyHit;
     Player::UpdateFireBulletsTimer(p);
 
-    
-    Player* another = g_is_host ? (&g_Player2) : (&g_Player);
-    Player* cur = g_is_host ? (&g_Player) : (&g_Player2);
-    if (
-        (p->isFocus)  && 
-        dist<=20.0f && 
-        (   (p->playerType==1 && (!IS_PRESSED(TH_BUTTON_SHOOT))) || (p->playerType!=1 && (!IS_PRESSED(TH_BUTTON_SHOOT2))))
-    )
+    Player *another = g_is_host ? (&g_Player2) : (&g_Player);
+    Player *cur = g_is_host ? (&g_Player) : (&g_Player2);
+    if ((p->isFocus) && dist <= 20.0f &&
+        ((p->playerType == 1 && (!IS_PRESSED(TH_BUTTON_SHOOT))) ||
+         (p->playerType != 1 && (!IS_PRESSED(TH_BUTTON_SHOOT2)))))
     {
         p->lifegiveTime++;
-    }else{
-        p->lifegiveTime = 0;
     }
-    if(p->lifegiveTime >= 90)
+    else
     {
         p->lifegiveTime = 0;
-        if(p->playerType==1 && g_GameManager.livesRemaining>=1 && g_GameManager.livesRemaining2<8) {
+    }
+    if (p->lifegiveTime >= 90)
+    {
+        p->lifegiveTime = 0;
+        if (p->playerType == 1 && g_GameManager.livesRemaining >= 1 && g_GameManager.livesRemaining2 < 8)
+        {
             g_Gui.flags.flag0 = 2;
             g_GameManager.livesRemaining--;
             D3DXVECTOR3 p1 = p->positionCenter;
-            if(g_Player2.playerState == PLAYER_STATE_SPIRIT){
+            if (g_Player2.playerState == PLAYER_STATE_SPIRIT)
+            {
                 g_Player2.playerState = PLAYER_STATE_ALIVE;
                 g_SoundPlayer.PlaySoundByIdx(SOUND_1UP, 0);
                 g_Player2.playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, 255);
-            }else{
+            }
+            else
+            {
                 g_ItemManager.SpawnItem(&p1, ITEM_LIFE, 3);
             }
-            //g_GameManager.livesRemaining2++;
-            //g_SoundPlayer.PlaySoundByIdx(SOUND_F, 0);
-        } else if(p->playerType!=1 && g_GameManager.livesRemaining2>=1 && g_GameManager.livesRemaining<8) {
+            // g_GameManager.livesRemaining2++;
+            // g_SoundPlayer.PlaySoundByIdx(SOUND_F, 0);
+        }
+        else if (p->playerType != 1 && g_GameManager.livesRemaining2 >= 1 && g_GameManager.livesRemaining < 8)
+        {
             g_Gui.flags.flag0 = 2;
             g_GameManager.livesRemaining2--;
             D3DXVECTOR3 p1 = p->positionCenter;
-            //g_GameManager.livesRemaining++;
-            //g_SoundPlayer.PlaySoundByIdx(SOUND_F, 0);
-            if(g_Player.playerState == PLAYER_STATE_SPIRIT){
+            // g_GameManager.livesRemaining++;
+            // g_SoundPlayer.PlaySoundByIdx(SOUND_F, 0);
+            if (g_Player.playerState == PLAYER_STATE_SPIRIT)
+            {
                 g_Player.playerState = PLAYER_STATE_ALIVE;
                 g_SoundPlayer.PlaySoundByIdx(SOUND_1UP, 0);
                 g_Player.playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, 255);
-            }else{
+            }
+            else
+            {
                 g_ItemManager.SpawnItem(&p1, ITEM_LIFE, 4);
             }
         }
     }
 
-    if(!g_is_single_mode){
-        if(p == another)
+    if (!g_is_single_mode)
+    {
+        if (p == another)
         {
-            if(p->playerState==PLAYER_STATE_SPIRIT)
+            if (p->playerState == PLAYER_STATE_SPIRIT)
             {
-                 p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, 80);
-            }else
+                p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, 80);
+            }
+            else
             {
-                if(dist < 50.0f)
+                if (dist < 50.0f)
                     dist = 50.0f;
-                if(dist<100.0f) {
-                    int alpha = ((dist-50.0f)/50.0f)*200+55;
-                    if(alpha>255) alpha=255;
-                    if(alpha<0) alpha=0;
+                if (dist < 100.0f)
+                {
+                    int alpha = ((dist - 50.0f) / 50.0f) * 200 + 55;
+                    if (alpha > 255)
+                        alpha = 255;
+                    if (alpha < 0)
+                        alpha = 0;
                     p->playerSprite.color = COLOR_SET_ALPHA(p->playerSprite.color, alpha);
-                }else{
+                }
+                else
+                {
                     p->playerSprite.color = COLOR_SET_ALPHA(p->playerSprite.color, 255);
                 }
             }
-        } 
+        }
     }
     // hitbox time
     {
-        if(p->isFocus)
+        if (p->isFocus)
         {
             p->hitboxTime++;
-        }else{
-            p->hitboxTime=0;
+        }
+        else
+        {
+            p->hitboxTime = 0;
         }
     }
-
 
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
@@ -959,13 +995,12 @@ ChainCallbackResult Player::OnDrawHighPrio(Player *p)
     p->playerSprite.pos.y = g_GameManager.arcadeRegionTopLeftPos.y + p->positionCenter.y;
     p->playerSprite.pos.z = 0.49;
 
-    
-
     if (!g_GameManager.isInRetryMenu)
     {
         g_AnmManager->DrawNoRotation(&p->playerSprite);
-        
-        if(p->hitboxTime!=0){
+
+        if (p->hitboxTime != 0)
+        {
             float hitboxScale1;
             float hitboxScale2;
             float hitboxAngle1;
@@ -974,49 +1009,55 @@ ChainCallbackResult Player::OnDrawHighPrio(Player *p)
 
             hitboxScale1 = MInterpolation(p->hitboxTime / 18.0f, 1.5f, 1.0f),
             hitboxScale2 = MInterpolation(p->hitboxTime / 12.0f, 0.3f, 1.0f),
-            hitboxAlpha = (p->hitboxTime < 6.0f ? p->hitboxTime / 6.0f : 1.0f)*255;
-            if( hitboxAlpha>255) 
-                hitboxAlpha=255;
-                if (p->hitboxTime < 18.0f) {
+            hitboxAlpha = (p->hitboxTime < 6.0f ? p->hitboxTime / 6.0f : 1.0f) * 255;
+            if (hitboxAlpha > 255)
+                hitboxAlpha = 255;
+            if (p->hitboxTime < 18.0f)
+            {
                 hitboxAngle1 = MInterpolation(p->hitboxTime / 18.0f, 3.14159f, -3.14159f);
                 hitboxAngle2 = -hitboxAngle1;
-            } else {
+            }
+            else
+            {
                 hitboxAngle1 = -3.14159f + p->hitboxTime * 0.05235988f;
                 hitboxAngle2 = 3.14159f - p->hitboxTime * 0.05235988f;
             }
             p->hitboxSprite.pos.x = g_GameManager.arcadeRegionTopLeftPos.x + p->positionCenter.x;
             p->hitboxSprite.pos.y = g_GameManager.arcadeRegionTopLeftPos.y + p->positionCenter.y;
             p->hitboxSprite.pos.z = 0.49;
-            p->hitboxSprite.color = COLOR_SET_ALPHA(p->hitboxSprite.color ,hitboxAlpha);
+            p->hitboxSprite.color = COLOR_SET_ALPHA(p->hitboxSprite.color, hitboxAlpha);
 
-            if(!g_is_single_mode){
-                Player* another = g_is_host ? (&g_Player2) : (&g_Player);
-                Player* cur = g_is_host ? (&g_Player) : (&g_Player2);
-                if(p == another)
+            if (!g_is_single_mode)
+            {
+                Player *another = g_is_host ? (&g_Player2) : (&g_Player);
+                Player *cur = g_is_host ? (&g_Player) : (&g_Player2);
+                if (p == another)
                 {
                     float dx = another->positionCenter.x - cur->positionCenter.x;
                     float dy = another->positionCenter.y - cur->positionCenter.y;
-                    float dist = sqrtf(dx*dx+dy*dy);
-                    if(dist < 50.0f)
+                    float dist = sqrtf(dx * dx + dy * dy);
+                    if (dist < 50.0f)
                         dist = 50.0f;
-                    if(dist<100.0f) {
-                        int alpha = ((dist-50.0f)/50.0f)*220+35;
-                        if(alpha>255) alpha=255;
-                        if(alpha<0) alpha=0;
+                    if (dist < 100.0f)
+                    {
+                        int alpha = ((dist - 50.0f) / 50.0f) * 220 + 35;
+                        if (alpha > 255)
+                            alpha = 255;
+                        if (alpha < 0)
+                            alpha = 0;
                         p->hitboxSprite.color = COLOR_SET_ALPHA(p->hitboxSprite.color, alpha);
                     }
-                } 
+                }
             }
 
             p->hitboxSprite.rotation.z = hitboxAngle1;
             p->hitboxSprite.scaleX = p->hitboxSprite.scaleY = hitboxScale1;
-           
+
             g_AnmManager->Draw(&p->hitboxSprite);
             p->hitboxSprite.rotation.z = hitboxAngle2;
             p->hitboxSprite.scaleX = p->hitboxSprite.scaleY = hitboxScale2;
             g_AnmManager->Draw(&p->hitboxSprite);
         }
-        
 
         if (p->orbState != ORB_HIDDEN &&
             (p->playerState == PLAYER_STATE_ALIVE || p->playerState == PLAYER_STATE_INVULNERABLE))
@@ -1331,8 +1372,8 @@ ZunResult Player::HandlePlayerInputs()
     verticalOrbOffset = 0.0;
     horizontalOrbOffset = verticalOrbOffset;
 
-    if ((this->playerType==1 && g_GameManager.currentPower < 8) ||
-        (this->playerType!=1 && g_GameManager.currentPower2 < 8) )
+    if ((this->playerType == 1 && g_GameManager.currentPower < 8) ||
+        (this->playerType != 1 && g_GameManager.currentPower2 < 8))
     {
         this->orbState = ORB_HIDDEN;
     }
@@ -1510,8 +1551,9 @@ ZunResult Player::UpdateFireBulletsTimer(Player *p)
     }
     else
     {
-        if (p->fireBulletTimer.HasTicked() && (!g_Player2.bombInfo.isInUse || g_GameManager.character2 != CHARA_MARISA ||
-                                               g_GameManager.shotType2 != SHOT_TYPE_B))
+        if (p->fireBulletTimer.HasTicked() &&
+            (!g_Player2.bombInfo.isInUse || g_GameManager.character2 != CHARA_MARISA ||
+             g_GameManager.shotType2 != SHOT_TYPE_B))
         {
             p->SpawnBullets(p, p->fireBulletTimer.AsFrames());
         }
@@ -1623,12 +1665,14 @@ FireBulletResult Player::FireSingleBullet(Player *player, PlayerBullet *bullet, 
     i32 unused;
     i32 unused2;
     i32 unused3;
-    if(player->playerType==1)
-        while (g_GameManager.currentPower >= powerData->power) {
+    if (player->playerType == 1)
+        while (g_GameManager.currentPower >= powerData->power)
+        {
             powerData++;
         }
     else
-        while (g_GameManager.currentPower2 >= powerData->power){
+        while (g_GameManager.currentPower2 >= powerData->power)
+        {
             powerData++;
         }
 
@@ -1766,7 +1810,8 @@ i32 Player::CheckGraze(D3DXVECTOR3 *center, D3DXVECTOR3 *size)
         }
     }
 
-    if (this->playerState == PLAYER_STATE_DEAD || this->playerState == PLAYER_STATE_SPAWNING || this->playerState == PLAYER_STATE_SPIRIT)
+    if (this->playerState == PLAYER_STATE_DEAD || this->playerState == PLAYER_STATE_SPAWNING ||
+        this->playerState == PLAYER_STATE_SPIRIT)
     {
         return 0;
     }
@@ -1786,7 +1831,8 @@ i32 Player::CheckGraze(D3DXVECTOR3 *center, D3DXVECTOR3 *size)
                   bombProjectileRight)
 i32 Player::CalcKillBoxCollision(D3DXVECTOR3 *bulletCenter, D3DXVECTOR3 *bulletSize)
 {
-    if(this->playerState == PLAYER_STATE_SPIRIT) {
+    if (this->playerState == PLAYER_STATE_SPIRIT)
+    {
         return 0;
     }
     PlayerRect *curBombProjectile;
@@ -1871,7 +1917,8 @@ i32 Player::CalcLaserHitbox(D3DXVECTOR3 *laserCenter, D3DXVECTOR3 *laserSize, D3
     {
         return 0;
     }
-    if (this->playerState == PLAYER_STATE_DEAD || this->playerState == PLAYER_STATE_SPAWNING || this->playerState == PLAYER_STATE_SPIRIT)
+    if (this->playerState == PLAYER_STATE_DEAD || this->playerState == PLAYER_STATE_SPAWNING ||
+        this->playerState == PLAYER_STATE_SPIRIT)
     {
         return 0;
     }

@@ -118,7 +118,7 @@ struct GuiImpl
     GuiFormattedText bonusScore;
     GuiFormattedText fullPowerMode;
     GuiFormattedText spellCardBonus;
-    
+
     GuiFormattedText fullPowerMode2;
 };
 ZUN_ASSERT_SIZE(GuiImpl, 0x2c44);

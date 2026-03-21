@@ -774,7 +774,7 @@ i32 StageMenu::OnUpdateRetryMenu()
             g_GameManager.score = g_GameManager.guiScore;
             g_GameManager.livesRemaining = g_Supervisor.defaultConfig.lifeCount;
             g_GameManager.bombsRemaining = g_Supervisor.defaultConfig.bombCount;
-            
+
             g_GameManager.livesRemaining2 = g_Supervisor.defaultConfig.lifeCount;
             g_GameManager.bombsRemaining2 = g_Supervisor.defaultConfig.bombCount;
 

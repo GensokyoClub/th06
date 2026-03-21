@@ -68,7 +68,6 @@ void Gui::ShowFullPowerMode2(i32 fmtArg)
     return;
 }
 
-
 void Gui::ShowSpellcardBonus(u32 spellcardScore)
 {
     this->impl->spellCardBonus.pos = D3DXVECTOR3(224.0f, 16.0f, 0.0f);
@@ -116,7 +115,8 @@ ChainCallbackResult Gui::OnDraw(Gui *gui)
 
         stringPos.y += 16.0f;
         g_AsciiManager.color = COLOR_LAVENDER;
-        g_AsciiManager.AddFormatText(&stringPos, "Power *  100 = %5d\n", (g_GameManager.currentPower+g_GameManager.currentPower2) * 100);
+        g_AsciiManager.AddFormatText(&stringPos, "Power *  100 = %5d\n",
+                                     (g_GameManager.currentPower + g_GameManager.currentPower2) * 100);
 
         stringPos.y += 16.0f;
         g_AsciiManager.color = COLOR_LIGHTBLUE;
@@ -130,9 +130,11 @@ ChainCallbackResult Gui::OnDraw(Gui *gui)
         {
             stringPos.y += 16.0f;
             g_AsciiManager.color = COLOR_LIGHTYELLOW;
-            g_AsciiManager.AddFormatText(&stringPos, "Player    = %8d\n", (g_GameManager.livesRemaining+g_GameManager.livesRemaining2) * 3000000);
+            g_AsciiManager.AddFormatText(&stringPos, "Player    = %8d\n",
+                                         (g_GameManager.livesRemaining + g_GameManager.livesRemaining2) * 3000000);
             stringPos.y += 16.0f;
-            g_AsciiManager.AddFormatText(&stringPos, "Bomb      = %8d\n", (g_GameManager.bombsRemaining+g_GameManager.bombsRemaining2) * 1000000);
+            g_AsciiManager.AddFormatText(&stringPos, "Bomb      = %8d\n",
+                                         (g_GameManager.bombsRemaining + g_GameManager.bombsRemaining2) * 1000000);
         }
 
         stringPos.y += 32.0f;
@@ -1012,12 +1014,12 @@ void Gui::UpdateStageElements()
         stageScore = 0;
         stageScore += g_GameManager.currentStage * 1000;
         stageScore += g_GameManager.grazeInStage * 10;
-        stageScore += (g_GameManager.currentPower+g_GameManager.currentPower2) * 100;
+        stageScore += (g_GameManager.currentPower + g_GameManager.currentPower2) * 100;
         stageScore *= g_GameManager.pointItemsCollectedInStage;
         if (6 <= g_GameManager.currentStage)
         {
-            stageScore += (g_GameManager.livesRemaining+g_GameManager.livesRemaining2) * 3000000;
-            stageScore += (g_GameManager.bombsRemaining+g_GameManager.bombsRemaining2) * 1000000;
+            stageScore += (g_GameManager.livesRemaining + g_GameManager.livesRemaining2) * 3000000;
+            stageScore += (g_GameManager.bombsRemaining + g_GameManager.bombsRemaining2) * 1000000;
         }
         switch (g_GameManager.difficulty)
         {
@@ -1174,7 +1176,7 @@ void Gui::DrawGameScene()
         this->flags.flag4 = 2;
         this->flags.flag2 = 2;
     }
-    
+
     float y_inc = 20.0f;
     if ((g_Supervisor.cfg.opts >> GCOS_DISPLAY_MINIMUM_GRAPHICS & 1) == 0)
     {
@@ -1219,7 +1221,7 @@ void Gui::DrawGameScene()
         vm = &this->impl->vms[16];
         for (idx = 0, xPos = 496.0f; idx < g_GameManager.livesRemaining2; idx++, xPos += 16.0f)
         {
-            vm->pos = D3DXVECTOR3(xPos+0.0f, 122.0f+9.0f, 0.49f);
+            vm->pos = D3DXVECTOR3(xPos + 0.0f, 122.0f + 9.0f, 0.49f);
             g_AnmManager->DrawNoRotation(vm);
         }
         for (idx = 0, xPos = 496.0f; idx < g_GameManager.livesRemaining; idx++, xPos += 16.0f)
@@ -1233,7 +1235,7 @@ void Gui::DrawGameScene()
         vm = &this->impl->vms[17];
         for (idx = 0, xPos = 496.0f; idx < g_GameManager.bombsRemaining2; idx++, xPos += 16.0f)
         {
-            vm->pos = D3DXVECTOR3(xPos+0.0f, 146.0f+9.0f, 0.49f);
+            vm->pos = D3DXVECTOR3(xPos + 0.0f, 146.0f + 9.0f, 0.49f);
             g_AnmManager->DrawNoRotation(vm);
         }
         for (idx = 0, xPos = 496.0f; idx < g_GameManager.bombsRemaining; idx++, xPos += 16.0f)
@@ -1241,7 +1243,6 @@ void Gui::DrawGameScene()
             vm->pos = D3DXVECTOR3(xPos, 146.0f, 0.49f);
             g_AnmManager->DrawNoRotation(vm);
         }
-       
     }
     if (this->flags.flag2 || ((g_Supervisor.cfg.opts >> GCOS_DISPLAY_MINIMUM_GRAPHICS & 1) != 0))
     {
@@ -1302,11 +1303,11 @@ void Gui::DrawGameScene()
         // power 2
         if (g_GameManager.currentPower2 > 0)
         {
-            memcpy(&vertices[0].position, &D3DXVECTOR3(496.0f, 186.0f+y_inc, 0.1f), sizeof(D3DXVECTOR3));
-            memcpy(&vertices[1].position, &D3DXVECTOR3(g_GameManager.currentPower2 + 496 + 0.0f, 186.0f+y_inc, 0.1f),
+            memcpy(&vertices[0].position, &D3DXVECTOR3(496.0f, 186.0f + y_inc, 0.1f), sizeof(D3DXVECTOR3));
+            memcpy(&vertices[1].position, &D3DXVECTOR3(g_GameManager.currentPower2 + 496 + 0.0f, 186.0f + y_inc, 0.1f),
                    sizeof(D3DXVECTOR3));
-            memcpy(&vertices[2].position, &D3DXVECTOR3(496.0f, 202.0f+y_inc, 0.1f), sizeof(D3DXVECTOR3));
-            memcpy(&vertices[3].position, &D3DXVECTOR3(g_GameManager.currentPower2 + 496 + 0.0f, 202.0f+y_inc, 0.1f),
+            memcpy(&vertices[2].position, &D3DXVECTOR3(496.0f, 202.0f + y_inc, 0.1f), sizeof(D3DXVECTOR3));
+            memcpy(&vertices[3].position, &D3DXVECTOR3(g_GameManager.currentPower2 + 496 + 0.0f, 202.0f + y_inc, 0.1f),
                    sizeof(D3DXVECTOR3));
 
             vertices[0].diffuse = vertices[2].diffuse = 0xe0e0ffff;
@@ -1342,13 +1343,13 @@ void Gui::DrawGameScene()
             if (128 <= g_GameManager.currentPower2)
             {
                 vm = &this->impl->vms[18];
-                vm->pos = D3DXVECTOR3(496.0f, 186.0f+y_inc, 0.0f);
+                vm->pos = D3DXVECTOR3(496.0f, 186.0f + y_inc, 0.0f);
                 g_AnmManager->DrawNoRotation(vm);
             }
         }
         if (g_GameManager.currentPower2 < 128)
         {
-            g_AsciiManager.AddFormatText(&D3DXVECTOR3(496.0f, 186.0f+y_inc, 0.0f), "%d", g_GameManager.currentPower2);
+            g_AsciiManager.AddFormatText(&D3DXVECTOR3(496.0f, 186.0f + y_inc, 0.0f), "%d", g_GameManager.currentPower2);
         }
     }
     {
@@ -1358,12 +1359,12 @@ void Gui::DrawGameScene()
         g_AsciiManager.AddFormatText(&elemPos, "%.9d", g_GameManager.highScore);
         if (this->flags.flag3 || ((g_Supervisor.cfg.opts >> 4 & 1) != 0))
         {
-            elemPos = D3DXVECTOR3(496.0f, 206.0f+y_inc, 0.0f);
+            elemPos = D3DXVECTOR3(496.0f, 206.0f + y_inc, 0.0f);
             g_AsciiManager.AddFormatText(&elemPos, "%d", g_GameManager.grazeInStage);
         }
         if (this->flags.flag4 || ((g_Supervisor.cfg.opts >> 4 & 1) != 0))
         {
-            elemPos = D3DXVECTOR3(496.0f, 226.0f+y_inc, 0.0f);
+            elemPos = D3DXVECTOR3(496.0f, 226.0f + y_inc, 0.0f);
             g_AsciiManager.AddFormatText(&elemPos, "%d", g_GameManager.pointItemsCollectedInStage);
         }
     }

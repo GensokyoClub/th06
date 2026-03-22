@@ -10,10 +10,10 @@
 #include "ZunResult.hpp"
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
-#include <windows.h>
 #include <d3d8.h>
 #include <d3dx8math.h>
 #include <string.h>
+#include <windows.h>
 
 namespace th06
 {

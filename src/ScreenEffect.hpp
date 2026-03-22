@@ -1,8 +1,8 @@
 #pragma once
 
-#include <windows.h>
 #include <d3d8types.h>
 #include <string.h>
+#include <windows.h>
 
 #include "Chain.hpp"
 #include "ZunResult.hpp"

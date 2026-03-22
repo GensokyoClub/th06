@@ -1,9 +1,9 @@
 
 #define _WIN32_WINNT 0x0500
-#include <winsock2.h>
 #include "Connection.hpp"
 #include "ConnectionUI.hpp"
 #include <windows.h>
+#include <winsock2.h>
 
 #include <D3DX8.h>
 #include <stdio.h>

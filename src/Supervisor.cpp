@@ -248,7 +248,9 @@ ChainCallbackResult Supervisor::OnUpdate(Supervisor *s)
     pos.x = 500;
     pos.y = 440;
     pos.z = 0;
-    g_AsciiManager.AddFormatText(&pos, "delay: %d", g_delay);
+    if(!g_is_single_mode){
+        g_AsciiManager.AddFormatText(&pos, "delay: %d", g_delay);
+    }
     // pos.x = 480;
     // pos.y = 440 - 24.0f;
     // pos.z = 0;

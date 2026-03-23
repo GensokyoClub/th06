@@ -501,8 +501,12 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
         }
         break;
     case STATE_CHARACTER_SELECT:
-        if (menu->stateTimer < 30)
+        if (menu->stateTimer < 30){
+            selectCharacterTextPos.y = menu->stateTimer*5;
+            g_AsciiManager.AddFormatText(&selectCharacterTextPos, "Select Character 1", "");
             break;
+        }
+        selectCharacterTextPos.y = 150;
         g_AsciiManager.AddFormatText(&selectCharacterTextPos, "Select Character 1", "");
         if (WAS_PRESSED_WEIRD(TH_BUTTON_LEFT))
         {
@@ -657,6 +661,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
         break;
     case STATE_SHOT_SELECT:
         MoveCursor(menu, 2);
+        selectCharacterTextPos.y=150;
         g_AsciiManager.AddFormatText(&selectCharacterTextPos, "Character 1 Shot Type", "");
         if (g_GameManager.difficulty == EXTRA &&
             g_GameManager.HasReachedMaxClears(g_GameManager.character, menu->cursor) == 0)
@@ -796,8 +801,12 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
         break;
 
     case STATE_CHARACTER_SELECT2:
-        if (menu->stateTimer < 30)
+        if (menu->stateTimer < 30){
+            selectCharacterTextPos.y = menu->stateTimer*5;
+            g_AsciiManager.AddFormatText(&selectCharacterTextPos, "Select Character 2", "");
             break;
+        }
+        selectCharacterTextPos.y = 150;
         g_AsciiManager.AddFormatText(&selectCharacterTextPos, "Select Character 2", "");
         if (WAS_PRESSED_WEIRD(TH_BUTTON_LEFT))
         {
@@ -968,6 +977,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
 
     case STATE_SHOT_SELECT2:
         MoveCursor(menu, 2);
+        selectCharacterTextPos.y = 150;
         g_AsciiManager.AddFormatText(&selectCharacterTextPos, "Character 2 Shot Type", "");
         if (g_GameManager.difficulty == EXTRA &&
             g_GameManager.HasReachedMaxClears(g_GameManager.character2, menu->cursor) == 0)

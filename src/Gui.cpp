@@ -254,7 +254,7 @@ ChainCallbackResult Gui::OnDraw(Gui *gui)
         g_AsciiManager.color = COLOR_WHITE;
 
         gui->impl->cheatActivated.pos.x =
-            ((f32)GAME_REGION_WIDTH - (f32)strlen("Cheat Activated!") * 16.0f) / 2.0f + (f32)GAME_REGION_LEFT;
+            ((f32)GAME_REGION_WIDTH - (f32)strlen("Cheat Activated!") * 16.0f) / 2.0f + (f32)GAME_REGION_LEFT + 5;
         gui->impl->cheatActivated.pos.y = GAME_REGION_BOTTOM - 64.0f;
         g_AsciiManager.AddFormatText(&gui->impl->cheatActivated.pos, "Cheat Activated!");
     }
@@ -263,16 +263,14 @@ ChainCallbackResult Gui::OnDraw(Gui *gui)
         g_AsciiManager.color = COLOR_RED;
 
         gui->impl->playerDeath.pos.x =
-            ((f32)GAME_REGION_WIDTH - (f32)strlen("Another Player Defeated!") * 16.0f) / 2.0f + (f32)GAME_REGION_LEFT;
+            ((f32)GAME_REGION_WIDTH - (f32)strlen("Player Defeated!") * 16.0f) / 2.0f + (f32)GAME_REGION_LEFT + 10;
         gui->impl->playerDeath.pos.y = GAME_REGION_BOTTOM - 64.0f;
-        g_AsciiManager.AddFormatText(&gui->impl->playerDeath.pos, "Another Player Defeated!");
+        g_AsciiManager.AddFormatText(&gui->impl->playerDeath.pos, "Player Defeated!");
 
         gui->impl->playerDeath.pos.y += 16.0f;
-        gui->impl->playerDeath.pos.x =
-            ((f32)GAME_REGION_WIDTH - (f32)strlen("hold focus near it to revive!") * 32.0f) / 2.0f +
-            (f32)GAME_REGION_LEFT;
+        gui->impl->playerDeath.pos.x = (f32)GAME_REGION_LEFT + 15;
         g_AsciiManager.color = COLOR_LIGHT_RED;
-        g_AsciiManager.AddString(&gui->impl->playerDeath.pos, "hold focus near it to revive!");
+        g_AsciiManager.AddString(&gui->impl->playerDeath.pos, "focus near it to revive!");
 
         g_AsciiManager.scale.x = 1.0;
         g_AsciiManager.scale.y = 1.0;

@@ -630,6 +630,7 @@ ChainCallbackResult Player::OnUpdate(Player *p)
         ((p->playerType == 1 && (!IS_PRESSED(TH_BUTTON_SHOOT))) ||
          (p->playerType != 1 && (!IS_PRESSED(TH_BUTTON_SHOOT2)))))
     {
+        g_SoundPlayer.PlaySoundByIdx(SOUND_15,0);
         p->lifegiveTime++;
     }
     else
@@ -653,6 +654,7 @@ ChainCallbackResult Player::OnUpdate(Player *p)
             else
             {
                 g_ItemManager.SpawnItem(&p1, ITEM_LIFE, 3);
+                g_SoundPlayer.PlaySoundByIdx(SOUND_WTF_IS_THAT_LMAO, 0);
             }
             // g_GameManager.livesRemaining2++;
             // g_SoundPlayer.PlaySoundByIdx(SOUND_F, 0);
@@ -673,6 +675,7 @@ ChainCallbackResult Player::OnUpdate(Player *p)
             else
             {
                 g_ItemManager.SpawnItem(&p1, ITEM_LIFE, 4);
+                g_SoundPlayer.PlaySoundByIdx(SOUND_WTF_IS_THAT_LMAO, 0);
             }
         }
     }

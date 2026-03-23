@@ -5,6 +5,7 @@
 #include "SoundPlayer.hpp"
 #include "Stage.hpp"
 #include "Supervisor.hpp"
+#include "Connection.hpp"
 #include "diffbuild.hpp"
 #include "i18n.hpp"
 
@@ -248,18 +249,21 @@ void GameWindow::CreateGameWindow(HINSTANCE hInstance)
     g_GameWindow.isAppActive = 0;
     base_class.lpszClassName = "BASE";
     RegisterClass(&base_class);
+
+    std::string myString = std::string(TH_WINDOW_TITLE)+std::string(" CO-OP ")+std::string(MULTI_NET_VER_S);
+    LPCSTR windowTitle = myString.c_str();
     if (g_Supervisor.cfg.windowed == 0)
     {
         width = GAME_WINDOW_WIDTH * 2;
         height = GAME_WINDOW_HEIGHT * 2;
         g_GameWindow.window =
-            CreateWindowEx(0, "BASE", TH_WINDOW_TITLE, WS_OVERLAPPEDWINDOW, 0, 0, width, height, 0, 0, hInstance, 0);
+            CreateWindowEx(0, "BASE", windowTitle, WS_OVERLAPPEDWINDOW, 0, 0, width, height, 0, 0, hInstance, 0);
     }
     else
     {
         width = GetSystemMetrics(SM_CXFIXEDFRAME) * 2 + GAME_WINDOW_WIDTH * 2;
         height = GAME_WINDOW_HEIGHT * 2 + GetSystemMetrics(SM_CYFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION);
-        g_GameWindow.window = CreateWindowEx(0, "BASE", TH_WINDOW_TITLE, WS_VISIBLE | WS_MINIMIZEBOX | WS_SYSMENU,
+        g_GameWindow.window = CreateWindowEx(0, "BASE", windowTitle, WS_VISIBLE | WS_MINIMIZEBOX | WS_SYSMENU,
                                              CW_USEDEFAULT, CW_USEDEFAULT, width, height, 0, 0, hInstance, 0);
     }
     g_Supervisor.hwndGameWindow = g_GameWindow.window;

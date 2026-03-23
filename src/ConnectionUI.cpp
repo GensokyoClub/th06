@@ -141,10 +141,11 @@ bool ConnectionUI::CreateMainWindow(HINSTANCE hInst)
 
     RegisterClassA(&wc);
     char title[100];
-    sprintf(title, "Launcher [ver=%s]", MULTI_NET_VER_S);
+    std::string myString = std::string("Launcher ")+std::string(MULTI_NET_VER_S);
+    LPCSTR windowTitle = myString.c_str();
 
-    m_hWnd = CreateWindowA("ConnectionUIClass", title, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
-                           CW_USEDEFAULT, CW_USEDEFAULT, 430, 400, NULL, NULL, hInst, this);
+    m_hWnd = CreateWindowA("ConnectionUIClass", windowTitle, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+                           CW_USEDEFAULT, CW_USEDEFAULT, 500, 500, NULL, NULL, hInst, this);
 
     return (m_hWnd != NULL);
 }
@@ -181,42 +182,47 @@ void ConnectionUI::CreateControls(HWND hWnd)
 
     CreateWindowA("STATIC", "Host IP:", WS_CHILD | WS_VISIBLE, 20, 20, 80, 20, hWnd, NULL, NULL, NULL);
 
-    m_editHostIp = CreateWindowA("EDIT", ip, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 110, 20, 270, 24, hWnd,
+    m_editHostIp = CreateWindowA("EDIT", ip, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 130, 20, 310, 24, hWnd,
                                  (HMENU)IDC_EDIT_HOST_IP, NULL, NULL);
 
     CreateWindowA("STATIC", "Host Port:", WS_CHILD | WS_VISIBLE, 20, 60, 80, 20, hWnd, NULL, NULL, NULL);
 
     m_editHostPort = CreateWindowA("EDIT", port_host, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL | ES_NUMBER,
-                                   110, 60, 100, 24, hWnd, (HMENU)IDC_EDIT_HOST_PORT, NULL, NULL);
+                                   130, 60, 100, 24, hWnd, (HMENU)IDC_EDIT_HOST_PORT, NULL, NULL);
 
     CreateWindowA("STATIC", "Listen Port:", WS_CHILD | WS_VISIBLE, 20, 100, 80, 20, hWnd, NULL, NULL, NULL);
 
     m_editListenPort =
-        CreateWindowA("EDIT", port_listen, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL | ES_NUMBER, 110, 100,
+        CreateWindowA("EDIT", port_listen, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL | ES_NUMBER, 130, 100,
                       100, 24, hWnd, (HMENU)IDC_EDIT_LISTEN_PORT, NULL, NULL);
 
-    m_btnHost = CreateWindowA("BUTTON", "as host", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 20, 150, 160, 32, hWnd,
+    m_btnHost = CreateWindowA("BUTTON", "as host", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 20, 150, 200, 32, hWnd,
                               (HMENU)IDC_BTN_START_HOST, NULL, NULL);
 
-    m_btnGuest = CreateWindowA("BUTTON", "as guest", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 220, 150, 160, 32, hWnd,
+    m_btnGuest = CreateWindowA("BUTTON", "as guest", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 240, 150, 200, 32, hWnd,
                                (HMENU)IDC_BTN_START_GUEST, NULL, NULL);
 
-    CreateWindowA("STATIC", "cur state:", WS_CHILD | WS_VISIBLE, 20, 210, 80, 20, hWnd, NULL, NULL, NULL);
+    CreateWindowA("STATIC", "current state:", WS_CHILD | WS_VISIBLE, 20, 210, 80, 20, hWnd, NULL, NULL, NULL);
 
-    m_staticLatency = CreateWindowA("STATIC", "no connection", WS_CHILD | WS_VISIBLE | WS_BORDER, 110, 210, 270, 24,
+    m_staticLatency = CreateWindowA("STATIC", "no connection", WS_CHILD | WS_VISIBLE | WS_BORDER, 130, 210, 310, 24,
                                     hWnd, (HMENU)IDC_STATIC_LATENCY, NULL, NULL);
 
     CreateWindowA("STATIC", "target delay:", WS_CHILD | WS_VISIBLE, 20, 250, 120, 20, hWnd, NULL, NULL, NULL);
 
     m_editTargetLatency =
-        CreateWindowA("EDIT", target_delay, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL | ES_NUMBER, 110, 250,
+        CreateWindowA("EDIT", target_delay, WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL | ES_NUMBER, 130, 250,
                       100, 24, hWnd, (HMENU)IDC_EDIT_TARGET_LATENCY, NULL, NULL);
 
-    m_btnStartGame = CreateWindowA("BUTTON", "Start Game", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | WS_DISABLED, 20, 300,
-                                   160, 32, hWnd, (HMENU)IDC_BTN_START_GAME, NULL, NULL);
+    m_btnStartGame = CreateWindowA("BUTTON", "Start Online", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | WS_DISABLED, 20, 300,
+                                   200, 32, hWnd, (HMENU)IDC_BTN_START_GAME, NULL, NULL);
 
-    m_btnStartGameLocal = CreateWindowA("BUTTON", "Start Game(local)", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 220, 300,
-                                        160, 32, hWnd, (HMENU)IDC_BTN_START_GAME_LOCAL, NULL, NULL);
+    m_btnStartGameLocal = CreateWindowA("BUTTON", "Start Offline", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 240, 300,
+                                        200, 32, hWnd, (HMENU)IDC_BTN_START_GAME_LOCAL, NULL, NULL);
+
+    CreateWindowA("STATIC", "Credits: Team Sanghai Alice and Gensokyo Club", WS_CHILD | WS_VISIBLE, 20, 350, 300, 20, hWnd, NULL, NULL, NULL);
+    CreateWindowA("STATIC", "Modders: Rueee and Cardana Wandra", WS_CHILD | WS_VISIBLE, 20, 375, 300, 20, hWnd, NULL, NULL, NULL);
+    CreateWindowA("STATIC", "Cheats: F2 life, F3 bombs, F4 power", WS_CHILD | WS_VISIBLE, 20, 400, 300, 20, hWnd, NULL, NULL, NULL);
+    CreateWindowA("STATIC", "Offline P2 Controls: DFG IJKL", WS_CHILD | WS_VISIBLE, 20, 425, 300, 20, hWnd, NULL, NULL, NULL);
 
     m_delay = atoi(target_delay);
     if (m_delay < 0)

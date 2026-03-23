@@ -6,7 +6,7 @@
 #include "ZunTimer.hpp"
 #include "diffbuild.hpp"
 #include "inttypes.hpp"
-#include <Windows.h>
+#include "Windows.h"
 
 namespace th06
 {

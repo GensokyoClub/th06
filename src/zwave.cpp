@@ -11,7 +11,7 @@
 #include "zwave.hpp"
 #include "dxutil.hpp"
 #include "utils.hpp"
-#include <Windows.h>
+#include "Windows.h"
 #include <dsound.h>
 #include <dxerr8.h>
 #include <mmsystem.h>

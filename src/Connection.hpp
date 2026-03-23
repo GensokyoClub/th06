@@ -1,7 +1,7 @@
 #pragma once
 #define MULTI_NET_VER 3940
 #define MULTI_NET_VER_S "Stable Release 3.9.4"
-#include <Windows.h>
+#include "Windows.h"
 #include <Winsock2.h>
 #include <Ws2tcpip.h>
 

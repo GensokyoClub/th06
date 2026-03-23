@@ -8,7 +8,7 @@
 #include "ZunResult.hpp"
 #include "diffbuild.hpp"
 #include "inttypes.hpp"
-#include <Windows.h>
+#include "Windows.h"
 #include <d3dx8math.h>
 
 namespace th06

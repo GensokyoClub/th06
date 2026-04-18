@@ -682,7 +682,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
                         }
                         mgr->randomItemSpawnIndex++;
                     }
-                    if (curEnemy->flags.isBoss && !g_EnemyManager.spellcardInfo.isActive != 0)
+                    if (curEnemy->flags.isBoss && g_EnemyManager.spellcardInfo.isActive == 0)
                     {
                         g_BulletManager.DespawnBullets(12800, false);
                     }

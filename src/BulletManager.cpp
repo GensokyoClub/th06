@@ -497,7 +497,7 @@ i32 BulletManager::DespawnBullets(i32 maxBonusScore, bool awardPoints)
             laser->state = 2;
             laser->timer.InitializeForPopup();
 
-            if (!awardPoints)
+            if (awardPoints)
             {
                 g_ItemManager.SpawnItem(&laser->pos, ITEM_POINT_BULLET, 1);
                 offset = laser->startOffset;

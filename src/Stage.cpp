@@ -470,7 +470,7 @@ ZunResult Stage::UpdateObjects()
     for (objIdx = 0; objIdx < this->objectsCount; objIdx++)
     {
         obj = this->objects[objIdx];
-        if (obj->flags & 1 != 0)
+        if ((obj->flags & 1) != 0)
         {
             vmsNotFinished = 0;
             objQuad = &obj->firstQuad;

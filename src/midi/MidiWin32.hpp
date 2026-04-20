@@ -2,8 +2,8 @@
 
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
+#include <Windows.h>
 #include <mmsystem.h>
-#include <windows.h>
 
 struct MidiDevice
 {

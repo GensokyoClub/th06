@@ -1,7 +1,6 @@
-#include <cstdint>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "sjis_conv_table.h"
 #include "sjis_converter.h"
@@ -60,6 +59,6 @@ char *sjis2utf8(const char *input)
     }
 
     // remove the unnecessary bytes
-    output[indexOutput] = 0;
+    output[indexOutput] = '\0';
     return output;
-};
+}

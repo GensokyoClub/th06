@@ -221,6 +221,8 @@ void GameWindow::CreateGameWindow()
     i32 width = GAME_WINDOW_WIDTH;
     i32 x = SDL_WINDOWPOS_UNDEFINED;
     i32 y = SDL_WINDOWPOS_UNDEFINED;
+    i32 drawableWidth = GAME_WINDOW_WIDTH;
+    i32 drawableHeight = GAME_WINDOW_HEIGHT;
     bool useFullscreenStretch = false;
 
     g_GameWindow.window = NULL;
@@ -266,8 +268,6 @@ void GameWindow::CreateGameWindow()
 
         utils::DebugPrint2("Using renderer backend %s", s_RenderBackends[i].name);
         g_glFuncTable.ResolveFunctions(s_RenderBackends[i].isEsContext);
-        i32 drawableWidth = GAME_WINDOW_WIDTH;
-        i32 drawableHeight = GAME_WINDOW_HEIGHT;
         SDL_GL_GetDrawableSize(g_GameWindow.window, &drawableWidth, &drawableHeight);
         UpdateViewportMetrics(drawableWidth, drawableHeight);
         g_GameWindow.renderBackendIndex = i;

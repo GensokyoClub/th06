@@ -360,8 +360,8 @@ ZunResult Ending::ParseEndFile()
                 g_AnmManager->SetAndExecuteScriptIdx(&this->sprites[lineDisplayed + this->timesFileParsed * 2],
                                                      lineDisplayed + ANM_SCRIPT_TEXT_ENDING_TEXT +
                                                          this->timesFileParsed * 2);
-                AnmManager::DrawVmTextFmt(g_AnmManager, &this->sprites[lineDisplayed + this->timesFileParsed * 2],
-                                          this->textColor, COLOR_END_TEXT_SHADOW, textBuffer);
+                g_AnmManager->DrawVmTextFmt(&this->sprites[lineDisplayed + this->timesFileParsed * 2], this->textColor,
+                                            COLOR_END_TEXT_SHADOW, textBuffer);
             }
             while (this->endFileDataPtr[0] == '\n' || this->endFileDataPtr[0] == '\0' ||
                    this->endFileDataPtr[0] == '\r')
@@ -396,8 +396,8 @@ ZunResult Ending::ParseEndFile()
                 g_AnmManager->SetAndExecuteScriptIdx(&this->sprites[lineDisplayed + this->timesFileParsed * 2],
                                                      lineDisplayed + ANM_SCRIPT_TEXT_ENDING_TEXT +
                                                          this->timesFileParsed * 2);
-                AnmManager::DrawVmTextFmt(g_AnmManager, &this->sprites[lineDisplayed + this->timesFileParsed * 2],
-                                          this->textColor, COLOR_END_TEXT_SHADOW, textBuffer);
+                g_AnmManager->DrawVmTextFmt(&this->sprites[lineDisplayed + this->timesFileParsed * 2], this->textColor,
+                                            COLOR_END_TEXT_SHADOW, textBuffer);
                 if (lineDisplayed)
                 {
                     goto endParsing;

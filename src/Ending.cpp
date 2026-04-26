@@ -108,7 +108,7 @@ void Ending::FadingEffect()
 }
 
 #pragma var_order(lineDisplayed, textBuffer, charactersReaded, anmScriptIdx, vmIndex, anmSpriteIdx, scrollBGDistance,  \
-                  scrollBGDuration, characterIdx, diffIdx, spriteIdx, musicFadeFrames, fill)
+                  scrollBGDuration, characterIdx, diffIdx, spriteIdx, musicFadeFrames)
 ZunResult Ending::ParseEndFile()
 {
     i32 vmIndex;
@@ -122,7 +122,6 @@ ZunResult Ending::ParseEndFile()
     i32 characterIdx;
     i32 charactersReaded;
     ZunBool lineDisplayed;
-    i32 fill[6];
 
     char textBuffer[39];
 

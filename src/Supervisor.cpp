@@ -606,7 +606,7 @@ void Supervisor::ReleasePbg3(i32 pbg3FileIdx)
     this->pbg3Archives[pbg3FileIdx] = NULL;
 }
 
-i32 Supervisor::LoadPbg3(i32 pbg3FileIdx, char *filename)
+i32 Supervisor::LoadPbg3(i32 pbg3FileIdx, const char *filename)
 {
     if (this->pbg3Archives[pbg3FileIdx] == NULL || strcmp(filename, this->pbg3ArchiveNames[pbg3FileIdx]) != 0)
     {
@@ -642,7 +642,7 @@ i32 Supervisor::LoadPbg3(i32 pbg3FileIdx, char *filename)
 
 ZunResult Supervisor::LoadConfig(const char *path)
 {
-    GameConfiguration *data;
+    const GameConfiguration *data;
     FILE *wavFile;
     FILE *wavFile2;
 
@@ -711,7 +711,7 @@ ZunResult Supervisor::LoadConfig(const char *path)
             g_GameErrorContext.Log(TH_ERR_CONFIG_CORRUPTED);
         }
         g_ControllerMapping = g_Supervisor.cfg.controllerMapping;
-        free(data);
+        free((void*)data);
     }
     if (((this->cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) != 0)
     {
@@ -772,7 +772,7 @@ ZunResult Supervisor::LoadConfig(const char *path)
     return ZUN_SUCCESS;
 }
 
-bool Supervisor::ReadMidiFile(u32 midiFileIdx, char *path)
+bool Supervisor::ReadMidiFile(u32 midiFileIdx, const char *path)
 {
     // Return conventions seem opposite of normal? But they're never used anyway
     if (g_Supervisor.cfg.musicMode == MIDI)
@@ -805,7 +805,7 @@ ZunResult Supervisor::PlayMidiFile(i32 midiFileIdx)
     return ZUN_ERROR;
 }
 
-ZunResult Supervisor::PlayAudio(char *path)
+ZunResult Supervisor::PlayAudio(const char *path)
 {
     char wavName[256];
     char wavPos[256];

@@ -85,7 +85,7 @@ struct Laser
 struct BulletManager
 {
     BulletManager();
-    static ZunResult RegisterChain(char *bulletAnmPath);
+    static ZunResult RegisterChain(const char *bulletAnmPath);
     static void CutChain();
     static ZunResult AddedCallback(BulletManager *mgr);
     static ZunResult DeletedCallback(BulletManager *mgr);
@@ -101,17 +101,17 @@ struct BulletManager
     void TurnAllBulletsIntoPoints();
 
     i32 DespawnBullets(i32 maxBonusScore, bool awardPoints);
-    ZunResult SpawnBulletPattern(EnemyBulletShooter *bulletProps);
-    Laser *SpawnLaserPattern(EnemyLaserShooter *bulletProps);
-    u32 SpawnSingleBullet(EnemyBulletShooter *bulletProps, i32 bulletIdx1, i32 bulletIdx2, f32 angle);
+    ZunResult SpawnBulletPattern(const EnemyBulletShooter *bulletProps);
+    Laser *SpawnLaserPattern(const EnemyLaserShooter *bulletProps);
+    u32 SpawnSingleBullet(const EnemyBulletShooter *bulletProps, i32 bulletIdx1, i32 bulletIdx2, f32 angle);
     BulletTypeSprites bulletTypeTemplates[16];
     Bullet bullets[640];
     Laser lasers[64];
     i32 nextBulletIndex;
     i32 bulletCount;
     ZunTimer time;
-    char *bulletAnmPath;
+    const char *bulletAnmPath;
 };
 
-extern u32 *g_EffectsColor;
+extern const u32 *g_EffectsColor;
 extern BulletManager g_BulletManager;

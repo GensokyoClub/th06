@@ -16,7 +16,7 @@ ItemManager::ItemManager() {
 
 };
 
-void ItemManager::SpawnItem(ZunVec3 *position, ItemType itemType, i32 state)
+void ItemManager::SpawnItem(const ZunVec3 *position, ItemType itemType, i32 state)
 {
     Item *item;
     i32 idx;
@@ -67,17 +67,20 @@ void ItemManager::SpawnItem(ZunVec3 *position, ItemType itemType, i32 state)
     return;
 }
 
-i32 g_PowerUpThresholds[11] = {8, 16, 32, 48, 64, 80, 96, 128, 999, 1, 0};
-i32 g_PowerItemScore[31] = {10,   20,   30,   40,   50,   60,    70,    80,    90,   100,  200,
+static const i32 g_PowerUpThresholds[11] = {8, 16, 32, 48, 64, 80, 96, 128, 999, 1, 0};
+static const i32 g_PowerItemScore[31] = {
+                            10,   20,   30,   40,   50,   60,    70,    80,    90,   100,  200,
                             300,  400,  500,  600,  700,  800,   900,   1000,  2000, 3000, 4000,
                             5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 51200};
 
-i32 inline calculatePointScore(Item *curItem, i32 scoreAcquiredItemTop, i32 scoreAcquiredItemBottom, i32 posMultiplier)
+static inline i32 calculatePointScore(const Item *curItem, i32 scoreAcquiredItemTop, i32 scoreAcquiredItemBottom, i32 posMultiplier)
 {
     return ((i32)curItem->currentPosition.y < 128)
                ? scoreAcquiredItemTop
                : (scoreAcquiredItemBottom - (((i32)curItem->currentPosition.y - 128) * posMultiplier));
 }
+
+static const ZunVec3 g_ItemSize(16.0f, 16.0f, 16.0f);
 
 void ItemManager::OnUpdate()
 {
@@ -93,7 +96,6 @@ void ItemManager::OnUpdate()
     i32 itemAcquired;
 
     curItem = &this->items[0];
-    static ZunVec3 g_ItemSize(16.0f, 16.0f, 16.0f);
     itemAcquired = false;
     this->itemCount = 0;
     for (idx = 0; idx < ARRAY_SIZE_SIGNED(this->items) - 1; idx++, curItem++)

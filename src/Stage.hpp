@@ -71,8 +71,8 @@ enum SpellcardState
 
 struct StageFile
 {
-    char *anmFile;
-    char *stdFile;
+    const char *anmFile;
+    const char *stdFile;
 };
 
 enum StageOpcode
@@ -96,17 +96,17 @@ struct Stage
     static ZunResult AddedCallback(Stage *stage);
     static ZunResult DeletedCallback(Stage *stage);
 
-    ZunResult LoadStageData(char *anmpath, char *stdpath);
+    ZunResult LoadStageData(const char *anmpath, const char *stdpath);
     ZunResult UpdateObjects();
     ZunResult RenderObjects(i32 zLevel);
 
     AnmVm *quadVms;
-    RawStageHeader *stdData;
+    const RawStageHeader *stdData;
     i32 quadCount;
     i32 objectsCount;
     RawStageObject **objects;
-    RawStageObjectInstance *objectInstances;
-    RawStageInstr *beginningOfScript;
+    const RawStageObjectInstance *objectInstances;
+    const RawStageInstr *beginningOfScript;
     ZunTimer scriptTime;
     i32 instructionIndex;
     ZunTimer timer;

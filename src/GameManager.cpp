@@ -19,9 +19,9 @@
 // #include <d3d8types.h>
 // #include <d3dx8math.h>
 
-u32 g_ExtraLivesScores[5] = {10000000, 20000000, 40000000, 60000000, 1900000000};
+static const u32 g_ExtraLivesScores[5] = {10000000, 20000000, 40000000, 60000000, 1900000000};
 
-char *g_EclFiles[9] = {"dummy",
+static const char *const g_EclFiles[9] = {"dummy",
                        "data/ecldata1.ecl",
                        "data/ecldata2.ecl",
                        "data/ecldata3.ecl",
@@ -33,11 +33,11 @@ char *g_EclFiles[9] = {"dummy",
 
 struct AnmStageFiles
 {
-    char *file1;
-    char *file2;
+    const char *file1;
+    const char *file2;
 };
 
-AnmStageFiles g_AnmStageFiles[8] = {
+static const AnmStageFiles g_AnmStageFiles[8] = {
     {"dummy", "dummy"},
     {"data/stg1enm.anm", "data/stg1enm2.anm"},
     {"data/stg2enm.anm", "data/stg2enm2.anm"},
@@ -54,7 +54,7 @@ struct DifficultyInfo
     u32 maxRank;
 };
 
-DifficultyInfo g_DifficultyInfoForReplay[5] = {
+static const DifficultyInfo g_DifficultyInfoForReplay[5] = {
     // rank, minRank, maxRank
     /* EASY    */ {16, 12, 20},
     /* NORMAL  */ {16, 10, 32},
@@ -63,7 +63,7 @@ DifficultyInfo g_DifficultyInfoForReplay[5] = {
     /* EXTRA   */ {16, 14, 18},
 };
 
-DifficultyInfo g_DifficultyInfo[5] = {
+static const DifficultyInfo g_DifficultyInfo[5] = {
     // rank, minRank, maxRank
     /* EASY    */ {16, 12, 20},
     /* NORMAL  */ {16, 10, 32},
@@ -75,8 +75,8 @@ DifficultyInfo g_DifficultyInfo[5] = {
 // These are either on Supervisor.cpp or somewhere else
 GameManager g_GameManager;
 
-ChainElem g_GameManagerCalcChain;
-ChainElem g_GameManagerDrawChain;
+static ChainElem g_GameManagerCalcChain;
+static ChainElem g_GameManagerDrawChain;
 
 #define MAX_SCORE 999999999
 #define MAX_CLEARS 99
@@ -88,7 +88,7 @@ ChainElem g_GameManagerDrawChain;
 
 #define MAX_LIVES 8
 
-i32 GameManager::IsInBounds(f32 x, f32 y, f32 width, f32 height)
+i32 GameManager::IsInBounds(f32 x, f32 y, f32 width, f32 height) const
 {
     if (width / 2.0f + x < 0.0f)
     {
@@ -622,7 +622,7 @@ GameManager::GameManager()
     (this->arcadeRegionSize).y = GAME_REGION_HEIGHT;
 }
 
-i32 GameManager::HasReachedMaxClears(i32 character, i32 shottype)
+i32 GameManager::HasReachedMaxClears(i32 character, i32 shottype) const
 {
     return (this->clrd[shottype + character * 2].difficultyClearedWithRetries[1] == MAX_CLEARS ||
             this->clrd[shottype + character * 2].difficultyClearedWithRetries[2] == MAX_CLEARS ||

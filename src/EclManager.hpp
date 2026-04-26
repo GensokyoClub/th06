@@ -52,9 +52,9 @@ struct EclTimelineInstrArgs
     u16 ushortVar2;
     u32 uintVar4;
 
-    ZunVec3 *Var1AsVec()
+    const ZunVec3 *Var1AsVec() const
     {
-        return (ZunVec3 *)&this->uintVar1;
+        return (const ZunVec3 *)&this->uintVar1;
     }
 };
 
@@ -312,7 +312,7 @@ union EclRawInstrArgs {
     EclRawInstrExInstrArgs exInstr;
     i32 setInt;
 
-    i32 GetBossLifeCount()
+    i32 GetBossLifeCount() const
     {
         return this->setInt;
     }
@@ -482,15 +482,15 @@ enum EclRawInstrOpcode
 
 struct EclManager
 {
-    ZunResult Load(char *ecl);
+    ZunResult Load(const char *ecl);
     void Unload();
     ZunResult RunEcl(Enemy *enemy);
-    ZunResult CallEclSub(EnemyEclContext *enemyEcl, i16 subId);
+    ZunResult CallEclSub(EnemyEclContext *enemyEcl, i16 subId) const;
 
-    EclRawHeader *eclFile;
-    EclTimelineInstr *timelinePtrs[3];
+    const EclRawHeader *eclFile;
+    const EclTimelineInstr *timelinePtrs[3];
     EclRawInstr **subTable;
-    EclTimelineInstr *timeline;
+    const EclTimelineInstr *timeline;
 };
 
 extern EclManager g_EclManager;

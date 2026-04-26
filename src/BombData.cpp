@@ -9,7 +9,7 @@
 #include "i18n.hpp"
 #include "utils.hpp"
 
-BombData g_BombData[4] = {
+extern const BombData g_BombData[4] = {
     /* ReimuA  */ {BombData::BombReimuACalc, BombData::BombReimuADraw},
     /* ReimuB  */ {BombData::BombReimuBCalc, BombData::BombReimuBDraw},
     /* MarisaA */ {BombData::BombMarisaACalc, BombData::BombMarisaADraw},

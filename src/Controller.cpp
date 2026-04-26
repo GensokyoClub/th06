@@ -10,8 +10,8 @@
 #include "utils.hpp"
 
 // DIFFABLE_STATIC(JOYCAPSA, g_JoystickCaps)
-u16 g_FocusButtonConflictState;
-u8 *keyboardState;
+static u16 g_FocusButtonConflictState;
+static u8 *keyboardState;
 
 u16 Controller::GetJoystickCaps(void)
 {
@@ -250,7 +250,7 @@ u16 Controller::GetControllerInput(u16 buttons)
 }
 
 u32 Controller::SetButtonFromDirectInputJoystate(u16 *outButtons, i16 controllerButtonToTest,
-                                                 enum TouhouButton touhouButton, u8 *inputButtons)
+                                                 enum TouhouButton touhouButton, const u8 *inputButtons)
 {
     if (controllerButtonToTest < 0)
     {
@@ -279,10 +279,10 @@ u32 Controller::SetButtonFromControllerInputs(u16 *outButtons, i16 controllerBut
     return pressed ? touhouButton & 0xFFFF : 0;
 }
 
-u8 g_ControllerData[SDL_CONTROLLER_BUTTON_MAX];
+static u8 g_ControllerData[SDL_CONTROLLER_BUTTON_MAX];
 
 // This is for rebinding keys
-u8 *Controller::GetControllerState()
+const u8 *Controller::GetControllerState()
 {
     //    JOYINFOEX joyinfoex;
     //    u32 joyButtonBit;

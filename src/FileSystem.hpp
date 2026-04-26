@@ -13,6 +13,6 @@ namespace FileSystem
 FILE *FopenUTF8(const char *filepath, const char *mode);
 void CreateDir(const char *path);
 u8 *OpenPath(const char *filepath, int isExternalResource);
-int WriteDataToFile(const char *path, void *data, std::size_t size);
+int WriteDataToFile(const char *path, const void *data, std::size_t size);
 } // namespace FileSystem
 extern u32 g_LastFileSize;

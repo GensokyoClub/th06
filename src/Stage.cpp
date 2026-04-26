@@ -12,11 +12,11 @@
 #include "utils.hpp"
 // #include <d3d8.h>
 
-ChainElem g_StageCalcChain;
-ChainElem g_StageOnDrawHighPrioChain;
-ChainElem g_StageOnDrawLowPrioChain;
+static ChainElem g_StageCalcChain;
+static ChainElem g_StageOnDrawHighPrioChain;
+static ChainElem g_StageOnDrawLowPrioChain;
 
-StageFile g_StageFiles[8] = {
+static const StageFile g_StageFiles[8] = {
     {"dummy", "dummy"},
     {"data/stg1bg.anm", "data/stage1.std"},
     {"data/stg2bg.anm", "data/stage2.std"},
@@ -39,7 +39,7 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage)
     ZunVec3 pos;
     i32 idx;
     f32 skyFogInterpRatio;
-    RawStageInstr *curInsn;
+    const RawStageInstr *curInsn;
 
     if (stage->stdData == NULL)
     {
@@ -391,8 +391,8 @@ ZunResult Stage::DeletedCallback(Stage *s)
     }
     if (s->stdData != NULL)
     {
-        void *stdData = s->stdData;
-        free(stdData);
+        const void *stdData = s->stdData;
+        free((void*)stdData);
         s->stdData = NULL;
     }
 
@@ -409,7 +409,7 @@ void Stage::CutChain()
     g_Chain.Cut(&g_StageOnDrawLowPrioChain);
 }
 
-ZunResult Stage::LoadStageData(char *anmpath, char *stdpath)
+ZunResult Stage::LoadStageData(const char *anmpath, const char *stdpath)
 {
     RawStageObject *curObj;
     RawStageQuadBasic *curQuad;
@@ -432,7 +432,7 @@ ZunResult Stage::LoadStageData(char *anmpath, char *stdpath)
     this->quadCount = this->stdData->nbFaces;
     this->objectInstances = (RawStageObjectInstance *)(this->stdData->facesOffset + ((u8 *)this->stdData));
     this->beginningOfScript = (RawStageInstr *)(this->stdData->scriptOffset + ((u8 *)this->stdData));
-    u32 *objectOffsets = (u32 *)(this->stdData + 1);
+    const u32 *objectOffsets = (u32 *)(this->stdData + 1);
 
     this->objects = (RawStageObject **)malloc(sizeof(RawStageObject *) * this->objectsCount);
 
@@ -461,8 +461,8 @@ ZunResult Stage::LoadStageData(char *anmpath, char *stdpath)
 ZunResult Stage::UpdateObjects()
 {
     AnmVm *vm;
-    RawStageQuadBasic *objQuad;
-    RawStageQuadBasic *objQuadType1;
+    const RawStageQuadBasic *objQuad;
+    const RawStageQuadBasic *objQuadType1;
     i32 objIdx;
     i32 vmsNotFinished;
     RawStageObject *obj;
@@ -510,12 +510,12 @@ ZunResult Stage::RenderObjects(i32 zLevel)
     f32 quadWidth;
     ZunVec3 projectSrc;
     bool didDraw;
-    RawStageQuadBasic *curQuad;
+    const RawStageQuadBasic *curQuad;
     ZunVec3 quadPos;
     ZunVec3 quadScaledPos;
     RawStageObject *obj;
     ZunMatrix worldMatrix;
-    RawStageObjectInstance *instance;
+    const RawStageObjectInstance *instance;
     i32 instancesDrawn;
     AnmVm *curQuadVm;
     i32 unk8;

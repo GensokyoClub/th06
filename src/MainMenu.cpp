@@ -25,11 +25,11 @@
 #include <SDL2/SDL_timer.h>
 #include <cstring>
 
-const char *g_ShortCharacterList[4] = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
-const char *g_DifficultyList[5] = {"Easy   ", "Normal ", "Hard   ", "Lunatic", "Extra  "};
-const char *g_StageList[7] = {"Stage1", "Stage2", "Stage3", "Stage4", "Stage5", "Stage6", "Extra "};
+static const char *const g_ShortCharacterList[4] = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
+static const char *const g_DifficultyList[5] = {"Easy   ", "Normal ", "Hard   ", "Lunatic", "Extra  "};
+static const char *const g_StageList[7] = {"Stage1", "Stage2", "Stage3", "Stage4", "Stage5", "Stage6", "Extra "};
 
-i16 g_LastJoystickInput;
+static i16 g_LastJoystickInput;
 
 MainMenu::MainMenu()
 {
@@ -48,7 +48,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
     i16 mapping;
     ZunResult startedUp;
     i16 sVar1;
-    u8 *controllerData;
+    const u8 *controllerData;
     ControllerMapping mappingData;
     f32 refreshRate;
     f32 local_48;
@@ -59,7 +59,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
     ZunVec3 pos3;
     ZunVec3 pos4;
     ZunVec3 pos5;
-    AnmVm *vm;
+    const AnmVm *vm;
     u32 hasLoadedSprite;
 
     if (menu->timeRelatedArrSize < ARRAY_SIZE_SIGNED(menu->timeRelatedArr))
@@ -1429,7 +1429,7 @@ i32 MainMenu::ReplayHandling()
                 }
             }
         }
-        if (WAS_PRESSED(TH_BUTTON_SELECTMENU) && this->currentReplay[this->cursor].header->stageReplayDataOffsets)
+        if (WAS_PRESSED(TH_BUTTON_SELECTMENU) /*&& this->currentReplay[this->cursor].header->stageReplayDataOffsets*/)
         {
             g_GameManager.isInReplay = 1;
             g_Supervisor.framerateMultiplier = 1.0;
@@ -1475,11 +1475,11 @@ i32 MainMenu::ReplayHandling()
     return 0;
 }
 
-ZunResult MainMenu::DrawReplayMenu()
+ZunResult MainMenu::DrawReplayMenu() const
 {
     i32 replayAmount;
     i32 i;
-    AnmVm *vmRef;
+    const AnmVm *vmRef;
     bool isSelected;
     bool isSelected2;
 
@@ -1578,7 +1578,7 @@ ZunResult MainMenu::DrawReplayMenu()
     return ZUN_SUCCESS;
 }
 
-void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelected)
+void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelected) const
 {
     if (subItem != subItemSelected)
     {
@@ -1885,7 +1885,7 @@ u32 MainMenu::OnUpdateOptionsMenu()
     return 0;
 }
 
-ZunResult MainMenu::ChoosePracticeLevel()
+ZunResult MainMenu::ChoosePracticeLevel() const
 {
     if (this->gameState == STATE_PRACTICE_LVL_SELECT)
     {
@@ -1926,7 +1926,7 @@ ChainCallbackResult MainMenu::OnDraw(MainMenu *menu)
 {
     ZunVec3 posBackup;
     ZunVec3 *pos;
-    ZunVec3 *offset;
+    const ZunVec3 *offset;
     bool shouldDraw;
     AnmVm *curVm;
     i32 vmIdx;

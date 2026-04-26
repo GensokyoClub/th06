@@ -184,9 +184,9 @@ struct AnmVm
     i16 baseSpriteIndex;
     i16 anmFileIndex;
     // Two padding bytes
-    AnmRawInstr *beginingOfScript;
-    AnmRawInstr *currentInstruction;
-    AnmLoadedSprite *sprite;
+    const AnmRawInstr *beginingOfScript;
+    const AnmRawInstr *currentInstruction;
+    const AnmLoadedSprite *sprite;
     ZunColor alphaInterpInitial;
     ZunColor alphaInterpFinal;
     ZunVec3 posInterpInitial;

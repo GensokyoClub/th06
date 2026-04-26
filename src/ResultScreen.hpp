@@ -60,12 +60,12 @@ enum ResultScreenMainMenuCursor
 
 struct Th6k
 {
-    Th6k *ShiftOneByte()
+    Th6k *ShiftOneByte() const
     {
         return (Th6k *)(((u8 *)this) + 1);
     };
 
-    Th6k *ShiftBytes(i32 value)
+    Th6k *ShiftBytes(i32 value) const
     {
         return (Th6k *)(((u8 *)this) + value);
     };
@@ -101,12 +101,12 @@ struct Clrd
 
 struct Pscr
 {
-    Pscr *ShiftOneByte()
+    Pscr *ShiftOneByte() const
     {
         return (Pscr *)(((u8 *)this) + 1);
     };
 
-    Pscr *ShiftBytes(i32 value)
+    Pscr *ShiftBytes(i32 value) const
     {
         return (Pscr *)(((u8 *)this) + value);
     };
@@ -120,7 +120,7 @@ struct Pscr
 
 struct Hscr
 {
-    Hscr *ShiftBytes(i32 value)
+    Hscr *ShiftBytes(i32 value) const
     {
         return (Hscr *)(((u8 *)this) + value);
     };
@@ -149,12 +149,12 @@ struct ScoreListNode
 
 struct ScoreRaw
 {
-    Th6k *ShiftOneByte()
+    Th6k *ShiftOneByte() const
     {
         return (Th6k *)(((u8 *)this) + 1);
     };
 
-    Th6k *ShiftBytes(i32 value)
+    Th6k *ShiftBytes(i32 value) const
     {
         return (Th6k *)(((u8 *)this) + value);
     };
@@ -189,7 +189,7 @@ struct ResultScreen
     static ZunResult AddedCallback(ResultScreen *r);
     static ZunResult DeletedCallback(ResultScreen *r);
 
-    static ScoreDat *OpenScore(char *path);
+    static ScoreDat *OpenScore(const char *path);
     static ZunResult ParseCatk(ScoreDat *s, Catk *catk);
     static ZunResult ParseClrd(ScoreDat *s, Clrd *out);
     static ZunResult ParsePscr(ScoreDat *s, Pscr *out);
@@ -210,7 +210,7 @@ struct ResultScreen
 
     static i32 LinkScore(ScoreListNode *, Hscr *);
     i32 LinkScoreEx(Hscr *out, i32 difficulty, i32 character);
-    u32 DrawFinalStats();
+    u32 DrawFinalStats() const;
 
     ScoreDat *scoreDat;
     i32 frameTimer;

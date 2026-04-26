@@ -61,10 +61,10 @@ struct GameManager
     static void SetupCamera(f32);
     static void SetupCameraStageBackground(f32);
 
-    i32 HasReachedMaxClears(i32 character, i32 shottype);
+    i32 HasReachedMaxClears(i32 character, i32 shottype) const;
     void IncreaseSubrank(i32 amount);
     void DecreaseSubrank(i32 amount);
-    i32 IsInBounds(f32 x, f32 y, f32 width, f32 height);
+    i32 IsInBounds(f32 x, f32 y, f32 width, f32 height) const;
 
     void AddScore(i32 points)
     {

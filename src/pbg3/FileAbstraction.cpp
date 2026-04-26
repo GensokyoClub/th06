@@ -7,13 +7,13 @@ FileAbstraction::FileAbstraction()
     access = ACCESS_INVALID;
 }
 
-i32 FileAbstraction::Open(char *filename, char *mode)
+i32 FileAbstraction::Open(const char *filename, const char *mode)
 {
     char openMode[] = "*b";
 
     this->Close();
 
-    char *curMode;
+    const char *curMode;
     for (curMode = mode; *curMode != '\0'; curMode += 1)
     {
         if (*curMode == 'r')
@@ -71,7 +71,7 @@ i32 FileAbstraction::Read(u8 *data, u32 dataLen, u32 *numBytesRead)
     return !(dataLen != 0 && *numBytesRead < dataLen);
 }
 
-i32 FileAbstraction::Write(u8 *data, u32 dataLen, u32 *outWritten)
+i32 FileAbstraction::Write(const u8 *data, u32 dataLen, u32 *outWritten)
 {
     if (this->access != ACCESS_WRITE)
     {

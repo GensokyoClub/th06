@@ -13,7 +13,8 @@
 #include "Stage.hpp"
 #include "utils.hpp"
 
-i32 g_SpellcardScore[64] = {200000, 200000, 200000, 200000, 200000, 200000, 200000, 250000, 250000, 250000, 250000,
+static const i32 g_SpellcardScore[64] = {
+                            200000, 200000, 200000, 200000, 200000, 200000, 200000, 250000, 250000, 250000, 250000,
                             250000, 250000, 250000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000,
                             300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 400000,
                             400000, 400000, 400000, 400000, 400000, 400000, 400000, 500000, 500000, 500000, 500000,
@@ -21,7 +22,8 @@ i32 g_SpellcardScore[64] = {200000, 200000, 200000, 200000, 200000, 200000, 2000
                             700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000};
 EclManager g_EclManager;
 typedef void (*ExInsn)(Enemy *, EclRawInstr *);
-ExInsn g_EclExInsn[17] = {EnemyEclInstr::ExInsCirnoRainbowBallJank, EnemyEclInstr::ExInsShootAtRandomArea,
+static const ExInsn g_EclExInsn[17] = {
+                          EnemyEclInstr::ExInsCirnoRainbowBallJank, EnemyEclInstr::ExInsShootAtRandomArea,
                           EnemyEclInstr::ExInsShootStarPattern,     EnemyEclInstr::ExInsPatchouliShottypeSetVars,
                           EnemyEclInstr::ExInsStage56Func4,         EnemyEclInstr::ExInsStage5Func5,
                           EnemyEclInstr::ExInsStage6XFunc6,         EnemyEclInstr::ExInsStage6Func7,
@@ -31,7 +33,7 @@ ExInsn g_EclExInsn[17] = {EnemyEclInstr::ExInsCirnoRainbowBallJank, EnemyEclInst
                           EnemyEclInstr::ExInsStageXFunc14,         EnemyEclInstr::ExInsStageXFunc15,
                           EnemyEclInstr::ExInsStageXFunc16};
 
-ZunResult EclManager::Load(char *eclPath)
+ZunResult EclManager::Load(const char *eclPath)
 {
     i32 idx;
 
@@ -60,7 +62,7 @@ void EclManager::Unload()
 {
     EclRawHeader *file;
 
-    free(this->eclFile);
+    free((void*)this->eclFile);
     this->eclFile = NULL;
 
     free(this->subTable);
@@ -69,7 +71,7 @@ void EclManager::Unload()
     return;
 }
 
-ZunResult EclManager::CallEclSub(EnemyEclContext *ctx, i16 subId)
+ZunResult EclManager::CallEclSub(EnemyEclContext *ctx, i16 subId) const
 {
     ctx->currentInstr = this->subTable[subId];
     ctx->time.InitializeForPopup();
@@ -88,10 +90,10 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
     Catk *local_70, *local_80;
     EclRawInstrBulletArgs *local_54;
     EnemyBulletShooter *local_58;
-    EclRawInstrAnmSetDeathArgs *local_5c;
+    const EclRawInstrAnmSetDeathArgs *local_5c;
     EnemyLaserShooter *local_60;
     EclRawInstrLaserArgs *local_64;
-    EclRawInstrSpellcardEffectArgs *local_6c;
+    const EclRawInstrSpellcardEffectArgs *local_6c;
     ZunVec3 local_98;
     EclRawInstrEnemyCreateArgs local_b0;
     Enemy *local_b4;

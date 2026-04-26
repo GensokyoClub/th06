@@ -62,7 +62,7 @@ ChainCallbackResult ScreenEffect::CalcFadeIn(ScreenEffect *effect)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-void ScreenEffect::DrawSquare(ZunRect *rect, ZunColor rectColor)
+void ScreenEffect::DrawSquare(const ZunRect *rect, ZunColor rectColor)
 {
     VertexDiffuseXyzrhw vertices[4];
 

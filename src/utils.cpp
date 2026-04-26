@@ -44,7 +44,7 @@ f32 AddNormalizeAngle(f32 a, f32 b)
     return a;
 }
 
-void Rotate(ZunVec3 *outVector, ZunVec3 *point, f32 angle)
+void Rotate(ZunVec3 *outVector, const ZunVec3 *point, f32 angle)
 {
     f32 sinOut;
     f32 cosOut;

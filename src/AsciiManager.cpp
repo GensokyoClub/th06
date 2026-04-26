@@ -13,9 +13,9 @@
 #include <cstring>
 
 AsciiManager g_AsciiManager;
-ChainElem g_AsciiManagerCalcChain;
-ChainElem g_AsciiManagerOnDrawMenusChain;
-ChainElem g_AsciiManagerOnDrawPopupsChain;
+static ChainElem g_AsciiManagerCalcChain;
+static ChainElem g_AsciiManagerOnDrawMenusChain;
+static ChainElem g_AsciiManagerOnDrawPopupsChain;
 
 AsciiManager::AsciiManager()
 {
@@ -168,7 +168,7 @@ void AsciiManager::CutChain()
     // to free it!
 }
 
-void AsciiManager::AddString(ZunVec3 *position, char *text)
+void AsciiManager::AddString(const ZunVec3 *position, const char *text)
 {
     if (this->numStrings >= 0x100)
     {
@@ -195,15 +195,14 @@ void AsciiManager::AddString(ZunVec3 *position, char *text)
     }
 }
 
-void AsciiManager::AddFormatText(ZunVec3 *position, const char *fmt, ...)
+void AsciiManager::AddFormatText(const ZunVec3 *position, const char *fmt, ...)
 {
     char tmpBuffer[512];
     std::va_list args;
 
     va_start(args, fmt);
     std::vsprintf(tmpBuffer, fmt, args);
-    AddString(position, tmpBuffer);
-
+    this->AddString(position, tmpBuffer);
     va_end(args);
 }
 
@@ -281,7 +280,7 @@ void AsciiManager::DrawStrings(void)
     }
 }
 
-void AsciiManager::CreatePopup1(ZunVec3 *position, i32 value, ZunColor color)
+void AsciiManager::CreatePopup1(const ZunVec3 *position, i32 value, ZunColor color)
 {
     AsciiManagerPopup *popup;
     i32 characterCount;
@@ -322,7 +321,7 @@ void AsciiManager::CreatePopup1(ZunVec3 *position, i32 value, ZunColor color)
     this->nextPopupIndex1++;
 }
 
-void AsciiManager::CreatePopup2(ZunVec3 *position, i32 value, ZunColor color)
+void AsciiManager::CreatePopup2(const ZunVec3 *position, i32 value, ZunColor color)
 {
     AsciiManagerPopup *popup;
     i32 characterCount;
@@ -838,8 +837,8 @@ void StageMenu::OnDrawRetryMenu()
 
 void AsciiManager::DrawPopupsWithHwVertexProcessing()
 {
-    u8 *currentDigit;
-    AsciiManagerPopup *currentPopup;
+    const u8 *currentDigit;
+    const AsciiManagerPopup *currentPopup;
     i32 i;
     i32 j;
 
@@ -889,8 +888,8 @@ void AsciiManager::DrawPopupsWithHwVertexProcessing()
 
 void AsciiManager::DrawPopupsWithoutHwVertexProcessing()
 {
-    u8 *currentDigit;
-    AsciiManagerPopup *currentPopup;
+    const u8 *currentDigit;
+    const AsciiManagerPopup *currentPopup;
     i32 i;
     i32 j;
 

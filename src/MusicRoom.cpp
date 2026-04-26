@@ -106,9 +106,9 @@ bool MusicRoom::ProcessInput()
     return false;
 }
 
+static MusicRoom g_MusicRoom;
 ZunResult MusicRoom::RegisterChain()
 {
-    static MusicRoom g_MusicRoom;
     MusicRoom *musicRoom;
 
     musicRoom = &g_MusicRoom;

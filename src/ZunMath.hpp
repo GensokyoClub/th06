@@ -6,6 +6,10 @@
 #include <cmath>
 #include <cstring>
 
+#ifndef __has_builtin
+#define __has_builtin(name) 0
+#endif
+
 #if __cplusplus >= 202002L
 #include <bit>
 inline u32 BitCeil(u32 n)
@@ -16,7 +20,13 @@ inline u32 CountrZero(u32 n)
 {
     return std::countr_zero(n);
 }
-#elif defined(__GNUC__)
+inline u16 RotateLeft16(u16 n, u8 s)
+{
+    return std::rotl(n, s);
+}
+#else
+
+#if __has_builtin(__builtin_clz)
 inline u32 BitCeil(u32 n)
 {
     // Check if n is a power of 2
@@ -28,11 +38,6 @@ inline u32 BitCeil(u32 n)
     u32 highestBit = 31 - __builtin_clz(n);
 
     return 1 << (highestBit + 1);
-}
-
-inline u32 CountrZero(u32 n)
-{
-    return __builtin_ctz(n);
 }
 #else
 // Shamelessly stolen from https://graphics.stanford.edu/%7Eseander/bithacks.html#RoundUpPowerOf2
@@ -48,7 +53,14 @@ inline u32 BitCeil(u32 n)
 
     return n;
 }
+#endif
 
+#if __has_builtin(__builtin_ctz)
+inline u32 CountrZero(u32 n)
+{
+    return __builtin_ctz(n);
+}
+#else
 // https://graphics.stanford.edu/%7Eseander/bithacks.html#ZerosOnRightMultLookup
 inline u32 CountrZero(u32 n)
 {
@@ -57,6 +69,20 @@ inline u32 CountrZero(u32 n)
 
     return multiplyDeBruijnBitPosition[((u32)((n & -n) * 0x077CB531U)) >> 27];
 }
+#endif
+
+#if __has_builtin(__builtin_rotateleft16)
+inline u16 RotateLeft16(u16 n, u8 s)
+{
+    return __builtin_rotateleft16(n, s);
+}
+#else
+inline u16 RotateLeft16(u16 n, u8 s)
+{
+    return (u32)n >> 16 - s | n << s;
+}
+#endif
+
 #endif
 
 // EoSD makes extensive use of the float versions of math functions made standard in C99
@@ -91,12 +117,12 @@ struct ZunVec2
         this->y = y;
     }
 
-    f32 VectorLength()
+    f32 VectorLength() const
     {
         return std::sqrt((f64)(this->x * this->x + this->y * this->y));
     }
 
-    f64 VectorLengthF64()
+    f64 VectorLengthF64() const
     {
         return (f64)this->VectorLength();
     }
@@ -182,23 +208,23 @@ struct ZunVec3
         return *this;
     }
 
-    f32 getMagnitude()
+    f32 getMagnitude() const
     {
         return ZUN_SQRTF(this->x * this->x + this->y * this->y + this->z * this->z);
     }
 
-    void getNormalized(ZunVec3 &norm)
+    void getNormalized(ZunVec3 &norm) const
     {
         norm = *this / this->getMagnitude();
     }
 
-    void calcCross(ZunVec3 &dst, ZunVec3 &vec)
+    void calcCross(ZunVec3 &dst, const ZunVec3 &vec) const
     {
         dst = ZunVec3(this->y * vec.z - this->z * vec.y, this->z * vec.x - this->x * vec.z,
                       this->x * vec.y - this->y * vec.x);
     }
 
-    f32 calcDot(ZunVec3 &vec)
+    f32 calcDot(const ZunVec3 &vec) const
     {
         return this->x * vec.x + this->y * vec.y + this->z * vec.z;
     }
@@ -371,7 +397,7 @@ struct ZunViewport
     f32 minZ;
     f32 maxZ;
 
-    void Set()
+    void Set() const
     {
         g_glFuncTable.glViewport(this->x * WIDTH_RESOLUTION_SCALE + VIEWPORT_OFF_X,
                                  (GAME_WINDOW_HEIGHT_REAL - ((this->y + this->height) * HEIGHT_RESOLUTION_SCALE)) -
@@ -423,13 +449,6 @@ inline f32 invertf(f32 x)
     return 1.f / x;
 }
 
-// TODO: Check value of x87 control word RC field in EoSD to verify this is actually correct
-inline f32 rintf(f32 float_in)
-{
-    // Was originally x87 frndint
-    return std::round(float_in);
-}
-
 inline f32 mapRange(f32 in, f32 domainLow, f32 domainHigh, f32 rangeLow, f32 rangeHigh)
 {
     // Shift domain to start at 0
@@ -443,7 +462,7 @@ inline f32 mapRange(f32 in, f32 domainLow, f32 domainHigh, f32 rangeLow, f32 ran
 }
 
 // Creates a left handed matrix, using the method from Microsoft's docs
-inline ZunMatrix createViewMatrix(ZunVec3 &camera, ZunVec3 &target, ZunVec3 &up)
+inline ZunMatrix createViewMatrix(const ZunVec3 &camera, const ZunVec3 &target, const ZunVec3 &up)
 {
     ZunMatrix lookMatrix;
 
@@ -549,8 +568,8 @@ inline ZunMatrix inverseViewportMatrix()
 }
 
 // Reimplementation of D3DXVec3Project. TODO: Replace if possible once port is working
-inline void projectVec3(ZunVec3 &out, ZunVec3 &inVec, ZunViewport &viewport, ZunMatrix &projection, ZunMatrix &view,
-                        ZunMatrix &world)
+inline void projectVec3(ZunVec3 &out, const ZunVec3 &inVec, const ZunViewport &viewport, const ZunMatrix &projection, const ZunMatrix &view,
+                        const ZunMatrix &world)
 {
     // WARNING: Runs into issues if matrices do things with W (Zun's never do)
 

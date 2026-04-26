@@ -136,7 +136,7 @@ u8 *FileSystem::OpenPath(const char *filepath, int isExternalResource)
     return data;
 }
 
-int FileSystem::WriteDataToFile(const char *path, void *data, size_t size)
+int FileSystem::WriteDataToFile(const char *path, const void *data, size_t size)
 {
     FILE *f;
 

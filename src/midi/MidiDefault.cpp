@@ -29,7 +29,7 @@ ZunResult MidiDevice::Close()
     return ZUN_SUCCESS;
 }
 
-bool MidiDevice::SendLongMsg(u8 *buf, u32 len)
+bool MidiDevice::SendLongMsg(const u8 *buf, u32 len)
 {
     return true;
 }

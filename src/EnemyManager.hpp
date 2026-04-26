@@ -20,7 +20,7 @@ struct EnemyManager
 {
     void Initialize();
     EnemyManager();
-    static ZunResult RegisterChain(char *stgEnm1, char *stgEnm2);
+    static ZunResult RegisterChain(const char *stgEnm1, const char *stgEnm2);
     static void CutChain();
     static ChainCallbackResult OnUpdate(EnemyManager *enemyManager);
     static ChainCallbackResult OnDraw(EnemyManager *enemyManager);
@@ -28,10 +28,10 @@ struct EnemyManager
     static ZunResult DeletedCallback(EnemyManager *enemyManager);
 
     void RunEclTimeline();
-    Enemy *SpawnEnemy(i32 eclSubId, ZunVec3 *pos, i16 life, i16 itemDrop, i32 score);
+    Enemy *SpawnEnemy(i32 eclSubId, const ZunVec3 *pos, i16 life, i16 itemDrop, i32 score);
 
-    char *stgEnmAnmFilename;
-    char *stgEnm2AnmFilename;
+    const char *stgEnmAnmFilename;
+    const char *stgEnm2AnmFilename;
     Enemy enemyTemplate;
     Enemy enemies[257];
     Enemy *bosses[8];
@@ -41,7 +41,7 @@ struct EnemyManager
     i8 unk_ee5c0[4];
     RunningSpellcardInfo spellcardInfo;
     i32 unk_ee5d8;
-    EclTimelineInstr *timelineInstr;
+    const EclTimelineInstr *timelineInstr;
     ZunTimer timelineTime;
 };
 

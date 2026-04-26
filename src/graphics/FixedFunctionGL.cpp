@@ -164,13 +164,13 @@ void FixedFunctionGL::SetTextureFactor(ZunColor factor)
     g_glFuncTable.glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, tfactorColor);
 }
 
-void FixedFunctionGL::SetTransformMatrix(TransformMatrix type, ZunMatrix &matrix)
+void FixedFunctionGL::SetTransformMatrix(TransformMatrix type, const ZunMatrix &matrix)
 {
     // This is not going to work for modelview
     GLenum matrixEnum[4] = {GL_MODELVIEW, GL_MODELVIEW, GL_PROJECTION, GL_TEXTURE};
 
     g_glFuncTable.glMatrixMode(matrixEnum[type]);
-    g_glFuncTable.glLoadMatrixf((GLfloat *)&matrix);
+    g_glFuncTable.glLoadMatrixf((const GLfloat *)&matrix);
 }
 
 void FixedFunctionGL::Draw()

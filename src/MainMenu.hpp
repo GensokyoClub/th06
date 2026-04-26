@@ -57,10 +57,10 @@ struct MainMenu
     ZunResult BeginStartup();
     ZunResult DrawStartMenu();
     u32 OnUpdateOptionsMenu();
-    ZunResult DrawReplayMenu();
-    ZunResult ChoosePracticeLevel();
+    ZunResult DrawReplayMenu() const;
+    ZunResult ChoosePracticeLevel() const;
     bool WeirdSecondInputCheck();
-    void ColorMenuItem(AnmVm *, i32, i32, i32);
+    void ColorMenuItem(AnmVm *, i32, i32, i32) const;
 
     static ZunResult LoadTitleAnm(MainMenu *menu);
     static CursorMovement MoveCursor(MainMenu *menu, i32 menuLength);

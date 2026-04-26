@@ -65,9 +65,9 @@ struct MsgRawHeader
 
 struct GuiMsgVm
 {
-    MsgRawHeader *msgFile;
-    MsgRawInstr **instrs;
-    MsgRawInstr *currentInstr;
+    const MsgRawHeader *msgFile;
+    const MsgRawInstr **instrs;
+    const MsgRawInstr *currentInstr;
     i32 currentMsgIdx;
     ZunTimer timer;
     i32 framesElapsedDuringPause;
@@ -93,7 +93,7 @@ struct GuiImpl
 {
     GuiImpl();
     ZunResult RunMsg();
-    ZunResult DrawDialogue();
+    ZunResult DrawDialogue() const;
     void MsgRead(i32 msgIdx);
 
     AnmVm vms[26];
@@ -133,36 +133,36 @@ struct Gui
     static ChainCallbackResult OnDraw(Gui *);
 
     ZunResult ActualAddedCallback();
-    ZunResult LoadMsg(char *path);
-    void FreeMsgFile();
+    ZunResult LoadMsg(const char *path) const;
+    void FreeMsgFile() const;
 
-    bool IsStageFinished();
+    bool IsStageFinished() const;
 
     void UpdateStageElements();
-    bool HasCurrentMsgIdx();
+    bool HasCurrentMsgIdx() const;
 
-    void DrawStageElements();
+    void DrawStageElements() const;
     void DrawGameScene();
 
-    void MsgRead(i32 msgIdx);
-    bool MsgWait();
+    void MsgRead(i32 msgIdx) const;
+    bool MsgWait() const;
 
-    void ShowSpellcard(i32 spellcardSprite, char *spellcardName);
-    void ShowSpellcardBonus(u32 spellcardScore);
-    void ShowBombNamePortrait(u32 sprite, char *bombName);
-    void ShowBonusScore(u32 bonusScore);
-    void EndEnemySpellcard();
-    void EndPlayerSpellcard();
-    bool IsDialogueSkippable();
+    void ShowSpellcard(i32 spellcardSprite, const char *spellcardName);
+    void ShowSpellcardBonus(u32 spellcardScore) const;
+    void ShowBombNamePortrait(u32 sprite, const char *bombName);
+    void ShowBonusScore(u32 bonusScore) const;
+    void EndEnemySpellcard() const;
+    void EndPlayerSpellcard() const;
+    bool IsDialogueSkippable() const;
 
-    void ShowFullPowerMode(i32 fmtArg);
+    void ShowFullPowerMode(i32 fmtArg) const;
 
     void SetBossHealthBar(f32 val)
     {
         this->bossHealthBar1 = val;
     }
 
-    bool BossPresent()
+    bool BossPresent() const
     {
         return this->bossPresent;
     }
@@ -172,7 +172,7 @@ struct Gui
         this->spellcardSecondsRemaining = val;
     }
 
-    i32 SpellcardSecondsRemaining()
+    i32 SpellcardSecondsRemaining() const
     {
         return this->spellcardSecondsRemaining;
     }

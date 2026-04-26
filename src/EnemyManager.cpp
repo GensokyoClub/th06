@@ -14,9 +14,10 @@
 #define ITEM_TABLES 8
 
 EnemyManager g_EnemyManager;
-ChainElem g_EnemyManagerCalcChain;
-ChainElem g_EnemyManagerDrawChain;
-u8 g_RandomItems[32] = {ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,
+static ChainElem g_EnemyManagerCalcChain;
+static ChainElem g_EnemyManagerDrawChain;
+static const u8 g_RandomItems[32] = {
+                        ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,
                         ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POINT,       ITEM_POINT,
                         ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POINT,
                         ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,
@@ -84,7 +85,7 @@ EnemyManager::EnemyManager()
     this->Initialize();
 }
 
-Enemy *EnemyManager::SpawnEnemy(i32 eclSubId, ZunVec3 *pos, i16 life, i16 itemDrop, i32 score)
+Enemy *EnemyManager::SpawnEnemy(i32 eclSubId, const ZunVec3 *pos, i16 life, i16 itemDrop, i32 score)
 {
     Enemy *newEnemy;
     i32 idx;
@@ -141,10 +142,10 @@ void EnemyManager::RunEclTimeline()
     ZunVec3 pos3;
     ZunVec3 pos2;
     ZunVec3 pos1;
-    EclTimelineInstrArgs *args4;
-    EclTimelineInstrArgs *args3;
-    EclTimelineInstrArgs *args2;
-    EclTimelineInstrArgs *args1;
+    const EclTimelineInstrArgs *args4;
+    const EclTimelineInstrArgs *args3;
+    const EclTimelineInstrArgs *args2;
+    const EclTimelineInstrArgs *args1;
     i32 subrankIncreaseFrame;
     Enemy *spawnedEnemy;
 
@@ -483,7 +484,7 @@ void Enemy::ClampPos()
     }
 }
 
-ZunResult EnemyManager::RegisterChain(char *stgEnm1, char *stgEnm2)
+ZunResult EnemyManager::RegisterChain(const char *stgEnm1, const char *stgEnm2)
 {
     EnemyManager *mgr = &g_EnemyManager;
     mgr->Initialize();

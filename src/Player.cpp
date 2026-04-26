@@ -24,7 +24,7 @@
 
 Player g_Player;
 
-CharacterData g_CharData[4] = {
+static const CharacterData g_CharData[4] = {
     /* ReimuA  */ {4.0, 2.0, 4.0, 2.0, Player::FireBulletReimuA, Player::FireBulletReimuA},
     /* ReimuB  */ {4.0, 2.0, 4.0, 2.0, Player::FireBulletReimuB, Player::FireBulletReimuB},
     /* MarisaA */ {5.0, 2.5, 5.0, 2.5, Player::FireBulletMarisaA, Player::FireBulletMarisaA},
@@ -219,7 +219,7 @@ ChainCallbackResult Player::OnUpdate(Player *p)
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, 2);
                     g_GameManager.currentPower = 0;
                     g_Gui.flags.flag2 = 2;
-                    g_GameManager.extraLives = 255;
+                    g_GameManager.extraLives = -1;
                 }
                 g_GameManager.DecreaseSubrank(1600);
             }
@@ -338,7 +338,7 @@ ChainCallbackResult Player::OnUpdate(Player *p)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-i32 Player::CalcDamageToEnemy(ZunVec3 *enemyPos, ZunVec3 *enemyHitboxSize, bool *hitWithLazerDuringBomb)
+i32 Player::CalcDamageToEnemy(const ZunVec3 *enemyPos, const ZunVec3 *enemyHitboxSize, bool *hitWithLazerDuringBomb)
 {
     ZunVec3 bulletTopLeft;
     i32 damage;
@@ -1008,7 +1008,7 @@ ZunResult Player::UpdateFireBulletsTimer(Player *p)
     return ZUN_SUCCESS;
 }
 
-f32 Player::AngleFromPlayer(ZunVec3 *pos)
+f32 Player::AngleFromPlayer(const ZunVec3 *pos) const
 {
     f32 relX;
     f32 relY;
@@ -1023,7 +1023,7 @@ f32 Player::AngleFromPlayer(ZunVec3 *pos)
     return ZUN_ATAN2F(relY, relX);
 }
 
-f32 Player::AngleToPlayer(ZunVec3 *pos)
+f32 Player::AngleToPlayer(const ZunVec3 *pos) const
 {
     f32 relX;
     f32 relY;
@@ -1089,9 +1089,9 @@ void Player::SpawnBullets(Player *p, u32 timer)
 }
 
 FireBulletResult Player::FireSingleBullet(Player *player, PlayerBullet *bullet, i32 bulletIdx,
-                                          i32 framesSinceLastBullet, CharacterPowerData *powerData)
+                                          i32 framesSinceLastBullet, const CharacterPowerData *powerData)
 {
-    CharacterPowerBulletData *bulletData;
+    const CharacterPowerBulletData *bulletData;
     f32 *pfVar4;
     i32 bulletFrame;
     i32 unused;
@@ -1194,10 +1194,10 @@ FireBulletResult Player::FireBulletMarisaB(Player *player, PlayerBullet *bullet,
     return player->FireSingleBullet(player, bullet, bulletIdx, framesSinceLastBullet, g_CharacterPowerDataMarisaB);
 }
 
-i32 Player::CheckGraze(ZunVec3 *center, ZunVec3 *size)
+i32 Player::CheckGraze(const ZunVec3 *center, const ZunVec3 *size) const
 {
     ZunVec3 bombBottomRight;
-    PlayerRect *bombProjectile;
+    const PlayerRect *bombProjectile;
     ZunVec3 bombTopLeft;
     ZunVec3 bulletBottomRight;
     ZunVec3 bulletTopLeft;
@@ -1244,7 +1244,7 @@ i32 Player::CheckGraze(ZunVec3 *center, ZunVec3 *size)
     return 1;
 }
 
-i32 Player::CalcKillBoxCollision(ZunVec3 *bulletCenter, ZunVec3 *bulletSize)
+i32 Player::CalcKillBoxCollision(const ZunVec3 *bulletCenter, const ZunVec3 *bulletSize)
 {
     PlayerRect *curBombProjectile;
     f32 bulletLeft, bulletTop, bulletRight, bulletBottom;
@@ -1289,7 +1289,7 @@ i32 Player::CalcKillBoxCollision(ZunVec3 *bulletCenter, ZunVec3 *bulletSize)
     }
 }
 
-i32 Player::CalcLaserHitbox(ZunVec3 *laserCenter, ZunVec3 *laserSize, ZunVec3 *rotation, f32 angle, i32 canGraze)
+i32 Player::CalcLaserHitbox(const ZunVec3 *laserCenter, const ZunVec3 *laserSize, const ZunVec3 *rotation, f32 angle, i32 canGraze)
 {
     ZunVec3 laserTopLeft;
     ZunVec3 laserBottomRight;
@@ -1344,7 +1344,7 @@ LASER_COLLISION:
     return 1;
 }
 
-i32 Player::CalcItemBoxCollision(ZunVec3 *itemCenter, ZunVec3 *itemSize)
+i32 Player::CalcItemBoxCollision(const ZunVec3 *itemCenter, const ZunVec3 *itemSize) const
 {
     if (this->playerState != PLAYER_STATE_ALIVE && this->playerState != PLAYER_STATE_INVULNERABLE)
     {
@@ -1366,7 +1366,7 @@ i32 Player::CalcItemBoxCollision(ZunVec3 *itemCenter, ZunVec3 *itemSize)
     }
 }
 
-void Player::ScoreGraze(ZunVec3 *center)
+void Player::ScoreGraze(const ZunVec3 *center) const
 {
     ZunVec3 particlePosition;
 

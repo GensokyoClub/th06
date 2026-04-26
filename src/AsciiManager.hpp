@@ -66,10 +66,10 @@ struct AsciiManager
     void DrawPopupsWithHwVertexProcessing();
     void DrawPopupsWithoutHwVertexProcessing();
 
-    void AddString(ZunVec3 *position, char *text);
-    void AddFormatText(ZunVec3 *position, const char *fmt, ...);
-    void CreatePopup1(ZunVec3 *position, i32 value, ZunColor color);
-    void CreatePopup2(ZunVec3 *position, i32 value, ZunColor color);
+    void AddString(const ZunVec3 *position, const char *text);
+    void AddFormatText(const ZunVec3 *position, const char *fmt, ...);
+    void CreatePopup1(const ZunVec3 *position, i32 value, ZunColor color);
+    void CreatePopup2(const ZunVec3 *position, i32 value, ZunColor color);
 
     void SetColor(ZunColor color)
     {

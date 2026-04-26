@@ -6,7 +6,7 @@ namespace EnemyEclInstr
 {
 i32 *GetVar(Enemy *enemy, EclVarId *varId, EclValueType *valueType);
 f32 *GetVarFloat(Enemy *enemy, f32 *varId, EclValueType *valueType);
-void SetVar(Enemy *enemy, EclVarId lhs, void *rhs);
+void SetVar(Enemy *enemy, EclVarId lhs, const void *rhs);
 
 void MathAdd(Enemy *enemy, EclVarId out, EclVarId *lhs, EclVarId *rhs);
 void MathSub(Enemy *enemy, EclVarId out, EclVarId *lhs, EclVarId *rhs);
@@ -17,7 +17,7 @@ void MathAtan2(Enemy *enemy, EclVarId out, f32 *a1, f32 *a2, f32 *b1, f32 *b2);
 
 void MoveDirTime(Enemy *enemy, EclRawInstr *instr);
 void MovePosTime(Enemy *enemy, EclRawInstr *instr);
-void MoveTime(Enemy *enemy, EclRawInstr *instr);
+void MoveTime(Enemy *enemy, const EclRawInstr *instr);
 
 void ExInsCirnoRainbowBallJank(Enemy *enemy, EclRawInstr *instr);
 void ExInsShootAtRandomArea(Enemy *enemy, EclRawInstr *instr);

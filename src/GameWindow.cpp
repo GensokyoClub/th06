@@ -21,7 +21,7 @@ f64 g_LastFrameTime;
 
 #define FRAME_TIME (1000. / 60.)
 
-static struct
+static const struct
 {
     const char *name;
     bool isEsContext;

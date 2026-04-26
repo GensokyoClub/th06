@@ -18,31 +18,31 @@
 #include "utils.hpp"
 
 Gui g_Gui;
-ChainElem g_GuiCalcChain;
-ChainElem g_GuiDrawChain;
+static ChainElem g_GuiCalcChain;
+static ChainElem g_GuiDrawChain;
 
-bool Gui::IsStageFinished()
+bool Gui::IsStageFinished() const
 {
     return this->impl->loadingScreenSprite.activeSpriteIndex >= 0 && this->impl->loadingScreenSprite.flags.isStopped;
 }
 
-void Gui::EndPlayerSpellcard()
+void Gui::EndPlayerSpellcard() const
 {
     (this->impl->bombSpellcardName).pendingInterrupt = 1;
 }
 
-void Gui::EndEnemySpellcard()
+void Gui::EndEnemySpellcard() const
 {
     this->impl->enemySpellcardName.pendingInterrupt = 1;
     return;
 }
 
-bool Gui::IsDialogueSkippable()
+bool Gui::IsDialogueSkippable() const
 {
     return (this->impl->msg).dialogueSkippable;
 }
 
-void Gui::ShowBonusScore(u32 bonusScore)
+void Gui::ShowBonusScore(u32 bonusScore) const
 {
     this->impl->bonusScore.pos = ZunVec3(416.0f, 32.0f, 0.0f);
     this->impl->bonusScore.isShown = 1;
@@ -51,7 +51,7 @@ void Gui::ShowBonusScore(u32 bonusScore)
     return;
 }
 
-void Gui::ShowFullPowerMode(i32 fmtArg)
+void Gui::ShowFullPowerMode(i32 fmtArg) const
 {
     this->impl->fullPowerMode.pos = ZunVec3(416.0f, 232.0f, 0.0f);
     this->impl->fullPowerMode.isShown = 1;
@@ -60,7 +60,7 @@ void Gui::ShowFullPowerMode(i32 fmtArg)
     return;
 }
 
-void Gui::ShowSpellcardBonus(u32 spellcardScore)
+void Gui::ShowSpellcardBonus(u32 spellcardScore) const
 {
     this->impl->spellCardBonus.pos = ZunVec3(224.0f, 16.0f, 0.0f);
     this->impl->spellCardBonus.isShown = 1;
@@ -219,7 +219,7 @@ ChainCallbackResult Gui::OnDraw(Gui *gui)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-void Gui::ShowBombNamePortrait(u32 sprite, char *bombName)
+void Gui::ShowBombNamePortrait(u32 sprite, const char *bombName)
 {
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->playerSpellcardPortrait, 0x4a1);
     g_AnmManager->SetActiveSprite(&this->impl->playerSpellcardPortrait, sprite);
@@ -230,7 +230,7 @@ void Gui::ShowBombNamePortrait(u32 sprite, char *bombName)
     g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB);
 }
 
-void Gui::ShowSpellcard(i32 spellcardSprite, char *spellcardName)
+void Gui::ShowSpellcard(i32 spellcardSprite, const char *spellcardName)
 {
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->enemySpellcardPortrait, ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT);
     g_AnmManager->SetActiveSprite(&this->impl->enemySpellcardPortrait, ANM_SPRITE_FACE_STAGE_START + spellcardSprite);
@@ -457,7 +457,7 @@ ZunResult Gui::ActualAddedCallback()
     return ZUN_SUCCESS;
 }
 
-ZunResult Gui::LoadMsg(char *path)
+ZunResult Gui::LoadMsg(const char *path) const
 {
     i32 idx;
 
@@ -471,7 +471,7 @@ ZunResult Gui::LoadMsg(char *path)
     this->impl->msg.currentMsgIdx = 0xffffffff;
     this->impl->msg.currentInstr = NULL;
 
-    this->impl->msg.instrs = (MsgRawInstr **)std::malloc(sizeof(MsgRawInstr **) * this->impl->msg.msgFile->numInstrs);
+    this->impl->msg.instrs = (const MsgRawInstr **)std::malloc(sizeof(MsgRawInstr **) * this->impl->msg.msgFile->numInstrs);
 
     for (idx = 0; idx < this->impl->msg.msgFile->numInstrs; idx++)
     {
@@ -481,16 +481,16 @@ ZunResult Gui::LoadMsg(char *path)
     return ZUN_SUCCESS;
 }
 
-void Gui::FreeMsgFile()
+void Gui::FreeMsgFile() const
 {
-    std::free(this->impl->msg.msgFile);
+    std::free((void*)this->impl->msg.msgFile);
     this->impl->msg.msgFile = NULL;
 
     std::free(this->impl->msg.instrs);
     this->impl->msg.instrs = NULL;
 }
 
-void Gui::MsgRead(i32 msgIdx)
+void Gui::MsgRead(i32 msgIdx) const
 {
     this->impl->MsgRead(msgIdx);
     g_Supervisor.unk198 = 3;
@@ -499,8 +499,8 @@ void Gui::MsgRead(i32 msgIdx)
 
 void GuiImpl::MsgRead(i32 msgIdx)
 {
-    MsgRawHeader *msgFile;
-    MsgRawInstr **msgInstrs;
+    const MsgRawHeader *msgFile;
+    const MsgRawInstr **msgInstrs;
 
     if (this->msg.msgFile->numInstrs <= msgIdx)
     {
@@ -535,7 +535,7 @@ void GuiImpl::MsgRead(i32 msgIdx)
 
 ZunResult GuiImpl::RunMsg()
 {
-    MsgRawInstrArgs *args;
+    const MsgRawInstrArgs *args;
 
     if (this->msg.currentMsgIdx < 0)
     {
@@ -706,7 +706,7 @@ SKIP_TIME_INCREMENT:
     return ZUN_SUCCESS;
 }
 
-ZunResult GuiImpl::DrawDialogue()
+ZunResult GuiImpl::DrawDialogue() const
 {
     f32 dialogueBoxHeight;
 
@@ -807,7 +807,7 @@ ZunResult GuiImpl::DrawDialogue()
     return ZUN_SUCCESS;
 }
 
-bool Gui::MsgWait()
+bool Gui::MsgWait() const
 {
     if (this->impl->msg.ignoreWaitCounter > 0)
     {
@@ -816,7 +816,7 @@ bool Gui::MsgWait()
     return 0 <= this->impl->msg.currentMsgIdx;
 }
 
-bool Gui::HasCurrentMsgIdx()
+bool Gui::HasCurrentMsgIdx() const
 {
     return 0 <= this->impl->msg.currentMsgIdx;
 }
@@ -1003,10 +1003,10 @@ void Gui::UpdateStageElements()
     return;
 }
 
-static ZunColor COLOR1 = 0xa0d0ff;
-static ZunColor COLOR2 = 0xa080ff;
-static ZunColor COLOR3 = 0xe080c0;
-static ZunColor COLOR4 = 0xff4040;
+static const ZunColor COLOR1 = 0xa0d0ff;
+static const ZunColor COLOR2 = 0xa080ff;
+static const ZunColor COLOR3 = 0xe080c0;
+static const ZunColor COLOR4 = 0xff4040;
 
 void Gui::DrawGameScene()
 {
@@ -1277,7 +1277,7 @@ void Gui::DrawGameScene()
     return;
 }
 
-void Gui::DrawStageElements()
+void Gui::DrawStageElements() const
 {
     ZunVec3 stageTextPos;
     ZunColor stageTextColor;

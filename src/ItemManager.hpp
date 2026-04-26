@@ -34,12 +34,13 @@ struct Item
 struct ItemManager
 {
     ItemManager();
-    void SpawnItem(ZunVec3 *position, ItemType type, i32 state);
+    void SpawnItem(const ZunVec3 *position, ItemType type, i32 state);
     void OnUpdate();
     void OnDraw();
     void RemoveAllItems();
 
-    Item items[513];
+    Item items[512];
+    Item dummy_item;
     i32 nextIndex;
     u32 itemCount;
 };

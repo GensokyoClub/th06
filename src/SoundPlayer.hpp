@@ -91,8 +91,8 @@ struct SoundPlayer
     void StopBGM();
     void FadeOut(f32 seconds);
 
-    ZunResult LoadWav(char *path);
-    ZunResult LoadPos(char *path);
+    ZunResult LoadWav(const char *path);
+    ZunResult LoadPos(const char *path);
 
     void BackgroundMusicPlayerThread();
     void MixAudio(u32 samples);
@@ -107,6 +107,4 @@ struct SoundPlayer
     bool isLooping;
 };
 
-extern SoundBufferIdxVolume g_SoundBufferIdxVol[32];
-extern const char *g_SFXList[26];
 extern SoundPlayer g_SoundPlayer;

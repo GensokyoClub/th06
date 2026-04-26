@@ -107,27 +107,27 @@ struct Supervisor
     static ZunResult DeletedCallback(Supervisor *s);
     static void DrawFpsCounter();
 
-    bool ReadMidiFile(u32 midiFileIdx, char *path);
+    bool ReadMidiFile(u32 midiFileIdx, const char *path);
     ZunResult PlayMidiFile(i32 midiFileIdx);
-    ZunResult PlayAudio(char *path);
+    ZunResult PlayAudio(const char *path);
     ZunResult StopAudio();
     ZunResult FadeOutMusic(f32 fadeOutSeconds);
 
     static ZunResult SetupDInput(Supervisor *s);
 
-    i32 LoadPbg3(i32 pbg3FileIdx, char *filename);
+    i32 LoadPbg3(i32 pbg3FileIdx, const char *filename);
     void ReleasePbg3(i32 pbg3FileIdx);
 
     ZunResult LoadConfig(const char *path);
 
     void TickTimer(i32 *frames, f32 *subframes);
 
-    f32 FramerateMultiplier()
+    f32 FramerateMultiplier() const
     {
         return this->effectiveFramerateMultiplier;
     }
 
-    u32 RedrawWholeFrame()
+    u32 RedrawWholeFrame() const
     {
         // SDL makes no guarantees about frame state after buffer swap,
         //   and Wayland will "reuse" old framebuffers in a nondeterministic
@@ -136,7 +136,7 @@ struct Supervisor
                (this->cfg.opts >> GCOS_DISPLAY_MINIMUM_GRAPHICS & 1) | 1;
     }
 
-    u32 ShouldRunAt60Fps()
+    u32 ShouldRunAt60Fps() const
     {
         return (this->cfg.opts >> GCOS_FORCE_60FPS & 1) || this->vsyncEnabled;
     }

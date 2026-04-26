@@ -32,7 +32,7 @@ struct WebGL : GfxInterface
     virtual void SetAttributePointer(VertexAttributeArrays attr, std::size_t stride, void *ptr);
     virtual void SetColorOp(TextureOpComponent component, ColorOp op);
     virtual void SetTextureFactor(ZunColor factor);
-    virtual void SetTransformMatrix(TransformMatrix type, ZunMatrix &matrix);
+    virtual void SetTransformMatrix(TransformMatrix type, const ZunMatrix &matrix);
     virtual void Draw();
 
   private:

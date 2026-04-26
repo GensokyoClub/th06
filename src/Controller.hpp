@@ -40,10 +40,10 @@ u32 SetButtonFromControllerInputs(u16 *outButtons, i16 controllerButtonToTest, e
                                   SDL_GameController *controller);
 
 u32 SetButtonFromDirectInputJoystate(u16 *outButtons, i16 controllerButtonToTest, enum TouhouButton touhouButton,
-                                     u8 *inputButtons);
+                                     const u8 *inputButtons);
 
 u16 GetControllerInput(u16 buttons);
-u8 *GetControllerState();
+const u8 *GetControllerState();
 u16 GetInput(void);
 void ResetKeyboard(void);
 }; // namespace Controller

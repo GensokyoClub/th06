@@ -4,7 +4,7 @@ Pbg3Parser::Pbg3Parser() : IPbg3Parser(), FileAbstraction()
 {
 }
 
-i32 Pbg3Parser::OpenArchive(char *path)
+i32 Pbg3Parser::OpenArchive(const char *path)
 {
     this->Close();
     this->Reset();

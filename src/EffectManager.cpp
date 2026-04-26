@@ -12,10 +12,10 @@
 
 EffectManager g_EffectManager;
 
-ChainElem g_EffectManagerCalcChain;
-ChainElem g_EffectManagerDrawChain;
+static ChainElem g_EffectManagerCalcChain;
+static ChainElem g_EffectManagerDrawChain;
 
-EffectInfo g_Effects[20] = {
+static const EffectInfo g_Effects[20] = {
     {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_SMALL, NULL},
     {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_SPIRAL, NULL},
     {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_NORMAL, NULL},
@@ -198,7 +198,7 @@ i32 EffectManager::EffectCallbackAttractSlow(Effect *effect)
     return EFFECT_CALLBACK_RESULT_DONE;
 }
 
-Effect *EffectManager::SpawnParticles(i32 effectIdx, ZunVec3 *pos, i32 count, ZunColor color)
+Effect *EffectManager::SpawnParticles(i32 effectIdx, const ZunVec3 *pos, i32 count, ZunColor color)
 {
     i32 idx;
     Effect *effect;

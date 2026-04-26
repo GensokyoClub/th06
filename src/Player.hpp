@@ -151,7 +151,7 @@ struct CharacterPowerData
 {
     i32 numBullets;
     i32 power;
-    CharacterPowerBulletData *bullets;
+    const CharacterPowerBulletData *bullets;
 };
 
 struct Player
@@ -167,7 +167,7 @@ struct Player
     static ZunResult DeletedCallback(Player *p);
 
     static FireBulletResult FireSingleBullet(Player *, PlayerBullet *bullet, i32 bullet_idx, i32 framesSinceLastBullet,
-                                             CharacterPowerData *powerData);
+                                             const CharacterPowerData *powerData);
 
     static FireBulletResult FireBulletReimuA(Player *, PlayerBullet *, u32, u32);
     static FireBulletResult FireBulletReimuB(Player *, PlayerBullet *, u32, u32);
@@ -183,14 +183,14 @@ struct Player
     static void DrawBullets(Player *p);
     static void DrawBulletExplosions(Player *p);
 
-    f32 AngleFromPlayer(ZunVec3 *pos);
-    f32 AngleToPlayer(ZunVec3 *pos);
-    i32 CheckGraze(ZunVec3 *center, ZunVec3 *size);
-    i32 CalcKillBoxCollision(ZunVec3 *bulletCenter, ZunVec3 *bulletSize);
-    i32 CalcLaserHitbox(ZunVec3 *laserCenter, ZunVec3 *laserSize, ZunVec3 *rotation, f32 angle, i32 canGraze);
-    i32 CalcDamageToEnemy(ZunVec3 *enemyPos, ZunVec3 *enemySize, bool *unk);
-    i32 CalcItemBoxCollision(ZunVec3 *center, ZunVec3 *size);
-    void ScoreGraze(ZunVec3 *center);
+    f32 AngleFromPlayer(const ZunVec3 *pos) const;
+    f32 AngleToPlayer(const ZunVec3 *pos) const;
+    i32 CheckGraze(const ZunVec3 *center, const ZunVec3 *size) const;
+    i32 CalcKillBoxCollision(const ZunVec3 *bulletCenter, const ZunVec3 *bulletSize);
+    i32 CalcLaserHitbox(const ZunVec3 *laserCenter, const ZunVec3 *laserSize, const ZunVec3 *rotation, f32 angle, i32 canGraze);
+    i32 CalcDamageToEnemy(const ZunVec3 *enemyPos, const ZunVec3 *enemySize, bool *unk);
+    i32 CalcItemBoxCollision(const ZunVec3 *center, const ZunVec3 *size) const;
+    void ScoreGraze(const ZunVec3 *center) const;
     void Die();
 
     AnmVm playerSprite;
@@ -236,7 +236,7 @@ struct Player
     ChainElem *chainDraw1;
     ChainElem *chainDraw2;
 
-    void inline SetToTopLeftPos(AnmVm *sprite)
+    inline void SetToTopLeftPos(AnmVm *sprite) const
     {
 
         f32 *x = &sprite->pos.x;

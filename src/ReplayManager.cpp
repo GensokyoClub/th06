@@ -15,7 +15,7 @@
 
 ReplayManager *g_ReplayManager;
 
-ZunResult ReplayManager::ValidateReplayData(ReplayHeader *data, i32 fileSize)
+ZunResult ReplayManager::ValidateReplayData(const ReplayHeader *data, i32 fileSize)
 {
     u8 *checksumCursor;
     u32 checksum;
@@ -65,7 +65,7 @@ ZunResult ReplayManager::ValidateReplayData(ReplayHeader *data, i32 fileSize)
     return ZUN_SUCCESS;
 }
 
-ZunResult ReplayManager::RegisterChain(i32 isDemo, char *replayFile)
+ZunResult ReplayManager::RegisterChain(i32 isDemo, const char *replayFile)
 {
     ReplayManager *replayMgr;
 
@@ -355,11 +355,11 @@ void ReplayManager::StopRecording()
     }
 }
 
-void ReplayManager::SaveReplay(char *replayPath, char *replayName)
+void ReplayManager::SaveReplay(const char *replayPath, char *replayName)
 {
     ReplayManager *mgr;
     FILE *file;
-    u8 *checksumCursor;
+    const u8 *checksumCursor;
     ReplayHeader replayCopy;
     u8 *obfuscateCursor;
     i32 obfStagePos;
@@ -370,7 +370,7 @@ void ReplayManager::SaveReplay(char *replayPath, char *replayName)
     f32 slowDown;
     i32 stageIdx;
     std::time_t time;
-    std::tm *tm;
+    const std::tm *tm;
 
     time = std::time(NULL);
     tm = std::localtime(&time);

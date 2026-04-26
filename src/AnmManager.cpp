@@ -18,25 +18,25 @@
 #include <SDL2/SDL_rwops.h>
 #include <SDL2/SDL_surface.h>
 
-VertexTex1Xyzrhw g_PrimitivesToDrawVertexBuf[4];
-VertexTex1DiffuseXyzrhw g_PrimitivesToDrawNoVertexBuf[4];
-VertexTex1DiffuseXyz g_PrimitivesToDrawUnknown[4];
+static VertexTex1Xyzrhw g_PrimitivesToDrawVertexBuf[4];
+static VertexTex1DiffuseXyzrhw g_PrimitivesToDrawNoVertexBuf[4];
+static VertexTex1DiffuseXyz g_PrimitivesToDrawUnknown[4];
 AnmManager *g_AnmManager;
 
-SDL_PixelFormatEnum g_TextureFormatSDLMapping[6] = {SDL_PIXELFORMAT_UNKNOWN,  SDL_PIXELFORMAT_RGBA32,
+static const SDL_PixelFormatEnum g_TextureFormatSDLMapping[6] = {SDL_PIXELFORMAT_UNKNOWN,  SDL_PIXELFORMAT_RGBA32,
                                                     SDL_PIXELFORMAT_RGBA5551, SDL_PIXELFORMAT_RGB565,
                                                     SDL_PIXELFORMAT_RGB24,    SDL_PIXELFORMAT_RGBA4444};
 
-GLenum g_TextureFormatGLFormatMapping[6] = {0, GL_RGBA, GL_RGBA, GL_RGB, GL_RGB, GL_RGBA};
+static const GLenum g_TextureFormatGLFormatMapping[6] = {0, GL_RGBA, GL_RGBA, GL_RGB, GL_RGB, GL_RGBA};
 
-GLenum g_TextureFormatGLTypeMapping[6] = {0,
+static const GLenum g_TextureFormatGLTypeMapping[6] = {0,
                                           GL_UNSIGNED_BYTE,
                                           GL_UNSIGNED_SHORT_5_5_5_1,
                                           GL_UNSIGNED_SHORT_5_6_5,
                                           GL_UNSIGNED_BYTE,
                                           GL_UNSIGNED_SHORT_4_4_4_4};
 
-u8 g_TextureFormatBytesPerPixel[6] = {0, 4, 2, 2, 3, 2};
+static const u8 g_TextureFormatBytesPerPixel[6] = {0, 4, 2, 2, 3, 2};
 
 void AnmManager::CreateTextureObject()
 {
@@ -101,7 +101,7 @@ u8 *AnmManager::ExtractSurfacePixels(SDL_Surface *src, u8 pixelDepth)
 
     u8 *pixelData = new u8[dstPitch * src->h];
     u8 *dstPtr = pixelData;
-    u8 *srcPtr = (u8 *)src->pixels;
+    const u8 *srcPtr = (u8 *)src->pixels;
 
     for (int i = 0; i < src->h; i++)
     {
@@ -313,7 +313,7 @@ void AnmManager::SetupVertexBuffer()
     }
 }
 
-ZunResult AnmManager::LoadTexture(i32 textureIdx, char *textureName, i32 textureFormat, ZunColor colorKey)
+ZunResult AnmManager::LoadTexture(i32 textureIdx, const char *textureName, i32 textureFormat, ZunColor colorKey)
 {
     u8 *rawTextureData;
     SDL_Surface *textureSurface;
@@ -337,7 +337,7 @@ ZunResult AnmManager::LoadTexture(i32 textureIdx, char *textureName, i32 texture
                                              (u8 **)&this->textures[textureIdx].fileData);
 
     // Hideous hack to account for ANM entries that report a different texture size than the actual size
-    AnmRawEntry *entry = this->anmFiles[textureIdx];
+    const AnmRawEntry *entry = this->anmFiles[textureIdx];
     if (textureSurface->w != entry->width || textureSurface->h != entry->height)
     {
         SDL_Surface *textureSurface2 = SDL_CreateRGBSurfaceWithFormat(0, entry->width, entry->height,
@@ -391,17 +391,17 @@ ZunResult AnmManager::LoadTexture(i32 textureIdx, char *textureName, i32 texture
     return ZUN_SUCCESS;
 }
 
-ZunResult AnmManager::LoadTextureAlphaChannel(i32 textureIdx, char *textureName, i32 textureFormat, ZunColor colorKey)
+ZunResult AnmManager::LoadTextureAlphaChannel(i32 textureIdx, const char *textureName, i32 textureFormat, ZunColor colorKey)
 {
     SDL_Surface *alphaSurface;
     TextureData *textureDesc;
 
     u8 *dstData;
-    u8 *srcData;
+    const u8 *srcData;
     u8 *dstData8;
-    u8 *srcData8;
+    const u8 *srcData8;
     u16 *dstData16;
-    u16 *srcData16;
+    const u16 *srcData16;
     u32 x;
     u32 y;
 
@@ -516,7 +516,7 @@ ZunResult AnmManager::LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset)
 
     anm->textureIdx = anmIdx;
 
-    char *anmName = (char *)((u8 *)anm + anm->nameOffset);
+    const char *anmName = (char *)((u8 *)anm + anm->nameOffset);
 
     // D3D seems to treat unknown texture format as a wildcard, but SDL treats it as an error
     //   This is a hack to avoid that for now
@@ -547,10 +547,10 @@ ZunResult AnmManager::LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset)
 
     anm->spriteIdxOffset = spriteIdxOffset;
 
-    u32 *curSpriteOffset = anm->spriteOffsets;
+    const u32 *curSpriteOffset = anm->spriteOffsets;
 
     i32 index;
-    AnmRawSprite *rawSprite;
+    const AnmRawSprite *rawSprite;
 
     for (index = 0; index < this->anmFiles[anmIdx]->numSprites; index++, curSpriteOffset++)
     {
@@ -582,10 +582,10 @@ void AnmManager::ReleaseAnm(i32 anmIdx)
 {
     if (this->anmFiles[anmIdx] != NULL)
     {
-        i32 *spriteIdx;
+        const i32 *spriteIdx;
         i32 i;
         i32 spriteIdxOffset = this->anmFilesSpriteIndexOffsets[anmIdx];
-        u32 *byteOffset = this->anmFiles[anmIdx]->spriteOffsets;
+        const u32 *byteOffset = this->anmFiles[anmIdx]->spriteOffsets;
         for (i = 0; i < this->anmFiles[anmIdx]->numSprites; i++, byteOffset++)
         {
             spriteIdx = (i32 *)((u8 *)this->anmFiles[anmIdx] + *byteOffset);
@@ -600,7 +600,7 @@ void AnmManager::ReleaseAnm(i32 anmIdx)
             this->spriteIndices[*byteOffset + spriteIdxOffset] = 0;
         }
         this->anmFilesSpriteIndexOffsets[anmIdx] = 0;
-        AnmRawEntry *entry = this->anmFiles[anmIdx];
+        const AnmRawEntry *entry = this->anmFiles[anmIdx];
         this->ReleaseTexture(entry->textureIdx);
         AnmRawEntry *anmFilePtr = this->anmFiles[anmIdx];
         free(anmFilePtr);
@@ -624,14 +624,14 @@ void AnmManager::ReleaseTexture(i32 textureIdx)
         this->textures[textureIdx].handle = 0;
     }
 
-    free(this->textures[textureIdx].fileData);
+    free((void*)this->textures[textureIdx].fileData);
     this->textures[textureIdx].fileData = NULL;
 
     delete[] this->textures[textureIdx].textureData;
     this->textures[textureIdx].textureData = NULL;
 }
 
-void AnmManager::LoadSprite(u32 spriteIdx, AnmLoadedSprite *sprite)
+void AnmManager::LoadSprite(u32 spriteIdx, const AnmLoadedSprite *sprite)
 {
     this->sprites[spriteIdx] = *sprite;
     this->sprites[spriteIdx].spriteId = this->maybeLoadedSpriteCount++;
@@ -674,7 +674,7 @@ ZunResult AnmManager::SetActiveSprite(AnmVm *vm, u32 sprite_index)
     return ZUN_SUCCESS;
 }
 
-void AnmManager::SetAndExecuteScript(AnmVm *vm, AnmRawInstr *beginingOfScript)
+void AnmManager::SetAndExecuteScript(AnmVm *vm, const AnmRawInstr *beginingOfScript)
 {
     ZunTimer *timer;
 
@@ -695,7 +695,7 @@ void AnmManager::SetAndExecuteScript(AnmVm *vm, AnmRawInstr *beginingOfScript)
     }
 }
 
-void AnmManager::SetRenderStateForVm(AnmVm *vm)
+void AnmManager::SetRenderStateForVm(const AnmVm *vm)
 {
     if (this->currentBlendMode != vm->flags.blendMode)
     {
@@ -847,7 +847,7 @@ void AnmManager::UpdateDirtyStates()
     }
 }
 
-ZunResult AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)
+ZunResult AnmManager::DrawOrthographic(const AnmVm *vm, bool roundToPixel)
 {
     if (roundToPixel)
     {
@@ -945,7 +945,7 @@ ZunResult AnmManager::DrawOrthographic(AnmVm *vm, bool roundToPixel)
     return ZUN_SUCCESS;
 }
 
-ZunResult AnmManager::DrawNoRotation(AnmVm *vm)
+ZunResult AnmManager::DrawNoRotation(const AnmVm *vm)
 {
     float fVar2;
     float fVar3;
@@ -997,7 +997,7 @@ void AnmManager::TranslateRotation(VertexTex1Xyzrhw *param_1, f32 x, f32 y, f32 
     return;
 }
 
-ZunResult AnmManager::Draw(AnmVm *vm)
+ZunResult AnmManager::Draw(const AnmVm *vm)
 {
     f32 zSine;
     f32 zCosine;
@@ -1056,7 +1056,7 @@ ZunResult AnmManager::Draw(AnmVm *vm)
     return this->DrawOrthographic(vm, false);
 }
 
-ZunResult AnmManager::DrawFacingCamera(AnmVm *vm)
+ZunResult AnmManager::DrawFacingCamera(const AnmVm *vm)
 {
     f32 centerX;
     f32 centerY;
@@ -1101,7 +1101,7 @@ ZunResult AnmManager::DrawFacingCamera(AnmVm *vm)
     return this->DrawOrthographic(vm, false);
 }
 
-ZunResult AnmManager::Draw3(AnmVm *vm)
+ZunResult AnmManager::Draw3(const AnmVm *vm)
 {
     ZunMatrix worldTransformMatrix;
     ZunMatrix rotationMatrix;
@@ -1229,7 +1229,7 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
     return ZUN_SUCCESS;
 }
 
-ZunResult AnmManager::Draw2(AnmVm *vm)
+ZunResult AnmManager::Draw2(const AnmVm *vm)
 {
     ZunMatrix worldTransformMatrix;
     ZunMatrix unusedMatrix;
@@ -1339,8 +1339,8 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
 
 i32 AnmManager::ExecuteScript(AnmVm *vm)
 {
-    AnmRawInstr *curInstr;
-    AnmRawInstr *nextInstr;
+    const AnmRawInstr *curInstr;
+    const AnmRawInstr *nextInstr;
     ZunColor local_28;
     ZunColor local_2c;
     f32 local_30;
@@ -1683,7 +1683,7 @@ stop:
 
 void AnmManager::DrawTextToSprite(u32 textureDstIdx, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight,
                                   i32 fontWidth, i32 fontHeight, ZunColor textColor, ZunColor shadowColor,
-                                  char *strToPrint)
+                                  const char *strToPrint)
 {
     if (fontWidth <= 0)
     {
@@ -1704,7 +1704,7 @@ void AnmManager::DrawTextToSprite(u32 textureDstIdx, i32 xPos, i32 yPos, i32 spr
 }
 
 
-void AnmManager::DrawVmTextFmt(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, char *fmt, ...)
+void AnmManager::DrawVmTextFmt(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
 {
     u32 fontWidth;
     char buffer[64];
@@ -1721,7 +1721,7 @@ void AnmManager::DrawVmTextFmt(AnmVm *vm, ZunColor textColor, ZunColor shadowCol
     return;
 }
 
-void AnmManager::DrawStringFormat(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, char *fmt, ...)
+void AnmManager::DrawStringFormat(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
 {
     char buf[64];
     va_list args;
@@ -1744,7 +1744,7 @@ void AnmManager::DrawStringFormat(AnmVm *vm, ZunColor textColor, ZunColor shadow
     return;
 }
 
-void AnmManager::DrawStringFormat2(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, char *fmt, ...)
+void AnmManager::DrawStringFormat2(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
 {
     char buf[64];
     va_list args;

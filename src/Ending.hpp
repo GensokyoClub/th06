@@ -60,7 +60,7 @@ struct Ending
 
     ZunResult ParseEndFile();
 
-    ZunResult LoadEnding(char *endFilePath);
+    ZunResult LoadEnding(const char *endFilePath);
     void FadingEffect();
 
     ChainElem *calcChain;

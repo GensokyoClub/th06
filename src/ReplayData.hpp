@@ -45,6 +45,6 @@ struct ReplayHeader
 
 struct ReplayData
 {
-    struct ReplayHeader *header;
+    ReplayHeader *header;
     StageReplayData *stageReplayData[7];
 };

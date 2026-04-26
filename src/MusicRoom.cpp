@@ -82,7 +82,7 @@ bool MusicRoom::ProcessInput()
             if (lineCharBuffer[0] != '\0')
             {
                 this->descriptionSprites[i].flags.flag1 = 1;
-                AnmManager::DrawVmTextFmt(g_AnmManager, &this->descriptionSprites[i], COLOR_MUSIC_ROOM_SONG_DESC_TEXT,
+                g_AnmManager->DrawVmTextFmt(&this->descriptionSprites[i], COLOR_MUSIC_ROOM_SONG_DESC_TEXT,
                                           COLOR_MUSIC_ROOM_SONG_DESC_SHADOW, lineCharBuffer);
             }
             else
@@ -359,7 +359,7 @@ finishMusiccmtRead:
     for (i = 0; i < musicRoom->numDescriptors; i++)
     {
         g_AnmManager->InitializeAndSetSprite(&musicRoom->titleSprites[i], ANM_OFFSET_MUSIC01 + i);
-        AnmManager::DrawVmTextFmt(g_AnmManager, &musicRoom->titleSprites[i], COLOR_MUSIC_ROOM_SONG_TITLE_TEXT,
+        g_AnmManager->DrawVmTextFmt(&musicRoom->titleSprites[i], COLOR_MUSIC_ROOM_SONG_TITLE_TEXT,
                                   COLOR_MUSIC_ROOM_SONG_TITLE_SHADOW, musicRoom->trackDescriptors[i].title);
         musicRoom->titleSprites[i].pos.x = 93.0f;
         musicRoom->titleSprites[i].pos.y = 104.0f + ((i + 1) * 18) - 20.0f;
@@ -381,7 +381,7 @@ finishMusiccmtRead:
         if (lineCharBuffer[0] != '\0')
         {
             musicRoom->descriptionSprites[i].flags.flag1 = 1;
-            AnmManager::DrawVmTextFmt(g_AnmManager, &musicRoom->descriptionSprites[i], COLOR_MUSIC_ROOM_SONG_DESC_TEXT,
+            g_AnmManager->DrawVmTextFmt(&musicRoom->descriptionSprites[i], COLOR_MUSIC_ROOM_SONG_DESC_TEXT,
                                       COLOR_MUSIC_ROOM_SONG_DESC_SHADOW, lineCharBuffer);
         }
         else

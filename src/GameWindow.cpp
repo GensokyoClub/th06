@@ -18,6 +18,14 @@
 GameWindow g_GameWindow;
 i32 g_TickCountToEffectiveFramerate;
 f64 g_LastFrameTime;
+i32 g_GameWindowWidthReal = GAME_WINDOW_WIDTH;
+i32 g_GameWindowHeightReal = GAME_WINDOW_HEIGHT;
+i32 g_ViewportWidth = GAME_WINDOW_WIDTH;
+i32 g_ViewportHeight = GAME_WINDOW_HEIGHT;
+i32 g_ViewportOffX = 0;
+i32 g_ViewportOffY = 0;
+f32 g_WidthResolutionScale = 1.0f;
+f32 g_HeightResolutionScale = 1.0f;
 
 #define FRAME_TIME (1000. / 60.)
 
@@ -29,6 +37,32 @@ static const struct
     GfxInterface *(*init)();
 } s_RenderBackends[] = {{"GL(ES) 2.0 / WebGL", true, WebGL::SetContextFlags, WebGL::Create},
                         {"Fixed function GL(ES)", false, FixedFunctionGL::SetContextFlags, FixedFunctionGL::Init}};
+
+static void UpdateViewportMetrics(i32 realWidth, i32 realHeight)
+{
+    g_GameWindowWidthReal = realWidth;
+    g_GameWindowHeightReal = realHeight;
+
+    g_ViewportWidth = realWidth;
+    g_ViewportHeight = realHeight;
+    g_ViewportOffX = 0;
+    g_ViewportOffY = 0;
+
+    // Keep the original 4:3 gameplay aspect in non-4:3 output windows.
+    if (realWidth * 3 > realHeight * 4)
+    {
+        g_ViewportWidth = (i32)((realHeight / 3.0f) * 4.0f);
+        g_ViewportOffX = (realWidth - g_ViewportWidth) / 2;
+    }
+    else if (realWidth * 3 < realHeight * 4)
+    {
+        g_ViewportHeight = (i32)((realWidth / 4.0f) * 3.0f);
+        g_ViewportOffY = (realHeight - g_ViewportHeight) / 2;
+    }
+
+    g_WidthResolutionScale = (f32)g_ViewportWidth / GAME_WINDOW_WIDTH;
+    g_HeightResolutionScale = (f32)g_ViewportHeight / GAME_WINDOW_HEIGHT;
+}
 
 RenderResult GameWindow::Render()
 {
@@ -183,10 +217,13 @@ void GameWindow::CreateGameWindow()
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);
 
     u32 flags = SDL_WINDOW_OPENGL;
-    i32 height = GAME_WINDOW_HEIGHT_REAL;
-    i32 width = GAME_WINDOW_WIDTH_REAL;
+    i32 height = GAME_WINDOW_HEIGHT;
+    i32 width = GAME_WINDOW_WIDTH;
     i32 x = SDL_WINDOWPOS_UNDEFINED;
     i32 y = SDL_WINDOWPOS_UNDEFINED;
+    i32 drawableWidth = GAME_WINDOW_WIDTH;
+    i32 drawableHeight = GAME_WINDOW_HEIGHT;
+    bool useFullscreenStretch = false;
 
     g_GameWindow.window = NULL;
     g_GameWindow.glContext = NULL;
@@ -194,6 +231,16 @@ void GameWindow::CreateGameWindow()
     if (g_Supervisor.cfg.windowed == 0)
     {
         flags |= SDL_WINDOW_FULLSCREEN;
+        useFullscreenStretch = ((g_Supervisor.cfg.opts >> GCOS_SCALE_FULLSCREEN_KEEP_ASPECT) & 1) != 0;
+        if (useFullscreenStretch)
+        {
+            SDL_DisplayMode mode;
+            if (SDL_GetCurrentDisplayMode(0, &mode) == 0 && mode.w > 0 && mode.h > 0)
+            {
+                width = mode.w;
+                height = mode.h;
+            }
+        }
     }
 
     for (u32 i = 0; i < ARRAY_SIZE(s_RenderBackends); i++)
@@ -221,6 +268,8 @@ void GameWindow::CreateGameWindow()
 
         utils::DebugPrint2("Using renderer backend %s", s_RenderBackends[i].name);
         g_glFuncTable.ResolveFunctions(s_RenderBackends[i].isEsContext);
+        SDL_GL_GetDrawableSize(g_GameWindow.window, &drawableWidth, &drawableHeight);
+        UpdateViewportMetrics(drawableWidth, drawableHeight);
         g_GameWindow.renderBackendIndex = i;
         break;
     fail:

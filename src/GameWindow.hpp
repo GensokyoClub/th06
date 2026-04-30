@@ -11,36 +11,24 @@
 #define GAME_WINDOW_HEIGHT (480)
 
 // The actual resolution used for the output window and viewport scaling
-//   At some point there should be a method to change this without recompiling but for now
-//   this'll do
-#ifndef GAME_WINDOW_WIDTH_REAL
-#define GAME_WINDOW_WIDTH_REAL (GAME_WINDOW_WIDTH)
-#endif
+//   These values are computed at runtime from the created window size.
+extern i32 g_GameWindowWidthReal;
+extern i32 g_GameWindowHeightReal;
+extern i32 g_ViewportWidth;
+extern i32 g_ViewportHeight;
+extern i32 g_ViewportOffX;
+extern i32 g_ViewportOffY;
+extern f32 g_WidthResolutionScale;
+extern f32 g_HeightResolutionScale;
 
-#ifndef GAME_WINDOW_HEIGHT_REAL
-#define GAME_WINDOW_HEIGHT_REAL (GAME_WINDOW_HEIGHT)
-#endif
-
-#define VIEWPORT_WIDTH GAME_WINDOW_WIDTH_REAL
-#define VIEWPORT_OFF_X 0
-#define VIEWPORT_HEIGHT GAME_WINDOW_HEIGHT_REAL
-#define VIEWPORT_OFF_Y 0
-
-// Aspect ratio wider than 4:3
-#if (GAME_WINDOW_WIDTH_REAL * 3) > (GAME_WINDOW_HEIGHT_REAL * 4)
-#undef VIEWPORT_WIDTH
-#undef VIEWPORT_OFF_X
-#define VIEWPORT_WIDTH ((u32)((GAME_WINDOW_HEIGHT_REAL / 3.0f) * 4.0f))
-#define VIEWPORT_OFF_X ((GAME_WINDOW_WIDTH_REAL - VIEWPORT_WIDTH) / 2)
-#elif (GAME_WINDOW_WIDTH_REAL * 3) < (GAME_WINDOW_HEIGHT_REAL * 4)
-#undef VIEWPORT_HEIGHT
-#undef VIEWPORT_OFF_Y
-#define VIEWPORT_HEIGHT ((u32)((GAME_WINDOW_WIDTH_REAL / 4.0f) * 3.0f))
-#define VIEWPORT_OFF_Y ((GAME_WINDOW_HEIGHT_REAL - VIEWPORT_HEIGHT) / 2)
-#endif
-
-#define WIDTH_RESOLUTION_SCALE (((f32)VIEWPORT_WIDTH) / GAME_WINDOW_WIDTH)
-#define HEIGHT_RESOLUTION_SCALE (((f32)VIEWPORT_HEIGHT) / GAME_WINDOW_HEIGHT)
+#define GAME_WINDOW_WIDTH_REAL (g_GameWindowWidthReal)
+#define GAME_WINDOW_HEIGHT_REAL (g_GameWindowHeightReal)
+#define VIEWPORT_WIDTH (g_ViewportWidth)
+#define VIEWPORT_OFF_X (g_ViewportOffX)
+#define VIEWPORT_HEIGHT (g_ViewportHeight)
+#define VIEWPORT_OFF_Y (g_ViewportOffY)
+#define WIDTH_RESOLUTION_SCALE (g_WidthResolutionScale)
+#define HEIGHT_RESOLUTION_SCALE (g_HeightResolutionScale)
 
 enum RenderResult
 {

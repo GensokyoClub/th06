@@ -185,7 +185,7 @@ class ConfigUI
             int bit;
         };
 
-        const CheckboxSpec specs[11] = {
+        const CheckboxSpec specs[12] = {
             {"No Vertex Buffer", GCOS_DONT_USE_VERTEX_BUF},
             {"No Fog", GCOS_DONT_USE_FOG},
             {"16 Bit Textures", GCOS_FORCE_16BIT_COLOR_MODE},
@@ -197,6 +197,7 @@ class ConfigUI
             {"No Depth test", GCOS_TURN_OFF_DEPTH_TEST},
             {"Force 60 FPS", GCOS_FORCE_60FPS},
             {"No DirectInput pad", GCOS_NO_DIRECTINPUT_PAD},
+            {"Scale fullscreen image (keep aspect)", GCOS_SCALE_FULLSCREEN_KEEP_ASPECT},
         };
 
         const int checkboxCount = sizeof(specs) / sizeof(specs[0]);

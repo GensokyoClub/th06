@@ -27,7 +27,6 @@ enum GameConfigOptsShifts
     GCOS_REFERENCE_RASTERIZER_MODE = 0x9,
     GCOS_DONT_USE_FOG = 0xa,
     GCOS_NO_DIRECTINPUT_PAD = 0xb,
-    GCOS_SCALE_FULLSCREEN_KEEP_ASPECT = 0xc,
 };
 
 struct ControllerMapping

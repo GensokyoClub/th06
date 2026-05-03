@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Windows.h>
+#include <windows.h>
 #include <d3d8.h>
 #include <d3dx8math.h>
 

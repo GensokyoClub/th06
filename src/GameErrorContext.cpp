@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <cstdarg>
 
 #include "CMyFont.hpp"
 #include "GameErrorContext.hpp"

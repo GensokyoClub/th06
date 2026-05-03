@@ -175,7 +175,7 @@ struct AnmManager
 
     void ReleaseAnm(i32 anmIdx);
     ZunResult LoadAnm(i32 anmIdx, char *path, i32 spriteIdxOffset);
-    void AnmManager::ExecuteAnmIdx(AnmVm *vm, i32 anmFileIdx)
+    void ExecuteAnmIdx(AnmVm *vm, i32 anmFileIdx)
     {
         vm->anmFileIndex = anmFileIdx;
         vm->pos = D3DXVECTOR3(0, 0, 0);

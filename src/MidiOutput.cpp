@@ -1,5 +1,5 @@
 #include "inttypes.hpp"
-#include <Windows.h>
+#include <windows.h>
 #include <mmreg.h>
 #include <mmsystem.h>
 
@@ -452,7 +452,7 @@ u32 MidiOutput::SetFadeOut(u32 ms)
 #pragma var_order(trackIndex, local_14, trackLoaded)
 void MidiOutput::OnTimerElapsed()
 {
-    unsigned __int64 local_14;
+    unsigned long long local_14;
     i32 trackIndex;
     BOOL trackLoaded;
 

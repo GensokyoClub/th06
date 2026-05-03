@@ -1,7 +1,7 @@
 #pragma once
 #include "diffbuild.hpp"
 #include "inttypes.hpp"
-#include <Windows.h>
+#include <windows.h>
 #include <d3dx8math.h>
 
 struct ZunVec2
@@ -54,6 +54,9 @@ ZUN_ASSERT_SIZE(ZunVec3, 0xC);
 
 #define RADIANS(degrees) ((degrees * ZUN_PI / 180.0f))
 
+#ifdef PS2_PORT
+#include "hal/win32/ZunMath_ps2.hpp"
+#else
 #define sincos(in, out_sine, out_cosine)                                                                               \
     {                                                                                                                  \
         __asm { \
@@ -102,3 +105,4 @@ f32 __inline rintf(f32 float_in)
     }
     return float_in;
 }
+#endif

@@ -3,7 +3,7 @@
 #include "ZunBool.hpp"
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
-#include <Windows.h>
+#include <windows.h>
 
 namespace th06
 {
@@ -153,8 +153,8 @@ struct MidiOutput : MidiTimer
     i32 divisions;
     i32 tempo;
     u32 unk124;
-    unsigned __int64 volume;
-    __int64 unk130;
+    unsigned long long volume;
+    long long unk130;
     MidiTrack *tracks;
     MidiDevice midiOutDev;
     u8 unk144[16];

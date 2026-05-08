@@ -17,7 +17,7 @@ bool MidiDevice::OpenDevice(u32 uDeviceId)
 
     if (!printedWarning)
     {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_NO_MIDI_SUPPORT);
+        g_GameErrorContext.Log(TH_ERR_NO_MIDI_SUPPORT);
         printedWarning = true;
     }
 
@@ -31,10 +31,17 @@ ZunResult MidiDevice::Close()
 
 bool MidiDevice::SendLongMsg(const u8 *buf, u32 len)
 {
+    (void)buf;
+    (void)len;
+
     return true;
 }
 
 bool MidiDevice::SendShortMsg(u8 midiStatus, u8 firstByte, u8 secondByte)
 {
+    (void)midiStatus;
+    (void)firstByte;
+    (void)secondByte;
+
     return true;
 }

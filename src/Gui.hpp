@@ -3,6 +3,7 @@
 #include "AnmVm.hpp"
 #include "Chain.hpp"
 #include "Enemy.hpp"
+#include "ZunEndian.hpp"
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 // #include <Windows.h>
@@ -27,31 +28,31 @@ enum MsgOps
 
 struct MsgRawInstrArgPortraitAnmScript
 {
-    i16 portraitIdx;
-    i16 anmScriptIdx;
+    LE<i16> portraitIdx;
+    LE<i16> anmScriptIdx;
 };
 struct MsgRawInstrArgText
 {
-    i16 textColor;
-    i16 textLine;
+    LE<i16> textColor;
+    LE<i16> textLine;
     char text[1];
 };
 struct MsgRawInstrArgAnmInterrupt
 {
-    i16 unk1;
+    LE<i16> unk1;
     u8 unk2;
 };
 union MsgRawInstrArgs {
     MsgRawInstrArgPortraitAnmScript portraitAnmScript;
     MsgRawInstrArgText text;
-    i32 dialogueSkippable;
-    i32 wait;
+    LE<i32> dialogueSkippable;
+    LE<i32> wait;
     MsgRawInstrArgAnmInterrupt anmInterrupt;
-    i32 music;
+    LE<i32> music;
 };
 struct MsgRawInstr
 {
-    u16 time;
+    LE<u16> time;
     u8 opcode;
     u8 argSize;
     MsgRawInstrArgs args;
@@ -59,8 +60,8 @@ struct MsgRawInstr
 
 struct MsgRawHeader
 {
-    i32 numInstrs;
-    u32 instrsOffsets[1];
+    LE<i32> numInstrs;
+    LE<u32> instrsOffsets[1];
 };
 
 struct GuiMsgVm

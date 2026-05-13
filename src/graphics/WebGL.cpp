@@ -43,7 +43,7 @@ GLuint createShader(const char *source, GLenum type, const char *descString,
         fullShaderSource[shaderSourceIndex++] = "#define USE_FRAG_DEPTH\n";
     }
 
-    if (g_Supervisor.cfg.opts & (1 >> GCOS_DONT_USE_FOG))
+    if (g_Supervisor.cfg.opts & (1 << GCOS_DONT_USE_FOG))
     {
         fullShaderSource[shaderSourceIndex++] = "#define NO_FOG\n";
         omittedUniforms.insert(UNIFORM_FOG_NEAR);
@@ -51,7 +51,7 @@ GLuint createShader(const char *source, GLenum type, const char *descString,
         omittedUniforms.insert(UNIFORM_FOG_COLOR);
     }
 
-    if (g_Supervisor.cfg.opts & (1 >> GCOS_DONT_USE_VERTEX_BUF))
+    if (g_Supervisor.cfg.opts & (1 << GCOS_DONT_USE_VERTEX_BUF))
     {
         fullShaderSource[shaderSourceIndex++] = "#define NO_VERTEX_BUFFER\n";
     }

@@ -172,9 +172,9 @@ struct AnmManager
     void ClearVertexBuffer();
 
     u32 spritesToDraw;
-    VertexTex1Xyzrhw* vertexBufferStartPtr;
-    VertexTex1Xyzrhw* vertexBufferEndPtr;
-    VertexTex1Xyzrhw  vertexBuffer[0x18000];
+    VertexTex1Xyzrhw *vertexBufferStartPtr;
+    VertexTex1Xyzrhw *vertexBufferEndPtr;
+    VertexTex1Xyzrhw vertexBuffer[0x18000];
 
     u32 renderStateChangesThisFrame;
     u32 flushesThisFrame;
@@ -248,7 +248,8 @@ struct AnmManager
 
     void SetDepthMask(bool depthEnable)
     {
-        if(this->dirtyDepthMask != depthEnable) this->FlushVertexBuffer();
+        if (this->dirtyDepthMask != depthEnable)
+            this->FlushVertexBuffer();
         this->dirtyDepthMask = depthEnable;
 
         if ((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1 || this->dirtyDepthMask == this->depthMask)
@@ -348,7 +349,8 @@ struct AnmManager
 
     void SetTextureFactor(ZunColor factor)
     {
-        if(this->dirtytTextureFactor != factor) this->FlushVertexBuffer();
+        if (this->dirtytTextureFactor != factor)
+            this->FlushVertexBuffer();
         this->dirtytTextureFactor = factor;
 
         if (this->dirtytTextureFactor == this->textureFactor)

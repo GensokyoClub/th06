@@ -297,7 +297,8 @@ void WebGL::SetTextureFactor(ZunColor factor)
 void WebGL::SetTransformMatrix(TransformMatrix type, const ZunMatrix &matrix)
 {
     // I should probably just remove the model matrix from the range of possibilies
-    static const u32 matrixUniformEnum[4] = {UNIFORM_MODELVIEW, UNIFORM_MODELVIEW, UNIFORM_PROJECTION, UNIFORM_TEXTURE_MATRIX};
+    static const u32 matrixUniformEnum[4] = {UNIFORM_MODELVIEW, UNIFORM_MODELVIEW, UNIFORM_PROJECTION,
+                                             UNIFORM_TEXTURE_MATRIX};
 
     g_glFuncTable.glUniformMatrix4fv(this->uniforms[matrixUniformEnum[type]], 1, false, (const GLfloat *)&matrix.m);
 }

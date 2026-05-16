@@ -393,7 +393,7 @@ ZunResult Stage::DeletedCallback(Stage *s)
     if (s->stdData != NULL)
     {
         const void *stdData = s->stdData;
-        free((void*)stdData);
+        free((void *)stdData);
         s->stdData = NULL;
     }
 

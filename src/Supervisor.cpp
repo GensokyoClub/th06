@@ -711,7 +711,7 @@ ZunResult Supervisor::LoadConfig(const char *path)
             g_GameErrorContext.Log(TH_ERR_CONFIG_CORRUPTED);
         }
         g_ControllerMapping = g_Supervisor.cfg.controllerMapping;
-        free((void*)data);
+        free((void *)data);
     }
     if (((this->cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) != 0)
     {

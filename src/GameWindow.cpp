@@ -26,8 +26,7 @@ static const struct
 {
     const char *name;
     GfxInterface *(*TryInit)();
-} s_RenderBackends[] = {{"GL(ES) 2.0 / WebGL", WebGL::Create},
-                        {"Fixed function GL(ES)", FixedFunctionGL::Init}};
+} s_RenderBackends[] = {{"GL(ES) 2.0 / WebGL", WebGL::Create}, {"Fixed function GL(ES)", FixedFunctionGL::Init}};
 
 RenderResult GameWindow::Render()
 {
@@ -187,7 +186,8 @@ void GameWindow::CreateGameWindow()
     for (u32 i = 0; i < ARRAY_SIZE(s_RenderBackends); i++)
     {
         g_GfxBackend = s_RenderBackends[i].TryInit();
-        if(g_GfxBackend) {
+        if (g_GfxBackend)
+        {
             utils::DebugPrint2("Using renderer backend %s", s_RenderBackends[i].name);
             break;
         }
@@ -312,7 +312,6 @@ i32 GameWindow::InitD3dRendering(void)
             //            present_params.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_ONE;
             //            GameErrorContext::Log(&g_GameErrorContext, TH_ERR_SET_REFRESH_RATE_60HZ);
         }
-
 
         //        if (g_Supervisor.cfg.frameskipConfig == 0)
         //        {

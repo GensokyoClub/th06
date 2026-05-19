@@ -134,7 +134,8 @@ stop:
     delete g_AnmManager;
     g_AnmManager = NULL;
 
-    if(g_GfxBackend != NULL) delete g_GfxBackend;
+    if (g_GfxBackend != NULL)
+        delete g_GfxBackend;
     SDL_Quit();
 
     if (renderResult == 2)

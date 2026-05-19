@@ -1,4 +1,4 @@
-// these functions were moved here because of a 
+// these functions were moved here because of a
 // circular dependency between GfxInterface and ZunMath headers
 
 // ZunMath uses the GfxBackend instance to manipulate viewport and depth range
@@ -9,15 +9,17 @@
 #include "ZunMath.hpp"
 #include "GameWindow.hpp"
 
-void ZunViewport::Set() const{
+void ZunViewport::Set() const
+{
     g_GfxBackend->SetViewport(this->x * WIDTH_RESOLUTION_SCALE + VIEWPORT_OFF_X,
-                                (GAME_WINDOW_HEIGHT_REAL - ((this->y + this->height) * HEIGHT_RESOLUTION_SCALE)) -
-                                    VIEWPORT_OFF_Y,
-                                this->width * WIDTH_RESOLUTION_SCALE, this->height * HEIGHT_RESOLUTION_SCALE);
+                              (GAME_WINDOW_HEIGHT_REAL - ((this->y + this->height) * HEIGHT_RESOLUTION_SCALE)) -
+                                  VIEWPORT_OFF_Y,
+                              this->width * WIDTH_RESOLUTION_SCALE, this->height * HEIGHT_RESOLUTION_SCALE);
     g_GfxBackend->SetDepthRange(this->minZ, this->maxZ);
 }
 
-void ZunViewport::Get() {
+void ZunViewport::Get()
+{
     u32 viewPortGet[4];
     f32 depthRangeGet[2];
 

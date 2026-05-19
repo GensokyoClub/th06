@@ -1,6 +1,6 @@
 #include "FixedFunctionGL.hpp"
-#include "Supervisor.hpp"
 #include "GameWindow.hpp"
+#include "Supervisor.hpp"
 #include "i18n.hpp"
 #include <SDL2/SDL.h>
 
@@ -29,7 +29,7 @@ GfxInterface *FixedFunctionGL::Init()
     }
     FixedFunctionGL *self = new FixedFunctionGL();
 
-    SDL_Window* window = SDL_CreateWindow(TH_WINDOW_TITLE, x, y, width, height, flags);
+    SDL_Window *window = SDL_CreateWindow(TH_WINDOW_TITLE, x, y, width, height, flags);
     self->window = window;
     if (window == NULL)
     {
@@ -122,7 +122,6 @@ GfxInterface *FixedFunctionGL::Init()
 
     return self;
 }
-
 
 void FixedFunctionGL::Exit()
 {
@@ -231,19 +230,21 @@ void FixedFunctionGL::SetTransformMatrix(TransformMatrix type, const ZunMatrix &
     g_glFuncTable.glLoadMatrixf((const GLfloat *)&matrix);
 }
 
-
-void FixedFunctionGL::Enable(Capabilities cap) {
-    switch (cap) {
-        case CAPS_BLEND:
-            g_glFuncTable.glEnable(GL_BLEND);
-            break;
-        case CAPS_DEPTH_TEST:
-            g_glFuncTable.glEnable(GL_DEPTH_TEST);
-            break;
+void FixedFunctionGL::Enable(Capabilities cap)
+{
+    switch (cap)
+    {
+    case CAPS_BLEND:
+        g_glFuncTable.glEnable(GL_BLEND);
+        break;
+    case CAPS_DEPTH_TEST:
+        g_glFuncTable.glEnable(GL_DEPTH_TEST);
+        break;
     }
 }
 
-void FixedFunctionGL::SetBlendMode(BlendMode mode) {
+void FixedFunctionGL::SetBlendMode(BlendMode mode)
+{
     if (mode == BLEND_INV_SRC_ALPHA)
     {
         g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -254,48 +255,60 @@ void FixedFunctionGL::SetBlendMode(BlendMode mode) {
     }
 }
 
-void FixedFunctionGL::SetViewport(i32 x, i32 y, i32 width, i32 height) {
+void FixedFunctionGL::SetViewport(i32 x, i32 y, i32 width, i32 height)
+{
     g_glFuncTable.glViewport(x, y, width, height);
 }
 
-void FixedFunctionGL::GetViewport(u32* viewport) {
-    g_glFuncTable.glGetIntegerv(GL_VIEWPORT, (GLint*)viewport);
+void FixedFunctionGL::GetViewport(u32 *viewport)
+{
+    g_glFuncTable.glGetIntegerv(GL_VIEWPORT, (GLint *)viewport);
 }
 
-void FixedFunctionGL::GetDepthRange(f32* depthRange) {
+void FixedFunctionGL::GetDepthRange(f32 *depthRange)
+{
     g_glFuncTable.glGetFloatv(GL_DEPTH_RANGE, depthRange);
 }
 
-void FixedFunctionGL::SetClearColor(f32 r, f32 g, f32 b, f32 a) {
+void FixedFunctionGL::SetClearColor(f32 r, f32 g, f32 b, f32 a)
+{
     g_glFuncTable.glClearColor(r, g, b, a);
 }
 
-void FixedFunctionGL::SetTextureFilter() {
+void FixedFunctionGL::SetTextureFilter()
+{
     g_glFuncTable.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
-void FixedFunctionGL::SetClearDepth(f32 depth) {
+void FixedFunctionGL::SetClearDepth(f32 depth)
+{
     g_glFuncTable.glClearDepthf(depth);
 }
 
-void FixedFunctionGL::Clear(u32 clearBits) {
+void FixedFunctionGL::Clear(u32 clearBits)
+{
     GLbitfield mask = 0;
 
-    if (clearBits & CLEAR_COLOR_BUFFER) mask |= GL_COLOR_BUFFER_BIT;
-    if (clearBits & CLEAR_DEPTH_BUFFER) mask |= GL_DEPTH_BUFFER_BIT;
+    if (clearBits & CLEAR_COLOR_BUFFER)
+        mask |= GL_COLOR_BUFFER_BIT;
+    if (clearBits & CLEAR_DEPTH_BUFFER)
+        mask |= GL_DEPTH_BUFFER_BIT;
 
     g_glFuncTable.glClear(mask);
 }
 
-void FixedFunctionGL::SetDepthRange(f32 near, f32 far) {
+void FixedFunctionGL::SetDepthRange(f32 near, f32 far)
+{
     g_glFuncTable.glDepthRangef(near, far);
 }
 
-void FixedFunctionGL::SetDepthMask(bool enable) {
+void FixedFunctionGL::SetDepthMask(bool enable)
+{
     g_glFuncTable.glDepthMask(enable);
 }
 
-void FixedFunctionGL::SetDepthFunc(DepthFunc func) {
+void FixedFunctionGL::SetDepthFunc(DepthFunc func)
+{
     // This'll end up less awkward once there's a render backend abstraction layer I swear
     if (func == DEPTH_FUNC_ALWAYS)
     {
@@ -307,24 +320,28 @@ void FixedFunctionGL::SetDepthFunc(DepthFunc func) {
     }
 }
 
-GfxTextureHandle FixedFunctionGL::CreateTexture() {
+GfxTextureHandle FixedFunctionGL::CreateTexture()
+{
     GLuint texture;
     g_glFuncTable.glGenTextures(1, &texture);
     textures.push_back(texture);
 
-    return {textures.size()-1};
+    return {textures.size() - 1};
 }
 
-void FixedFunctionGL::BindTexture(GfxTextureHandle handle) {
+void FixedFunctionGL::BindTexture(GfxTextureHandle handle)
+{
     g_glFuncTable.glBindTexture(GL_TEXTURE_2D, textures[handle.id]);
 }
 
-void FixedFunctionGL::DeleteTexture(GfxTextureHandle handle) {
+void FixedFunctionGL::DeleteTexture(GfxTextureHandle handle)
+{
     g_glFuncTable.glDeleteTextures(1, &textures[handle.id]);
     textures[handle.id] = 0;
 }
 
-void FixedFunctionGL::SetTextureImage(u32 width, u32 height, PixelFormat fmt, PixelDataType type, const void* data) {
+void FixedFunctionGL::SetTextureImage(u32 width, u32 height, PixelFormat fmt, PixelDataType type, const void *data)
+{
     GLenum glFmt;
     GLenum glType;
 
@@ -362,21 +379,23 @@ void FixedFunctionGL::SetTextureSubImage(i32 xoffset, i32 yoffset, i32 width, i3
     g_glFuncTable.glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
 }
 
-void FixedFunctionGL::ReadPixels(i32 x, i32 y, i32 width, i32 height, const void* pixels) {
-    g_glFuncTable.glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, (void*)pixels);
+void FixedFunctionGL::ReadPixels(i32 x, i32 y, i32 width, i32 height, const void *pixels)
+{
+    g_glFuncTable.glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, (void *)pixels);
 }
 
 void FixedFunctionGL::Draw(PrimitiveType type, i32 start, i32 count)
 {
     GLenum glPrim;
 
-    switch (type) {
-        case PRIM_TRIANGLE_STRIP:
-            glPrim = GL_TRIANGLE_STRIP;
-            break;
-        case PRIM_TRIANGLES:
-            glPrim = GL_TRIANGLES;
-            break;
+    switch (type)
+    {
+    case PRIM_TRIANGLE_STRIP:
+        glPrim = GL_TRIANGLE_STRIP;
+        break;
+    case PRIM_TRIANGLES:
+        glPrim = GL_TRIANGLES;
+        break;
     }
 
     g_glFuncTable.glDrawArrays(glPrim, start, count);

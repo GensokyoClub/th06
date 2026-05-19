@@ -8,9 +8,9 @@
 #include "AnmIdx.hpp"
 #include "AnmVm.hpp"
 #include "GameManager.hpp"
+#include "GameWindow.hpp"
 #include "ZunResult.hpp"
 #include "ZunTimer.hpp"
-#include "GameWindow.hpp"
 #include "inttypes.hpp"
 
 #define TEX_FMT_UNKNOWN 0
@@ -444,7 +444,7 @@ struct AnmManager
     SDL_Surface *surfaces[32];
     //    SDL_Surface *surfacesBis[32];
     //    D3DXIMAGE_INFO surfaceSourceInfo[32];
-    //GLuint currentTextureHandle;
+    // GLuint currentTextureHandle;
     GfxTextureHandle currentTextureHandle;
     GfxTextureHandle dummyTextureHandle;
     u8 currentBlendMode;
@@ -458,7 +458,7 @@ struct AnmManager
     i32 screenshotWidth;
     i32 screenshotHeight;
 
-    //GfxInterface *gfxBackend;
+    // GfxInterface *gfxBackend;
 
   private:
     u32 dirtyFlags;

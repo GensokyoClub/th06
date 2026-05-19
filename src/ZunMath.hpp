@@ -512,7 +512,6 @@ inline ZunMatrix perspectiveMatrixFromFOV(f32 verticalFOV, f32 aspectRatio, f32 
     return perspectiveMatrix;
 }
 
-
 ZunMatrix inverseViewportMatrix();
 
 // Reimplementation of D3DXVec3Project. TODO: Replace if possible once port is working

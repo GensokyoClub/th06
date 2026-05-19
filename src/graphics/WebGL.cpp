@@ -1,6 +1,6 @@
 #include "WebGL.hpp"
-#include "Supervisor.hpp"
 #include "GameWindow.hpp"
+#include "Supervisor.hpp"
 #include "utils.hpp"
 #include <new>
 #include <unordered_set>
@@ -147,7 +147,7 @@ GfxInterface *WebGL::Create()
         flags |= SDL_WINDOW_FULLSCREEN;
     }
 
-    SDL_Window* window = SDL_CreateWindow(TH_WINDOW_TITLE, x, y, width, height, flags);
+    SDL_Window *window = SDL_CreateWindow(TH_WINDOW_TITLE, x, y, width, height, flags);
     interface->window = window;
     if (window == NULL)
     {
@@ -358,38 +358,46 @@ void WebGL::SetTransformMatrix(TransformMatrix type, const ZunMatrix &matrix)
     g_glFuncTable.glUniformMatrix4fv(this->uniforms[matrixUniformEnum[type]], 1, false, (const GLfloat *)&matrix.m);
 }
 
-void WebGL::Enable(Capabilities cap) {
-    switch (cap) {
-        case CAPS_BLEND:
-            g_glFuncTable.glEnable(GL_BLEND);
-            break;
-        case CAPS_DEPTH_TEST:
-            g_glFuncTable.glEnable(GL_DEPTH_TEST);
-            break;
+void WebGL::Enable(Capabilities cap)
+{
+    switch (cap)
+    {
+    case CAPS_BLEND:
+        g_glFuncTable.glEnable(GL_BLEND);
+        break;
+    case CAPS_DEPTH_TEST:
+        g_glFuncTable.glEnable(GL_DEPTH_TEST);
+        break;
     }
 }
 
-void WebGL::SetTextureFilter() {
+void WebGL::SetTextureFilter()
+{
     g_glFuncTable.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
-void WebGL::GetViewport(u32* viewport) {
-    g_glFuncTable.glGetIntegerv(GL_VIEWPORT, (GLint*)viewport);
+void WebGL::GetViewport(u32 *viewport)
+{
+    g_glFuncTable.glGetIntegerv(GL_VIEWPORT, (GLint *)viewport);
 }
 
-void WebGL::GetDepthRange(f32* depthRange) {
+void WebGL::GetDepthRange(f32 *depthRange)
+{
     g_glFuncTable.glGetFloatv(GL_DEPTH_RANGE, depthRange);
 }
 
-void WebGL::SetViewport(i32 x, i32 y, i32 width, i32 height) {
+void WebGL::SetViewport(i32 x, i32 y, i32 width, i32 height)
+{
     g_glFuncTable.glViewport(x, y, width, height);
 }
 
-void WebGL::SetDepthRange(f32 near, f32 far) {
+void WebGL::SetDepthRange(f32 near, f32 far)
+{
     g_glFuncTable.glDepthRangef(near, far);
 }
 
-void WebGL::SetBlendMode(BlendMode mode) {
+void WebGL::SetBlendMode(BlendMode mode)
+{
     if (mode == BLEND_INV_SRC_ALPHA)
     {
         g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -400,28 +408,35 @@ void WebGL::SetBlendMode(BlendMode mode) {
     }
 }
 
-void WebGL::SetClearDepth(f32 depth) {
+void WebGL::SetClearDepth(f32 depth)
+{
     g_glFuncTable.glClearDepthf(depth);
 }
 
-void WebGL::SetClearColor(f32 r, f32 g, f32 b, f32 a) {
+void WebGL::SetClearColor(f32 r, f32 g, f32 b, f32 a)
+{
     g_glFuncTable.glClearColor(r, g, b, a);
 }
 
-void WebGL::Clear(u32 clearBits) {
+void WebGL::Clear(u32 clearBits)
+{
     GLbitfield mask = 0;
 
-    if (clearBits & CLEAR_COLOR_BUFFER) mask |= GL_COLOR_BUFFER_BIT;
-    if (clearBits & CLEAR_DEPTH_BUFFER) mask |= GL_DEPTH_BUFFER_BIT;
+    if (clearBits & CLEAR_COLOR_BUFFER)
+        mask |= GL_COLOR_BUFFER_BIT;
+    if (clearBits & CLEAR_DEPTH_BUFFER)
+        mask |= GL_DEPTH_BUFFER_BIT;
 
     g_glFuncTable.glClear(mask);
 }
 
-void WebGL::SetDepthMask(bool enable) {
+void WebGL::SetDepthMask(bool enable)
+{
     g_glFuncTable.glDepthMask(enable);
 }
 
-void WebGL::SetDepthFunc(DepthFunc func) {
+void WebGL::SetDepthFunc(DepthFunc func)
+{
     if (func == DEPTH_FUNC_ALWAYS)
     {
         g_glFuncTable.glDepthFunc(GL_ALWAYS);
@@ -431,16 +446,20 @@ void WebGL::SetDepthFunc(DepthFunc func) {
         g_glFuncTable.glDepthFunc(GL_LEQUAL);
     }
 }
-GfxTextureHandle WebGL::CreateTexture() {
+GfxTextureHandle WebGL::CreateTexture()
+{
     GLuint texture;
     g_glFuncTable.glGenTextures(1, &texture);
 
     u32 id;
-    if(!freeTextures.empty()) {
+    if (!freeTextures.empty())
+    {
         id = freeTextures.back();
         freeTextures.pop_back();
         textures[id] = texture;
-    } else {
+    }
+    else
+    {
         id = textures.size();
         textures.push_back(texture);
     }
@@ -448,24 +467,31 @@ GfxTextureHandle WebGL::CreateTexture() {
     return {id};
 }
 
-void WebGL::BindTexture(GfxTextureHandle handle) {
-    if(handle > textures.size()) return;
+void WebGL::BindTexture(GfxTextureHandle handle)
+{
+    if (handle > textures.size())
+        return;
     GLuint tex = textures[handle.id];
-    if(tex != 0) g_glFuncTable.glBindTexture(GL_TEXTURE_2D, tex);
+    if (tex != 0)
+        g_glFuncTable.glBindTexture(GL_TEXTURE_2D, tex);
 }
 
-void WebGL::DeleteTexture(GfxTextureHandle handle) {
-    if(handle > textures.size()) return;
+void WebGL::DeleteTexture(GfxTextureHandle handle)
+{
+    if (handle > textures.size())
+        return;
     GLuint tex = textures[handle.id];
 
-    if(tex != 0) {
+    if (tex != 0)
+    {
         g_glFuncTable.glDeleteTextures(1, &textures[handle.id]);
         textures[handle.id] = 0;
         freeTextures.push_back(handle.id);
     }
 }
 
-void WebGL::SetTextureImage(u32 width, u32 height, PixelFormat fmt, PixelDataType type, const void* data) {
+void WebGL::SetTextureImage(u32 width, u32 height, PixelFormat fmt, PixelDataType type, const void *data)
+{
     GLenum glFmt;
     GLenum glType;
 
@@ -498,27 +524,28 @@ void WebGL::SetTextureImage(u32 width, u32 height, PixelFormat fmt, PixelDataTyp
     g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, glFmt, width, height, 0, glFmt, glType, data);
 }
 
-
 void WebGL::SetTextureSubImage(i32 xoffset, i32 yoffset, i32 width, i32 height, const void *data)
 {
     g_glFuncTable.glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
 }
 
-void WebGL::ReadPixels(i32 x, i32 y, i32 width, i32 height, const void* pixels) {
-    g_glFuncTable.glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, (void*)pixels);
+void WebGL::ReadPixels(i32 x, i32 y, i32 width, i32 height, const void *pixels)
+{
+    g_glFuncTable.glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, (void *)pixels);
 }
 
 void WebGL::Draw(PrimitiveType type, i32 start, i32 count)
 {
     GLenum glPrim;
 
-    switch (type) {
-        case PRIM_TRIANGLE_STRIP:
-            glPrim = GL_TRIANGLE_STRIP;
-            break;
-        case PRIM_TRIANGLES:
-            glPrim = GL_TRIANGLES;
-            break;
+    switch (type)
+    {
+    case PRIM_TRIANGLE_STRIP:
+        glPrim = GL_TRIANGLE_STRIP;
+        break;
+    case PRIM_TRIANGLES:
+        glPrim = GL_TRIANGLES;
+        break;
     }
 
     g_glFuncTable.glDrawArrays(glPrim, start, count);

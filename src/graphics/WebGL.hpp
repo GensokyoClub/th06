@@ -1,9 +1,9 @@
 #pragma once
 
-#include "GfxInterface.hpp"
 #include "GLFunc.hpp"
-#include <vector>
+#include "GfxInterface.hpp"
 #include <SDL2/SDL.h>
+#include <vector>
 
 enum GlShaderUniform
 {
@@ -28,7 +28,8 @@ struct WebGL : GfxInterface
 
     bool Init();
     virtual void Exit();
-    ~WebGL() override {
+    ~WebGL() override
+    {
         Exit();
     };
 
@@ -42,8 +43,8 @@ struct WebGL : GfxInterface
 
     virtual void SetTextureFilter();
 
-    virtual void GetViewport(u32* viewport);
-    virtual void GetDepthRange(f32* depthRange);
+    virtual void GetViewport(u32 *viewport);
+    virtual void GetDepthRange(f32 *depthRange);
     virtual void SetViewport(i32 x, i32 y, i32 width, i32 height);
     virtual void SetDepthRange(f32 near, f32 far);
 
@@ -59,16 +60,16 @@ struct WebGL : GfxInterface
     virtual GfxTextureHandle CreateTexture();
     virtual void BindTexture(GfxTextureHandle handle);
     virtual void DeleteTexture(GfxTextureHandle handle);
-    virtual void SetTextureImage(u32 width, u32 height, PixelFormat fmt, PixelDataType type, const void* data);
-    virtual void SetTextureSubImage(i32 xoffset, i32 yoffset, i32 width, i32 height, const void* data);
+    virtual void SetTextureImage(u32 width, u32 height, PixelFormat fmt, PixelDataType type, const void *data);
+    virtual void SetTextureSubImage(i32 xoffset, i32 yoffset, i32 width, i32 height, const void *data);
 
-    virtual void ReadPixels(i32 x, i32 y, i32 width, i32 height, const void* pixels);
+    virtual void ReadPixels(i32 x, i32 y, i32 width, i32 height, const void *pixels);
 
     virtual void Draw(PrimitiveType type, i32 start, i32 count);
     virtual void SwapBuffers();
 
   private:
-    SDL_Window* window;
+    SDL_Window *window;
     SDL_GLContext glContext;
 
     GLuint fragmentShaderHandle;

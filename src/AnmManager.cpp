@@ -26,14 +26,13 @@ static const SDL_PixelFormatEnum g_TextureFormatSDLMapping[6] = {SDL_PIXELFORMAT
                                                                  SDL_PIXELFORMAT_RGBA5551, SDL_PIXELFORMAT_RGB565,
                                                                  SDL_PIXELFORMAT_RGB24,    SDL_PIXELFORMAT_RGBA4444};
 
-static const PixelFormat g_TextureFormatTypeGfxMapping[6] = {static_cast<PixelFormat>(0), PIXEL_RGBA, PIXEL_RGBA, PIXEL_RGB, PIXEL_RGB, PIXEL_RGBA};
+static const PixelFormat g_TextureFormatTypeGfxMapping[6] = {
+    static_cast<PixelFormat>(0), PIXEL_RGBA, PIXEL_RGBA, PIXEL_RGB, PIXEL_RGB, PIXEL_RGBA};
 
-static const PixelDataType g_TextureFormatTypeMapping[6] = {static_cast<PixelDataType>(0), //ugh
-                                          PIXEL_UNSIGNED_BYTE,
-                                            PIXEL_UNSIGNED_SHORT_5_5_5_1,
-                                            PIXEL_UNSIGNED_SHORT_5_6_5,
-                                            PIXEL_UNSIGNED_BYTE,
-                                            PIXEL_UNSIGNED_SHORT_4_4_4_4};
+static const PixelDataType g_TextureFormatTypeMapping[6] = {static_cast<PixelDataType>(0), // ugh
+                                                            PIXEL_UNSIGNED_BYTE,           PIXEL_UNSIGNED_SHORT_5_5_5_1,
+                                                            PIXEL_UNSIGNED_SHORT_5_6_5,    PIXEL_UNSIGNED_BYTE,
+                                                            PIXEL_UNSIGNED_SHORT_4_4_4_4};
 
 static const u8 g_TextureFormatBytesPerPixel[6] = {0, 4, 2, 2, 3, 2};
 
@@ -367,11 +366,11 @@ ZunResult AnmManager::LoadTexture(i32 textureIdx, const char *textureName, i32 t
     // of those should be globally disabled for the texture unit anyway This also drops colorKey (an equivalent doesn't
     // exist in OpenGL). I'm not sure its use ever matters anyway
 
-    //g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, g_TextureFormatTypeGfxMapping[textureFormat], textureSurface->w,
-    //                           textureSurface->h, 0, g_TextureFormatTypeGfxMapping[textureFormat],
-    //                           g_TextureFormatTypeMapping[textureFormat], rawTextureData);
+    // g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, g_TextureFormatTypeGfxMapping[textureFormat], textureSurface->w,
+    //                            textureSurface->h, 0, g_TextureFormatTypeGfxMapping[textureFormat],
+    //                            g_TextureFormatTypeMapping[textureFormat], rawTextureData);
     g_GfxBackend->SetTextureImage(textureSurface->w, textureSurface->h, g_TextureFormatTypeGfxMapping[textureFormat],
-                                g_TextureFormatTypeMapping[textureFormat], rawTextureData);
+                                  g_TextureFormatTypeMapping[textureFormat], rawTextureData);
 
     SDL_FreeSurface(textureSurface);
 
@@ -473,8 +472,8 @@ ZunResult AnmManager::LoadTextureAlphaChannel(i32 textureIdx, const char *textur
     SDL_FreeSurface(alphaSurface);
 
     this->SetCurrentTexture(this->textures[textureIdx].handle);
-    g_GfxBackend->SetTextureImage(textureDesc->width, textureDesc->height, PIXEL_RGBA, g_TextureFormatTypeMapping[textureFormat],
-                                textureDesc->textureData);
+    g_GfxBackend->SetTextureImage(textureDesc->width, textureDesc->height, PIXEL_RGBA,
+                                  g_TextureFormatTypeMapping[textureFormat], textureDesc->textureData);
 
     return ZUN_SUCCESS;
 }
@@ -488,8 +487,9 @@ ZunResult AnmManager::CreateEmptyTexture(i32 textureIdx, u32 width, u32 height, 
     this->textures[textureIdx].height = BitCeil(height);
     this->textures[textureIdx].format = textureFormat;
 
-    g_GfxBackend->SetTextureImage(textures[textureIdx].width, textures[textureIdx].height, g_TextureFormatTypeGfxMapping[textureFormat],
-                                g_TextureFormatTypeMapping[textureFormat], NULL);
+    g_GfxBackend->SetTextureImage(textures[textureIdx].width, textures[textureIdx].height,
+                                  g_TextureFormatTypeGfxMapping[textureFormat],
+                                  g_TextureFormatTypeMapping[textureFormat], NULL);
 
     return ZUN_SUCCESS;
 }
@@ -781,7 +781,7 @@ void AnmManager::UpdateDirtyStates()
             {
                 u8 currBit = CountrZero(changedAttributes);
                 g_GfxBackend->ToggleVertexAttribute(changedAttributes & (1 << currBit),
-                                                  this->enabledVertexAttributes & (1 << currBit));
+                                                    this->enabledVertexAttributes & (1 << currBit));
                 changedAttributes &= ~(1 << currBit);
             }
 
@@ -798,7 +798,7 @@ void AnmManager::UpdateDirtyStates()
                 this->attribArrays[i] = this->dirtyAttribArrays[i];
 
                 g_GfxBackend->SetAttributePointer((VertexAttributeArrays)i, this->attribArrays[i].stride,
-                                                this->attribArrays[i].ptr);
+                                                  this->attribArrays[i].ptr);
             }
 
             break;
@@ -828,7 +828,7 @@ void AnmManager::UpdateDirtyStates()
                         &this->dirtyTransformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX],
                         sizeof(*this->transformMatrices));
             g_GfxBackend->SetTransformMatrix((TransformMatrix)(currFlagIndex - DIRTY_MODEL_MATRIX),
-                                           this->transformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX]);
+                                             this->transformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX]);
         }
     }
 }
@@ -2085,8 +2085,8 @@ void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width, i32
         new u8[((u32)(width * WIDTH_RESOLUTION_SCALE + 1)) * ((u32)(height * HEIGHT_RESOLUTION_SCALE + 1)) * 4];
 
     g_GfxBackend->ReadPixels(left * WIDTH_RESOLUTION_SCALE + VIEWPORT_OFF_X,
-                            GAME_WINDOW_HEIGHT_REAL - ((top + height) * HEIGHT_RESOLUTION_SCALE) - VIEWPORT_OFF_Y,
-                            width * WIDTH_RESOLUTION_SCALE, height * HEIGHT_RESOLUTION_SCALE, backBufferPixels);
+                             GAME_WINDOW_HEIGHT_REAL - ((top + height) * HEIGHT_RESOLUTION_SCALE) - VIEWPORT_OFF_Y,
+                             width * WIDTH_RESOLUTION_SCALE, height * HEIGHT_RESOLUTION_SCALE, backBufferPixels);
 
     unstretchedSurface = SDL_CreateRGBSurfaceWithFormatFrom(backBufferPixels, width * WIDTH_RESOLUTION_SCALE,
                                                             height * HEIGHT_RESOLUTION_SCALE, 32,
@@ -2130,8 +2130,8 @@ void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width, i32
         ExtractSurfacePixels(dstFormatSurface, g_TextureFormatBytesPerPixel[this->textures[textureId].format]);
 
     g_GfxBackend->SetTextureImage(this->textures[textureId].width, this->textures[textureId].height,
-                                g_TextureFormatTypeGfxMapping[this->textures[textureId].format],
-                                g_TextureFormatTypeMapping[this->textures[textureId].format], dstFormatPixels);
+                                  g_TextureFormatTypeGfxMapping[this->textures[textureId].format],
+                                  g_TextureFormatTypeMapping[this->textures[textureId].format], dstFormatPixels);
 
 cleanup:
     SDL_FreeSurface(unstretchedSurface);

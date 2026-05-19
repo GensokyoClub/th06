@@ -49,6 +49,7 @@ struct WebGL : GfxInterface
     virtual void SetDepthRange(f32 near, f32 far);
 
     virtual void Enable(Capabilities cap);
+    virtual bool HasError();
     virtual void SetBlendMode(BlendMode mode);
     virtual void SetDepthMask(bool enable);
     virtual void SetDepthFunc(DepthFunc func);

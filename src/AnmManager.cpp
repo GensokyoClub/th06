@@ -349,9 +349,9 @@ ZunResult AnmManager::LoadTexture(i32 textureIdx, const char *textureName, i32 t
     CreateTextureObject();
 
     // Clear any errors that might be pending
-    /*while (g_glFuncTable.glGetError() != GL_NO_ERROR)
-    {
-    }*/
+    while(g_GfxBackend->HasError()) {
+
+    }
 
     rawTextureData = ExtractSurfacePixels(textureSurface, g_TextureFormatBytesPerPixel[textureFormat]);
 
@@ -374,12 +374,12 @@ ZunResult AnmManager::LoadTexture(i32 textureIdx, const char *textureName, i32 t
 
     SDL_FreeSurface(textureSurface);
 
-    /*if (g_glFuncTable.glGetError() != GL_NO_ERROR)
+    if (g_GfxBackend->HasError())
     {
         ReleaseTexture(textureIdx);
 
         return ZUN_ERROR;
-    }*/
+    }
 
     return ZUN_SUCCESS;
 }

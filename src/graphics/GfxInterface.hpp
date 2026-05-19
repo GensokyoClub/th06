@@ -134,6 +134,8 @@ struct GfxInterface
 
     virtual void Enable(Capabilities cap) = 0;
 
+    virtual bool HasError() = 0;
+
     virtual void SetBlendMode(BlendMode mode) = 0;
     virtual void SetDepthMask(bool enable) = 0;
     virtual void SetDepthFunc(DepthFunc func) = 0;

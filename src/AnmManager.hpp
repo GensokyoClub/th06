@@ -7,11 +7,10 @@
 
 #include "AnmIdx.hpp"
 #include "AnmVm.hpp"
-#include "GLFunc.hpp"
 #include "GameManager.hpp"
+#include "GameWindow.hpp"
 #include "ZunResult.hpp"
 #include "ZunTimer.hpp"
-#include "graphics/GfxInterface.hpp"
 #include "inttypes.hpp"
 
 #define TEX_FMT_UNKNOWN 0
@@ -23,7 +22,7 @@
 
 struct TextureData
 {
-    GLuint handle;
+    GfxTextureHandle handle;
     const void *fileData;
 
     // Fields needed to compensate for inability to read back texture for alpha loading
@@ -36,10 +35,10 @@ struct TextureData
 // Endian-neutral version of ZunColor, for use with OpenGL
 struct ColorData
 {
-    GLubyte r;
-    GLubyte g;
-    GLubyte b;
-    GLubyte a;
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 a;
 
     ColorData()
     {
@@ -168,6 +167,17 @@ struct AnmManager
 
     //    void ReleaseVertexBuffer();
     void SetupVertexBuffer();
+    void FlushVertexBuffer();
+    void ClearVertexBuffer();
+
+    u32 spritesToDraw;
+    VertexTex1Xyzrhw *vertexBufferStartPtr;
+    VertexTex1Xyzrhw *vertexBufferEndPtr;
+    VertexTex1Xyzrhw vertexBuffer[0x18000];
+
+    u32 renderStateChangesThisFrame;
+    u32 flushesThisFrame;
+    ZunResult AddSpriteToDrawBuffer(VertexTex1Xyzrhw *vertices);
 
     ZunResult CreateEmptyTexture(i32 textureIdx, u32 width, u32 height, i32 textureFormat);
     ZunResult LoadTexture(i32 textureIdx, const char *textureName, i32 textureFormat, ZunColor colorKey);
@@ -196,7 +206,7 @@ struct AnmManager
             this->UpdateDirtyStates();
         }
 
-        g_glFuncTable.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        g_GfxBackend->Draw(PRIM_TRIANGLE_STRIP, 0, 4);
     }
 
     // We need to do checks in these because they're called nearly every ANM draw call and otherwise
@@ -237,6 +247,8 @@ struct AnmManager
 
     void SetDepthMask(bool depthEnable)
     {
+        if (this->dirtyDepthMask != depthEnable)
+            this->FlushVertexBuffer();
         this->dirtyDepthMask = depthEnable;
 
         if ((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1 || this->dirtyDepthMask == this->depthMask)
@@ -258,12 +270,13 @@ struct AnmManager
         this->dirtyFlags |= (1 << DIRTY_DEPTH_CONFIG);
     }
 
-    void SetCurrentTexture(GLuint textureHandle)
+    void SetCurrentTexture(GfxTextureHandle textureHandle)
     {
         if (this->currentTextureHandle != textureHandle)
         {
+            this->FlushVertexBuffer();
             this->currentTextureHandle = textureHandle;
-            g_glFuncTable.glBindTexture(GL_TEXTURE_2D, textureHandle);
+            g_GfxBackend->BindTexture(textureHandle);
         }
     }
     void SetCurrentSprite(const AnmLoadedSprite *sprite)
@@ -277,6 +290,8 @@ struct AnmManager
         {
             return;
         }
+
+        this->FlushVertexBuffer();
 
         this->projectionMode = projectionMode;
 
@@ -306,6 +321,7 @@ struct AnmManager
 
     void SetFogRange(f32 nearPlane, f32 farPlane)
     {
+        this->FlushVertexBuffer();
         this->dirtyFogNear = nearPlane;
         this->dirtyFogFar = farPlane;
         this->dirtyFlags |= (1 << DIRTY_FOG);
@@ -332,6 +348,8 @@ struct AnmManager
 
     void SetTextureFactor(ZunColor factor)
     {
+        if (this->dirtytTextureFactor != factor)
+            this->FlushVertexBuffer();
         this->dirtytTextureFactor = factor;
 
         if (this->dirtytTextureFactor == this->textureFactor)
@@ -426,8 +444,9 @@ struct AnmManager
     SDL_Surface *surfaces[32];
     //    SDL_Surface *surfacesBis[32];
     //    D3DXIMAGE_INFO surfaceSourceInfo[32];
-    GLuint currentTextureHandle;
-    GLuint dummyTextureHandle;
+    // GLuint currentTextureHandle;
+    GfxTextureHandle currentTextureHandle;
+    GfxTextureHandle dummyTextureHandle;
     u8 currentBlendMode;
     ProjectionMode projectionMode;
     const AnmLoadedSprite *currentSprite;
@@ -439,7 +458,7 @@ struct AnmManager
     i32 screenshotWidth;
     i32 screenshotHeight;
 
-    GfxInterface *gfxBackend;
+    // GfxInterface *gfxBackend;
 
   private:
     u32 dirtyFlags;

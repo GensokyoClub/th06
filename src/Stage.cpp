@@ -282,6 +282,7 @@ ChainCallbackResult Stage::OnDrawLowPrio(Stage *stage)
         }
         g_AnmManager->Draw(&stage->spellcardBackground);
     }
+    g_AnmManager->FlushVertexBuffer();
     g_Supervisor.viewport.minZ = 0.0;
     g_Supervisor.viewport.maxZ = 0.5;
     GameManager::SetupCameraStageBackground(0);
@@ -392,7 +393,7 @@ ZunResult Stage::DeletedCallback(Stage *s)
     if (s->stdData != NULL)
     {
         const void *stdData = s->stdData;
-        free((void*)stdData);
+        free((void *)stdData);
         s->stdData = NULL;
     }
 

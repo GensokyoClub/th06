@@ -1,6 +1,5 @@
 #include "AnmManager.hpp"
 #include "FileSystem.hpp"
-#include "GLFunc.hpp"
 #include "GameErrorContext.hpp"
 #include "Rng.hpp"
 #include "Supervisor.hpp"
@@ -24,26 +23,25 @@ static VertexTex1DiffuseXyz g_PrimitivesToDrawUnknown[4];
 AnmManager *g_AnmManager;
 
 static const SDL_PixelFormatEnum g_TextureFormatSDLMapping[6] = {SDL_PIXELFORMAT_UNKNOWN,  SDL_PIXELFORMAT_RGBA32,
-                                                    SDL_PIXELFORMAT_RGBA5551, SDL_PIXELFORMAT_RGB565,
-                                                    SDL_PIXELFORMAT_RGB24,    SDL_PIXELFORMAT_RGBA4444};
+                                                                 SDL_PIXELFORMAT_RGBA5551, SDL_PIXELFORMAT_RGB565,
+                                                                 SDL_PIXELFORMAT_RGB24,    SDL_PIXELFORMAT_RGBA4444};
 
-static const GLenum g_TextureFormatGLFormatMapping[6] = {0, GL_RGBA, GL_RGBA, GL_RGB, GL_RGB, GL_RGBA};
+static const PixelFormat g_TextureFormatTypeGfxMapping[6] = {
+    static_cast<PixelFormat>(0), PIXEL_RGBA, PIXEL_RGBA, PIXEL_RGB, PIXEL_RGB, PIXEL_RGBA};
 
-static const GLenum g_TextureFormatGLTypeMapping[6] = {0,
-                                          GL_UNSIGNED_BYTE,
-                                          GL_UNSIGNED_SHORT_5_5_5_1,
-                                          GL_UNSIGNED_SHORT_5_6_5,
-                                          GL_UNSIGNED_BYTE,
-                                          GL_UNSIGNED_SHORT_4_4_4_4};
+static const PixelDataType g_TextureFormatTypeMapping[6] = {static_cast<PixelDataType>(0), // ugh
+                                                            PIXEL_UNSIGNED_BYTE,           PIXEL_UNSIGNED_SHORT_5_5_5_1,
+                                                            PIXEL_UNSIGNED_SHORT_5_6_5,    PIXEL_UNSIGNED_BYTE,
+                                                            PIXEL_UNSIGNED_SHORT_4_4_4_4};
 
 static const u8 g_TextureFormatBytesPerPixel[6] = {0, 4, 2, 2, 3, 2};
 
 void AnmManager::CreateTextureObject()
 {
-    g_glFuncTable.glGenTextures(1, &this->currentTextureHandle);
-    g_glFuncTable.glBindTexture(GL_TEXTURE_2D, this->currentTextureHandle);
+    this->currentTextureHandle = g_GfxBackend->CreateTexture();
+    g_GfxBackend->BindTexture(this->currentTextureHandle);
 
-    g_glFuncTable.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    g_GfxBackend->SetTextureFilter();
 }
 
 SDL_Surface *AnmManager::LoadToSurfaceWithFormat(const char *filename, SDL_PixelFormatEnum format, u8 **fileData)
@@ -176,7 +174,7 @@ AnmManager::~AnmManager()
 {
     if (this->dummyTextureHandle != 0)
     {
-        g_glFuncTable.glDeleteTextures(1, &this->dummyTextureHandle);
+        g_GfxBackend->DeleteTexture(this->dummyTextureHandle);
         this->dummyTextureHandle = 0;
     }
 
@@ -199,6 +197,7 @@ AnmManager::AnmManager()
     this->maybeLoadedSpriteCount = 0;
 
     std::memset(this, 0, sizeof(AnmManager));
+    ClearVertexBuffer();
 
     for (i32 spriteIndex = 0; spriteIndex < ARRAY_SIZE_SIGNED(this->sprites); spriteIndex++)
     {
@@ -230,14 +229,6 @@ AnmManager::AnmManager()
     g_PrimitivesToDrawNoVertexBuf[2].textureUV.y = 1.0;
     g_PrimitivesToDrawNoVertexBuf[3].textureUV.x = 1.0;
     g_PrimitivesToDrawNoVertexBuf[3].textureUV.y = 1.0;
-
-    // OpenGL considers textures to be incomplete if the bound texture has no image defined
-    // Incomplete textures result in texturing being turned off, but EoSD has places where it
-    // uses the texturing engine to color fragments without using the texture itself. The dummy
-    // texture is necessary to ensure the texture can't be considered incomplete in these cases.
-    this->CreateTextureObject();
-    this->dummyTextureHandle = this->currentTextureHandle;
-    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
     //    this->vertexBuffer = NULL;
     this->currentBlendMode = 0;
@@ -358,7 +349,7 @@ ZunResult AnmManager::LoadTexture(i32 textureIdx, const char *textureName, i32 t
     CreateTextureObject();
 
     // Clear any errors that might be pending
-    while (g_glFuncTable.glGetError() != GL_NO_ERROR)
+    while (g_GfxBackend->HasError())
     {
     }
 
@@ -375,13 +366,15 @@ ZunResult AnmManager::LoadTexture(i32 textureIdx, const char *textureName, i32 t
     // of those should be globally disabled for the texture unit anyway This also drops colorKey (an equivalent doesn't
     // exist in OpenGL). I'm not sure its use ever matters anyway
 
-    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, g_TextureFormatGLFormatMapping[textureFormat], textureSurface->w,
-                               textureSurface->h, 0, g_TextureFormatGLFormatMapping[textureFormat],
-                               g_TextureFormatGLTypeMapping[textureFormat], rawTextureData);
+    // g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, g_TextureFormatTypeGfxMapping[textureFormat], textureSurface->w,
+    //                            textureSurface->h, 0, g_TextureFormatTypeGfxMapping[textureFormat],
+    //                            g_TextureFormatTypeMapping[textureFormat], rawTextureData);
+    g_GfxBackend->SetTextureImage(textureSurface->w, textureSurface->h, g_TextureFormatTypeGfxMapping[textureFormat],
+                                  g_TextureFormatTypeMapping[textureFormat], rawTextureData);
 
     SDL_FreeSurface(textureSurface);
 
-    if (g_glFuncTable.glGetError() != GL_NO_ERROR)
+    if (g_GfxBackend->HasError())
     {
         ReleaseTexture(textureIdx);
 
@@ -391,7 +384,8 @@ ZunResult AnmManager::LoadTexture(i32 textureIdx, const char *textureName, i32 t
     return ZUN_SUCCESS;
 }
 
-ZunResult AnmManager::LoadTextureAlphaChannel(i32 textureIdx, const char *textureName, i32 textureFormat, ZunColor colorKey)
+ZunResult AnmManager::LoadTextureAlphaChannel(i32 textureIdx, const char *textureName, i32 textureFormat,
+                                              ZunColor colorKey)
 {
     SDL_Surface *alphaSurface;
     TextureData *textureDesc;
@@ -478,8 +472,8 @@ ZunResult AnmManager::LoadTextureAlphaChannel(i32 textureIdx, const char *textur
     SDL_FreeSurface(alphaSurface);
 
     this->SetCurrentTexture(this->textures[textureIdx].handle);
-    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureDesc->width, textureDesc->height, 0, GL_RGBA,
-                               g_TextureFormatGLTypeMapping[textureFormat], textureDesc->textureData);
+    g_GfxBackend->SetTextureImage(textureDesc->width, textureDesc->height, PIXEL_RGBA,
+                                  g_TextureFormatTypeMapping[textureFormat], textureDesc->textureData);
 
     return ZUN_SUCCESS;
 }
@@ -493,10 +487,9 @@ ZunResult AnmManager::CreateEmptyTexture(i32 textureIdx, u32 width, u32 height, 
     this->textures[textureIdx].height = BitCeil(height);
     this->textures[textureIdx].format = textureFormat;
 
-    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, g_TextureFormatGLFormatMapping[textureFormat],
-                               textures[textureIdx].width, textures[textureIdx].height, 0,
-                               g_TextureFormatGLFormatMapping[textureFormat],
-                               g_TextureFormatGLTypeMapping[textureFormat], NULL);
+    g_GfxBackend->SetTextureImage(textures[textureIdx].width, textures[textureIdx].height,
+                                  g_TextureFormatTypeGfxMapping[textureFormat],
+                                  g_TextureFormatTypeMapping[textureFormat], NULL);
 
     return ZUN_SUCCESS;
 }
@@ -619,12 +612,12 @@ void AnmManager::ReleaseTexture(i32 textureIdx)
             this->currentTextureHandle = 0;
         }
 
-        g_glFuncTable.glDeleteTextures(1, &this->textures[textureIdx].handle);
+        g_GfxBackend->DeleteTexture(this->textures[textureIdx].handle);
 
         this->textures[textureIdx].handle = 0;
     }
 
-    free((void*)this->textures[textureIdx].fileData);
+    free((void *)this->textures[textureIdx].fileData);
     this->textures[textureIdx].fileData = NULL;
 
     delete[] this->textures[textureIdx].textureData;
@@ -699,15 +692,16 @@ void AnmManager::SetRenderStateForVm(const AnmVm *vm)
 {
     if (this->currentBlendMode != vm->flags.blendMode)
     {
+        this->FlushVertexBuffer();
         this->currentBlendMode = vm->flags.blendMode;
         if (this->currentBlendMode == AnmVmBlendMode_InvSrcAlpha)
         {
-            g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            g_GfxBackend->SetBlendMode(BLEND_INV_SRC_ALPHA);
             //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
         }
         else
         {
-            g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            g_GfxBackend->SetBlendMode(BLEND_ONE);
             //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
         }
     }
@@ -754,13 +748,13 @@ void AnmManager::UpdateDirtyStates()
             {
                 this->fogNear = this->dirtyFogNear;
                 this->fogFar = this->dirtyFogFar;
-                gfxBackend->SetFogRange(this->fogNear, this->fogFar);
+                g_GfxBackend->SetFogRange(this->fogNear, this->fogFar);
             }
 
             if (this->dirtyFogColor != this->fogColor)
             {
                 this->fogColor = this->dirtyFogColor;
-                gfxBackend->SetFogColor(this->fogColor);
+                g_GfxBackend->SetFogColor(this->fogColor);
             }
 
             break;
@@ -768,22 +762,14 @@ void AnmManager::UpdateDirtyStates()
             if (this->dirtyDepthMask != this->depthMask)
             {
                 this->depthMask = this->dirtyDepthMask;
-                g_glFuncTable.glDepthMask(this->depthMask);
+                g_GfxBackend->SetDepthMask(this->depthMask);
             }
 
             if (this->dirtyDepthFunc != this->depthFunc)
             {
                 this->depthFunc = this->dirtyDepthFunc;
 
-                // This'll end up less awkward once there's a render backend abstraction layer I swear
-                if (this->depthFunc == DEPTH_FUNC_ALWAYS)
-                {
-                    g_glFuncTable.glDepthFunc(GL_ALWAYS);
-                }
-                else
-                {
-                    g_glFuncTable.glDepthFunc(GL_LEQUAL);
-                }
+                g_GfxBackend->SetDepthFunc(this->depthFunc);
             }
 
             break;
@@ -794,8 +780,8 @@ void AnmManager::UpdateDirtyStates()
             while (changedAttributes != 0)
             {
                 u8 currBit = CountrZero(changedAttributes);
-                gfxBackend->ToggleVertexAttribute(changedAttributes & (1 << currBit),
-                                                  this->enabledVertexAttributes & (1 << currBit));
+                g_GfxBackend->ToggleVertexAttribute(changedAttributes & (1 << currBit),
+                                                    this->enabledVertexAttributes & (1 << currBit));
                 changedAttributes &= ~(1 << currBit);
             }
 
@@ -811,8 +797,8 @@ void AnmManager::UpdateDirtyStates()
 
                 this->attribArrays[i] = this->dirtyAttribArrays[i];
 
-                gfxBackend->SetAttributePointer((VertexAttributeArrays)i, this->attribArrays[i].stride,
-                                                this->attribArrays[i].ptr);
+                g_GfxBackend->SetAttributePointer((VertexAttributeArrays)i, this->attribArrays[i].stride,
+                                                  this->attribArrays[i].ptr);
             }
 
             break;
@@ -826,13 +812,13 @@ void AnmManager::UpdateDirtyStates()
 
                 this->colorOps[i] = this->dirtyColorOps[i];
 
-                gfxBackend->SetColorOp((TextureOpComponent)i, this->colorOps[i]);
+                g_GfxBackend->SetColorOp((TextureOpComponent)i, this->colorOps[i]);
             }
 
             break;
         case DIRTY_TEXTURE_FACTOR:
             this->textureFactor = this->dirtytTextureFactor;
-            gfxBackend->SetTextureFactor(this->textureFactor);
+            g_GfxBackend->SetTextureFactor(this->textureFactor);
             break;
         case DIRTY_MODEL_MATRIX:
         case DIRTY_VIEW_MATRIX:
@@ -841,14 +827,15 @@ void AnmManager::UpdateDirtyStates()
             std::memcpy(&this->transformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX],
                         &this->dirtyTransformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX],
                         sizeof(*this->transformMatrices));
-            gfxBackend->SetTransformMatrix((TransformMatrix)(currFlagIndex - DIRTY_MODEL_MATRIX),
-                                           this->transformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX]);
+            g_GfxBackend->SetTransformMatrix((TransformMatrix)(currFlagIndex - DIRTY_MODEL_MATRIX),
+                                             this->transformMatrices[currFlagIndex - DIRTY_MODEL_MATRIX]);
         }
     }
 }
 
 ZunResult AnmManager::DrawOrthographic(const AnmVm *vm, bool roundToPixel)
 {
+    float triangleX1, triangleX2, triangleY1, triangleY2;
     if (roundToPixel)
     {
         // In the original D3D code, 0.5 was subtracted from the final position here to center on D3D
@@ -866,6 +853,30 @@ ZunResult AnmManager::DrawOrthographic(const AnmVm *vm, bool roundToPixel)
     }
     g_PrimitivesToDrawVertexBuf[0].position.z = g_PrimitivesToDrawVertexBuf[1].position.z =
         g_PrimitivesToDrawVertexBuf[2].position.z = g_PrimitivesToDrawVertexBuf[3].position.z = vm->pos.z;
+
+    triangleX1 = ZUN_MAX(g_PrimitivesToDrawVertexBuf[0].position.x, g_PrimitivesToDrawVertexBuf[1].position.x);
+    triangleX1 = ZUN_MAX(g_PrimitivesToDrawVertexBuf[2].position.x, triangleX1);
+    triangleX1 = ZUN_MAX(g_PrimitivesToDrawVertexBuf[3].position.x, triangleX1);
+
+    triangleY1 = ZUN_MAX(g_PrimitivesToDrawVertexBuf[0].position.y, g_PrimitivesToDrawVertexBuf[1].position.y);
+    triangleY1 = ZUN_MAX(g_PrimitivesToDrawVertexBuf[2].position.y, triangleY1);
+    triangleY1 = ZUN_MAX(g_PrimitivesToDrawVertexBuf[3].position.y, triangleY1);
+
+    triangleX2 = ZUN_MIN(g_PrimitivesToDrawVertexBuf[0].position.x, g_PrimitivesToDrawVertexBuf[1].position.x);
+    triangleX2 = ZUN_MIN(g_PrimitivesToDrawVertexBuf[2].position.x, triangleX2);
+    triangleX2 = ZUN_MIN(g_PrimitivesToDrawVertexBuf[3].position.x, triangleX2);
+
+    triangleY2 = ZUN_MIN(g_PrimitivesToDrawVertexBuf[0].position.y, g_PrimitivesToDrawVertexBuf[1].position.y);
+    triangleY2 = ZUN_MIN(g_PrimitivesToDrawVertexBuf[2].position.y, triangleY2);
+    triangleY2 = ZUN_MIN(g_PrimitivesToDrawVertexBuf[3].position.y, triangleY2);
+
+    if (triangleX1 < g_Supervisor.viewport.x || triangleY1 < g_Supervisor.viewport.y ||
+        triangleX2 > (g_Supervisor.viewport.x + g_Supervisor.viewport.width) ||
+        triangleY2 > (g_Supervisor.viewport.y + g_Supervisor.viewport.height))
+    {
+        return ZUN_SUCCESS;
+    }
+
     if (this->currentSprite != vm->sprite)
     {
         this->currentSprite = vm->sprite;
@@ -902,10 +913,12 @@ ZunResult AnmManager::DrawOrthographic(const AnmVm *vm, bool roundToPixel)
 
     if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
     {
-        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawVertexBuf),
+        this->AddSpriteToDrawBuffer(g_PrimitivesToDrawVertexBuf);
+        /*this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawVertexBuf),
                                   &g_PrimitivesToDrawVertexBuf[0].position);
         this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawVertexBuf),
-                                  &g_PrimitivesToDrawVertexBuf[0].textureUV);
+                                  &g_PrimitivesToDrawVertexBuf[0].textureUV);*/
+
         //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, g_PrimitivesToDrawVertexBuf, 0x18);
     }
     else
@@ -938,9 +951,56 @@ ZunResult AnmManager::DrawOrthographic(const AnmVm *vm, bool roundToPixel)
         this->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*g_PrimitivesToDrawNoVertexBuf),
                                   &g_PrimitivesToDrawNoVertexBuf[0].diffuse);
         //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, g_PrimitivesToDrawNoVertexBuf, 0x1c);
+        this->BackendDrawCall();
     }
 
-    this->BackendDrawCall();
+    return ZUN_SUCCESS;
+}
+
+void AnmManager::ClearVertexBuffer()
+{
+    if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) != 0)
+    {
+        return;
+    }
+    this->spritesToDraw = 0;
+    this->vertexBufferStartPtr = this->vertexBufferEndPtr = this->vertexBuffer;
+}
+
+void AnmManager::FlushVertexBuffer()
+{
+    if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) != 0)
+        return;
+    if (spritesToDraw == 0)
+        return;
+
+    this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD);
+
+    this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(VertexTex1Xyzrhw), &vertexBufferStartPtr->position);
+    this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(VertexTex1Xyzrhw), &vertexBufferStartPtr->textureUV);
+    this->UpdateDirtyStates();
+
+    g_GfxBackend->Draw(PRIM_TRIANGLES, 0, spritesToDraw * 6);
+
+    this->ClearVertexBuffer();
+    flushesThisFrame++;
+}
+
+/* This function copies 4 vertices creating a quad into 6 vertices
+ * (2 triangles) for rendering.
+ */
+
+ZunResult AnmManager::AddSpriteToDrawBuffer(VertexTex1Xyzrhw *vertices)
+{
+    this->vertexBufferEndPtr[0] = vertices[0];
+    this->vertexBufferEndPtr[1] = vertices[1];
+    this->vertexBufferEndPtr[2] = vertices[2];
+    this->vertexBufferEndPtr[3] = vertices[1];
+    this->vertexBufferEndPtr[4] = vertices[2];
+    this->vertexBufferEndPtr[5] = vertices[3];
+
+    this->vertexBufferEndPtr += 6;
+    this->spritesToDraw++;
 
     return ZUN_SUCCESS;
 }
@@ -1122,7 +1182,7 @@ ZunResult AnmManager::Draw3(const AnmVm *vm)
         return ZUN_ERROR;
     }
 
-    SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
+    this->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
 
     ZunMatrix originalView = this->dirtyTransformMatrices[MATRIX_VIEW];
 
@@ -1177,20 +1237,42 @@ ZunResult AnmManager::Draw3(const AnmVm *vm)
     worldTransformMatrix.m[3][2] = vm->pos.z;
 
     // Now, set transform matrix.
-    ZunMatrix modelView = originalView * worldTransformMatrix;
-    this->SetTransformMatrix(MATRIX_VIEW, modelView);
+    ZunMatrix modelView;
+    if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) != 0)
+    {
+        modelView = originalView * worldTransformMatrix;
+        this->SetTransformMatrix(MATRIX_VIEW, modelView);
+    }
+    else
+    {
+        for (int i = 0; i < 4; i++)
+            g_PrimitivesToDrawVertexBuf[i].position =
+                ZunVec4(worldTransformMatrix * this->vertexBufferContents[i].position, 1.0f);
+
+        g_PrimitivesToDrawVertexBuf[0].textureUV.x = g_PrimitivesToDrawVertexBuf[2].textureUV.x =
+            vm->sprite->uvStart.x + vm->uvScrollPos.x;
+        g_PrimitivesToDrawVertexBuf[1].textureUV.x = g_PrimitivesToDrawVertexBuf[3].textureUV.x =
+            vm->sprite->uvEnd.x + vm->uvScrollPos.x;
+        g_PrimitivesToDrawVertexBuf[0].textureUV.y = g_PrimitivesToDrawVertexBuf[1].textureUV.y =
+            vm->sprite->uvStart.y + vm->uvScrollPos.y;
+        g_PrimitivesToDrawVertexBuf[2].textureUV.y = g_PrimitivesToDrawVertexBuf[3].textureUV.y =
+            vm->sprite->uvEnd.y + vm->uvScrollPos.y;
+    }
 
     // Load sprite if vm->sprite is not the same as current sprite.
     if (this->currentSprite != vm->sprite)
     {
         this->currentSprite = vm->sprite;
-        textureMatrix = vm->matrix;
-        textureMatrix.m[3][0] = vm->sprite->uvStart.x + vm->uvScrollPos.x;
-        textureMatrix.m[3][1] = vm->sprite->uvStart.y + vm->uvScrollPos.y;
+        if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) != 0)
+        {
+            textureMatrix = vm->matrix;
+            textureMatrix.m[3][0] = vm->sprite->uvStart.x + vm->uvScrollPos.x;
+            textureMatrix.m[3][1] = vm->sprite->uvStart.y + vm->uvScrollPos.y;
 
-        this->SetTransformMatrix(MATRIX_TEXTURE, textureMatrix);
+            this->SetTransformMatrix(MATRIX_TEXTURE, textureMatrix);
+        }
 
-        SetCurrentTexture(this->textures[vm->sprite->sourceFileIndex].handle);
+        this->SetCurrentTexture(this->textures[vm->sprite->sourceFileIndex].handle);
     }
 
     if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
@@ -1208,10 +1290,8 @@ ZunResult AnmManager::Draw3(const AnmVm *vm)
     // Draw the VM.
     if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) == 0)
     {
-        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawUnknown),
-                                  &g_PrimitivesToDrawUnknown[0].position);
-        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawUnknown),
-                                  &g_PrimitivesToDrawUnknown[0].textureUV);
+
+        this->AddSpriteToDrawBuffer(g_PrimitivesToDrawVertexBuf);
     }
     else
     {
@@ -1221,11 +1301,11 @@ ZunResult AnmManager::Draw3(const AnmVm *vm)
                                   &g_PrimitivesToDrawUnknown[0].textureUV);
         this->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*g_PrimitivesToDrawUnknown),
                                   &g_PrimitivesToDrawUnknown[0].diffuse);
+
+        this->BackendDrawCall();
+        this->SetTransformMatrix(MATRIX_VIEW, originalView);
     }
 
-    this->BackendDrawCall();
-
-    this->SetTransformMatrix(MATRIX_VIEW, originalView);
     return ZUN_SUCCESS;
 }
 
@@ -1272,17 +1352,39 @@ ZunResult AnmManager::Draw2(const AnmVm *vm)
     worldTransformMatrix.m[1][1] *= -vm->scaleY;
 
     ZunMatrix originalView = this->dirtyTransformMatrices[MATRIX_VIEW];
-    ZunMatrix modelView = originalView * worldTransformMatrix;
-    this->SetTransformMatrix(MATRIX_VIEW, modelView);
+    ZunMatrix modelView;
 
+    if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) != 0)
+    {
+        modelView = originalView * worldTransformMatrix;
+        this->SetTransformMatrix(MATRIX_VIEW, modelView);
+    }
+    else
+    {
+        for (int i = 0; i < 4; i++)
+            g_PrimitivesToDrawVertexBuf[i].position =
+                ZunVec4(worldTransformMatrix * this->vertexBufferContents[i].position, 1.0f);
+
+        g_PrimitivesToDrawVertexBuf[0].textureUV.x = g_PrimitivesToDrawVertexBuf[2].textureUV.x =
+            vm->sprite->uvStart.x + vm->uvScrollPos.x;
+        g_PrimitivesToDrawVertexBuf[1].textureUV.x = g_PrimitivesToDrawVertexBuf[3].textureUV.x =
+            vm->sprite->uvEnd.x + vm->uvScrollPos.x;
+        g_PrimitivesToDrawVertexBuf[0].textureUV.y = g_PrimitivesToDrawVertexBuf[1].textureUV.y =
+            vm->sprite->uvStart.y + vm->uvScrollPos.y;
+        g_PrimitivesToDrawVertexBuf[2].textureUV.y = g_PrimitivesToDrawVertexBuf[3].textureUV.y =
+            vm->sprite->uvEnd.y + vm->uvScrollPos.y;
+    }
     if (this->currentSprite != vm->sprite)
     {
         this->currentSprite = vm->sprite;
-        textureMatrix = vm->matrix;
-        textureMatrix.m[3][0] = vm->sprite->uvStart.x + vm->uvScrollPos.x;
-        textureMatrix.m[3][1] = vm->sprite->uvStart.y + vm->uvScrollPos.y;
+        if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) != 0)
+        {
+            textureMatrix = vm->matrix;
+            textureMatrix.m[3][0] = vm->sprite->uvStart.x + vm->uvScrollPos.x;
+            textureMatrix.m[3][1] = vm->sprite->uvStart.y + vm->uvScrollPos.y;
 
-        this->SetTransformMatrix(MATRIX_TEXTURE, textureMatrix);
+            this->SetTransformMatrix(MATRIX_TEXTURE, textureMatrix);
+        }
 
         //        if (this->currentTextureHandle != this->textures[vm->sprite->sourceFileIndex].handle)
         //        {
@@ -1290,7 +1392,7 @@ ZunResult AnmManager::Draw2(const AnmVm *vm)
         //            g_Supervisor.d3dDevice->SetTexture(0, this->currentTexture);
         //        }
 
-        SetCurrentTexture(this->textures[vm->sprite->sourceFileIndex].handle);
+        this->SetCurrentTexture(this->textures[vm->sprite->sourceFileIndex].handle);
 
         if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0)
         {
@@ -1306,12 +1408,7 @@ ZunResult AnmManager::Draw2(const AnmVm *vm)
 
     if ((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF & 1) == 0)
     {
-        this->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*g_PrimitivesToDrawUnknown),
-                                  &g_PrimitivesToDrawUnknown[0].position);
-        this->SetAttributePointer(VERTEX_ARRAY_TEX_COORD, sizeof(*g_PrimitivesToDrawUnknown),
-                                  &g_PrimitivesToDrawUnknown[0].textureUV);
-
-        //        g_Supervisor.d3dDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+        this->AddSpriteToDrawBuffer(g_PrimitivesToDrawVertexBuf);
     }
     else
     {
@@ -1323,11 +1420,11 @@ ZunResult AnmManager::Draw2(const AnmVm *vm)
                                   &g_PrimitivesToDrawUnknown[0].diffuse);
 
         //        g_Supervisor.d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, , 0x18);
+
+        this->BackendDrawCall();
+
+        this->SetTransformMatrix(MATRIX_VIEW, originalView);
     }
-
-    this->BackendDrawCall();
-
-    this->SetTransformMatrix(MATRIX_VIEW, originalView);
 
     return ZUN_SUCCESS;
 }
@@ -1703,7 +1800,6 @@ void AnmManager::DrawTextToSprite(u32 textureDstIdx, i32 xPos, i32 yPos, i32 spr
     return;
 }
 
-
 void AnmManager::DrawVmTextFmt(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
 {
     u32 fontWidth;
@@ -1715,8 +1811,8 @@ void AnmManager::DrawVmTextFmt(AnmVm *vm, ZunColor textColor, ZunColor shadowCol
     vsprintf(buffer, fmt, argptr);
     va_end(argptr);
     this->DrawTextToSprite(vm->sprite->sourceFileIndex, vm->sprite->startPixelInclusive.x,
-                             vm->sprite->startPixelInclusive.y, vm->sprite->textureWidth, vm->sprite->textureHeight,
-                             fontWidth, vm->fontHeight, textColor, shadowColor, buffer);
+                           vm->sprite->startPixelInclusive.y, vm->sprite->textureWidth, vm->sprite->textureHeight,
+                           fontWidth, vm->fontHeight, textColor, shadowColor, buffer);
     vm->flags.isVisible = true;
     return;
 }
@@ -1733,13 +1829,13 @@ void AnmManager::DrawStringFormat(AnmVm *vm, ZunColor textColor, ZunColor shadow
     vsprintf(buf, fmt, args);
     va_end(args);
     this->DrawTextToSprite(vm->sprite->sourceFileIndex, vm->sprite->startPixelInclusive.x,
-                          vm->sprite->startPixelInclusive.y, vm->sprite->textureWidth, vm->sprite->textureHeight,
-                          fontWidth, vm->fontHeight, textColor, shadowColor, " ");
+                           vm->sprite->startPixelInclusive.y, vm->sprite->textureWidth, vm->sprite->textureHeight,
+                           fontWidth, vm->fontHeight, textColor, shadowColor, " ");
     secondPartStartX =
         vm->sprite->startPixelInclusive.x + vm->sprite->textureWidth - ((f32)strlen(buf) * (f32)(fontWidth + 1) / 2.0f);
     this->DrawTextToSprite(vm->sprite->sourceFileIndex, secondPartStartX, vm->sprite->startPixelInclusive.y,
-                          vm->sprite->textureWidth, vm->sprite->textureHeight, fontWidth, vm->fontHeight, textColor,
-                          shadowColor, buf);
+                           vm->sprite->textureWidth, vm->sprite->textureHeight, fontWidth, vm->fontHeight, textColor,
+                           shadowColor, buf);
     vm->flags.isVisible = true;
     return;
 }
@@ -1756,13 +1852,13 @@ void AnmManager::DrawStringFormat2(AnmVm *vm, ZunColor textColor, ZunColor shado
     vsprintf(buf, fmt, args);
     va_end(args);
     this->DrawTextToSprite(vm->sprite->sourceFileIndex, vm->sprite->startPixelInclusive.x,
-                          vm->sprite->startPixelInclusive.y, vm->sprite->textureWidth, vm->sprite->textureHeight,
-                          fontWidth, vm->fontHeight, textColor, shadowColor, " ");
+                           vm->sprite->startPixelInclusive.y, vm->sprite->textureWidth, vm->sprite->textureHeight,
+                           fontWidth, vm->fontHeight, textColor, shadowColor, " ");
     secondPartStartX = vm->sprite->startPixelInclusive.x + vm->sprite->textureWidth / 2.0f -
                        ((f32)strlen(buf) * (f32)(fontWidth + 1) / 4.0f);
     this->DrawTextToSprite(vm->sprite->sourceFileIndex, secondPartStartX, vm->sprite->startPixelInclusive.y,
-                          vm->sprite->textureWidth, vm->sprite->textureHeight, fontWidth, vm->fontHeight, textColor,
-                          shadowColor, buf);
+                           vm->sprite->textureWidth, vm->sprite->textureHeight, fontWidth, vm->fontHeight, textColor,
+                           shadowColor, buf);
     vm->flags.isVisible = true;
     return;
 }
@@ -1988,10 +2084,9 @@ void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width, i32
     backBufferPixels =
         new u8[((u32)(width * WIDTH_RESOLUTION_SCALE + 1)) * ((u32)(height * HEIGHT_RESOLUTION_SCALE + 1)) * 4];
 
-    g_glFuncTable.glReadPixels(left * WIDTH_RESOLUTION_SCALE + VIEWPORT_OFF_X,
-                               GAME_WINDOW_HEIGHT_REAL - ((top + height) * HEIGHT_RESOLUTION_SCALE) - VIEWPORT_OFF_Y,
-                               width * WIDTH_RESOLUTION_SCALE, height * HEIGHT_RESOLUTION_SCALE, GL_RGBA,
-                               GL_UNSIGNED_BYTE, backBufferPixels);
+    g_GfxBackend->ReadPixels(left * WIDTH_RESOLUTION_SCALE + VIEWPORT_OFF_X,
+                             GAME_WINDOW_HEIGHT_REAL - ((top + height) * HEIGHT_RESOLUTION_SCALE) - VIEWPORT_OFF_Y,
+                             width * WIDTH_RESOLUTION_SCALE, height * HEIGHT_RESOLUTION_SCALE, backBufferPixels);
 
     unstretchedSurface = SDL_CreateRGBSurfaceWithFormatFrom(backBufferPixels, width * WIDTH_RESOLUTION_SCALE,
                                                             height * HEIGHT_RESOLUTION_SCALE, 32,
@@ -2034,10 +2129,9 @@ void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width, i32
     dstFormatPixels =
         ExtractSurfacePixels(dstFormatSurface, g_TextureFormatBytesPerPixel[this->textures[textureId].format]);
 
-    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, g_TextureFormatGLFormatMapping[this->textures[textureId].format],
-                               this->textures[textureId].width, this->textures[textureId].height, 0,
-                               g_TextureFormatGLFormatMapping[this->textures[textureId].format],
-                               g_TextureFormatGLTypeMapping[this->textures[textureId].format], dstFormatPixels);
+    g_GfxBackend->SetTextureImage(this->textures[textureId].width, this->textures[textureId].height,
+                                  g_TextureFormatTypeGfxMapping[this->textures[textureId].format],
+                                  g_TextureFormatTypeMapping[this->textures[textureId].format], dstFormatPixels);
 
 cleanup:
     SDL_FreeSurface(unstretchedSurface);
@@ -2076,12 +2170,11 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
     u32 textureWidth = BitCeil((u32)src->w);
     u32 textureHeight = BitCeil((u32)src->h);
 
-    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE,
-                               NULL);
+    g_GfxBackend->SetTextureImage(textureWidth, textureHeight, PIXEL_RGB, PIXEL_UNSIGNED_BYTE, NULL);
 
     u8 *surfaceData = ExtractSurfacePixels(src, 3);
 
-    g_glFuncTable.glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, src->w, src->h, GL_RGB, GL_UNSIGNED_BYTE, surfaceData);
+    g_GfxBackend->SetTextureSubImage(0, 0, src->w, src->h, surfaceData);
 
     delete[] surfaceData;
 
@@ -2113,7 +2206,7 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src, const SDL_Rect &src
     this->SetColorOp(COMPONENT_ALPHA, COLOR_OP_MODULATE);
     this->SetColorOp(COMPONENT_RGB, COLOR_OP_MODULATE);
 
-    g_glFuncTable.glDeleteTextures(1, &this->currentTextureHandle);
+    g_GfxBackend->DeleteTexture(this->currentTextureHandle);
 
     this->SetCurrentSprite(NULL);
     this->SetCurrentTexture(0);

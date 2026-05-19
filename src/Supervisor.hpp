@@ -149,7 +149,7 @@ struct Supervisor
     //    LPDIRECTINPUTDEVICE8A controller;
     SDL_GameController *gameController;
     //    DIDEVCAPS controllerCaps;
-    SDL_Window *gameWindow;
+    //    SDL_Window *gameWindow;
     ZunMatrix viewMatrix;
     ZunMatrix projectionMatrix;
     ZunViewport viewport;

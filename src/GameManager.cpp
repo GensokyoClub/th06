@@ -22,14 +22,14 @@
 static const u32 g_ExtraLivesScores[5] = {10000000, 20000000, 40000000, 60000000, 1900000000};
 
 static const char *const g_EclFiles[9] = {"dummy",
-                       "data/ecldata1.ecl",
-                       "data/ecldata2.ecl",
-                       "data/ecldata3.ecl",
-                       "data/ecldata4.ecl",
-                       "data/ecldata5.ecl",
-                       "data/ecldata6.ecl",
-                       "data/ecldata7.ecl",
-                       NULL};
+                                          "data/ecldata1.ecl",
+                                          "data/ecldata2.ecl",
+                                          "data/ecldata3.ecl",
+                                          "data/ecldata4.ecl",
+                                          "data/ecldata5.ecl",
+                                          "data/ecldata6.ecl",
+                                          "data/ecldata7.ecl",
+                                          NULL};
 
 struct AnmStageFiles
 {
@@ -163,8 +163,8 @@ ChainCallbackResult GameManager::OnUpdate(GameManager *gameManager)
     SetupCamera(0);
 
     g_Supervisor.viewport.Set();
-    g_glFuncTable.glClearDepthf(1.0f);
-    g_glFuncTable.glClear(GL_DEPTH_BUFFER_BIT);
+    g_GfxBackend->SetClearDepth(1.0f);
+    g_GfxBackend->Clear(CLEAR_DEPTH_BUFFER);
 
     //    g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
     //    g_Supervisor.d3dDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, g_Stage.skyFog.color, 1.0, 0);

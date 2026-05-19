@@ -315,7 +315,7 @@ ZunResult Supervisor::AddedCallback(Supervisor *s)
     //    if (g_Supervisor.d3dDevice->Present(0, 0, 0, 0) < 0)
     //        g_Supervisor.d3dDevice->Reset(&g_Supervisor.presentParameters);
 
-    SDL_GL_SwapWindow(g_Supervisor.gameWindow);
+    g_GfxBackend->SwapBuffers();
 
     //
     g_AnmManager->CopySurfaceToBackBuffer(0, 0, 0, 0, 0);
@@ -323,7 +323,7 @@ ZunResult Supervisor::AddedCallback(Supervisor *s)
     //        g_Supervisor.d3dDevice->Reset(&g_Supervisor.presentParameters);
     //
 
-    SDL_GL_SwapWindow(g_Supervisor.gameWindow);
+    g_GfxBackend->SwapBuffers();
 
     g_AnmManager->ReleaseSurface(0);
 
@@ -711,7 +711,7 @@ ZunResult Supervisor::LoadConfig(const char *path)
             g_GameErrorContext.Log(TH_ERR_CONFIG_CORRUPTED);
         }
         g_ControllerMapping = g_Supervisor.cfg.controllerMapping;
-        free((void*)data);
+        free((void *)data);
     }
     if (((this->cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) != 0)
     {

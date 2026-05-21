@@ -1,5 +1,8 @@
 #pragma once
 
+// Header originally created by Zero318
+//   Any bad parts were tacked on by me
+
 #include <cstring>
 #include "inttypes.hpp"
 #include <SDL2/SDL_endian.h>
@@ -18,47 +21,71 @@ static_assert(
 );
 
 template <typename T>
-using UIForSize = std::conditional_t<sizeof(T) == sizeof(u8), u8,
-                  std::conditional_t<sizeof(T) == sizeof(u16), u16,
-                  std::conditional_t<sizeof(T) == sizeof(u32), u32,
-                  std::conditional_t<sizeof(T) == sizeof(u64), u64,
-                  void>>>>;
+using UIForSize = typename std::conditional<sizeof(T) == sizeof(u8), u8,
+                  typename std::conditional<sizeof(T) == sizeof(u16), u16,
+                  typename std::conditional<sizeof(T) == sizeof(u32), u32,
+                  typename std::conditional<sizeof(T) == sizeof(u64), u64,
+                  void>::type>::type>::type>::type;
 
-#if defined(__GNUC__) || defined(__clang__)
-#define UNALIGNED_ATTR __attribute__((packed))
-#elif defined _MSC_VER
-#define UNALIGNED_ATTR __declspec(align(1))
+// GCC-ARM without aligned access and GCC-SuperH both fail to inline a fixed-size unaligned memcpy,
+//    giving horrid codegen, but on just about every other platform, memcpy gets inlined and
+//    produces equal or better codegen than a manual implementation. So this check exists
+//    Is this hyperspecific? Yes, but I spent way too much time looking at godbolt for this
+//    header in general and I'll be damned if it's going to have suboptimal codegen
+#if (defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER)) && \
+    ((defined(__arm__) && !defined(__ARM_FEATURE_UNALIGNED)) || \
+     (defined(__sh__)))
+    #define DO_MANUAL_MEMCPY 1
 #else
-#define UNALIGNED_ATTR
-#define NEEDS_FALLBACK
+    #define DO_MANUAL_MEMCPY 0
 #endif
 
-template <typename T> struct UNALIGNED_ATTR Unaligned
-{
-    T data;
-
-    inline constexpr operator T() const
-    {
-// In nearly every case, the compiler will inline this memcpy and generate the same code
-//   as it would with a packed / unaligned attribute, except GCC ARM32 with mno-unaligned-access,
-//   which seems to be weirdly bad at inlining memcpy in general. That makes all of the compiler-specific
-//   macro-ing necessary to get codegen that doesn't suck :(
-#ifdef NEEDS_FALLBACK
-        T ret;
-        std::memcpy(&ret, (int *)&data, sizeof(T));
-        return ret;
-#else
-        return data;
-#endif
-    }
-};
-
-#undef UNALIGNED_ATTR
-#undef NEEDS_FALLBACK
+#if !DO_MANUAL_MEMCPY
+template <typename T>
+static inline constexpr UIForSize<T> read_to_ui_unaligned(void *value) {
+    UIForSize<T> ret;
+    std::memcpy(&ret, value, sizeof(T));
+    return ret;
+}
 
 template <typename T>
-static inline constexpr UIForSize<T> bit_cast_from_size(void *value) {
-    return *(Unaligned<UIForSize<T>> *)value;
+static inline constexpr void write_from_ui_unaligned(void *dst, const T &src) {
+    std::memcpy(dst, &src, sizeof(T));
+}
+#else
+
+// Since we have to go byte-by-byte anyway we do the accesses here as little endian.
+//   Aside from dodging the byteswap, this is also necessary because if GCC thinks we're
+//   doing a memcpy it'll "helpfully" outline it to the libc's memcpy :|
+
+template <typename T>
+static inline constexpr UIForSize<T> read_to_ui_unaligned(void *value) {
+    UIForSize<T> ret = 0;
+
+    for(i32 i = sizeof(T) - 1; i >= 0; i--) {
+        ret <<= 8;
+        ret |= ((char *) value)[i];
+    }
+
+    return ret;
+}
+
+template <typename T>
+static inline constexpr void write_from_ui_unaligned(void *dst, const T &src) {
+    T n = src;
+
+    for(size_t i = 0; i < sizeof(T); i++) {
+        ((char *)dst)[i] = n & 0xFF;
+        n >>= 8;
+    }
+}
+#endif
+
+template <typename T>
+static inline constexpr UIForSize<T> bit_cast_from_size(const T &a) {
+    UIForSize<T> ret;
+    std::memcpy(&ret, &a, sizeof(T));
+    return ret;
 }
 
 template <typename T>
@@ -78,9 +105,9 @@ struct LE {
     T raw;
 
     inline constexpr operator T() const {
-        UIForSize<T> ui = bit_cast_from_size<T>((void *)&raw);
+        UIForSize<T> ui = read_to_ui_unaligned<T>((void *)&raw);
 
-        if constexpr (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+        if constexpr ((std::is_floating_point<T>::value ? SDL_FLOATWORDORDER : SDL_BYTEORDER) == SDL_BIG_ENDIAN && !DO_MANUAL_MEMCPY) {
             ui = ZunByteswap(ui);
         }
 
@@ -88,39 +115,15 @@ struct LE {
     }
 
     inline constexpr LE &operator=(const T &a) {
-        UIForSize<T> ui = bit_cast_from_size<T>((void *)&a);
+        UIForSize<T> ui = bit_cast_from_size<T>(a);
 
-        if constexpr (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+        if constexpr ((std::is_floating_point<T>::value ? SDL_FLOATWORDORDER : SDL_BYTEORDER) == SDL_BIG_ENDIAN && !DO_MANUAL_MEMCPY) {
             ui = ZunByteswap(ui);
         }
 
-        raw = bit_cast_to_size<T>(ui);
+        write_from_ui_unaligned((void *)&raw, ui);
         return *this;
     }
 };
 
-template <>
-struct LE<float> {
-    float raw;
-
-    inline constexpr operator float() const {
-        UIForSize<float> ui = bit_cast_from_size<float>((void*) &raw);
-
-        if constexpr (SDL_FLOATWORDORDER == SDL_BIG_ENDIAN) {
-            ui = ZunByteswap(ui);
-        }
-
-        return bit_cast_to_size<float>(ui);
-    }
-
-    inline constexpr LE &operator=(const float &a) {
-        UIForSize<float> ui = bit_cast_from_size<float>((void *)&a);
-
-        if constexpr (SDL_FLOATWORDORDER == SDL_BIG_ENDIAN) {
-            ui = ZunByteswap(ui);
-        }
-
-        raw = bit_cast_to_size<float>(ui);
-        return *this;
-    }
-};
+#undef DO_MANUAL_MEMCPY

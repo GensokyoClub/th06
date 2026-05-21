@@ -39,8 +39,7 @@ struct ItemManager
     void OnDraw();
     void RemoveAllItems();
 
-    Item items[512];
-    Item dummy_item;
+    Item items[513];
     i32 nextIndex;
     u32 itemCount;
 };

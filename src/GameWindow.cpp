@@ -7,8 +7,8 @@
 #include "Supervisor.hpp"
 #include "ZunMath.hpp"
 #include "graphics/FixedFunctionGL.hpp"
-#include "graphics/WebGL.hpp"
 #include "graphics/Software.hpp"
+#include "graphics/WebGL.hpp"
 #include "i18n.hpp"
 #include "utils.hpp"
 
@@ -27,11 +27,9 @@ static const struct
 {
     const char *name;
     GfxInterface *(*TryInit)();
-} s_RenderBackends[] = {
-    {"GL(ES) 2.0 / WebGL", WebGL::Create}, 
-    {"Fixed function GL(ES)", FixedFunctionGL::Init},
-    {"Software fallback (VERY SLOW)", Software::Init}
-};
+} s_RenderBackends[] = {{"GL(ES) 2.0 / WebGL", WebGL::Create},
+                        {"Fixed function GL(ES)", FixedFunctionGL::Init},
+                        {"Software fallback (VERY SLOW)", Software::Init}};
 
 RenderResult GameWindow::Render()
 {
@@ -253,7 +251,8 @@ void GameWindow::CreateGameWindow()
 
 ZunResult GameWindow::InitD3dRendering()
 {
-    if(!g_GfxBackend) {
+    if (!g_GfxBackend)
+    {
         g_GameErrorContext.Fatal(TH_ERR_D3D_INIT_FAILED);
         return ZUN_ERROR;
     }

@@ -463,7 +463,7 @@ void WebGL::BindTexture(GfxTextureHandle handle)
 
 void WebGL::DeleteTexture(GfxTextureHandle handle)
 {
-    g_glFuncTable.glDeleteTextures(1, (GLuint*)&handle);
+    g_glFuncTable.glDeleteTextures(1, (GLuint *)&handle);
 }
 
 void WebGL::SetTextureImage(u32 width, u32 height, PixelFormat fmt, PixelDataType type, const void *data)

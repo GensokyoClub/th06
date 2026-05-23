@@ -337,8 +337,6 @@ struct ZunMatrix
         return result;
     }
 
-    
-
     void Identity()
     {
         std::memset(this->m, 0, sizeof(m));

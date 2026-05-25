@@ -92,7 +92,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
     EclRawInstrLaserArgs *local_64;
     const EclRawInstrSpellcardEffectArgs *local_6c;
     ZunVec3 local_98;
-    EclRawInstrEnemyCreateArgs local_b0;
+    EclRawInstrEnemyCreateArgs *enemyCreateInstr;
     Enemy *local_b4;
     EclVarId tmpVarId1;
     EclVarId tmpVarId2;
@@ -865,12 +865,13 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                 g_GameManager.counat += 1800;
                 break;
             case ECL_OPCODE_ENEMYCREATE:
-                local_b0 = instruction->args.enemyCreate;
-                tmpVec3 = local_b0.pos;
+                enemyCreateInstr = &instruction->args.enemyCreate;
+                tmpVec3 = enemyCreateInstr->pos;
                 tmpVec3.x = EnemyEclInstr::GetVarFloatValue(enemy, tmpVec3.x, NULL);
                 tmpVec3.y = EnemyEclInstr::GetVarFloatValue(enemy, tmpVec3.y, NULL);
                 tmpVec3.z = EnemyEclInstr::GetVarFloatValue(enemy, tmpVec3.z, NULL);
-                g_EnemyManager.SpawnEnemy(local_b0.subId, &tmpVec3, local_b0.life, local_b0.itemDrop, local_b0.score);
+                g_EnemyManager.SpawnEnemy(enemyCreateInstr->subId, &tmpVec3, enemyCreateInstr->life,
+                                          enemyCreateInstr->itemDrop, enemyCreateInstr->score);
                 break;
             case ECL_OPCODE_ENEMYKILLALL:
                 for (local_b4 = &g_EnemyManager.enemies[0], local_b8 = 0;

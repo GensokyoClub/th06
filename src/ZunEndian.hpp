@@ -104,6 +104,10 @@ template <typename T>
 struct LE {
     T raw;
 
+    // Prevent any situation where a struct containing LEs of some type is copied, the compiler assumes
+    //   an alignment, and the resulting copy segfaults. Instead we throw a compile-time error
+    LE(const LE<T> &a) = delete;
+
     inline constexpr operator T() const {
         UIForSize<T> ui = read_to_ui_unaligned<T>((void *)&raw);
 

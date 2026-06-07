@@ -187,7 +187,7 @@ void EnemyManager::RunEclTimeline()
             case 1:
                 if (!g_Gui.BossPresent())
                 {
-                    this->SpawnEnemy(this->timelineInstr->arg0, this->timelineInstr->args.Var1AsVec(), -1, ITEM_NO_ITEM,
+                    this->SpawnEnemy(this->timelineInstr->arg0, this->timelineInstr->args.Var1AsVec(), -1, ITEM_RANDOM_ITEM,
                                      -1);
                 }
                 break;
@@ -204,7 +204,7 @@ void EnemyManager::RunEclTimeline()
                 if (!g_Gui.BossPresent())
                 {
                     spawnedEnemy = this->SpawnEnemy(this->timelineInstr->arg0, this->timelineInstr->args.Var1AsVec(),
-                                                    -1, ITEM_NO_ITEM, -1);
+                                                    -1, ITEM_RANDOM_ITEM, -1);
                     spawnedEnemy->flags.unk4 = 1;
                 }
                 break;
@@ -245,7 +245,7 @@ void EnemyManager::RunEclTimeline()
                     {
                         pos2.z = g_Rng.GetRandomF32InRange(800.0f);
                     }
-                    this->SpawnEnemy(this->timelineInstr->arg0, &pos2, -1, ITEM_NO_ITEM, -1);
+                    this->SpawnEnemy(this->timelineInstr->arg0, &pos2, -1, ITEM_RANDOM_ITEM, -1);
                 }
                 break;
             case 6:
@@ -286,7 +286,7 @@ void EnemyManager::RunEclTimeline()
                     {
                         pos4.z = g_Rng.GetRandomF32InRange(800.0f);
                     }
-                    spawnedEnemy = this->SpawnEnemy(this->timelineInstr->arg0, &pos4, -1, ITEM_NO_ITEM, -1);
+                    spawnedEnemy = this->SpawnEnemy(this->timelineInstr->arg0, &pos4, -1, ITEM_RANDOM_ITEM, -1);
                     spawnedEnemy->flags.unk4 = 1;
                 }
                 break;
@@ -672,7 +672,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
                         g_EffectManager.SpawnParticles(curEnemy->deathAnm2 + 4, &curEnemy->position, 3, 0xffffffff);
                         g_ItemManager.SpawnItem(&curEnemy->position, (ItemType)curEnemy->itemDrop, local_8);
                     }
-                    else if (curEnemy->itemDrop == ITEM_NO_ITEM)
+                    else if (curEnemy->itemDrop == ITEM_RANDOM_ITEM)
                     {
                         if (mgr->randomItemSpawnIndex % 3 == 0)
                         {

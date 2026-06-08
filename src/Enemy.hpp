@@ -107,7 +107,7 @@ struct EnemyFlags
     // Second byte
     u8 isInteractable : 1;
     u8 unk7 : 1;
-    u8 unk8 : 1;
+    u8 hasBeenInBounds : 1;
     u8 isBoss : 1;
     u8 isDamageable : 1;
     u8 unk11 : 3;

@@ -46,7 +46,7 @@ void EnemyManager::Initialize()
     enemy->bossTimer.InitializeForPopup();
     enemy->flags.isInteractable = 1;
     enemy->flags.unk7 = 1;
-    enemy->flags.unk8 = 0;
+    enemy->flags.hasBeenInBounds = 0;
     enemy->hitboxDimensions = D3DXVECTOR3(12.0f, 12.0f, 12.0f);
     enemy->axisSpeed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
     enemy->angularVelocity = 0.0f;
@@ -540,13 +540,13 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
         mgr->enemyCount++;
         curEnemy->Move();
         curEnemy->ClampPos();
-        if (curEnemy->flags.unk8 == 0 &&
+        if (curEnemy->flags.hasBeenInBounds == 0 &&
             g_GameManager.IsInBounds(curEnemy->position.x, curEnemy->position.y, curEnemy->primaryVm.sprite->widthPx,
                                      curEnemy->primaryVm.sprite->heightPx))
         {
-            curEnemy->flags.unk8 = 1;
+            curEnemy->flags.hasBeenInBounds = 1;
         }
-        if (curEnemy->flags.unk8 == 1 &&
+        if (curEnemy->flags.hasBeenInBounds == 1 &&
             !g_GameManager.IsInBounds(curEnemy->position.x, curEnemy->position.y, curEnemy->primaryVm.sprite->widthPx,
                                       curEnemy->primaryVm.sprite->heightPx))
         {
@@ -580,7 +580,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
             }
         }
         local_8 = 0;
-        if (curEnemy->flags.unk8 != 0 && !curEnemy->flags.unk15)
+        if (curEnemy->flags.hasBeenInBounds != 0 && !curEnemy->flags.unk15)
         {
             enemyLifeBeforeDmg = curEnemy->life;
             if (curEnemy->flags.unk7 && curEnemy->flags.isInteractable)

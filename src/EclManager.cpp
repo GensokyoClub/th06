@@ -858,7 +858,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                 for (local_b4 = &g_EnemyManager.enemies[0], local_b8 = 0;
                      local_b8 < ARRAY_SIZE_SIGNED(g_EnemyManager.enemies) - 1; local_b8++, local_b4++)
                 {
-                    if (!local_b4->flags.unk5)
+                    if (!local_b4->flags.isSlotOccupied)
                     {
                         continue;
                     }

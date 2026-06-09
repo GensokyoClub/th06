@@ -42,7 +42,7 @@ void EnemyManager::Initialize()
     {
         enemy->vms[i].anmFileIndex = -1;
     }
-    enemy->flags.unk5 = 1;
+    enemy->flags.isSlotOccupied = 1;
     enemy->bossTimer.InitializeForPopup();
     enemy->flags.isInteractable = 1;
     enemy->flags.unk7 = 1;
@@ -98,7 +98,7 @@ Enemy *EnemyManager::SpawnEnemy(i32 eclSubId, D3DXVECTOR3 *pos, i16 life, i16 it
     idx = 0;
     for (; idx < ARRAY_SIZE_SIGNED(this->enemies) - 1; idx++, newEnemy++)
     {
-        if (newEnemy->flags.unk5)
+        if (newEnemy->flags.isSlotOccupied)
             continue;
 
         *newEnemy = this->enemyTemplate;
@@ -316,7 +316,7 @@ void EnemyManager::RunEclTimeline()
                 break;
             case 0xc:
                 if (this->bosses[this->timelineInstr->arg0] != NULL &&
-                    this->bosses[this->timelineInstr->arg0]->flags.unk5)
+                    this->bosses[this->timelineInstr->arg0]->flags.isSlotOccupied)
                 {
                     this->timelineTime.Decrement(1);
                     return;
@@ -360,7 +360,7 @@ ZunBool Enemy::HandleLifeCallback()
         curEnemy = g_EnemyManager.enemies;
         for (i = 0; i < ARRAY_SIZE_SIGNED(g_EnemyManager.enemies) - 1; i++, curEnemy++)
         {
-            if (!curEnemy->flags.unk5)
+            if (!curEnemy->flags.isSlotOccupied)
             {
                 continue;
             }
@@ -418,7 +418,7 @@ ZunBool Enemy::HandleTimerCallback()
         curEnemy = g_EnemyManager.enemies;
         for (i = 0; i < ARRAY_SIZE_SIGNED(g_EnemyManager.enemies) - 1; i++, curEnemy++)
         {
-            if (!curEnemy->flags.unk5)
+            if (!curEnemy->flags.isSlotOccupied)
             {
                 continue;
             }
@@ -450,7 +450,7 @@ void Enemy::Despawn()
 {
     if (!this->flags.deathMode)
     {
-        this->flags.unk5 = 0;
+        this->flags.isSlotOccupied = 0;
     }
     else
     {
@@ -533,7 +533,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
     for (curEnemy = &mgr->enemies[0], mgr->enemyCount = 0, enemyIdx = 0; enemyIdx < ARRAY_SIZE_SIGNED(mgr->enemies) - 1;
          enemyIdx++, curEnemy++)
     {
-        if (!curEnemy->flags.unk5)
+        if (!curEnemy->flags.isSlotOccupied)
         {
             continue;
         }
@@ -550,7 +550,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
             !g_GameManager.IsInBounds(curEnemy->position.x, curEnemy->position.y, curEnemy->primaryVm.sprite->widthPx,
                                       curEnemy->primaryVm.sprite->heightPx))
         {
-            curEnemy->flags.unk5 = 0;
+            curEnemy->flags.isSlotOccupied = 0;
             curEnemy->Despawn();
             continue;
         }
@@ -564,7 +564,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
         }
         if (g_EclManager.RunEcl(curEnemy) == ZUN_ERROR)
         {
-            curEnemy->flags.unk5 = 0;
+            curEnemy->flags.isSlotOccupied = 0;
             curEnemy->Despawn();
             continue;
         }
@@ -659,7 +659,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
                     goto LAB_00412a4d;
                 case 0:
                     g_GameManager.AddScore(curEnemy->score);
-                    curEnemy->flags.unk5 = 0;
+                    curEnemy->flags.isSlotOccupied = 0;
                 LAB_00412a4d:
                     if (curEnemy->flags.isBoss)
                     {
@@ -776,7 +776,7 @@ ChainCallbackResult EnemyManager::OnDraw(EnemyManager *mgr)
     for (curEnemy = &mgr->enemies[0], curEnemyIdx = 0; curEnemyIdx < ARRAY_SIZE_SIGNED(mgr->enemies) - 1;
          curEnemyIdx++, curEnemy++)
     {
-        if (!curEnemy->flags.unk5)
+        if (!curEnemy->flags.isSlotOccupied)
         {
             continue;
         }

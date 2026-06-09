@@ -45,7 +45,7 @@ void EnemyManager::Initialize()
     enemy->flags.isSlotOccupied = 1;
     enemy->bossTimer.InitializeForPopup();
     enemy->flags.isInteractable = 1;
-    enemy->flags.unk7 = 1;
+    enemy->flags.isCollidable = 1;
     enemy->flags.hasBeenInBounds = 0;
     enemy->hitboxDimensions = D3DXVECTOR3(12.0f, 12.0f, 12.0f);
     enemy->axisSpeed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -583,7 +583,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
         if (curEnemy->flags.hasBeenInBounds != 0 && !curEnemy->flags.isInvisible)
         {
             enemyLifeBeforeDmg = curEnemy->life;
-            if (curEnemy->flags.unk7 && curEnemy->flags.isInteractable)
+            if (curEnemy->flags.isCollidable && curEnemy->flags.isInteractable)
             {
                 enemyHitbox = curEnemy->hitboxDimensions / 1.5;
                 if (g_Player.CalcKillBoxCollision(&curEnemy->position, &enemyHitbox) == 1 && curEnemy->flags.isInteractable &&

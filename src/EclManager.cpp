@@ -664,7 +664,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                 enemy->hitboxDimensions.z = instruction->args.move.pos.z;
                 break;
             case ECL_OPCODE_ENEMYFLAGCOLLISION:
-                enemy->flags.unk7 = instruction->args.setInt;
+                enemy->flags.isCollidable = instruction->args.setInt;
                 break;
             case ECL_OPCODE_ENEMYFLAGCANTAKEDAMAGE:
                 enemy->flags.isDamageable = instruction->args.setInt;

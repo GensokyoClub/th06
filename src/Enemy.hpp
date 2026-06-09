@@ -101,7 +101,7 @@ struct EnemyFlags
     u8 movementMode : 2;
     u8 movementEaseType : 3;
     u8 shootingDisabled : 1;
-    u8 unk4 : 1;
+    u8 invertX : 1;
     u8 isSlotOccupied : 1;
 
     // Second byte

@@ -55,7 +55,7 @@ void EnemyManager::Initialize()
     enemy->speed = 0.0f;
     enemy->flags.movementMode = 0;
     enemy->flags.shootingDisabled = 0;
-    enemy->flags.unk4 = 0;
+    enemy->flags.invertX = 0;
     enemy->flags.isBoss = 0;
     enemy->stackDepth = 0;
     enemy->life = 1;
@@ -197,7 +197,7 @@ void EnemyManager::RunEclTimeline()
                     args2 = &this->timelineInstr->args;
                     spawnedEnemy = this->SpawnEnemy(this->timelineInstr->arg0, args2->Var1AsVec(), args2->ushortVar1,
                                                     args2->ushortVar2, args2->uintVar4);
-                    spawnedEnemy->flags.unk4 = 1;
+                    spawnedEnemy->flags.invertX = 1;
                 }
                 break;
             case 3:
@@ -205,7 +205,7 @@ void EnemyManager::RunEclTimeline()
                 {
                     spawnedEnemy = this->SpawnEnemy(this->timelineInstr->arg0, this->timelineInstr->args.Var1AsVec(),
                                                     -1, ITEM_RANDOM_ITEM, -1);
-                    spawnedEnemy->flags.unk4 = 1;
+                    spawnedEnemy->flags.invertX = 1;
                 }
                 break;
             case 4:
@@ -267,7 +267,7 @@ void EnemyManager::RunEclTimeline()
                     }
                     spawnedEnemy = this->SpawnEnemy(this->timelineInstr->arg0, &pos3, args4->ushortVar1,
                                                     args4->ushortVar2, args4->uintVar4);
-                    spawnedEnemy->flags.unk4 = 1;
+                    spawnedEnemy->flags.invertX = 1;
                 }
                 break;
             case 7:
@@ -287,7 +287,7 @@ void EnemyManager::RunEclTimeline()
                         pos4.z = g_Rng.GetRandomF32InRange(800.0f);
                     }
                     spawnedEnemy = this->SpawnEnemy(this->timelineInstr->arg0, &pos4, -1, ITEM_RANDOM_ITEM, -1);
-                    spawnedEnemy->flags.unk4 = 1;
+                    spawnedEnemy->flags.invertX = 1;
                 }
                 break;
             case 8:
@@ -862,7 +862,7 @@ void EnemyManager::CutChain()
 
 void Enemy::Move()
 {
-    if (!this->flags.unk4)
+    if (!this->flags.invertX)
     {
         this->position.x += g_Supervisor.effectiveFramerateMultiplier * this->axisSpeed.x;
     }

@@ -70,7 +70,7 @@ void EnemyManager::Initialize()
     enemy->anmExRight = -1;
     enemy->anmExDefaults = -1;
     enemy->flags.isDamageable = 1;
-    enemy->flags.unk11 = 0;
+    enemy->flags.deathMode = 0;
     enemy->deathCallbackSub = -1;
     enemy->flags.shouldClampPos = 0;
     enemy->effectIdx = 0;
@@ -448,7 +448,7 @@ ZunBool Enemy::HandleTimerCallback()
 
 void Enemy::Despawn()
 {
-    if (!this->flags.unk11)
+    if (!this->flags.deathMode)
     {
         this->flags.unk5 = 0;
     }
@@ -642,12 +642,12 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
             {
                 curEnemy->lifeCallbackThreshold = -1;
                 curEnemy->timerCallbackThreshold = -1;
-                switch (curEnemy->flags.unk11)
+                switch (curEnemy->flags.deathMode)
                 {
                 case 3:
                     curEnemy->life = 1;
                     curEnemy->flags.isDamageable = 0;
-                    curEnemy->flags.unk11 = 0;
+                    curEnemy->flags.deathMode = 0;
                     g_Gui.bossPresent = 0;
                     g_EffectManager.SpawnParticles(curEnemy->deathAnm1, &curEnemy->position, 1, COLOR_WHITE);
                     g_EffectManager.SpawnParticles(curEnemy->deathAnm1, &curEnemy->position, 1, COLOR_WHITE);

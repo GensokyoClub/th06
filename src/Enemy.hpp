@@ -110,7 +110,7 @@ struct EnemyFlags
     u8 hasBeenInBounds : 1;
     u8 isBoss : 1;
     u8 isDamageable : 1;
-    u8 unk11 : 3;
+    u8 deathMode : 3;
 
     // Third byte
     bool shouldClampPos : 1;

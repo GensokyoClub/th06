@@ -673,7 +673,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                 g_SoundPlayer.PlaySoundByIdx((SoundIdx)instruction->args.setInt, 0);
                 break;
             case ECL_OPCODE_ENEMYFLAGDEATH:
-                enemy->flags.unk11 = instruction->args.setInt;
+                enemy->flags.deathMode = instruction->args.setInt;
                 break;
             case ECL_OPCODE_DEATHCALLBACKSUB:
                 enemy->deathCallbackSub = instruction->args.setInt;

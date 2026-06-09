@@ -115,7 +115,7 @@ struct EnemyFlags
     // Third byte
     bool shouldClampPos : 1;
     u8 rotateAnm : 1;
-    u8 unk14 : 1;
+    u8 disableCallStack : 1;
     u8 isInvisible : 1;
     u8 isTimeoutSpell : 1;
 

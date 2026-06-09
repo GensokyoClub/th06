@@ -243,13 +243,13 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
             HANDLE_CALL:
                 local_14 = instruction->args.call.eclSub;
                 enemy->currentContext.currentInstr = (EclRawInstr *)((u8 *)instruction + instruction->offsetToNext);
-                if (enemy->flags.unk14 == 0)
+                if (enemy->flags.disableCallStack == 0)
                 {
                     memcpy(&enemy->savedContextStack[enemy->stackDepth], &enemy->currentContext,
                            sizeof(EnemyEclContext));
                 }
                 g_EclManager.CallEclSub(&enemy->currentContext, (u16)local_14);
-                if (enemy->flags.unk14 == 0 && enemy->stackDepth < 7)
+                if (enemy->flags.disableCallStack == 0 && enemy->stackDepth < 7)
                 {
                     enemy->stackDepth++;
                 }
@@ -257,7 +257,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                 enemy->currentContext.float0 = instruction->args.call.float0;
                 continue;
             case ECL_OPCODE_RET:
-                if (enemy->flags.unk14)
+                if (enemy->flags.disableCallStack)
                 {
                     utils::DebugPrint2("error : no Stack Ret\n");
                 }
@@ -685,7 +685,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                 enemy->runInterrupt = instruction->args.setInt;
             HANDLE_INTERRUPT:
                 enemy->currentContext.currentInstr = (EclRawInstr *)((u8 *)instruction + instruction->offsetToNext);
-                if (enemy->flags.unk14 == 0)
+                if (enemy->flags.disableCallStack == 0)
                 {
                     memcpy(&enemy->savedContextStack[enemy->stackDepth], &enemy->currentContext,
                            sizeof(EnemyEclContext));
@@ -896,7 +896,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                 }
                 break;
             case ECL_OPCODE_ENEMYFLAGDISABLECALLSTACK:
-                enemy->flags.unk14 = instruction->args.setInt;
+                enemy->flags.disableCallStack = instruction->args.setInt;
                 break;
             case ECL_OPCODE_BULLETRANKINFLUENCE:
                 enemy->bulletRankSpeedLow = args->bulletRankInfluence.bulletRankSpeedLow;

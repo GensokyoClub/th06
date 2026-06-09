@@ -98,7 +98,7 @@ ZUN_ASSERT_SIZE(EnemyEclContext, 0x4c);
 struct EnemyFlags
 {
     // First byte
-    u8 unk1 : 2;
+    u8 movementMode : 2;
     u8 movementEaseType : 3;
     u8 shootingDisabled : 1;
     u8 unk4 : 1;

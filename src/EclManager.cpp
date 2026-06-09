@@ -318,34 +318,34 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                 enemy->axisSpeed.x = *EnemyEclInstr::GetVarFloat(enemy, &enemy->axisSpeed.x, NULL);
                 enemy->axisSpeed.y = *EnemyEclInstr::GetVarFloat(enemy, &enemy->axisSpeed.y, NULL);
                 enemy->axisSpeed.z = *EnemyEclInstr::GetVarFloat(enemy, &enemy->axisSpeed.z, NULL);
-                enemy->flags.unk1 = 0;
+                enemy->flags.movementMode = 0;
                 break;
             case ECL_OPCODE_MOVEVELOCITY:
                 local_8 = instruction->args.move.pos;
                 enemy->angle = *EnemyEclInstr::GetVarFloat(enemy, &local_8.x, NULL);
                 enemy->speed = *EnemyEclInstr::GetVarFloat(enemy, &local_8.y, NULL);
-                enemy->flags.unk1 = 1;
+                enemy->flags.movementMode = 1;
                 break;
             case ECL_OPCODE_MOVEANGULARVELOCITY:
                 local_8 = instruction->args.move.pos;
                 enemy->angularVelocity = *EnemyEclInstr::GetVarFloat(enemy, &local_8.x, NULL);
-                enemy->flags.unk1 = 1;
+                enemy->flags.movementMode = 1;
                 break;
             case ECL_OPCODE_MOVEATPLAYER:
                 local_8 = instruction->args.move.pos;
                 enemy->angle = g_Player.AngleToPlayer(&enemy->position) + local_8.x;
                 enemy->speed = *EnemyEclInstr::GetVarFloat(enemy, &local_8.y, NULL);
-                enemy->flags.unk1 = 1;
+                enemy->flags.movementMode = 1;
                 break;
             case ECL_OPCODE_MOVESPEED:
                 local_8 = instruction->args.move.pos;
                 enemy->speed = *EnemyEclInstr::GetVarFloat(enemy, &local_8.x, NULL);
-                enemy->flags.unk1 = 1;
+                enemy->flags.movementMode = 1;
                 break;
             case ECL_OPCODE_MOVEACCELERATION:
                 local_8 = instruction->args.move.pos;
                 enemy->acceleration = *EnemyEclInstr::GetVarFloat(enemy, &local_8.x, NULL);
-                enemy->flags.unk1 = 1;
+                enemy->flags.movementMode = 1;
                 break;
             case ECL_OPCODE_BULLETFANAIMED:
             case ECL_OPCODE_BULLETFAN:
@@ -923,7 +923,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
         }
         else
         {
-            switch (enemy->flags.unk1)
+            switch (enemy->flags.movementMode)
             {
             case 1:
                 enemy->angle = utils::AddNormalizeAngle(enemy->angle, g_Supervisor.effectiveFramerateMultiplier *
@@ -962,7 +962,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                 enemy->angle = atan2f(enemy->axisSpeed.y, enemy->axisSpeed.x);
                 if ((ZunBool)(enemy->moveInterpTimer.current <= 0))
                 {
-                    enemy->flags.unk1 = 0;
+                    enemy->flags.movementMode = 0;
                     enemy->position = enemy->moveInterpStartPos + enemy->moveInterp;
                     enemy->axisSpeed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
                 }

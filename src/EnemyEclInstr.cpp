@@ -55,7 +55,7 @@ void MoveDirTime(Enemy *enemy, EclRawInstr *instr)
 
     enemy->moveInterpTimer.SetCurrent(enemy->moveInterpStartTime);
 
-    enemy->flags.unk1 = 2;
+    enemy->flags.movementMode = 2;
 }
 
 void MovePosTime(Enemy *enemy, EclRawInstr *instr)
@@ -73,7 +73,7 @@ void MovePosTime(Enemy *enemy, EclRawInstr *instr)
 
     enemy->moveInterpTimer.SetCurrent(enemy->moveInterpStartTime);
 
-    enemy->flags.unk1 = 2;
+    enemy->flags.movementMode = 2;
     enemy->axisSpeed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }
 
@@ -94,7 +94,7 @@ void MoveTime(Enemy *enemy, EclRawInstr *instr)
 
     enemy->moveInterpTimer.SetCurrent(enemy->moveInterpStartTime);
 
-    enemy->flags.unk1 = 2;
+    enemy->flags.movementMode = 2;
 }
 
 i32 *GetVar(Enemy *enemy, EclVarId *eclVarId, EclValueType *valueType)

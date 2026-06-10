@@ -6,9 +6,11 @@
 #include "Chain.hpp"
 #include "ReplayData.hpp"
 #include "ZunColor.hpp"
+#include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-enum GameState {
+enum GameState
+{
     STATE_STARTUP,
     STATE_PRE_INPUT,
     STATE_MAIN_MENU,
@@ -29,13 +31,15 @@ enum GameState {
     STATE_PRACTICE_LVL_SELECT,
 };
 
-enum CursorMovement {
+enum CursorMovement
+{
     CURSOR_MOVE_UP = -1,
     CURSOR_DONT_MOVE = 0,
     CURSOR_MOVE_DOWN = 1,
 };
 
-enum OptionsCursorPosition {
+enum OptionsCursorPosition
+{
     CURSOR_OPTIONS_POS_LIFECOUNT,
     CURSOR_OPTIONS_POS_BOMBCOUNT,
     CURSOR_OPTIONS_POS_COLORMODE,
@@ -47,40 +51,38 @@ enum OptionsCursorPosition {
     CURSOR_OPTIONS_POS_EXIT,
 };
 
-struct MainMenu {
+struct MainMenu
+{
     MainMenu();
-    bool BeginStartup();
-    bool DrawStartMenu();
+    ZunResult BeginStartup();
+    ZunResult DrawStartMenu();
     u32 OnUpdateOptionsMenu();
-    bool DrawReplayMenu();
-    bool ChoosePracticeLevel();
+    ZunResult DrawReplayMenu() const;
+    ZunResult ChoosePracticeLevel() const;
     bool WeirdSecondInputCheck();
-    void ColorMenuItem(AnmVm *, i32, i32, i32);
+    void ColorMenuItem(AnmVm *, i32, i32, i32) const;
 
-    static bool LoadTitleAnm(MainMenu *menu);
+    static ZunResult LoadTitleAnm(MainMenu *menu);
     static CursorMovement MoveCursor(MainMenu *menu, i32 menuLength);
-    static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor,
-                             ZunColor activeItemColor,
-                             ZunColor inactiveItemColor,
-                             i32 spriteIdx /* I think*/);
-    static void SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping,
-                            bool unk);
+    static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor, ZunColor activeItemColor,
+                             ZunColor inactiveItemColor, i32 spriteIdx /* I think*/);
+    static void SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, bool unk);
 
     i32 ReplayHandling();
-    static bool LoadReplayMenu(MainMenu *menu);
+    static ZunResult LoadReplayMenu(MainMenu *menu);
 
-    static bool RegisterChain(u32 isDemo);
+    static ZunResult RegisterChain(u32 isDemo);
     static ChainCallbackResult OnUpdate(MainMenu *s);
     static ChainCallbackResult OnDraw(MainMenu *s);
-    static bool AddedCallback(MainMenu *s);
-    static bool DeletedCallback(MainMenu *s);
-    static bool LoadDiffCharSelect(MainMenu *s);
+    static ZunResult AddedCallback(MainMenu *s);
+    static ZunResult DeletedCallback(MainMenu *s);
+    static ZunResult LoadDiffCharSelect(MainMenu *s);
 
     static void ReleaseTitleAnm();
 
     AnmVm vm[122];
     i32 cursor;
-    // i8 padding[0x40];
+    i8 padding[0x40];
     u32 unk_81e4;
     i32 chosenReplay;
     i32 replayFilesNum;

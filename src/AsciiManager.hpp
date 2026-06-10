@@ -7,12 +7,14 @@
 #include "StageMenu.hpp"
 #include "ZunColor.hpp"
 #include "ZunMath.hpp"
+#include "ZunResult.hpp"
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
 #define TEXT_RIGHT_ARROW 0x7f
 
-struct AsciiManagerString {
+struct AsciiManagerString
+{
     char text[64];
     ZunVec3 position;
     ZunColor color;
@@ -24,7 +26,8 @@ struct AsciiManagerString {
     u32 isGui;
 };
 
-struct AsciiManagerPopup {
+struct AsciiManagerPopup
+{
     char digits[8];
     ZunVec3 position;
     ZunColor color;
@@ -33,23 +36,29 @@ struct AsciiManagerPopup {
     u8 characterCount;
 };
 
+struct WeirdPadding
+{
+    u32 unk;
+};
+
 // The AsciiManager is responsible for drawing various textual elements on the
 // screen:
 //
 // - The FPS counter
 // - The in-game menus
 // - Various text elements such as the "Stage clear" prompt.
-struct AsciiManager {
+struct AsciiManager
+{
     AsciiManager();
 
-    static bool RegisterChain();
+    static ZunResult RegisterChain();
     static void CutChain();
 
     static ChainCallbackResult OnUpdate(AsciiManager *s);
     static ChainCallbackResult OnDrawMenus(AsciiManager *s);
     static ChainCallbackResult OnDrawPopups(AsciiManager *s);
-    static bool AddedCallback(AsciiManager *s);
-    static bool DeletedCallback(AsciiManager *s);
+    static ZunResult AddedCallback(AsciiManager *s);
+    static ZunResult DeletedCallback(AsciiManager *s);
 
     void InitializeVms();
 
@@ -57,12 +66,13 @@ struct AsciiManager {
     void DrawPopupsWithHwVertexProcessing();
     void DrawPopupsWithoutHwVertexProcessing();
 
-    void AddString(ZunVec3 *position, const char *text);
-    void AddFormatText(ZunVec3 *position, const char *fmt, ...);
-    void CreatePopup1(ZunVec3 *position, i32 value, ZunColor color);
-    void CreatePopup2(ZunVec3 *position, i32 value, ZunColor color);
+    void AddString(const ZunVec3 *position, const char *text);
+    void AddFormatText(const ZunVec3 *position, const char *fmt, ...);
+    void CreatePopup1(const ZunVec3 *position, i32 value, ZunColor color);
+    void CreatePopup2(const ZunVec3 *position, i32 value, ZunColor color);
 
-    void SetColor(ZunColor color) {
+    void SetColor(ZunColor color)
+    {
         this->color = color;
     }
 
@@ -74,10 +84,13 @@ struct AsciiManager {
     ZunVec2 scale;
     // If true, we are drawing an element of the Gui class.
     u32 isGui;
-    // If true, we are drawing the currently selected element of the MainMenu class.
+    // If true, we are drawing the currently selected element of the MainMenu
+    // class.
     bool isSelected;
     i32 nextPopupIndex1;
     i32 nextPopupIndex2;
+    // Seems unused
+    WeirdPadding unk3;
     // Menu that shows up when the player presses the menu button while in-game.
     StageMenu gameMenu;
     // Menu that shows up when the player dies after losing their last life.

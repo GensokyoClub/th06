@@ -3,32 +3,39 @@
 #include "Supervisor.hpp"
 #include "inttypes.hpp"
 
-struct ZunTimer {
+struct ZunTimer
+{
     i32 previous;
     f32 subFrame;
     i32 current;
 
-    ZunTimer() {
+    ZunTimer()
+    {
         this->Initialize();
     }
 
-    bool operator==(i32 time) {
+    bool operator==(i32 time) const
+    {
         return this->current == time;
     }
 
-    bool operator>=(i32 time) {
+    bool operator>=(i32 time) const
+    {
         return this->current >= time;
     }
 
-    bool operator>(i32 time) {
+    bool operator>(i32 time) const
+    {
         return this->current > time;
     }
 
-    bool operator<(i32 time) {
+    bool operator<(i32 time) const
+    {
         return this->current < time;
     }
 
-    bool operator<=(i32 time) {
+    bool operator<=(i32 time) const
+    {
         return this->current <= time;
     }
 
@@ -37,36 +44,43 @@ struct ZunTimer {
     void Decrement(i32 value);
     i32 NextTick();
 
-    void IncrementInline(i32 value) {
+    void IncrementInline(i32 value)
+    {
         this->Increment(value);
     }
 
-    void InitializeForPopup() {
+    void InitializeForPopup()
+    {
         this->current = 0;
         this->subFrame = 0;
         this->previous = -999;
     }
 
-    void SetCurrent(i32 value) {
+    void SetCurrent(i32 value)
+    {
         this->current = value;
         this->subFrame = 0;
         this->previous = -999;
     }
 
-    void Tick() {
+    void Tick()
+    {
         this->previous = this->current;
         g_Supervisor.TickTimer(&this->current, &this->subFrame);
     }
 
-    f32 AsFramesFloat() {
+    f32 AsFramesFloat() const
+    {
         return this->current + this->subFrame;
     }
 
-    i32 AsFrames() {
+    i32 AsFrames() const
+    {
         return this->current;
     }
 
-    bool HasTicked() {
+    bool HasTicked() const
+    {
         return this->current != this->previous;
     }
 };

@@ -1,6 +1,7 @@
 #pragma once
 #include "GameErrorContext.hpp"
 #include "ZunMath.hpp"
+#include "ZunResult.hpp"
 #include "inttypes.hpp"
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(x[0]))
@@ -12,19 +13,15 @@
 #define ZUN_CLEAR_BITS(a, keep_mask) (a & ~keep_mask)
 
 #define IS_PRESSED(key) (g_CurFrameInput & (key))
-#define WAS_PRESSED(key)                 \
-    (((g_CurFrameInput & (key)) != 0) && \
-     (g_CurFrameInput & (key)) != (g_LastFrameInput & (key)))
-#define WAS_PRESSED_PERIODIC(key) \
-    (WAS_PRESSED(key) ||          \
-     (((g_CurFrameInput & (key)) != 0) && (g_IsEigthFrameOfHeldInput != 0)))
+#define WAS_PRESSED(key) (((g_CurFrameInput & (key)) != 0) && (g_CurFrameInput & (key)) != (g_LastFrameInput & (key)))
+#define WAS_PRESSED_PERIODIC(key)                                                                                      \
+    (WAS_PRESSED(key) || (((g_CurFrameInput & (key)) != 0) && (g_IsEigthFrameOfHeldInput != 0)))
 
-#define HAS_OPTION(option) ((g_Supervisor.cfg.opts >> option) & 1)
+namespace utils
+{
+void DebugPrint(const char *fmt, ...);
+void DebugPrint2(const char *fmt, ...);
 
-namespace utils {
-    void DebugPrint(const char *fmt, ...);
-    void DebugPrint2(const char *fmt, ...);
-
-    f32 AddNormalizeAngle(f32 a, f32 b);
-    void Rotate(ZunVec3 *outVector, ZunVec3 *point, f32 angle);
+f32 AddNormalizeAngle(f32 a, f32 b);
+void Rotate(ZunVec3 *outVector, const ZunVec3 *point, f32 angle);
 }; // namespace utils

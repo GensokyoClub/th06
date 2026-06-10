@@ -3,9 +3,12 @@
 #include "Chain.hpp"
 #include "EclManager.hpp"
 #include "Enemy.hpp"
+#include "ZunResult.hpp"
 #include "inttypes.hpp"
+// #include <Windows.h>
 
-struct RunningSpellcardInfo {
+struct RunningSpellcardInfo
+{
     bool isCapturing;
     u32 isActive;
     i32 captureScore;
@@ -13,19 +16,19 @@ struct RunningSpellcardInfo {
     bool usedBomb;
 };
 
-struct EnemyManager {
+struct EnemyManager
+{
     void Initialize();
     EnemyManager();
-    static bool RegisterChain(const char *stgEnm1, const char *stgEnm2);
+    static ZunResult RegisterChain(const char *stgEnm1, const char *stgEnm2);
     static void CutChain();
     static ChainCallbackResult OnUpdate(EnemyManager *enemyManager);
     static ChainCallbackResult OnDraw(EnemyManager *enemyManager);
-    static bool AddedCallback(EnemyManager *enemyManager);
-    static bool DeletedCallback(EnemyManager *enemyManager);
+    static ZunResult AddedCallback(EnemyManager *enemyManager);
+    static ZunResult DeletedCallback(EnemyManager *enemyManager);
 
     void RunEclTimeline();
-    Enemy *SpawnEnemy(i32 eclSubId, ZunVec3 *pos, i16 life, i16 itemDrop,
-                      i32 score);
+    Enemy *SpawnEnemy(i32 eclSubId, const ZunVec3 *pos, i16 life, i16 itemDrop, i32 score);
 
     const char *stgEnmAnmFilename;
     const char *stgEnm2AnmFilename;
@@ -38,7 +41,7 @@ struct EnemyManager {
     i8 unk_ee5c0[4];
     RunningSpellcardInfo spellcardInfo;
     i32 unk_ee5d8;
-    EclTimelineInstr *timelineInstr;
+    const EclTimelineInstr *timelineInstr;
     ZunTimer timelineTime;
 };
 

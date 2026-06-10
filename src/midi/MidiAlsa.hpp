@@ -1,17 +1,19 @@
 #pragma once
 
-#include "../inttypes.hpp"
+#include "ZunResult.hpp"
+#include "inttypes.hpp"
 #include <alsa/asoundlib.h>
 
-struct MidiDevice {
+struct MidiDevice
+{
   public:
     MidiDevice();
     ~MidiDevice();
 
-    bool Close();
+    ZunResult Close();
     bool OpenDevice(u32 uDeviceId);
     bool SendShortMsg(u8 midiStatus, u8 firstByte, u8 secondByte);
-    bool SendLongMsg(u8 *buf, u32 len);
+    bool SendLongMsg(const u8 *buf, u32 len);
 
   private:
     void Reset();

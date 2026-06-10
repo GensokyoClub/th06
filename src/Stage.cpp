@@ -10,62 +10,73 @@
 #include "Supervisor.hpp"
 #include "ZunColor.hpp"
 #include "utils.hpp"
+// #include <d3d8.h>
 
-ChainElem g_StageCalcChain;
-ChainElem g_StageOnDrawHighPrioChain;
-ChainElem g_StageOnDrawLowPrioChain;
+static ChainElem g_StageCalcChain;
+static ChainElem g_StageOnDrawHighPrioChain;
+static ChainElem g_StageOnDrawLowPrioChain;
 
-StageFile g_StageFiles[8] = {
-    { "dummy", "dummy" },
-    { "data/stg1bg.anm", "data/stage1.std" },
-    { "data/stg2bg.anm", "data/stage2.std" },
-    { "data/stg3bg.anm", "data/stage3.std" },
-    { "data/stg4bg.anm", "data/stage4.std" },
-    { "data/stg5bg.anm", "data/stage5.std" },
-    { "data/stg6bg.anm", "data/stage6.std" },
-    { "data/stg7bg.anm", "data/stage7.std" },
+static const StageFile g_StageFiles[8] = {
+    {"dummy", "dummy"},
+    {"data/stg1bg.anm", "data/stage1.std"},
+    {"data/stg2bg.anm", "data/stage2.std"},
+    {"data/stg3bg.anm", "data/stage3.std"},
+    {"data/stg4bg.anm", "data/stage4.std"},
+    {"data/stg5bg.anm", "data/stage5.std"},
+    {"data/stg6bg.anm", "data/stage6.std"},
+    {"data/stg7bg.anm", "data/stage7.std"},
 };
 Stage g_Stage;
 
-Stage::Stage() {
+Stage::Stage()
+{
 }
 
-ChainCallbackResult Stage::OnUpdate(Stage *stage) {
+#define StdVec3Arg (*(ZunVec3Raw *)curInsn->args)
+#define StdF32Arg(index) (*(LE<f32> *)&curInsn->args[index])
+#define StdU32Arg(index) (*(LE<u32> *)&curInsn->args[index])
+#define StdI32Arg(index) (*(LE<i32> *)&curInsn->args[index])
+
+ChainCallbackResult Stage::OnUpdate(Stage *stage)
+{
     f32 posInterpRatio;
     f32 facingDirInterpRatio;
     ZunVec3 pos;
     i32 idx;
     f32 skyFogInterpRatio;
-    RawStageInstr *curInsn;
+    const RawStageInstr *curInsn;
 
-    if (stage->stdData == NULL) {
+    if (stage->stdData == NULL)
+    {
         return CHAIN_CALLBACK_RESULT_CONTINUE;
     }
-    if (g_GameManager.isTimeStopped) {
+    if (g_GameManager.isTimeStopped)
+    {
         // When Sakuya uses her time stop ability, we want to darken her
         // spellcard background a bit, to give a visual indication of what's
         // going on.
-        COLOR_SET_COMPONENT(stage->spellcardBackground.color,
-                            COLOR_ALPHA_BYTE_IDX, 0x60);
-        COLOR_SET_COMPONENT(stage->spellcardBackground.color,
-                            COLOR_BLUE_BYTE_IDX, 0x80);
-        COLOR_SET_COMPONENT(stage->spellcardBackground.color,
-                            COLOR_GREEN_BYTE_IDX, 0x30);
-        COLOR_SET_COMPONENT(stage->spellcardBackground.color,
-                            COLOR_RED_BYTE_IDX, 0x30);
+        COLOR_SET_COMPONENT(stage->spellcardBackground.color, COLOR_ALPHA_BYTE_IDX, 0x60);
+        COLOR_SET_COMPONENT(stage->spellcardBackground.color, COLOR_BLUE_BYTE_IDX, 0x80);
+        COLOR_SET_COMPONENT(stage->spellcardBackground.color, COLOR_GREEN_BYTE_IDX, 0x30);
+        COLOR_SET_COMPONENT(stage->spellcardBackground.color, COLOR_RED_BYTE_IDX, 0x30);
         return CHAIN_CALLBACK_RESULT_CONTINUE;
     }
-    for (;;) {
+    for (;;)
+    {
         curInsn = stage->beginningOfScript + stage->instructionIndex;
-        switch (curInsn->opcode) {
+        switch (curInsn->opcode)
+        {
         case STDOP_CAMERA_POSITION_KEY:
-            if (curInsn->frame == -1) {
-                stage->positionInterpInitial = *(ZunVec3 *)curInsn->args;
+            if (curInsn->frame == -1)
+            {
+                stage->positionInterpInitial = StdVec3Arg;
                 stage->position.x = stage->positionInterpInitial.x;
                 stage->position.y = stage->positionInterpInitial.y;
                 stage->position.z = stage->positionInterpInitial.z;
-            } else if (stage->scriptTime.current >= curInsn->frame) {
-                pos = *(ZunVec3 *)curInsn->args;
+            }
+            else if (stage->scriptTime.current >= curInsn->frame)
+            {
+                pos = StdVec3Arg;
                 stage->position.x = pos.x;
                 stage->position.y = pos.y;
                 stage->position.z = pos.z;
@@ -73,31 +84,30 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage) {
                 stage->positionInterpStartTime = curInsn->frame;
                 stage->instructionIndex++;
                 curInsn++;
-                while (curInsn->opcode != 0) {
+                while (curInsn->opcode != 0)
+                {
                     curInsn++;
                 }
                 stage->positionInterpEndTime = curInsn->frame;
-                stage->positionInterpFinal = *(ZunVec3 *)curInsn->args;
+                stage->positionInterpFinal = StdVec3Arg;
             }
             break;
         case STDOP_FOG:
-            if (stage->scriptTime.current >= curInsn->frame) {
-                stage->skyFog.color = curInsn->args[0];
-                stage->skyFog.nearPlane = ((f32 *)curInsn->args)[1];
-                stage->skyFog.farPlane = ((f32 *)curInsn->args)[2];
-                if (stage->skyFogInterpDuration == 0) {
-                    //                    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGCOLOR,
-                    //                    stage->skyFog.color);
-                    //                    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGSTART,
-                    //                    *(u32
+            if (stage->scriptTime.current >= curInsn->frame)
+            {
+                stage->skyFog.color = StdU32Arg(0);
+                stage->skyFog.nearPlane = StdF32Arg(1);
+                stage->skyFog.farPlane = StdF32Arg(2);
+                if (stage->skyFogInterpDuration == 0)
+                {
+                    //                    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGCOLOR, stage->skyFog.color);
+                    //                    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGSTART, *(u32
                     //                    *)&stage->skyFog.nearPlane);
-                    //                    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGEND,
-                    //                    *(u32
+                    //                    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGEND, *(u32
                     //                    *)&stage->skyFog.farPlane);
 
                     g_AnmManager->SetFogColor(stage->skyFog.color);
-                    g_AnmManager->SetFogRange(stage->skyFog.nearPlane,
-                                              stage->skyFog.farPlane);
+                    g_AnmManager->SetFogRange(stage->skyFog.nearPlane, stage->skyFog.farPlane);
                 }
                 stage->instructionIndex++;
                 stage->skyFogInterpFinal = stage->skyFog;
@@ -105,149 +115,146 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage) {
             }
             break;
         case STDOP_FOG_INTERP:
-            if (stage->scriptTime.current >= curInsn->frame) {
+            if (stage->scriptTime.current >= curInsn->frame)
+            {
                 stage->skyFogInterpInitial = stage->skyFog;
-                stage->skyFogInterpDuration = curInsn->args[0];
+                stage->skyFogInterpDuration = StdI32Arg(0);
                 stage->skyFogInterpTimer.InitializeForPopup();
                 stage->instructionIndex++;
                 continue;
             }
             break;
         case STDOP_CAMERA_FACING:
-            if (stage->scriptTime.current >= curInsn->frame) {
+            if (stage->scriptTime.current >= curInsn->frame)
+            {
                 stage->facingDirInterpInitial = stage->facingDirInterpFinal;
-                stage->facingDirInterpFinal = *(ZunVec3 *)curInsn->args;
+                stage->facingDirInterpFinal = StdVec3Arg;
                 stage->instructionIndex++;
                 continue;
             }
             break;
         case STDOP_CAMERA_FACING_INTERP_LINEAR:
-            if (stage->scriptTime.current >= curInsn->frame) {
-                stage->facingDirInterpDuration = curInsn->args[0];
+            if (stage->scriptTime.current >= curInsn->frame)
+            {
+                stage->facingDirInterpDuration = StdI32Arg(0);
                 stage->facingDirInterpTimer.InitializeForPopup();
                 stage->instructionIndex++;
                 continue;
             }
             break;
         case STDOP_PAUSE:
-            if (stage->unpauseFlag) {
+            if (stage->unpauseFlag)
+            {
                 stage->instructionIndex++;
                 stage->unpauseFlag = '\0';
                 continue;
             }
             break;
         }
-        if (curInsn->frame != -1) {
-            posInterpRatio =
-                (stage->scriptTime.AsFramesFloat() -
-                 stage->positionInterpStartTime) /
-                (stage->positionInterpEndTime - stage->positionInterpStartTime);
+        if (curInsn->frame != -1)
+        {
+            posInterpRatio = (stage->scriptTime.AsFramesFloat() - stage->positionInterpStartTime) /
+                             (stage->positionInterpEndTime - stage->positionInterpStartTime);
             pos = stage->positionInterpFinal;
             stage->position.x =
-                (pos.x - stage->positionInterpInitial.x) * posInterpRatio +
-                stage->positionInterpInitial.x;
+                (pos.x - stage->positionInterpInitial.x) * posInterpRatio + stage->positionInterpInitial.x;
             stage->position.y =
-                (pos.y - stage->positionInterpInitial.y) * posInterpRatio +
-                stage->positionInterpInitial.y;
+                (pos.y - stage->positionInterpInitial.y) * posInterpRatio + stage->positionInterpInitial.y;
             stage->position.z =
-                (pos.z - stage->positionInterpInitial.z) * posInterpRatio +
-                stage->positionInterpInitial.z;
+                (pos.z - stage->positionInterpInitial.z) * posInterpRatio + stage->positionInterpInitial.z;
         }
-        if (stage->facingDirInterpDuration != 0) {
-            if (stage->facingDirInterpTimer.current <
-                stage->facingDirInterpDuration) {
+        if (stage->facingDirInterpDuration != 0)
+        {
+            if (stage->facingDirInterpTimer.current < stage->facingDirInterpDuration)
+            {
                 stage->facingDirInterpTimer.Tick();
-            } else {
-                stage->facingDirInterpTimer.SetCurrent(
-                    stage->facingDirInterpDuration);
+            }
+            else
+            {
+                stage->facingDirInterpTimer.SetCurrent(stage->facingDirInterpDuration);
             }
             pos = stage->facingDirInterpFinal - stage->facingDirInterpInitial;
-            facingDirInterpRatio = stage->facingDirInterpTimer.AsFramesFloat() /
-                                   stage->facingDirInterpDuration;
-            g_GameManager.stageCameraFacingDir.x =
-                pos.x * facingDirInterpRatio + stage->facingDirInterpInitial.x;
-            g_GameManager.stageCameraFacingDir.y =
-                pos.y * facingDirInterpRatio + stage->facingDirInterpInitial.y;
-            g_GameManager.stageCameraFacingDir.z =
-                pos.z * facingDirInterpRatio + stage->facingDirInterpInitial.z;
+            facingDirInterpRatio = stage->facingDirInterpTimer.AsFramesFloat() / stage->facingDirInterpDuration;
+            g_GameManager.stageCameraFacingDir.x = pos.x * facingDirInterpRatio + stage->facingDirInterpInitial.x;
+            g_GameManager.stageCameraFacingDir.y = pos.y * facingDirInterpRatio + stage->facingDirInterpInitial.y;
+            g_GameManager.stageCameraFacingDir.z = pos.z * facingDirInterpRatio + stage->facingDirInterpInitial.z;
         }
-        if (stage->skyFogInterpDuration != 0) {
+        if (stage->skyFogInterpDuration != 0)
+        {
             stage->skyFogInterpTimer.Tick();
-            skyFogInterpRatio = stage->skyFogInterpTimer.AsFramesFloat() /
-                                stage->skyFogInterpDuration;
-            if (skyFogInterpRatio >= 1.0f) {
+            skyFogInterpRatio = stage->skyFogInterpTimer.AsFramesFloat() / stage->skyFogInterpDuration;
+            if (skyFogInterpRatio >= 1.0f)
+            {
                 skyFogInterpRatio = 1.0;
             }
-            for (idx = 0; idx < 4; idx++) {
-                COLOR_SET_COMPONENT(
-                    stage->skyFog.color, idx,
-                    (u8)(((f32)COLOR_GET_COMPONENT(
-                              stage->skyFogInterpFinal.color, idx) -
-                          (f32)COLOR_GET_COMPONENT(
-                              stage->skyFogInterpInitial.color, idx)) *
-                             skyFogInterpRatio +
-                         (f32)COLOR_GET_COMPONENT(
-                             stage->skyFogInterpInitial.color, idx)));
+            for (idx = 0; idx < 4; idx++)
+            {
+                COLOR_SET_COMPONENT(stage->skyFog.color, idx,
+                                    (u8)(((f32)COLOR_GET_COMPONENT(stage->skyFogInterpFinal.color, idx) -
+                                          (f32)COLOR_GET_COMPONENT(stage->skyFogInterpInitial.color, idx)) *
+                                             skyFogInterpRatio +
+                                         (f32)COLOR_GET_COMPONENT(stage->skyFogInterpInitial.color, idx)));
             }
-            stage->skyFog.nearPlane = (stage->skyFogInterpFinal.nearPlane -
-                                       stage->skyFogInterpInitial.nearPlane) *
-                                          skyFogInterpRatio +
-                                      stage->skyFogInterpInitial.nearPlane;
-            stage->skyFog.farPlane = (stage->skyFogInterpFinal.farPlane -
-                                      stage->skyFogInterpInitial.farPlane) *
-                                         skyFogInterpRatio +
-                                     stage->skyFogInterpInitial.farPlane;
+            stage->skyFog.nearPlane =
+                (stage->skyFogInterpFinal.nearPlane - stage->skyFogInterpInitial.nearPlane) * skyFogInterpRatio +
+                stage->skyFogInterpInitial.nearPlane;
+            stage->skyFog.farPlane =
+                (stage->skyFogInterpFinal.farPlane - stage->skyFogInterpInitial.farPlane) * skyFogInterpRatio +
+                stage->skyFogInterpInitial.farPlane;
 
             g_AnmManager->SetFogColor(stage->skyFog.color);
-            g_AnmManager->SetFogRange(stage->skyFog.nearPlane,
-                                      stage->skyFog.farPlane);
+            g_AnmManager->SetFogRange(stage->skyFog.nearPlane, stage->skyFog.farPlane);
 
-            //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGCOLOR,
-            //            stage->skyFog.color);
-            //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGSTART,
-            //            *(u32 *)&stage->skyFog.nearPlane);
-            //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGEND,
-            //            *(u32 *)&stage->skyFog.farPlane);
-            if (stage->skyFogInterpTimer.current >=
-                stage->skyFogInterpDuration) {
+            //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGCOLOR, stage->skyFog.color);
+            //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGSTART, *(u32 *)&stage->skyFog.nearPlane);
+            //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGEND, *(u32 *)&stage->skyFog.farPlane);
+            if (stage->skyFogInterpTimer.current >= stage->skyFogInterpDuration)
+            {
                 stage->skyFogInterpDuration = 0;
             }
         }
-        if (curInsn->opcode != STDOP_PAUSE) {
+        if (curInsn->opcode != STDOP_PAUSE)
+        {
             stage->scriptTime.Tick();
         }
         stage->UpdateObjects();
-        if (stage->spellcardState >= RUNNING) {
-            if (stage->ticksSinceSpellcardStarted == 60) {
-                stage->spellcardState =
-                    static_cast<SpellcardState>(stage->spellcardState + 1);
+        if (stage->spellcardState >= RUNNING)
+        {
+            if (stage->ticksSinceSpellcardStarted == 60)
+            {
+                stage->spellcardState = static_cast<SpellcardState>(stage->spellcardState + 1);
             }
-            stage->ticksSinceSpellcardStarted =
-                stage->ticksSinceSpellcardStarted + 1;
+            stage->ticksSinceSpellcardStarted = stage->ticksSinceSpellcardStarted + 1;
             g_AnmManager->ExecuteScript(&stage->spellcardBackground);
         }
         return CHAIN_CALLBACK_RESULT_CONTINUE;
     }
 }
 
-ChainCallbackResult Stage::OnDrawHighPrio(Stage *stage) {
-    if (stage->skyFogNeedsSetup) {
+#undef StdVec3Arg
+#undef StdF32Arg
+#undef StdU32Arg
+#undef StdI32Arg
+
+ChainCallbackResult Stage::OnDrawHighPrio(Stage *stage)
+{
+    if (stage->skyFogNeedsSetup)
+    {
         stage->skyFogNeedsSetup = 0;
-        //        g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGCOLOR,
-        //        stage->skyFog.color);
+        //        g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGCOLOR, stage->skyFog.color);
 
         g_AnmManager->SetFogColor(stage->skyFog.color);
     }
 
-    //    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGSTART, *(u32
-    //    *)&stage->skyFog.nearPlane);
-    //    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGEND, *(u32
-    //    *)&stage->skyFog.farPlane);
+    //    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGSTART, *(u32 *)&stage->skyFog.nearPlane);
+    //    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGEND, *(u32 *)&stage->skyFog.farPlane);
 
     g_AnmManager->SetFogRange(stage->skyFog.nearPlane, stage->skyFog.farPlane);
 
-    if (stage->spellcardState <= RUNNING) {
-        if (!g_Gui.IsStageFinished()) {
+    if (stage->spellcardState <= RUNNING)
+    {
+        if (!g_Gui.IsStageFinished())
+        {
             stage->RenderObjects(0);
             stage->RenderObjects(1);
         }
@@ -255,35 +262,37 @@ ChainCallbackResult Stage::OnDrawHighPrio(Stage *stage) {
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-ChainCallbackResult Stage::OnDrawLowPrio(Stage *stage) {
+ChainCallbackResult Stage::OnDrawLowPrio(Stage *stage)
+{
     i32 stageToSpellcardBackgroundAlpha;
     ZunRect gameRegion;
 
-    if (stage->spellcardState <= RUNNING) {
-        if (!g_Gui.IsStageFinished()) {
+    if (stage->spellcardState <= RUNNING)
+    {
+        if (!g_Gui.IsStageFinished())
+        {
             stage->RenderObjects(2);
             stage->RenderObjects(3);
-            if (stage->spellcardState == RUNNING) {
+            if (stage->spellcardState == RUNNING)
+            {
                 gameRegion.left = GAME_REGION_LEFT;
                 gameRegion.top = GAME_REGION_TOP;
                 gameRegion.right = GAME_REGION_LEFT + GAME_REGION_WIDTH;
                 gameRegion.bottom = GAME_REGION_TOP + GAME_REGION_HEIGHT;
-                stageToSpellcardBackgroundAlpha =
-                    (stage->ticksSinceSpellcardStarted * 255) / 60;
-                ScreenEffect::DrawSquare(&gameRegion,
-                                         stageToSpellcardBackgroundAlpha << 24);
+                stageToSpellcardBackgroundAlpha = (stage->ticksSinceSpellcardStarted * 255) / 60;
+                ScreenEffect::DrawSquare(&gameRegion, stageToSpellcardBackgroundAlpha << 24);
             }
         }
     }
-    if (RUNNING <= stage->spellcardState) {
-        if (stage->ticksSinceSpellcardStarted <=
-            g_Supervisor.cfg.frameskipConfig) {
-            g_AnmManager->SetAndExecuteScriptIdx(
-                &stage->spellcardBackground,
-                ANM_SCRIPT_EFFECTS_SPELLCARD_BACKGROUND);
+    if (RUNNING <= stage->spellcardState)
+    {
+        if (stage->ticksSinceSpellcardStarted <= g_Supervisor.cfg.frameskipConfig)
+        {
+            g_AnmManager->SetAndExecuteScriptIdx(&stage->spellcardBackground, ANM_SCRIPT_EFFECTS_SPELLCARD_BACKGROUND);
         }
         g_AnmManager->Draw(&stage->spellcardBackground);
     }
+    g_AnmManager->FlushVertexBuffer();
     g_Supervisor.viewport.minZ = 0.0;
     g_Supervisor.viewport.maxZ = 0.5;
     GameManager::SetupCameraStageBackground(0);
@@ -292,7 +301,8 @@ ChainCallbackResult Stage::OnDrawLowPrio(Stage *stage) {
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-bool Stage::AddedCallback(Stage *stage) {
+ZunResult Stage::AddedCallback(Stage *stage)
+{
     ZunTimer *facingDirTimer;
     ZunTimer *scriptTimer;
 
@@ -309,10 +319,10 @@ bool Stage::AddedCallback(Stage *stage) {
     stage->spellcardState = NOT_RUNNING;
     stage->skyFogInterpDuration = 0;
 
-    if (!stage->LoadStageData(
-            g_StageFiles[g_GameManager.currentStage].anmFile,
-            g_StageFiles[g_GameManager.currentStage].stdFile)) {
-        return false;
+    if (stage->LoadStageData(g_StageFiles[g_GameManager.currentStage].anmFile,
+                             g_StageFiles[g_GameManager.currentStage].stdFile) != ZUN_SUCCESS)
+    {
+        return ZUN_ERROR;
     }
     stage->skyFog.color = COLOR_BLACK;
     stage->skyFog.nearPlane = 200.0;
@@ -332,20 +342,18 @@ bool Stage::AddedCallback(Stage *stage) {
     facingDirTimer->InitializeForPopup();
     stage->unpauseFlag = 0;
 
-    //    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGCOLOR,
-    //    stage->skyFog.color);
-    //    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGSTART, *(DWORD
-    //    *)&stage->skyFog.nearPlane);
-    //    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGEND, *(DWORD
-    //    *)&stage->skyFog.farPlane);
+    //    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGCOLOR, stage->skyFog.color);
+    //    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGSTART, *(DWORD *)&stage->skyFog.nearPlane);
+    //    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGEND, *(DWORD *)&stage->skyFog.farPlane);
 
     g_AnmManager->SetFogColor(stage->skyFog.color);
     g_AnmManager->SetFogRange(stage->skyFog.nearPlane, stage->skyFog.farPlane);
 
-    return true;
+    return ZUN_SUCCESS;
 }
 
-bool Stage::RegisterChain(u32 stage) {
+ZunResult Stage::RegisterChain(u32 stage)
+{
 
     Stage *stg = &g_Stage;
     ZunTimer *timer;
@@ -362,118 +370,126 @@ bool Stage::RegisterChain(u32 stage) {
     g_StageCalcChain.addedCallback = NULL;
     g_StageCalcChain.deletedCallback = NULL;
     g_StageCalcChain.addedCallback = (ChainAddedCallback)Stage::AddedCallback;
-    g_StageCalcChain.deletedCallback =
-        (ChainDeletedCallback)Stage::DeletedCallback;
+    g_StageCalcChain.deletedCallback = (ChainDeletedCallback)Stage::DeletedCallback;
     g_StageCalcChain.arg = stg;
 
-    if (!g_Chain.AddToCalcChain(&g_StageCalcChain, TH_CHAIN_PRIO_CALC_STAGE)) {
-        return false;
+    if (g_Chain.AddToCalcChain(&g_StageCalcChain, TH_CHAIN_PRIO_CALC_STAGE))
+    {
+        return ZUN_ERROR;
     }
     g_StageOnDrawHighPrioChain.callback = (ChainCallback)OnDrawHighPrio;
     g_StageOnDrawHighPrioChain.addedCallback = NULL;
     g_StageOnDrawHighPrioChain.deletedCallback = NULL;
     g_StageOnDrawHighPrioChain.arg = stg;
-    g_Chain.AddToDrawChain(&g_StageOnDrawHighPrioChain,
-                           TH_CHAIN_PRIO_DRAW_HIGH_PRIO_STAGE);
+    g_Chain.AddToDrawChain(&g_StageOnDrawHighPrioChain, TH_CHAIN_PRIO_DRAW_HIGH_PRIO_STAGE);
     g_StageOnDrawLowPrioChain.callback = (ChainCallback)OnDrawLowPrio;
     g_StageOnDrawLowPrioChain.addedCallback = NULL;
     g_StageOnDrawLowPrioChain.deletedCallback = NULL;
     g_StageOnDrawLowPrioChain.arg = stg;
-    g_Chain.AddToDrawChain(&g_StageOnDrawLowPrioChain,
-                           TH_CHAIN_PRIO_DRAW_LOW_PRIO_STAGE);
+    g_Chain.AddToDrawChain(&g_StageOnDrawLowPrioChain, TH_CHAIN_PRIO_DRAW_LOW_PRIO_STAGE);
 
-    return true;
+    return ZUN_SUCCESS;
 }
 
-bool Stage::DeletedCallback(Stage *s) {
+ZunResult Stage::DeletedCallback(Stage *s)
+{
     g_AnmManager->ReleaseAnm(ANM_FILE_STAGEBG);
-    if (s->quadVms != NULL) {
+    if (s->quadVms != NULL)
+    {
         void *quadVms = s->quadVms;
         free(quadVms);
         s->quadVms = NULL;
     }
-    if (s->stdData != NULL) {
-        void *stdData = s->stdData;
-        free(stdData);
+    if (s->stdData != NULL)
+    {
+        const void *stdData = s->stdData;
+        free((void *)stdData);
         s->stdData = NULL;
     }
 
     free(s->objects);
     s->objects = NULL;
 
-    return true;
+    return ZUN_SUCCESS;
 }
 
-void Stage::CutChain() {
+void Stage::CutChain()
+{
     g_Chain.Cut(&g_StageCalcChain);
     g_Chain.Cut(&g_StageOnDrawHighPrioChain);
     g_Chain.Cut(&g_StageOnDrawLowPrioChain);
 }
 
-bool Stage::LoadStageData(const char *anmpath, const char *stdpath) {
+ZunResult Stage::LoadStageData(const char *anmpath, const char *stdpath)
+{
     RawStageObject *curObj;
     RawStageQuadBasic *curQuad;
     i32 idx;
     i32 vmIdx;
     u32 sizeVmArr;
+    u32 padding1, padding2, padding3, padding4, padding5, padding6;
 
-    if (!g_AnmManager->LoadAnm(ANM_FILE_STAGEBG, anmpath, ANM_OFFSET_STAGEBG)) {
-        return false;
+    if (g_AnmManager->LoadAnm(ANM_FILE_STAGEBG, anmpath, ANM_OFFSET_STAGEBG) != ZUN_SUCCESS)
+    {
+        return ZUN_ERROR;
     }
-    this->stdData = (RawStageHeader *)FileSystem::OpenPath(stdpath);
-    if (this->stdData == NULL) {
-        GameErrorContext::Log(&g_GameErrorContext, TH_ERR_STAGE_DATA_CORRUPTED);
-        return false;
+    this->stdData = (RawStageHeader *)FileSystem::OpenPath(stdpath, false);
+    if (this->stdData == NULL)
+    {
+        g_GameErrorContext.Log(TH_ERR_STAGE_DATA_CORRUPTED);
+        return ZUN_ERROR;
     }
     this->objectsCount = this->stdData->nbObjects;
     this->quadCount = this->stdData->nbFaces;
-    this->objectInstances =
-        (RawStageObjectInstance *)(this->stdData->facesOffset +
-                                   ((u8 *)this->stdData));
-    this->beginningOfScript =
-        (RawStageInstr *)(this->stdData->scriptOffset + ((u8 *)this->stdData));
-    u32 *objectOffsets = (u32 *)(this->stdData + 1);
+    this->objectInstances = (RawStageObjectInstance *)(this->stdData->facesOffset + ((u8 *)this->stdData));
+    this->beginningOfScript = (RawStageInstr *)(this->stdData->scriptOffset + ((u8 *)this->stdData));
+    const LE<u32> *objectOffsets = (LE<u32> *)(this->stdData + 1);
 
-    this->objects = (RawStageObject **)malloc(sizeof(RawStageObject *) *
-                                              this->objectsCount);
+    this->objects = (RawStageObject **)malloc(sizeof(RawStageObject *) * this->objectsCount);
 
-    for (idx = 0; idx < this->objectsCount; idx++) {
-        this->objects[idx] =
-            (RawStageObject *)(((u8 *)this->stdData) + objectOffsets[idx]);
+    for (idx = 0; idx < this->objectsCount; idx++)
+    {
+        this->objects[idx] = (RawStageObject *)(((u8 *)this->stdData) + objectOffsets[idx]);
     }
 
     sizeVmArr = this->quadCount * sizeof(AnmVm);
     this->quadVms = (AnmVm *)malloc(sizeVmArr);
-    for (idx = 0, vmIdx = 0; idx < this->objectsCount; idx++) {
+    for (idx = 0, vmIdx = 0; idx < this->objectsCount; idx++)
+    {
         curObj = this->objects[idx];
         curObj->flags = 1;
         curQuad = &curObj->firstQuad;
-        while (0 <= curQuad->type) {
-            g_AnmManager->ExecuteAnmIdx(
-                &this->quadVms[vmIdx], curQuad->anmScript + ANM_OFFSET_STAGEBG);
+        while (0 <= curQuad->type)
+        {
+            g_AnmManager->ExecuteAnmIdx(&this->quadVms[vmIdx], curQuad->anmScript + ANM_OFFSET_STAGEBG);
             curQuad->vmIdx = vmIdx++;
             curQuad = (RawStageQuadBasic *)((u8 *)curQuad + curQuad->byteSize);
         }
     }
-    return true;
+    return ZUN_SUCCESS;
 }
 
-bool Stage::UpdateObjects() {
+ZunResult Stage::UpdateObjects()
+{
     AnmVm *vm;
-    RawStageQuadBasic *objQuad;
-    RawStageQuadBasic *objQuadType1;
+    const RawStageQuadBasic *objQuad;
+    const RawStageQuadBasic *objQuadType1;
     i32 objIdx;
     i32 vmsNotFinished;
     RawStageObject *obj;
 
-    for (objIdx = 0; objIdx < this->objectsCount; objIdx++) {
+    for (objIdx = 0; objIdx < this->objectsCount; objIdx++)
+    {
         obj = this->objects[objIdx];
-        if (obj->flags & 1) {
+        if ((obj->flags & 1) != 0)
+        {
             vmsNotFinished = 0;
             objQuad = &obj->firstQuad;
-            while (0 <= objQuad->type) {
+            while (0 <= objQuad->type)
+            {
                 vm = &this->quadVms[objQuad->vmIdx];
-                switch (objQuad->type) {
+                switch (objQuad->type)
+                {
                 case 0:
                     g_AnmManager->ExecuteScript(vm);
                     break;
@@ -485,32 +501,35 @@ bool Stage::UpdateObjects() {
                     g_AnmManager->ExecuteScript(vm);
                     break;
                 }
-                if (vm->currentInstruction != NULL) {
+                if (vm->currentInstruction != NULL)
+                {
                     vmsNotFinished++;
                 }
-                objQuad = (RawStageQuadBasic *)(((i8 *)&objQuad->type) +
-                                                objQuad->byteSize);
+                objQuad = (RawStageQuadBasic *)(((i8 *)&objQuad->type) + objQuad->byteSize);
             }
-            if (vmsNotFinished == 0) {
+            if (vmsNotFinished == 0)
+            {
                 obj->flags = obj->flags & ~1;
             }
         }
     }
-    return true;
+    return ZUN_SUCCESS;
 }
 
-bool Stage::RenderObjects(i32 zLevel) {
+ZunResult Stage::RenderObjects(i32 zLevel)
+{
     f32 quadWidth;
     ZunVec3 projectSrc;
     bool didDraw;
-    RawStageQuadBasic *curQuad;
+    const RawStageQuadBasic *curQuad;
     ZunVec3 quadPos;
     ZunVec3 quadScaledPos;
     RawStageObject *obj;
     ZunMatrix worldMatrix;
-    RawStageObjectInstance *instance;
+    const RawStageObjectInstance *instance;
     i32 instancesDrawn;
     AnmVm *curQuadVm;
+    i32 unk8;
 
     instance = &this->objectInstances[0];
     instancesDrawn = 0;
@@ -521,11 +540,13 @@ bool Stage::RenderObjects(i32 zLevel) {
     //    D3DXMatrixIdentity(&worldMatrix);
     worldMatrix.Identity();
 
-    while (instance->id >= 0) {
+    while (instance->id >= 0)
+    {
         obj = this->objects[instance->id];
-        if (obj->zLevel == zLevel) {
+        if (obj->zLevel == zLevel)
+        {
             curQuad = &obj->firstQuad;
-            // unk8 = 0;
+            unk8 = 0;
 
             //  Say hello to helper cube:
             //
@@ -544,167 +565,151 @@ bool Stage::RenderObjects(i32 zLevel) {
             // the 8 corner of the kube that reprents this object, and check if
             // any of them is visible on the viewport.
             //
-            // It will check them in the following order: C, G, E, A, D, H, F,
-            // B.
+            // It will check them in the following order: C, G, E, A, D, H, F, B.
 
             // It first starts by checking point C
-            worldMatrix.m[3][0] =
-                obj->position.x + instance->position.x - this->position.x;
-            worldMatrix.m[3][1] =
-                -(obj->position.y + instance->position.y - this->position.y);
-            worldMatrix.m[3][2] = obj->position.z + instance->position.z -
-                                  this->position.z + obj->size.z;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
+            worldMatrix.m[3][0] = obj->position.x + instance->position.x - this->position.x;
+            worldMatrix.m[3][1] = -(obj->position.y + instance->position.y - this->position.y);
+            worldMatrix.m[3][2] = obj->position.z + instance->position.z - this->position.z + obj->size.z;
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
+                        g_Supervisor.viewMatrix, worldMatrix);
 
             if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
+            {
                 goto render;
             }
 
             // Then G:
             worldMatrix.m[3][1] = worldMatrix.m[3][1] - obj->size.y;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
+                        g_Supervisor.viewMatrix, worldMatrix);
             if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
+            {
                 goto render;
             }
 
             // Then E
             worldMatrix.m[3][2] = worldMatrix.m[3][2] - obj->size.z;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
+                        g_Supervisor.viewMatrix, worldMatrix);
             if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
+            {
                 goto render;
             }
 
             // Then A
             worldMatrix.m[3][1] = worldMatrix.m[3][1] + obj->size.y;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
+                        g_Supervisor.viewMatrix, worldMatrix);
             if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
+            {
                 goto render;
             }
 
             // Then D
-            worldMatrix.m[3][0] = obj->position.x + instance->position.x -
-                                  this->position.x + obj->size.x;
-            worldMatrix.m[3][1] =
-                -(obj->position.y + instance->position.y - this->position.y);
-            worldMatrix.m[3][2] = obj->position.z + instance->position.z -
-                                  this->position.z + obj->size.z;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
+            worldMatrix.m[3][0] = obj->position.x + instance->position.x - this->position.x + obj->size.x;
+            worldMatrix.m[3][1] = -(obj->position.y + instance->position.y - this->position.y);
+            worldMatrix.m[3][2] = obj->position.z + instance->position.z - this->position.z + obj->size.z;
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
+                        g_Supervisor.viewMatrix, worldMatrix);
             if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
+            {
                 goto render;
             }
 
             // Then H
             worldMatrix.m[3][1] = worldMatrix.m[3][1] - obj->size.y;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
+                        g_Supervisor.viewMatrix, worldMatrix);
             if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
+            {
                 goto render;
             }
 
             // Then F
             worldMatrix.m[3][2] = worldMatrix.m[3][2] - (obj->size).z;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
+                        g_Supervisor.viewMatrix, worldMatrix);
             if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
+            {
                 goto render;
             }
 
             // And finally B
             worldMatrix.m[3][1] = worldMatrix.m[3][1] + (obj->size).y;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
+                        g_Supervisor.viewMatrix, worldMatrix);
             if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+                quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height)
+            {
                 goto render;
             }
 
-            // If none of the points were in the viewport, we can skip this
-            // object entirely.
+            // If none of the points were in the viewport, we can skip this object
+            // entirely.
             goto skip;
 
         render:
             didDraw = true;
-            while (0 <= curQuad->type) {
+            while (0 <= curQuad->type)
+            {
                 curQuadVm = this->quadVms + curQuad->vmIdx;
-                switch (curQuad->type) {
+                switch (curQuad->type)
+                {
                 case 0:
-                    curQuadVm->pos.x = curQuad->position.x +
-                                       instance->position.x - this->position.x;
-                    curQuadVm->pos.y = curQuad->position.y +
-                                       instance->position.y - this->position.y;
-                    curQuadVm->pos.z = curQuad->position.z +
-                                       instance->position.z - this->position.z;
-                    if (curQuad->size.x != 0.0f) {
-                        curQuadVm->scaleX =
-                            curQuad->size.x / curQuadVm->sprite->widthPx;
+                    curQuadVm->pos.x = curQuad->position.x + instance->position.x - this->position.x;
+                    curQuadVm->pos.y = curQuad->position.y + instance->position.y - this->position.y;
+                    curQuadVm->pos.z = curQuad->position.z + instance->position.z - this->position.z;
+                    if (curQuad->size.x != 0.0f)
+                    {
+                        curQuadVm->scaleX = curQuad->size.x / curQuadVm->sprite->widthPx;
                     }
-                    if (curQuad->size.y != 0.0f) {
-                        curQuadVm->scaleY =
-                            curQuad->size.y / curQuadVm->sprite->heightPx;
+                    if (curQuad->size.y != 0.0f)
+                    {
+                        curQuadVm->scaleY = curQuad->size.y / curQuadVm->sprite->heightPx;
                     }
-                    if (curQuadVm->autoRotate == 2) {
-                        if (curQuad->size.x != 0.0f) {
+                    if (curQuadVm->autoRotate == 2)
+                    {
+                        if (curQuad->size.x != 0.0f)
+                        {
                             quadWidth = curQuad->size.x;
-                        } else {
+                        }
+                        else
+                        {
                             quadWidth = curQuadVm->sprite->widthPx;
                         }
                         worldMatrix.m[3][0] = curQuadVm->pos.x;
                         worldMatrix.m[3][1] = -curQuadVm->pos.y;
                         worldMatrix.m[3][2] = curQuadVm->pos.z;
-                        projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                                    g_Supervisor.projectionMatrix,
+                        projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
                                     g_Supervisor.viewMatrix, worldMatrix);
-                        worldMatrix.m[3][0] =
-                            quadWidth * curQuadVm->scaleX + worldMatrix.m[3][0];
-                        projectVec3(quadScaledPos, projectSrc,
-                                    g_Supervisor.viewport,
-                                    g_Supervisor.projectionMatrix,
+                        worldMatrix.m[3][0] = quadWidth * curQuadVm->scaleX + worldMatrix.m[3][0];
+                        projectVec3(quadScaledPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
                                     g_Supervisor.viewMatrix, worldMatrix);
-                        curQuadVm->scaleX =
-                            (quadScaledPos.x - quadPos.x) / quadWidth;
+                        curQuadVm->scaleX = (quadScaledPos.x - quadPos.x) / quadWidth;
                         curQuadVm->scaleY = curQuadVm->scaleX;
                         curQuadVm->pos = quadPos;
                         g_AnmManager->DrawFacingCamera(curQuadVm);
-                    } else {
+                    }
+                    else
+                    {
                         g_AnmManager->Draw3(curQuadVm);
                     }
                     break;
                 }
-                curQuad = (RawStageQuadBasic *)(((u8 *)&curQuad->type) +
-                                                curQuad->byteSize);
+                curQuad = (RawStageQuadBasic *)(((u8 *)&curQuad->type) + curQuad->byteSize);
             }
             instancesDrawn++;
         }
     skip:
         instance++;
     }
-    return true;
+    return ZUN_SUCCESS;
 }

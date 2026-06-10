@@ -4,12 +4,11 @@
 
 GLFuncTable g_glFuncTable;
 
-#define TRY_RESOLVE_FUNCTION(func) \
-    this->func = (decltype(this->func))SDL_GL_GetProcAddress(#func);
-#define TRY_RESOLVE_FUNCTION_GLES(func) \
-    this->func##_ptr = (decltype(this->func##_ptr))SDL_GL_GetProcAddress(#func);
+#define TRY_RESOLVE_FUNCTION(func) this->func = (decltype(this->func))SDL_GL_GetProcAddress(#func);
+#define TRY_RESOLVE_FUNCTION_GLES(func) this->func##_ptr = (decltype(this->func##_ptr))SDL_GL_GetProcAddress(#func);
 
-void GLFuncTable::ResolveFunctions(bool glesContext) {
+void GLFuncTable::ResolveFunctions(bool glesContext)
+{
     TRY_RESOLVE_FUNCTION(glAlphaFunc)
     TRY_RESOLVE_FUNCTION(glBindTexture)
     TRY_RESOLVE_FUNCTION(glBlendFunc)
@@ -46,18 +45,19 @@ void GLFuncTable::ResolveFunctions(bool glesContext) {
     TRY_RESOLVE_FUNCTION(glVertexPointer)
     TRY_RESOLVE_FUNCTION(glViewport)
 
-    // Ideally, we'd just check for both the regular GL and GLES version of the
-    // function and
-    //   use whichever doesn't return NULL, but function resolves on GLX are
-    //   actually context independent, meaning we can get a valid function
-    //   pointer that then throws an error when we call it because the context
-    //   doesn't actually match what's needed. So instead we need to pass a
-    //   parameter to identify which function version to resolve and use.
+    // Ideally, we'd just check for both the regular GL and GLES version of the function and
+    //   use whichever doesn't return NULL, but function resolves on GLX are actually context
+    //   independent, meaning we can get a valid function pointer that then throws an error
+    //   when we call it because the context doesn't actually match what's needed. So instead
+    //   we need to pass a parameter to identify which function version to resolve and use.
 
-    if (glesContext) {
+    if (glesContext)
+    {
         TRY_RESOLVE_FUNCTION_GLES(glClearDepthf)
         TRY_RESOLVE_FUNCTION_GLES(glDepthRangef)
-    } else {
+    }
+    else
+    {
         TRY_RESOLVE_FUNCTION(glClearDepth)
         TRY_RESOLVE_FUNCTION(glDepthRange)
     }
@@ -88,18 +88,26 @@ void GLFuncTable::ResolveFunctions(bool glesContext) {
     this->isGlesContext = glesContext;
 }
 
-void GLFuncTable::glClearDepthf(GLclampf depth) {
-    if (this->isGlesContext) {
+void GLFuncTable::glClearDepthf(GLclampf depth)
+{
+    if (this->isGlesContext)
+    {
         this->glClearDepthf_ptr(depth);
-    } else {
+    }
+    else
+    {
         this->glClearDepth(depth);
     }
 }
 
-void GLFuncTable::glDepthRangef(GLclampf near_val, GLclampf far_val) {
-    if (this->isGlesContext) {
+void GLFuncTable::glDepthRangef(GLclampf near_val, GLclampf far_val)
+{
+    if (this->isGlesContext)
+    {
         this->glDepthRangef_ptr(near_val, far_val);
-    } else {
+    }
+    else
+    {
         this->glDepthRange(near_val, far_val);
     }
 }

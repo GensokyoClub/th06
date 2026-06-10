@@ -2,32 +2,24 @@
 
 #include <SDL2/SDL_video.h>
 
-#include "graphics/GLFunc.hpp"
+#include "ZunResult.hpp"
+#include "graphics/GfxInterface.hpp"
 #include "inttypes.hpp"
 
-// The internal resolution EoSD uses. 640x480. I can't think of any reason
-// anyone sane
+// The internal resolution EoSD uses. 640x480. I can't think of any reason anyone sane
 //   would want to change this
 #define GAME_WINDOW_WIDTH (640)
 #define GAME_WINDOW_HEIGHT (480)
 
 // The actual resolution used for the output window and viewport scaling
-//   At some point there should be a method to change this without recompiling
-//   but for now this'll do
+//   At some point there should be a method to change this without recompiling but for now
+//   this'll do
 #ifndef GAME_WINDOW_WIDTH_REAL
-#ifdef __SWITCH__
-#define GAME_WINDOW_WIDTH_REAL (1280)
-#else
-#define GAME_WINDOW_WIDTH_REAL (640 * 2)
-#endif
+#define GAME_WINDOW_WIDTH_REAL (GAME_WINDOW_WIDTH)
 #endif
 
 #ifndef GAME_WINDOW_HEIGHT_REAL
-#ifdef __SWITCH__
-#define GAME_WINDOW_HEIGHT_REAL (720)
-#else
-#define GAME_WINDOW_HEIGHT_REAL (480 * 2)
-#endif
+#define GAME_WINDOW_HEIGHT_REAL (GAME_WINDOW_HEIGHT)
 #endif
 
 #define VIEWPORT_WIDTH GAME_WINDOW_WIDTH_REAL
@@ -51,22 +43,22 @@
 #define WIDTH_RESOLUTION_SCALE (((f32)VIEWPORT_WIDTH) / GAME_WINDOW_WIDTH)
 #define HEIGHT_RESOLUTION_SCALE (((f32)VIEWPORT_HEIGHT) / GAME_WINDOW_HEIGHT)
 
-enum RenderResult {
+enum RenderResult
+{
     RENDER_RESULT_KEEP_RUNNING,
     RENDER_RESULT_EXIT_SUCCESS,
     RENDER_RESULT_EXIT_ERROR,
 };
 
-struct GameWindow {
+struct GameWindow
+{
     RenderResult Render();
     static void Present();
 
     static void CreateGameWindow();
-    static i32 InitD3dRendering();
+    static ZunResult InitD3dRendering();
     static void InitD3dDevice();
 
-    SDL_Window *window;
-    SDL_GLContext glContext;
     i32 isAppClosing;
     i32 lastActiveAppValue;
     i32 isAppActive;
@@ -80,3 +72,4 @@ struct GameWindow {
 extern GameWindow g_GameWindow;
 extern i32 g_TickCountToEffectiveFramerate;
 extern double g_LastFrameTime;
+extern GfxInterface *g_GfxBackend;

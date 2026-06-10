@@ -4,7 +4,9 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-enum ItemType : i16 // This enum is 1 byte in size on Enemy
+// #include <d3dx8math.h>
+
+enum ItemType // This enum is 1 byte in size on Enemy
 {
     ITEM_POWER_SMALL,
     ITEM_POINT,
@@ -13,11 +15,11 @@ enum ItemType : i16 // This enum is 1 byte in size on Enemy
     ITEM_FULL_POWER,
     ITEM_LIFE,
     ITEM_POINT_BULLET,
-    // Might need to be 0xffffff? That causes clangd to freak out though..
-    ITEM_NO_ITEM = -1,
+    ITEM_NO_ITEM = 0xffffffff,
 };
 
-struct Item {
+struct Item
+{
     AnmVm sprite;
     ZunVec3 currentPosition;
     ZunVec3 startPosition;
@@ -29,9 +31,10 @@ struct Item {
     i8 state;
 };
 
-struct ItemManager {
+struct ItemManager
+{
     ItemManager();
-    void SpawnItem(ZunVec3 *position, ItemType type, i32 state);
+    void SpawnItem(const ZunVec3 *position, ItemType type, i32 state);
     void OnUpdate();
     void OnDraw();
     void RemoveAllItems();

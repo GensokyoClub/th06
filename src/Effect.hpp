@@ -5,7 +5,8 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-enum EffectCallbackResult {
+enum EffectCallbackResult
+{
     EFFECT_CALLBACK_RESULT_STOP = 0,
     EFFECT_CALLBACK_RESULT_DONE = 1
 };
@@ -13,8 +14,8 @@ enum EffectCallbackResult {
 struct Effect;
 
 typedef i32 (*EffectUpdateCallback)(Effect *);
-
-struct Effect {
+struct Effect
+{
     AnmVm vm;
     ZunVec3 pos1;
     ZunVec3 unk_11c;
@@ -33,7 +34,8 @@ struct Effect {
     i8 unk_17b;
 };
 
-struct EffectInfo {
+struct EffectInfo
+{
     i32 anmIdx;
     EffectUpdateCallback updateCallback;
 };

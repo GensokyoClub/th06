@@ -2,7 +2,8 @@
 
 #include "Player.hpp"
 
-struct BombData {
+struct BombData
+{
     void (*calc)(Player *p);
     void (*draw)(Player *p);
 
@@ -16,4 +17,4 @@ struct BombData {
     static void BombMarisaBDraw(Player *);
     static void DarkenViewport(Player *player);
 };
-extern BombData g_BombData[4];
+extern const BombData g_BombData[4];

@@ -1,8 +1,10 @@
 #pragma once
 
+#include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-enum ChainCallbackResult {
+enum ChainCallbackResult
+{
     CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB = (unsigned int)0,
     CHAIN_CALLBACK_RESULT_CONTINUE = (unsigned int)1,
     CHAIN_CALLBACK_RESULT_EXECUTE_AGAIN = (unsigned int)2,
@@ -14,10 +16,11 @@ enum ChainCallbackResult {
 
 // TODO
 typedef ChainCallbackResult (*ChainCallback)(void *);
-typedef bool (*ChainAddedCallback)(void *);
-typedef bool (*ChainDeletedCallback)(void *);
+typedef ZunResult (*ChainAddedCallback)(void *);
+typedef ZunResult (*ChainDeletedCallback)(void *);
 
-class ChainElem {
+class ChainElem
+{
   public:
     short priority;
     u16 isHeapAllocated : 1;
@@ -33,7 +36,8 @@ class ChainElem {
     ~ChainElem();
 };
 
-class Chain {
+class Chain
+{
   private:
     ChainElem calcChain;
     ChainElem drawChain;
@@ -46,7 +50,7 @@ class Chain {
 
     void Cut(ChainElem *to_remove);
     void Release(void);
-    bool AddToCalcChain(ChainElem *elem, int priority);
+    int AddToCalcChain(ChainElem *elem, int priority);
     int AddToDrawChain(ChainElem *elem, int priority);
     int RunDrawChain(void);
     int RunCalcChain(void);

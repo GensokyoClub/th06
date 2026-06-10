@@ -3,7 +3,8 @@
 #include "AnmVm.hpp"
 #include "inttypes.hpp"
 
-struct StageMenu {
+struct StageMenu
+{
     StageMenu();
 
     i32 OnUpdateGameMenu();

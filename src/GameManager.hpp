@@ -1,10 +1,16 @@
 #pragma once
 
+// #include <Windows.h>
+// #include <d3d8.h>
+// #include <d3dx8math.h>
+
 #include "Chain.hpp"
 #include "ResultScreen.hpp"
+#include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-enum Difficulty {
+enum Difficulty
+{
     EASY,
     NORMAL,
     HARD,
@@ -12,7 +18,8 @@ enum Difficulty {
     EXTRA,
 };
 
-enum StageNumber {
+enum StageNumber
+{
     STAGE1,
     STAGE2,
     STAGE3,
@@ -42,27 +49,30 @@ enum StageNumber {
 struct GameManager;
 
 extern GameManager g_GameManager;
-struct GameManager {
+struct GameManager
+{
     GameManager();
-    static bool RegisterChain();
+    static ZunResult RegisterChain();
     static void CutChain();
     static ChainCallbackResult OnUpdate(GameManager *gameManager);
     static ChainCallbackResult OnDraw(GameManager *gameManager);
-    static bool AddedCallback(GameManager *gameManager);
-    static bool DeletedCallback(GameManager *gameManager);
+    static ZunResult AddedCallback(GameManager *gameManager);
+    static ZunResult DeletedCallback(GameManager *gameManager);
     static void SetupCamera(f32);
     static void SetupCameraStageBackground(f32);
 
-    i32 HasReachedMaxClears(i32 character, i32 shottype);
+    i32 HasReachedMaxClears(i32 character, i32 shottype) const;
     void IncreaseSubrank(i32 amount);
     void DecreaseSubrank(i32 amount);
-    i32 IsInBounds(f32 x, f32 y, f32 width, f32 height);
+    i32 IsInBounds(f32 x, f32 y, f32 width, f32 height) const;
 
-    void AddScore(i32 points) {
+    void AddScore(i32 points)
+    {
         this->score += points;
     }
 
-    static i32 CharacterShotType() {
+    static i32 CharacterShotType()
+    {
         return g_GameManager.shotType + g_GameManager.character * 2;
     }
 

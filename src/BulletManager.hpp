@@ -1,12 +1,14 @@
 #pragma once
 
 #include "AnmVm.hpp"
+#include "ZunResult.hpp"
 #include "inttypes.hpp"
 
 struct EnemyBulletShooter;
 struct EnemyLaserShooter;
 
-enum BulletAimMode {
+enum BulletAimMode
+{
     FAN_AIMED,
     FAN,
     CIRCLE_AIMED,
@@ -18,7 +20,8 @@ enum BulletAimMode {
     RANDOM,
 };
 
-struct BulletTypeSprites {
+struct BulletTypeSprites
+{
     AnmVm spriteBullet;
     AnmVm spriteSpawnEffectFast;
     AnmVm spriteSpawnEffectNormal;
@@ -30,7 +33,8 @@ struct BulletTypeSprites {
     u8 bulletHeight;
 };
 
-struct Bullet {
+struct Bullet
+{
     BulletTypeSprites sprites;
     ZunVec3 pos;
     ZunVec3 velocity;
@@ -55,7 +59,8 @@ struct Bullet {
     u8 isGrazed;
 };
 
-struct Laser {
+struct Laser
+{
     AnmVm vm0;
     AnmVm vm1;
     ZunVec3 pos;
@@ -77,12 +82,13 @@ struct Laser {
     u8 state;
 };
 
-struct BulletManager {
+struct BulletManager
+{
     BulletManager();
-    static bool RegisterChain(const char *bulletAnmPath);
+    static ZunResult RegisterChain(const char *bulletAnmPath);
     static void CutChain();
-    static bool AddedCallback(BulletManager *mgr);
-    static bool DeletedCallback(BulletManager *mgr);
+    static ZunResult AddedCallback(BulletManager *mgr);
+    static ZunResult DeletedCallback(BulletManager *mgr);
     static ChainCallbackResult OnUpdate(BulletManager *mgr);
     static ChainCallbackResult OnDraw(BulletManager *mgr);
 
@@ -95,10 +101,9 @@ struct BulletManager {
     void TurnAllBulletsIntoPoints();
 
     i32 DespawnBullets(i32 maxBonusScore, bool awardPoints);
-    bool SpawnBulletPattern(EnemyBulletShooter *bulletProps);
-    Laser *SpawnLaserPattern(EnemyLaserShooter *bulletProps);
-    u32 SpawnSingleBullet(EnemyBulletShooter *bulletProps, i32 bulletIdx1,
-                          i32 bulletIdx2, f32 angle);
+    ZunResult SpawnBulletPattern(const EnemyBulletShooter *bulletProps);
+    Laser *SpawnLaserPattern(const EnemyLaserShooter *bulletProps);
+    u32 SpawnSingleBullet(const EnemyBulletShooter *bulletProps, i32 bulletIdx1, i32 bulletIdx2, f32 angle);
     BulletTypeSprites bulletTypeTemplates[16];
     Bullet bullets[640];
     Laser lasers[64];
@@ -108,5 +113,5 @@ struct BulletManager {
     const char *bulletAnmPath;
 };
 
-extern u32 *g_EffectsColor;
+extern const u32 *g_EffectsColor;
 extern BulletManager g_BulletManager;

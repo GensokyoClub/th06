@@ -1,14 +1,16 @@
 #pragma once
 
+#include "ZunResult.hpp"
 #include "inttypes.hpp"
-#include <SDL2/SDL_rwops.h>
-#include <SDL2/SDL_audio.h>
 #include "thirdparty/miniaudio.h"
+#include <SDL2/SDL_audio.h>
+#include <SDL2/SDL_rwops.h>
 #include <atomic>
 #include <mutex>
 #include <thread>
 
-enum SoundIdx {
+enum SoundIdx
+{
     NO_SOUND = -1,
     SOUND_SHOOT = 0,
     SOUND_1 = 1,
@@ -44,21 +46,24 @@ enum SoundIdx {
     SOUND_POWERUP = 31,
 };
 
-struct SoundBufferIdxVolume {
+struct SoundBufferIdxVolume
+{
     i32 bufferIdx;
     i16 volume;
 };
 
-struct SoundData {
+struct SoundData
+{
     ma_sound sound;
     bool isLoaded;
     bool isPlaying;
     ma_uint64 pos;
 };
 
-struct LoopingDataSource {
+struct LoopingDataSource
+{
     ma_data_source_base base;
-    ma_decoder* decoder;
+    ma_decoder *decoder;
     ma_uint64 loopStartFrame;
     ma_uint64 loopEndFrame;
     ma_uint64 totalFrames;
@@ -66,35 +71,36 @@ struct LoopingDataSource {
     ma_format format;
     ma_uint32 channels;
     ma_uint32 sampleRate;
-    void* fileData;
-    ma_uint8* pcmData;
+    void *fileData;
+    ma_uint8 *pcmData;
     ma_uint64 pcmSize;
     ma_uint64 cursor;
 };
 
-struct MusicStream {
+struct MusicStream
+{
     LoopingDataSource loopingSource;
     ma_sound sound;
     bool isLoaded;
 };
 
-struct SoundPlayer {
+struct SoundPlayer
+{
     SoundPlayer();
 
-    bool InitializeDSound();
-    bool InitSoundBuffers();
-    bool Release(void);
+    ZunResult InitializeDSound();
+    ZunResult InitSoundBuffers();
+    ZunResult Release(void);
 
-    bool LoadSound(i32 idx, const char *path, f32 volumeMultiplier);
+    ZunResult LoadSound(i32 idx, const char *path, f32 volumeMultiplier);
     void PlaySounds();
     void PlaySoundByIdx(SoundIdx idx);
-    bool PlayBGM(bool isLooping);
+    ZunResult PlayBGM(bool isLooping);
     void StopBGM();
     void FadeOut(f32 seconds);
 
-    bool LoadWav(char *path);
-    bool LoadPos(char *path);
-    void StopLooping();
+    ZunResult LoadWav(const char *path);
+    ZunResult LoadPos(const char *path);
 
     SoundData soundBuffers[64];
     std::mutex soundBufMutex;
@@ -107,6 +113,4 @@ struct SoundPlayer {
     SDL_AudioDeviceID audioDev;
 };
 
-extern SoundBufferIdxVolume g_SoundBufferIdxVol[32];
-extern const char *g_SFXList[26];
 extern SoundPlayer g_SoundPlayer;

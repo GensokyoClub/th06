@@ -3,13 +3,15 @@ precision mediump float;
 uniform bool useTexCoords;
 // uniform bool useDiffuse;
 uniform sampler2D tex;
+uniform float fogNear;
+uniform float fogFar;
 uniform vec4 fogColor;
 uniform int colorOp;
 uniform vec4 envDiffuse;
 
-varying mediump vec2 interpTexCoords;
-varying lowp vec4 interpDiffuse;
-varying mediump float fogCoeff;
+varying vec2 interpTexCoords;
+varying vec4 interpDiffuse;
+varying float viewZ;
 
 const float alphaThreshold = 4.0 / 255.0;
 
@@ -23,8 +25,14 @@ void main()
     vec4 fragArg1 = fragColor;
     vec4 fragArg2 = fragColor;
 
-    vec4 texColor = texture2D(tex, interpTexCoords);
-    fragArg1 = mix(interpDiffuse, texColor, float(useTexCoords));
+    if (useTexCoords)
+    {
+        fragArg1 = texture2D(tex, interpTexCoords);
+    }
+    else
+    {
+        fragArg1 = interpDiffuse;
+    }
 
 #ifndef NO_VERTEX_BUFFER
     fragArg2 = envDiffuse;
@@ -32,24 +40,41 @@ void main()
     fragArg2 = interpDiffuse;
 #endif
 
-    vec4 modulate = fragArg1 * fragArg2;
-
-    vec4 add;
-    add.rgb = min(fragArg1.rgb + fragArg2.rgb, vec3(1.0));
-    add.a   = fragArg1.a * fragArg2.a;
-
-    vec4 replace = fragArg1;
-
-    fragColor =
-        modulate * float(colorOp == OP_MODULATE) +
-        add      * float(colorOp == OP_ADD) +
-        replace  * float(colorOp == OP_REPLACE);
+    // Did you know the GLES GLSL 1.0 doesn't have switch statements? I love branching in shaders!
+    if (colorOp == OP_MODULATE)
+    {
+        fragColor = fragArg1 * fragArg2;
+    }
+    else if (colorOp == OP_ADD)
+    {
+        // In EoSD, add only applies to RGB, alpha still uses modulate here
+        fragColor.rgb = min(fragArg1.rgb + fragArg2.rgb, vec3(1.0, 1.0, 1.0));
+        fragColor.a = fragArg1.a * fragArg2.a;
+    }
+    else if(colorOp == OP_REPLACE)
+    {
+        fragColor = fragArg1;
+    }
 
 #ifndef NO_FOG
-    fragColor.rgb = mix(fogColor.rgb, fragColor.rgb, fogCoeff);
+    float fogCoefficient = (fogFar - viewZ) / (fogFar - fogNear);
+    fogCoefficient = clamp(fogCoefficient, 0.0, 1.0);
+
+    fragColor.rgb = mix(fogColor.rgb, fragColor.rgb, fogCoefficient);
 #endif
 
-    fragColor.a *= float(fragColor.a > alphaThreshold);
+#ifndef USE_FRAG_DEPTH
+    if (fragColor.a < alphaThreshold)
+    {
+        discard;
+    }
+#else
+    if (fragColor.a < alphaThreshold)
+    {
+        fragColor.a = 0.0;
+        gl_FragDepthEXT = 1.0;
+    }
+#endif
 
     gl_FragColor = fragColor;
 }

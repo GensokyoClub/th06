@@ -4,9 +4,11 @@
 #include "Effect.hpp"
 #include "ZunColor.hpp"
 #include "ZunMath.hpp"
+#include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-enum ParticleEffects {
+enum ParticleEffects
+{
     PARTICLE_EFFECT_UNK_0,
     PARTICLE_EFFECT_UNK_1,
     PARTICLE_EFFECT_UNK_2,
@@ -28,18 +30,19 @@ enum ParticleEffects {
     PARTICLE_EFFECT_UNK_18,
     PARTICLE_EFFECT_UNK_19,
 };
-struct EffectManager {
+struct EffectManager
+{
     i32 nextIndex;
     i32 activeEffects;
     Effect effects[513];
 
     EffectManager();
 
-    static bool RegisterChain();
+    static ZunResult RegisterChain();
     static void CutChain();
     static ChainCallbackResult OnUpdate(EffectManager *mgr);
-    static bool AddedCallback(EffectManager *mgr);
-    static bool DeletedCallback(EffectManager *mgr);
+    static ZunResult AddedCallback(EffectManager *mgr);
+    static ZunResult DeletedCallback(EffectManager *mgr);
 
     static i32 EffectCallbackRandomSplash(Effect *);
     static i32 EffectCallbackRandomSplashBig(Effect *);
@@ -50,8 +53,7 @@ struct EffectManager {
 
     static ChainCallbackResult OnDraw(EffectManager *mgr);
     void Reset();
-    Effect *SpawnParticles(i32 effectIdx, ZunVec3 *pos, i32 count,
-                           ZunColor color);
+    Effect *SpawnParticles(i32 effectIdx, const ZunVec3 *pos, i32 count, ZunColor color);
 };
 
 extern EffectManager g_EffectManager;

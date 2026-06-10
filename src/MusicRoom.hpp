@@ -2,10 +2,13 @@
 
 #include "AnmVm.hpp"
 #include "Chain.hpp"
+#include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-struct TrackDescriptor {
-    TrackDescriptor() {
+struct TrackDescriptor
+{
+    TrackDescriptor()
+    {
         memset(this, 0, sizeof(TrackDescriptor));
     }
 
@@ -14,18 +17,20 @@ struct TrackDescriptor {
     char description[8][66];
 };
 
-struct MusicRoom {
-    MusicRoom() {
+struct MusicRoom
+{
+    MusicRoom()
+    {
         memset(this, 0, sizeof(MusicRoom));
     }
 
-    static bool AddedCallback(MusicRoom *musicRoom);
-    static bool DeletedCallback(MusicRoom *musicRoom);
+    static ZunResult AddedCallback(MusicRoom *musicRoom);
+    static ZunResult DeletedCallback(MusicRoom *musicRoom);
     bool ProcessInput();
-    bool CheckInputEnable();
+    ZunResult CheckInputEnable();
     static ChainCallbackResult OnDraw(MusicRoom *musicRoom);
     static ChainCallbackResult OnUpdate(MusicRoom *musicRoom);
-    static bool RegisterChain();
+    static ZunResult RegisterChain();
 
     ChainElem *calc_chain;
     ChainElem *draw_chain;

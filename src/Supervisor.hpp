@@ -7,11 +7,14 @@
 #include "Controller.hpp"
 #include "MidiOutput.hpp"
 #include "ZunMath.hpp"
+#include "ZunResult.hpp"
 #include "inttypes.hpp"
+#include "pbg3/Pbg3Archive.hpp"
 
 #define GAME_VERSION 0x102
 
-enum GameConfigOptsShifts {
+enum GameConfigOptsShifts
+{
     GCOS_USE_D3D_HW_TEXTURE_BLENDING = 0x0,
     GCOS_DONT_USE_VERTEX_BUF = 0x1,
     GCOS_FORCE_16BIT_COLOR_MODE = 0x2,
@@ -26,7 +29,8 @@ enum GameConfigOptsShifts {
     GCOS_NO_DIRECTINPUT_PAD = 0xb,
 };
 
-struct ControllerMapping {
+struct ControllerMapping
+{
     i16 shootButton;
     i16 bombButton;
     i16 focusButton;
@@ -38,13 +42,15 @@ struct ControllerMapping {
     i16 skipButton;
 };
 
-enum MusicMode {
+enum MusicMode
+{
     OFF = 0,
     WAV = 1,
     MIDI = 2
 };
 
-struct GameConfiguration {
+struct GameConfiguration
+{
     ControllerMapping controllerMapping;
     // Always 0x102 for 1.02
     i32 version;
@@ -63,9 +69,9 @@ struct GameConfiguration {
     // GameConfigOpts bitfield.
     u32 opts;
 
-    u32 IsSoftwareTexturing() {
-        return (this->opts >> GCOS_NO_COLOR_COMP & 1) |
-               (this->opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING & 1);
+    u32 IsSoftwareTexturing()
+    {
+        return (this->opts >> GCOS_NO_COLOR_COMP & 1) | (this->opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING & 1);
     }
 };
 
@@ -77,7 +83,8 @@ struct GameConfiguration {
 
 typedef char Pbg3ArchiveName[32];
 
-enum SupervisorState {
+enum SupervisorState
+{
     SUPERVISOR_STATE_INIT,
     SUPERVISOR_STATE_MAINMENU,
     SUPERVISOR_STATE_GAMEMANAGER,
@@ -91,51 +98,62 @@ enum SupervisorState {
     SUPERVISOR_STATE_ENDING,
 };
 
-struct Supervisor {
-    static bool RegisterChain();
+struct Supervisor
+{
+    static ZunResult RegisterChain();
     static ChainCallbackResult OnUpdate(Supervisor *s);
     static ChainCallbackResult OnDraw(Supervisor *s);
-    static bool AddedCallback(Supervisor *s);
-    static bool DeletedCallback(Supervisor *s);
+    static ZunResult AddedCallback(Supervisor *s);
+    static ZunResult DeletedCallback(Supervisor *s);
     static void DrawFpsCounter();
 
-    bool ReadMidiFile(u32 midiFileIdx, char *path);
-    bool PlayMidiFile(i32 midiFileIdx);
-    bool PlayAudio(const char *path);
-    bool StopAudio();
-    bool FadeOutMusic(f32 fadeOutSeconds);
+    bool ReadMidiFile(u32 midiFileIdx, const char *path);
+    ZunResult PlayMidiFile(i32 midiFileIdx);
+    ZunResult PlayAudio(const char *path);
+    ZunResult StopAudio();
+    ZunResult FadeOutMusic(f32 fadeOutSeconds);
 
-    static bool SetupDInput(Supervisor *s);
+    static ZunResult SetupDInput(Supervisor *s);
 
-    // i32 LoadPbg3(i32 pbg3FileIdx, const char *filename);
-    // void ReleasePbg3(i32 pbg3FileIdx);
+    i32 LoadPbg3(i32 pbg3FileIdx, const char *filename);
+    void ReleasePbg3(i32 pbg3FileIdx);
 
-    bool LoadConfig(const char *path);
+    ZunResult LoadConfig(const char *path);
 
     void TickTimer(i32 *frames, f32 *subframes);
 
-    f32 FramerateMultiplier() {
+    f32 FramerateMultiplier() const
+    {
         return this->effectiveFramerateMultiplier;
     }
 
-    u32 RedrawWholeFrame() {
+    u32 RedrawWholeFrame() const
+    {
         // SDL makes no guarantees about frame state after buffer swap,
         //   and Wayland will "reuse" old framebuffers in a nondeterministic
-        //   way, so we're basically required to always redraw to avoid UI
-        //   corruption
+        //   way, so we're basically required to always redraw to avoid UI corruption
         return (this->cfg.opts >> GCOS_CLEAR_BACKBUFFER_ON_REFRESH & 1) |
                (this->cfg.opts >> GCOS_DISPLAY_MINIMUM_GRAPHICS & 1) | 1;
     }
 
-    u32 ShouldRunAt60Fps() {
+    u32 ShouldRunAt60Fps() const
+    {
         return (this->cfg.opts >> GCOS_FORCE_60FPS & 1) || this->vsyncEnabled;
     }
 
+    //    HINSTANCE hInstance;
+    //    PDIRECT3D8 d3dIface;
+    //    PDIRECT3DDEVICE8 d3dDevice;
+    //    LPDIRECTINPUT8 dinputIface;
+    //    LPDIRECTINPUTDEVICE8A keyboard;
+    //    LPDIRECTINPUTDEVICE8A controller;
     SDL_GameController *gameController;
-    SDL_Window *gameWindow;
+    //    DIDEVCAPS controllerCaps;
+    //    SDL_Window *gameWindow;
     ZunMatrix viewMatrix;
     ZunMatrix projectionMatrix;
     ZunViewport viewport;
+    //    D3DPRESENT_PARAMETERS presentParameters;
     GameConfiguration cfg;
     GameConfiguration defaultConfig;
     i32 calcCount;
@@ -152,18 +170,20 @@ struct Supervisor {
     f32 effectiveFramerateMultiplier;
     f32 framerateMultiplier;
 
-#ifndef __SWITCH__
     MidiOutput *midiOutput;
-#endif
 
     f32 unk1b4;
     f32 unk1b8;
+
+    Pbg3Archive *pbg3Archives[16];
+    Pbg3ArchiveName pbg3ArchiveNames[16];
 
     u8 hasD3dHardwareVertexProcessing;
     u8 lockableBackbuffer;
     u8 colorMode16Bits;
 
     u32 startupTimeBeforeMenuMusic;
+    //    D3DCAPS8 d3dCaps;
 };
 
 extern ControllerMapping g_ControllerMapping;

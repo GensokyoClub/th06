@@ -6,11 +6,13 @@
 #include "Chain.hpp"
 #include "GameManager.hpp"
 #include "ZunMath.hpp"
+#include "ZunResult.hpp"
 #include "inttypes.hpp"
 
 struct Player;
 
-enum PlayerDirection {
+enum PlayerDirection
+{
     MOVEMENT_NONE,
     MOVEMENT_UP,
     MOVEMENT_DOWN,
@@ -22,31 +24,36 @@ enum PlayerDirection {
     MOVEMENT_DOWN_RIGHT
 };
 
-enum Character {
+enum Character
+{
     CHARA_REIMU,
     CHARA_MARISA,
 };
 
-enum ShotType {
+enum ShotType
+{
     SHOT_TYPE_A,
     SHOT_TYPE_B,
 };
 
-enum BulletType {
+enum BulletType
+{
     BULLET_TYPE_0,
     BULLET_TYPE_1,
     BULLET_TYPE_2,
     BULLET_TYPE_LASER
 };
 
-enum PlayerState {
+enum PlayerState
+{
     PLAYER_STATE_ALIVE,
     PLAYER_STATE_SPAWNING,
     PLAYER_STATE_DEAD,
     PLAYER_STATE_INVULNERABLE,
 };
 
-enum OrbState {
+enum OrbState
+{
     ORB_HIDDEN,
     ORB_UNFOCUSED,
     ORB_FOCUSING,
@@ -54,19 +61,22 @@ enum OrbState {
     ORB_UNFOCUSING,
 };
 
-enum BulletState {
+enum BulletState
+{
     BULLET_STATE_UNUSED,
     BULLET_STATE_FIRED,
     BULLET_STATE_COLLIDED,
 };
-struct PlayerRect {
+struct PlayerRect
+{
     f32 posX;
     f32 posY;
     f32 sizeX;
     f32 sizeY;
 };
 
-struct PlayerBullet {
+struct PlayerBullet
+{
     AnmVm sprite;
     ZunVec3 position;
     ZunVec3 size;
@@ -80,20 +90,21 @@ struct PlayerBullet {
     i16 unk_152;
     i16 spawnPositionIdx;
 
-    void MoveHorizontal(f32 *position) {
-        *position +=
-            this->velocity.x * g_Supervisor.effectiveFramerateMultiplier;
+    void MoveHorizontal(f32 *position)
+    {
+        *position += this->velocity.x * g_Supervisor.effectiveFramerateMultiplier;
         this->sprite.pos.x = *position;
     }
 
-    void MoveVertical(f32 *position) {
-        *position +=
-            this->velocity.y * g_Supervisor.effectiveFramerateMultiplier;
+    void MoveVertical(f32 *position)
+    {
+        *position += this->velocity.y * g_Supervisor.effectiveFramerateMultiplier;
         this->sprite.pos.y = *position;
     }
 };
 
-struct PlayerBombInfo {
+struct PlayerBombInfo
+{
     u32 isInUse;
     i32 duration;
     ZunTimer timer;
@@ -110,9 +121,9 @@ typedef i32 FireBulletResult;
 #define FBR_STOP_SPAWNING (-2)
 #define FBR_SPAWN_MORE (-1)
 
-typedef FireBulletResult (*FireBulletCallback)(Player *, PlayerBullet *, u32,
-                                               u32);
-struct CharacterData {
+typedef FireBulletResult (*FireBulletCallback)(Player *, PlayerBullet *, u32, u32);
+struct CharacterData
+{
     f32 orthogonalMovementSpeed;
     f32 orthogonalMovementSpeedFocus;
     f32 diagonalMovementSpeed;
@@ -121,7 +132,8 @@ struct CharacterData {
     FireBulletCallback fireBulletFocusCallback;
 };
 
-struct CharacterPowerBulletData {
+struct CharacterPowerBulletData
+{
     i16 waitBetweenBullets;
     i16 bulletFrame;
     ZunVec2 motion;
@@ -135,55 +147,51 @@ struct CharacterPowerBulletData {
     i16 bulletSoundIdx;
 };
 
-struct CharacterPowerData {
+struct CharacterPowerData
+{
     i32 numBullets;
     i32 power;
-    CharacterPowerBulletData *bullets;
+    const CharacterPowerBulletData *bullets;
 };
 
-struct Player {
+struct Player
+{
     Player();
 
-    static bool RegisterChain(u8 unk);
+    static ZunResult RegisterChain(u8 unk);
     static void CutChain();
     static ChainCallbackResult OnUpdate(Player *p);
     static ChainCallbackResult OnDrawHighPrio(Player *p);
     static ChainCallbackResult OnDrawLowPrio(Player *p);
-    static bool AddedCallback(Player *p);
-    static bool DeletedCallback(Player *p);
+    static ZunResult AddedCallback(Player *p);
+    static ZunResult DeletedCallback(Player *p);
 
-    static FireBulletResult FireSingleBullet(Player *, PlayerBullet *bullet,
-                                             i32 bullet_idx,
-                                             i32 framesSinceLastBullet,
-                                             CharacterPowerData *powerData);
+    static FireBulletResult FireSingleBullet(Player *, PlayerBullet *bullet, i32 bullet_idx, i32 framesSinceLastBullet,
+                                             const CharacterPowerData *powerData);
 
-    static FireBulletResult FireBulletReimuA(Player *, PlayerBullet *, u32,
-                                             u32);
-    static FireBulletResult FireBulletReimuB(Player *, PlayerBullet *, u32,
-                                             u32);
-    static FireBulletResult FireBulletMarisaA(Player *, PlayerBullet *, u32,
-                                              u32);
-    static FireBulletResult FireBulletMarisaB(Player *, PlayerBullet *, u32,
-                                              u32);
+    static FireBulletResult FireBulletReimuA(Player *, PlayerBullet *, u32, u32);
+    static FireBulletResult FireBulletReimuB(Player *, PlayerBullet *, u32, u32);
+    static FireBulletResult FireBulletMarisaA(Player *, PlayerBullet *, u32, u32);
+    static FireBulletResult FireBulletMarisaB(Player *, PlayerBullet *, u32, u32);
 
     static void StartFireBulletTimer(Player *);
-    bool HandlePlayerInputs();
+    ZunResult HandlePlayerInputs();
     static void UpdatePlayerBullets(Player *);
-    static bool UpdateFireBulletsTimer(Player *);
+    static ZunResult UpdateFireBulletsTimer(Player *);
 
     static void SpawnBullets(Player *, u32 timer);
     static void DrawBullets(Player *p);
     static void DrawBulletExplosions(Player *p);
 
-    f32 AngleFromPlayer(ZunVec3 *pos);
-    f32 AngleToPlayer(ZunVec3 *pos);
-    i32 CheckGraze(ZunVec3 *center, ZunVec3 *size);
-    i32 CalcKillBoxCollision(ZunVec3 *bulletCenter, ZunVec3 *bulletSize);
-    i32 CalcLaserHitbox(ZunVec3 *laserCenter, ZunVec3 *laserSize,
-                        ZunVec3 *rotation, f32 angle, i32 canGraze);
-    i32 CalcDamageToEnemy(ZunVec3 *enemyPos, ZunVec3 *enemySize, bool *unk);
-    i32 CalcItemBoxCollision(ZunVec3 *center, ZunVec3 *size);
-    void ScoreGraze(ZunVec3 *center);
+    f32 AngleFromPlayer(const ZunVec3 *pos) const;
+    f32 AngleToPlayer(const ZunVec3 *pos) const;
+    i32 CheckGraze(const ZunVec3 *center, const ZunVec3 *size) const;
+    i32 CalcKillBoxCollision(const ZunVec3 *bulletCenter, const ZunVec3 *bulletSize);
+    i32 CalcLaserHitbox(const ZunVec3 *laserCenter, const ZunVec3 *laserSize, const ZunVec3 *rotation, f32 angle,
+                        i32 canGraze);
+    i32 CalcDamageToEnemy(const ZunVec3 *enemyPos, const ZunVec3 *enemySize, bool *unk);
+    i32 CalcItemBoxCollision(const ZunVec3 *center, const ZunVec3 *size) const;
+    void ScoreGraze(const ZunVec3 *center) const;
     void Die();
 
     AnmVm playerSprite;
@@ -229,7 +237,8 @@ struct Player {
     ChainElem *chainDraw1;
     ChainElem *chainDraw2;
 
-    void inline SetToTopLeftPos(AnmVm *sprite) {
+    inline void SetToTopLeftPos(AnmVm *sprite) const
+    {
 
         f32 *x = &sprite->pos.x;
         *x += g_GameManager.arcadeRegionTopLeftPos.x;

@@ -5,23 +5,26 @@
 #include "ReplayData.hpp"
 #include "inttypes.hpp"
 
-struct ReplayManager {
-    static bool RegisterChain(i32 isDemo, const char *replayFile);
+struct ReplayManager
+{
+    static ZunResult RegisterChain(i32 isDemo, const char *replayFile);
     static ChainCallbackResult OnUpdate(ReplayManager *mgr);
     static ChainCallbackResult OnUpdateDemoHighPrio(ReplayManager *mgr);
     static ChainCallbackResult OnUpdateDemoLowPrio(ReplayManager *mgr);
     static ChainCallbackResult OnDraw(ReplayManager *mgr);
-    static bool AddedCallback(ReplayManager *mgr);
-    static bool AddedCallbackDemo(ReplayManager *mgr);
-    static bool DeletedCallback(ReplayManager *mgr);
+    static ZunResult AddedCallback(ReplayManager *mgr);
+    static ZunResult AddedCallbackDemo(ReplayManager *mgr);
+    static ZunResult DeletedCallback(ReplayManager *mgr);
     static void StopRecording();
-    static void SaveReplay(char *replay_path, char *param_2);
-    static bool ValidateReplayData(ReplayHeader *data, i32 fileSize);
+    static void SaveReplay(const char *replay_path, char *param_2);
+    static ZunResult ValidateReplayData(const ReplayHeader *data, i32 fileSize);
 
-    ReplayManager() {
+    ReplayManager()
+    {
     }
 
-    i32 IsDemo() {
+    i32 IsDemo() const
+    {
         return this->isDemo;
     }
 
@@ -32,7 +35,7 @@ struct ReplayManager {
     u8 unk10[52];
     u16 unk44;
     ReplayDataInput *replayInputs;
-    ReplayDataInput *replayInputStageBookmarks[7];
+    const ReplayDataInput *replayInputStageBookmarks[7];
     ChainElem *calcChain;
     ChainElem *drawChain;
     ChainElem *calcChainDemoHighPrio;

@@ -549,9 +549,7 @@ ZunResult AnmManager::LoadAnm(i32 anmIdx, const char *path,
         anmName = (char *)((u8 *)anm + anm->alphaNameOffset);
         if (this->LoadTextureAlphaChannel(anm->textureIdx, anmName, anm->format,
                                           anm->colorKey) != ZUN_SUCCESS) {
-            g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED,
-                                     anmName);
-            return ZUN_ERROR;
+            utils::DebugPrint2("%s alpha channel skipped\n", anmName);
         }
     }
 

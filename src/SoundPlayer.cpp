@@ -464,10 +464,10 @@ ZunResult SoundPlayer::InitSoundBuffers() {
                 -1);
 
     for (int idx = 0; idx < ARRAY_SIZE_SIGNED(g_SoundBufferIdxVol); idx++) {
-        if (!this->LoadSound(
+        if (this->LoadSound(
                 idx, g_SFXList[g_SoundBufferIdxVol[idx].bufferIdx],
                 1.0f / std::powf(10.0f, (float)g_SoundBufferIdxVol[idx].volume /
-                                            -2000))) {
+                                            -2000)) != ZUN_SUCCESS) {
             g_GameErrorContext.Log(TH_ERR_SOUNDPLAYER_FAILED_TO_LOAD_SOUND_FILE,
                                    g_SFXList[idx]);
             return ZUN_ERROR;

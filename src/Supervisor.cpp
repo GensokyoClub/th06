@@ -617,7 +617,7 @@ ZunResult Supervisor::LoadConfig(const char *path) {
         g_Supervisor.cfg.version = GAME_VERSION;
         g_Supervisor.cfg.padXAxis = 600;
         g_Supervisor.cfg.padYAxis = 600;
-        wavFile = FileSystem::FopenUTF8("bgm/th06_01.wav", "rb");
+        wavFile = FileSystem::FopenUTF8("bgm/th06_01.ogg", "rb");
         if (wavFile != NULL) {
             g_Supervisor.cfg.musicMode = WAV;
             std::fclose(wavFile);
@@ -649,7 +649,7 @@ ZunResult Supervisor::LoadConfig(const char *path) {
             g_Supervisor.cfg.version = GAME_VERSION;
             g_Supervisor.cfg.padXAxis = 600;
             g_Supervisor.cfg.padYAxis = 600;
-            wavFile2 = FileSystem::FopenUTF8("bgm/th06_01.wav", "rb");
+            wavFile2 = FileSystem::FopenUTF8("bgm/th06_01.ogg", "rb");
             if (wavFile2 != NULL) {
                 g_Supervisor.cfg.musicMode = WAV;
                 std::fclose(wavFile2);
@@ -759,9 +759,9 @@ ZunResult Supervisor::PlayAudio(const char *path) {
         std::strcpy(wavName, path);
         std::strcpy(wavPos, path);
         pathExtension = std::strrchr(wavName, L'.');
-        pathExtension[1] = 'w';
-        pathExtension[2] = 'a';
-        pathExtension[3] = 'v';
+        pathExtension[1] = 'o';
+        pathExtension[2] = 'g';
+        pathExtension[3] = 'g';
         pathExtension = std::strrchr(wavPos, L'.');
         pathExtension[1] = 'p';
         pathExtension[2] = 'o';

@@ -89,7 +89,19 @@ u8 *FileSystem::OpenPath(const char *filepath, int isExternalResource) {
             }
         }
         if (entryIdx < 0) {
-            return NULL;
+            file = FopenUTF8(filepath, "rb");
+            if (file == NULL) {
+                return NULL;
+            }
+            utils::DebugPrint2("%s Load ... \n", filepath);
+            std::fseek(file, 0, SEEK_END);
+            fsize = std::ftell(file);
+            g_LastFileSize = fsize;
+            std::fseek(file, 0, SEEK_SET);
+            data = (u8 *)std::malloc(fsize);
+            std::fread(data, 1, fsize, file);
+            std::fclose(file);
+            return data;
         }
     }
     if (entryIdx >= 0) {

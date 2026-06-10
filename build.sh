@@ -33,7 +33,7 @@ else
     premake5 --cc=clang ninja $C23_EMBED $TRUTH_FFI_INTEGRATION
 fi;
 
-premake5 clang ecc
+premake5 --config="Debug" ecc
 
 cd build
 

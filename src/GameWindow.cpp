@@ -220,15 +220,7 @@ void GameWindow::CreateGameWindow()
 {
     SDL_Init(SDL_INIT_GAMECONTROLLER);
 
-    i32 realWidth = (i32)g_Supervisor.cfg.windowWidth;
-    i32 realHeight = (i32)g_Supervisor.cfg.windowHeight;
-    if (realWidth < GAME_WINDOW_WIDTH || realHeight < GAME_WINDOW_HEIGHT || realWidth > 16384 ||
-        realHeight > 16384)
-    {
-        realWidth = GAME_WINDOW_WIDTH_REAL_DEFAULT;
-        realHeight = GAME_WINDOW_HEIGHT_REAL_DEFAULT;
-    }
-    g_ViewportScale.Recompute(realWidth, realHeight);
+    g_ViewportScale.Recompute(GAME_WINDOW_WIDTH_REAL_DEFAULT, GAME_WINDOW_HEIGHT_REAL_DEFAULT);
 
     for (u32 i = 0; i < ARRAY_SIZE(s_RenderBackends); i++)
     {

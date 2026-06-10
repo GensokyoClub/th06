@@ -2091,16 +2091,22 @@ void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width, i32
 
     this->SetCurrentTexture(this->textures[textureId].handle);
 
-    backBufferPixels =
-        new u8[((u32)(width * WIDTH_RESOLUTION_SCALE + 1)) * ((u32)(height * HEIGHT_RESOLUTION_SCALE + 1)) * 4];
+    i32 readWidth = (i32)(width * WIDTH_RESOLUTION_SCALE);
+    i32 readHeight = (i32)(height * HEIGHT_RESOLUTION_SCALE);
 
-    g_GfxBackend->ReadPixels(left * WIDTH_RESOLUTION_SCALE + VIEWPORT_OFF_X,
-                             GAME_WINDOW_HEIGHT_REAL - ((top + height) * HEIGHT_RESOLUTION_SCALE) - VIEWPORT_OFF_Y,
-                             width * WIDTH_RESOLUTION_SCALE, height * HEIGHT_RESOLUTION_SCALE, backBufferPixels);
+    if (readWidth <= 0 || readHeight <= 0)
+    {
+        return;
+    }
 
-    unstretchedSurface = SDL_CreateRGBSurfaceWithFormatFrom(backBufferPixels, width * WIDTH_RESOLUTION_SCALE,
-                                                            height * HEIGHT_RESOLUTION_SCALE, 32,
-                                                            width * WIDTH_RESOLUTION_SCALE * 4, SDL_PIXELFORMAT_RGBA32);
+    backBufferPixels = new u8[(u32)readWidth * (u32)readHeight * 4];
+
+    g_GfxBackend->ReadPixels((i32)(left * WIDTH_RESOLUTION_SCALE) + VIEWPORT_OFF_X,
+                             GAME_WINDOW_HEIGHT_REAL - (i32)((top + height) * HEIGHT_RESOLUTION_SCALE) - VIEWPORT_OFF_Y,
+                             readWidth, readHeight, backBufferPixels);
+
+    unstretchedSurface = SDL_CreateRGBSurfaceWithFormatFrom(backBufferPixels, readWidth, readHeight, 32, readWidth * 4,
+                                                            SDL_PIXELFORMAT_RGBA32);
     stretchedSurface = SDL_CreateRGBSurfaceWithFormat(0, this->textures[textureId].width,
                                                       this->textures[textureId].height, 32, SDL_PIXELFORMAT_RGBA32);
 
@@ -2115,8 +2121,8 @@ void AnmManager::TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width, i32
 
     stretchSrcRect.x = 0;
     stretchSrcRect.y = 0;
-    stretchSrcRect.h = height * HEIGHT_RESOLUTION_SCALE;
-    stretchSrcRect.w = width * WIDTH_RESOLUTION_SCALE;
+    stretchSrcRect.h = readHeight;
+    stretchSrcRect.w = readWidth;
 
     stretchDstRect.x = 0;
     stretchDstRect.y = 0;

@@ -118,6 +118,7 @@ struct AnmVm
         this->alphaInterpEndTime = 0;
         this->color = COLOR_WHITE;
         this->matrix.Identity();
+        std::memset(&this->flags, 0, sizeof(this->flags));
         this->flags.isVisible = 1;
         this->flags.flag1 = 1;
         this->autoRotate = 0;

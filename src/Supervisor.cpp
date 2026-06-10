@@ -690,8 +690,6 @@ ZunResult Supervisor::LoadConfig(const char *path)
             g_Supervisor.cfg.version = GAME_VERSION;
             g_Supervisor.cfg.padXAxis = 600;
             g_Supervisor.cfg.padYAxis = 600;
-            g_Supervisor.cfg.windowWidth = 0;
-            g_Supervisor.cfg.windowHeight = 0;
             wavFile2 = FileSystem::FopenUTF8("bgm/th06_01.wav", "rb");
             if (wavFile2 != NULL)
             {

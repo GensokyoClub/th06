@@ -7,34 +7,32 @@
 #include <string>
 #include <unordered_map>
 
-#define SET_DRAW_COLOR(renderer, color) SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+#define SET_DRAW_COLOR(renderer, color)                                        \
+    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 
-struct TextureLabel
-{
+struct TextureLabel {
     SDL_Rect rect{};
     SDL_Texture *texture = nullptr;
 };
 
-class LabelCache
-{
+class LabelCache {
   public:
     explicit LabelCache(TTF_Font *font);
     ~LabelCache();
 
-    TextureLabel render(SDL_Renderer *renderer, const std::string &text, SDL_Color color);
+    TextureLabel render(SDL_Renderer *renderer, const std::string &text,
+                        SDL_Color color);
     void clear();
 
   private:
-    struct CacheKey
-    {
+    struct CacheKey {
         std::string text;
         SDL_Color color;
 
         bool operator==(const CacheKey &other) const;
     };
 
-    struct CacheHasher
-    {
+    struct CacheHasher {
         std::size_t operator()(const CacheKey &key) const;
     };
 
@@ -42,10 +40,10 @@ class LabelCache
     std::unordered_map<CacheKey, TextureLabel, CacheHasher> cache;
 };
 
-class UIContext
-{
+class UIContext {
   public:
-    UIContext(SDL_Renderer *renderer, TTF_Font *font, SDL_Color backgroundColor);
+    UIContext(SDL_Renderer *renderer, TTF_Font *font,
+              SDL_Color backgroundColor);
 
     SDL_Color Foreground() const;
     SDL_Color ButtonBg() const;
@@ -56,18 +54,17 @@ class UIContext
     SDL_Color backgroundColor;
 };
 
-class Widget
-{
+class Widget {
   public:
     virtual ~Widget() = default;
     virtual void handleEvent(const SDL_Event &e) = 0;
     virtual void render(UIContext &ctx) = 0;
 };
 
-class ToggleBase : public Widget
-{
+class ToggleBase : public Widget {
   public:
-    ToggleBase(SDL_Rect rect, std::string label, TTF_Font *font, bool *dirtyFlag);
+    ToggleBase(SDL_Rect rect, std::string label, TTF_Font *font,
+               bool *dirtyFlag);
     ~ToggleBase() override = default;
 
   protected:
@@ -82,10 +79,10 @@ class ToggleBase : public Widget
     int labelHeight = 0;
 };
 
-class Checkbox : public ToggleBase
-{
+class Checkbox : public ToggleBase {
   public:
-    Checkbox(SDL_Rect rect, std::string label, bool initial, TTF_Font *font, bool *dirtyFlag);
+    Checkbox(SDL_Rect rect, std::string label, bool initial, TTF_Font *font,
+             bool *dirtyFlag);
 
     void handleEvent(const SDL_Event &e) override;
     void render(UIContext &ctx) override;
@@ -97,28 +94,18 @@ class Checkbox : public ToggleBase
     bool checked;
 };
 
-class RadioButton : public ToggleBase
-{
+class RadioButton : public ToggleBase {
   public:
-    RadioButton(SDL_Rect rect, std::string label, int groupId, int optionId, bool initial, TTF_Font *font,
-                bool *dirtyFlag);
+    RadioButton(SDL_Rect rect, std::string label, int groupId, int optionId,
+                bool initial, TTF_Font *font, bool *dirtyFlag);
 
     void handleEvent(const SDL_Event &e) override;
     void render(UIContext &ctx) override;
 
     void setSelectedState(bool value, bool notifyDirty);
-    bool isSelected() const
-    {
-        return selected;
-    };
-    int getGroupId() const
-    {
-        return groupId;
-    };
-    int getOptionId() const
-    {
-        return optionId;
-    };
+    bool isSelected() const { return selected; };
+    int getGroupId() const { return groupId; };
+    int getOptionId() const { return optionId; };
 
     void setOnSelected(std::function<void(int, RadioButton *)> handler);
 
@@ -129,8 +116,7 @@ class RadioButton : public ToggleBase
     std::function<void(int, RadioButton *)> onSelected;
 };
 
-class Button : public Widget
-{
+class Button : public Widget {
   public:
     Button(SDL_Rect rect, std::string label, std::function<void()> onClick);
 
@@ -143,8 +129,7 @@ class Button : public Widget
     std::function<void()> onClick;
 };
 
-struct GroupBox
-{
+struct GroupBox {
     SDL_Rect rect;
     std::string label;
 

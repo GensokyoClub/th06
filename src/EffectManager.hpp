@@ -7,8 +7,7 @@
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-enum ParticleEffects
-{
+enum ParticleEffects {
     PARTICLE_EFFECT_UNK_0,
     PARTICLE_EFFECT_UNK_1,
     PARTICLE_EFFECT_UNK_2,
@@ -30,8 +29,7 @@ enum ParticleEffects
     PARTICLE_EFFECT_UNK_18,
     PARTICLE_EFFECT_UNK_19,
 };
-struct EffectManager
-{
+struct EffectManager {
     i32 nextIndex;
     i32 activeEffects;
     Effect effects[513];
@@ -53,7 +51,8 @@ struct EffectManager
 
     static ChainCallbackResult OnDraw(EffectManager *mgr);
     void Reset();
-    Effect *SpawnParticles(i32 effectIdx, const ZunVec3 *pos, i32 count, ZunColor color);
+    Effect *SpawnParticles(i32 effectIdx, const ZunVec3 *pos, i32 count,
+                           ZunColor color);
 };
 
 extern EffectManager g_EffectManager;

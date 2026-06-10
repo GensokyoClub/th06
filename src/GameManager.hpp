@@ -9,8 +9,7 @@
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-enum Difficulty
-{
+enum Difficulty {
     EASY,
     NORMAL,
     HARD,
@@ -18,8 +17,7 @@ enum Difficulty
     EXTRA,
 };
 
-enum StageNumber
-{
+enum StageNumber {
     STAGE1,
     STAGE2,
     STAGE3,
@@ -49,8 +47,7 @@ enum StageNumber
 struct GameManager;
 
 extern GameManager g_GameManager;
-struct GameManager
-{
+struct GameManager {
     GameManager();
     static ZunResult RegisterChain();
     static void CutChain();
@@ -66,13 +63,9 @@ struct GameManager
     void DecreaseSubrank(i32 amount);
     i32 IsInBounds(f32 x, f32 y, f32 width, f32 height) const;
 
-    void AddScore(i32 points)
-    {
-        this->score += points;
-    }
+    void AddScore(i32 points) { this->score += points; }
 
-    static i32 CharacterShotType()
-    {
+    static i32 CharacterShotType() {
         return g_GameManager.shotType + g_GameManager.character * 2;
     }
 

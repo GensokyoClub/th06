@@ -3,15 +3,9 @@
 #include "inttypes.hpp"
 #include <cstdio>
 
-enum AccessMode
-{
-    ACCESS_READ,
-    ACCESS_WRITE,
-    ACCESS_INVALID
-};
+enum AccessMode { ACCESS_READ, ACCESS_WRITE, ACCESS_INVALID };
 
-class IFileAbstraction
-{
+class IFileAbstraction {
   public:
     virtual i32 Open(const char *filename, const char *mode) = 0;
     virtual void Close() = 0;
@@ -25,8 +19,7 @@ class IFileAbstraction
     virtual u8 *ReadWholeFile(u32 maxSize) = 0;
 };
 
-class FileAbstraction : public IFileAbstraction
-{
+class FileAbstraction : public IFileAbstraction {
   public:
     FileAbstraction();
     ~FileAbstraction();
@@ -42,10 +35,7 @@ class FileAbstraction : public IFileAbstraction
     virtual u32 GetSize();
     virtual u8 *ReadWholeFile(u32 maxSize);
 
-    bool HasNonNullHandle()
-    {
-        return this->handle != NULL;
-    }
+    bool HasNonNullHandle() { return this->handle != NULL; }
 
   protected:
     std::FILE *handle;

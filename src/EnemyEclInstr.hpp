@@ -2,18 +2,15 @@
 
 #include "Enemy.hpp"
 
-namespace EnemyEclInstr
-{
+namespace EnemyEclInstr {
 i32 *GetVar(Enemy *enemy, EclVarId *varId, EclValueType *valueType);
 f32 *GetVarFloat(Enemy *enemy, f32 *varId, EclValueType *valueType);
 
-inline i32 GetVarValue(Enemy *enemy, EclVarId varId, EclValueType *valueType)
-{
+inline i32 GetVarValue(Enemy *enemy, EclVarId varId, EclValueType *valueType) {
     return *GetVar(enemy, &varId, valueType);
 }
 
-inline f32 GetVarFloatValue(Enemy *enemy, f32 varId, EclValueType *valueType)
-{
+inline f32 GetVarFloatValue(Enemy *enemy, f32 varId, EclValueType *valueType) {
     return *GetVarFloat(enemy, &varId, valueType);
 }
 

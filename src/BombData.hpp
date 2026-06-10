@@ -2,8 +2,7 @@
 
 #include "Player.hpp"
 
-struct BombData
-{
+struct BombData {
     void (*calc)(Player *p);
     void (*draw)(Player *p);
 

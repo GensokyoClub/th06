@@ -19,8 +19,7 @@ struct Enemy;
 struct EnemyEclContext;
 struct EnemyManager;
 
-enum EclVarId : i32
-{
+enum EclVarId : i32 {
     ECL_VAR_I32_0 = -10001,
     ECL_VAR_I32_1 = -10002,
     ECL_VAR_I32_2 = -10003,
@@ -48,8 +47,7 @@ enum EclVarId : i32
     ECL_VAR_PLAYER_SHOT = -10025,
 };
 
-struct EclTimelineInstrArgs
-{
+struct EclTimelineInstrArgs {
     LE<u32> uintVar1;
     LE<u32> uintVar2;
     LE<u32> uintVar3;
@@ -57,14 +55,12 @@ struct EclTimelineInstrArgs
     LE<u16> ushortVar2;
     LE<u32> uintVar4;
 
-    const ZunVec3Raw *Var1AsVec() const
-    {
+    const ZunVec3Raw *Var1AsVec() const {
         return (const ZunVec3Raw *)&this->uintVar1;
     }
 };
 
-struct EclTimelineInstr
-{
+struct EclTimelineInstr {
     LE<i16> time;
     LE<i16> arg0;
     LE<i16> opCode;
@@ -73,15 +69,13 @@ struct EclTimelineInstr
 };
 
 union EclRawInstrArg {
-    struct
-    {
+    struct {
         i8 a;
         i8 b;
         i8 c;
         i8 d;
     } by;
-    struct
-    {
+    struct {
         LE<i16> lo;
         LE<i16> hi;
     } sh;
@@ -90,8 +84,7 @@ union EclRawInstrArg {
     LE<EclVarId> id;
 };
 
-struct EclRawInstrAluArgs
-{
+struct EclRawInstrAluArgs {
     LE<EclVarId> res;
     EclRawInstrArg arg1;
     EclRawInstrArg arg2;
@@ -99,15 +92,13 @@ struct EclRawInstrAluArgs
     EclRawInstrArg arg4;
 };
 
-struct EclRawInstrJumpArgs
-{
+struct EclRawInstrJumpArgs {
     LE<i32> time;
     LE<i32> offset;
     LE<EclVarId> var;
 };
 
-struct EclRawInstrCallArgs
-{
+struct EclRawInstrCallArgs {
     LE<i32> eclSub;
     LE<i32> var0;
     LE<f32> float0;
@@ -115,37 +106,31 @@ struct EclRawInstrCallArgs
     LE<i32> cmpRhs;
 };
 
-struct EclRawInstrCmpArgs
-{
+struct EclRawInstrCmpArgs {
     EclRawInstrArg lhs;
     EclRawInstrArg rhs;
 };
 
-struct EclRawInstrMoveArgs
-{
+struct EclRawInstrMoveArgs {
     ZunVec3Raw pos;
 };
 
-struct EclRawInstrAnmSetMainArgs
-{
+struct EclRawInstrAnmSetMainArgs {
     LE<i32> scriptIdx;
 };
 
-struct EclRawInstrAnmSetSlotArgs
-{
+struct EclRawInstrAnmSetSlotArgs {
     LE<i32> vmIdx;
     LE<i32> scriptIdx;
 };
 
-struct EclRawInstrAnmSetDeathArgs
-{
+struct EclRawInstrAnmSetDeathArgs {
     i8 deathAnm1;
     i8 deathAnm2;
     i8 deathAnm3;
 };
 
-struct EclRawInstrBulletArgs
-{
+struct EclRawInstrBulletArgs {
     LE<i16> sprite;
     LE<i16> color;
     LE<EclVarId> count1;
@@ -157,8 +142,7 @@ struct EclRawInstrBulletArgs
     LE<i32> flags;
 };
 
-struct EclRawInstrLaserArgs
-{
+struct EclRawInstrLaserArgs {
     LE<i16> sprite;
     LE<i16> color;
     LE<f32> angle;
@@ -175,14 +159,12 @@ struct EclRawInstrLaserArgs
     LE<i32> flags;
 };
 
-struct EclRawInstrLaserOpArgs
-{
+struct EclRawInstrLaserOpArgs {
     LE<i32> laserIdx;
     ZunVec3Raw arg1;
 };
 
-struct EclRawInstrBulletEffectsArgs
-{
+struct EclRawInstrBulletEffectsArgs {
     LE<EclVarId> ivar1;
     LE<EclVarId> ivar2;
     LE<EclVarId> ivar3;
@@ -193,26 +175,22 @@ struct EclRawInstrBulletEffectsArgs
     LE<f32> fvar4;
 };
 
-struct EclRawInstrSetInt
-{
+struct EclRawInstrSetInt {
     LE<i32> i32Param;
 };
 
-struct EclRawInstrSpellcardEffectArgs
-{
+struct EclRawInstrSpellcardEffectArgs {
     LE<i32> effectColorId;
     ZunVec3Raw pos;
     LE<f32> effectDistance;
 };
 
-struct EclRawInstrMoveBoundSetArgs
-{
+struct EclRawInstrMoveBoundSetArgs {
     ZunVec2Raw lowerMoveLimit;
     ZunVec2Raw upperMoveLimit;
 };
 
-struct EclRawInstrAnmSetPosesArgs
-{
+struct EclRawInstrAnmSetPosesArgs {
     LE<i16> anmExDefault;
     LE<i16> anmExFarLeft;
     LE<i16> anmExFarRight;
@@ -220,38 +198,32 @@ struct EclRawInstrAnmSetPosesArgs
     LE<i16> anmExRight;
 };
 
-struct EclRawInstrSetInterruptArgs
-{
+struct EclRawInstrSetInterruptArgs {
     LE<i32> interruptSub;
     LE<i32> interruptId;
 };
 
-struct EclRawInstrSpellcardStartArgs
-{
+struct EclRawInstrSpellcardStartArgs {
     LE<i16> spellcardSprite;
     LE<i16> spellcardId;
     char spellcardName[1];
 };
 
-struct EclRawInstrEffectParticleArgs
-{
+struct EclRawInstrEffectParticleArgs {
     LE<i32> effectId;
     LE<i32> numParticles;
     LE<ZunColor> particleColor;
 };
 
-struct EclRawInstrTimeSetArgs
-{
+struct EclRawInstrTimeSetArgs {
     LE<EclVarId> timeToSet;
 };
 
-struct EclRawInstrDropItemArgs
-{
+struct EclRawInstrDropItemArgs {
     LE<ItemType> itemId;
 };
 
-struct EclRawInstrEnemyCreateArgs
-{
+struct EclRawInstrEnemyCreateArgs {
     LE<i32> subId;
     ZunVec3Raw pos;
     LE<i16> life;
@@ -259,19 +231,16 @@ struct EclRawInstrEnemyCreateArgs
     LE<i32> score;
 };
 
-struct EclRawInstrAnmInterruptSlotArgs
-{
+struct EclRawInstrAnmInterruptSlotArgs {
     LE<i32> vmId;
     LE<i32> interruptId;
 };
 
-struct EclRawInstrBulletSoundArgs
-{
+struct EclRawInstrBulletSoundArgs {
     LE<SoundIdx> bulletSfx;
 };
 
-struct EclRawInstrBulletRankInfluenceArgs
-{
+struct EclRawInstrBulletRankInfluenceArgs {
     LE<f32> bulletRankSpeedLow;
     LE<f32> bulletRankSpeedHigh;
     LE<i32> bulletRankAmount1Low;
@@ -280,8 +249,7 @@ struct EclRawInstrBulletRankInfluenceArgs
     LE<i32> bulletRankAmount2High;
 };
 
-struct EclRawInstrExInstrArgs
-{
+struct EclRawInstrExInstrArgs {
     LE<u32> exInstrIndex;
     union {
         LE<i32> i32Param;
@@ -317,14 +285,10 @@ union EclRawInstrArgs {
     EclRawInstrExInstrArgs exInstr;
     LE<i32> setInt;
 
-    i32 GetBossLifeCount() const
-    {
-        return this->setInt;
-    }
+    i32 GetBossLifeCount() const { return this->setInt; }
 };
 
-struct EclRawInstr
-{
+struct EclRawInstr {
     LE<i32> time;
     LE<i16> opCode;
     LE<i16> offsetToNext;
@@ -337,16 +301,14 @@ struct EclRawInstr
     EclRawInstrArgs args;
 };
 
-struct EclRawHeader
-{
+struct EclRawHeader {
     LE<i16> subCount;
     LE<i16> mainCount;
     LE<u32> timelineOffsets[3];
     LE<u32> subOffsets[0];
 };
 
-enum EclRawInstrOpcode
-{
+enum EclRawInstrOpcode {
     ECL_OPCODE_NOP,
     ECL_OPCODE_UNIMP,
     ECL_OPCODE_JUMP,
@@ -485,8 +447,7 @@ enum EclRawInstrOpcode
     ECL_OPCODE_SPELLCARDFLAGTIMEOUT,
 };
 
-struct EclManager
-{
+struct EclManager {
     ZunResult Load(const char *ecl);
     void Unload();
     ZunResult RunEcl(Enemy *enemy);

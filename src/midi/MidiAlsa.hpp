@@ -4,8 +4,7 @@
 #include "inttypes.hpp"
 #include <alsa/asoundlib.h>
 
-struct MidiDevice
-{
+struct MidiDevice {
   public:
     MidiDevice();
     ~MidiDevice();

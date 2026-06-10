@@ -7,8 +7,7 @@
 #include "inttypes.hpp"
 // #include <Windows.h>
 
-struct RunningSpellcardInfo
-{
+struct RunningSpellcardInfo {
     bool isCapturing;
     u32 isActive;
     i32 captureScore;
@@ -16,8 +15,7 @@ struct RunningSpellcardInfo
     bool usedBomb;
 };
 
-struct EnemyManager
-{
+struct EnemyManager {
     void Initialize();
     EnemyManager();
     static ZunResult RegisterChain(const char *stgEnm1, const char *stgEnm2);
@@ -28,7 +26,8 @@ struct EnemyManager
     static ZunResult DeletedCallback(EnemyManager *enemyManager);
 
     void RunEclTimeline();
-    Enemy *SpawnEnemy(i32 eclSubId, const ZunVec3 *pos, i16 life, i16 itemDrop, i32 score);
+    Enemy *SpawnEnemy(i32 eclSubId, const ZunVec3 *pos, i16 life, i16 itemDrop,
+                      i32 score);
 
     const char *stgEnmAnmFilename;
     const char *stgEnm2AnmFilename;

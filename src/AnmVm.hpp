@@ -9,8 +9,7 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-struct AnmLoadedSprite
-{
+struct AnmLoadedSprite {
     i32 sourceFileIndex;
     ZunVec2 startPixelInclusive;
     ZunVec2 endPixelInclusive;
@@ -56,28 +55,24 @@ struct AnmLoadedSprite
 #define AnmOpcode_ScaleTime 30
 #define AnmOpcode_SetZWriteDisable 31
 
-struct AnmRawInstr
-{
+struct AnmRawInstr {
     LE<i16> time;
     u8 opcode;
     u8 argsCount;
     u32 args[10];
 };
 
-enum AnmVmBlendMode
-{
+enum AnmVmBlendMode {
     AnmVmBlendMode_InvSrcAlpha,
     AnmVmBlendMode_One,
 };
 
-enum AnmVmColorOp
-{
+enum AnmVmColorOp {
     AnmVmColorOp_Modulate,
     AnmVmColorOp_Add,
 };
 
-enum AnmVmAnchor
-{
+enum AnmVmAnchor {
     AnmVmAnchor_Center,
     AnmVmAnchor_Left,
     AnmVmAnchor_Top,
@@ -98,10 +93,8 @@ struct AnmVmFlags {
     u32 isStopped : 1;
 };
 
-struct AnmVm
-{
-    void Initialize()
-    {
+struct AnmVm {
+    void Initialize() {
         this->uvScrollPos.y = 0.0;
         this->uvScrollPos.x = 0.0;
         this->scaleInterpFinalX = 0.0;
@@ -127,15 +120,9 @@ struct AnmVm
         this->currentTimeInScript.Initialize();
     }
 
-    AnmVm()
-    {
-        this->activeSpriteIndex = -1;
-    }
+    AnmVm() { this->activeSpriteIndex = -1; }
 
-    void SetInvisible()
-    {
-        this->flags.isVisible = 0;
-    }
+    void SetInvisible() { this->flags.isVisible = 0; }
 
     ZunVec3 rotation;
     ZunVec3 angleVel;

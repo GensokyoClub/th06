@@ -5,24 +5,16 @@
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-struct TrackDescriptor
-{
-    TrackDescriptor()
-    {
-        memset(this, 0, sizeof(TrackDescriptor));
-    }
+struct TrackDescriptor {
+    TrackDescriptor() { memset(this, 0, sizeof(TrackDescriptor)); }
 
     char path[64];
     char title[34];
     char description[8][66];
 };
 
-struct MusicRoom
-{
-    MusicRoom()
-    {
-        memset(this, 0, sizeof(MusicRoom));
-    }
+struct MusicRoom {
+    MusicRoom() { memset(this, 0, sizeof(MusicRoom)); }
 
     static ZunResult AddedCallback(MusicRoom *musicRoom);
     static ZunResult DeletedCallback(MusicRoom *musicRoom);

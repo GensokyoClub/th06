@@ -9,8 +9,7 @@
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-enum GameState
-{
+enum GameState {
     STATE_STARTUP,
     STATE_PRE_INPUT,
     STATE_MAIN_MENU,
@@ -31,15 +30,13 @@ enum GameState
     STATE_PRACTICE_LVL_SELECT,
 };
 
-enum CursorMovement
-{
+enum CursorMovement {
     CURSOR_MOVE_UP = -1,
     CURSOR_DONT_MOVE = 0,
     CURSOR_MOVE_DOWN = 1,
 };
 
-enum OptionsCursorPosition
-{
+enum OptionsCursorPosition {
     CURSOR_OPTIONS_POS_LIFECOUNT,
     CURSOR_OPTIONS_POS_BOMBCOUNT,
     CURSOR_OPTIONS_POS_COLORMODE,
@@ -51,8 +48,7 @@ enum OptionsCursorPosition
     CURSOR_OPTIONS_POS_EXIT,
 };
 
-struct MainMenu
-{
+struct MainMenu {
     MainMenu();
     ZunResult BeginStartup();
     ZunResult DrawStartMenu();
@@ -64,9 +60,12 @@ struct MainMenu
 
     static ZunResult LoadTitleAnm(MainMenu *menu);
     static CursorMovement MoveCursor(MainMenu *menu, i32 menuLength);
-    static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor, ZunColor activeItemColor,
-                             ZunColor inactiveItemColor, i32 spriteIdx /* I think*/);
-    static void SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, bool unk);
+    static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor,
+                             ZunColor activeItemColor,
+                             ZunColor inactiveItemColor,
+                             i32 spriteIdx /* I think*/);
+    static void SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping,
+                            bool unk);
 
     i32 ReplayHandling();
     static ZunResult LoadReplayMenu(MainMenu *menu);

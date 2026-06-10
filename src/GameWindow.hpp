@@ -6,7 +6,8 @@
 #include "graphics/GfxInterface.hpp"
 #include "inttypes.hpp"
 
-// The internal resolution EoSD uses. 640x480. I can't think of any reason anyone sane
+// The internal resolution EoSD uses. 640x480. I can't think of any reason
+// anyone sane
 //   would want to change this
 #define GAME_WINDOW_WIDTH (640)
 #define GAME_WINDOW_HEIGHT (480)
@@ -19,8 +20,7 @@
 #define GAME_WINDOW_HEIGHT_REAL_DEFAULT (GAME_WINDOW_HEIGHT)
 #endif
 
-struct ViewportScaling
-{
+struct ViewportScaling {
     i32 realWidth;
     i32 realHeight;
     i32 viewportWidth;
@@ -44,15 +44,13 @@ extern ViewportScaling g_ViewportScale;
 #define WIDTH_RESOLUTION_SCALE (g_ViewportScale.widthScale)
 #define HEIGHT_RESOLUTION_SCALE (g_ViewportScale.heightScale)
 
-enum RenderResult
-{
+enum RenderResult {
     RENDER_RESULT_KEEP_RUNNING,
     RENDER_RESULT_EXIT_SUCCESS,
     RENDER_RESULT_EXIT_ERROR,
 };
 
-struct GameWindow
-{
+struct GameWindow {
     RenderResult Render();
     static void Present();
 

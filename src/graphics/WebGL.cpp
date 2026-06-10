@@ -5,7 +5,8 @@
 #include <new>
 #include <unordered_set>
 
-// Provided for anyone who wants to recompile with new shaders without rerunning the premake script
+// Provided for anyone who wants to recompile with new shaders without rerunning
+// the premake script
 #ifdef USE_C23_EMBED
 static const char fragShaderBytes[] = {
 #embed "ff.frag"
@@ -23,66 +24,59 @@ static const char vertShaderBytes[] = {
 #define DIFFUSE_ATTRIBUTE_INDEX 2
 
 GLuint createShader(const char *source, GLenum type, const char *descString,
-                    std::unordered_set<GlShaderUniform> &omittedUniforms)
-{
+                    std::unordered_set<GlShaderUniform> &omittedUniforms) {
     const char *fullShaderSource[32];
     GLint getRet = 0;
     GLuint shaderHandle = g_glFuncTable.glCreateShader(type);
     u32 shaderSourceIndex = 1;
 
-    if (shaderHandle == 0)
-    {
+    if (shaderHandle == 0) {
         goto fail;
     }
 
     fullShaderSource[0] = "#version 100\n";
 
-    if (SDL_GL_ExtensionSupported("GL_EXT_frag_depth"))
-    {
-        fullShaderSource[shaderSourceIndex++] = "#extension GL_EXT_frag_depth : require\n";
+    if (SDL_GL_ExtensionSupported("GL_EXT_frag_depth")) {
+        fullShaderSource[shaderSourceIndex++] =
+            "#extension GL_EXT_frag_depth : require\n";
         fullShaderSource[shaderSourceIndex++] = "#define USE_FRAG_DEPTH\n";
     }
 
-    if (g_Supervisor.cfg.opts & (1 << GCOS_DONT_USE_FOG))
-    {
+    if (g_Supervisor.cfg.opts & (1 << GCOS_DONT_USE_FOG)) {
         fullShaderSource[shaderSourceIndex++] = "#define NO_FOG\n";
         omittedUniforms.insert(UNIFORM_FOG_NEAR);
         omittedUniforms.insert(UNIFORM_FOG_FAR);
         omittedUniforms.insert(UNIFORM_FOG_COLOR);
     }
 
-    if (g_Supervisor.cfg.opts & (1 << GCOS_DONT_USE_VERTEX_BUF))
-    {
+    if (g_Supervisor.cfg.opts & (1 << GCOS_DONT_USE_VERTEX_BUF)) {
         fullShaderSource[shaderSourceIndex++] = "#define NO_VERTEX_BUFFER\n";
-    }
-    else
-    {
+    } else {
         omittedUniforms.insert(UNIFORM_ENV_DIFFUSE);
     }
 
     fullShaderSource[shaderSourceIndex] = source;
 
-    g_glFuncTable.glShaderSource(shaderHandle, shaderSourceIndex + 1, fullShaderSource, NULL);
+    g_glFuncTable.glShaderSource(shaderHandle, shaderSourceIndex + 1,
+                                 fullShaderSource, NULL);
     g_glFuncTable.glCompileShader(shaderHandle);
 
     g_glFuncTable.glGetShaderiv(shaderHandle, GL_COMPILE_STATUS, &getRet);
 
-    if (getRet)
-    {
+    if (getRet) {
         return shaderHandle;
     }
 
     g_glFuncTable.glGetShaderiv(shaderHandle, GL_INFO_LOG_LENGTH, &getRet);
 
-    if (getRet == 0)
-    {
-        utils::DebugPrint("Shader %s compilation failed and has no log!\n", descString);
-    }
-    else
-    {
+    if (getRet == 0) {
+        utils::DebugPrint("Shader %s compilation failed and has no log!\n",
+                          descString);
+    } else {
         char *log = new char[getRet];
         g_glFuncTable.glGetShaderInfoLog(shaderHandle, getRet, NULL, log);
-        utils::DebugPrint("Shader %s compilation failed, log: \n%s", descString, log);
+        utils::DebugPrint("Shader %s compilation failed, log: \n%s", descString,
+                          log);
         delete[] log;
     }
 
@@ -90,23 +84,20 @@ fail:
     return 0;
 }
 
-bool linkProgram(GLuint programHandle)
-{
+bool linkProgram(GLuint programHandle) {
     g_glFuncTable.glLinkProgram(programHandle);
 
     GLint getRet;
 
     g_glFuncTable.glGetProgramiv(programHandle, GL_LINK_STATUS, &getRet);
 
-    if (getRet)
-    {
+    if (getRet) {
         return true;
     }
 
     g_glFuncTable.glGetProgramiv(programHandle, GL_INFO_LOG_LENGTH, &getRet);
 
-    if (getRet == 0)
-    {
+    if (getRet == 0) {
         utils::DebugPrint("Program link failed and has no log!");
         return false;
     }
@@ -119,15 +110,13 @@ bool linkProgram(GLuint programHandle)
     return false;
 }
 
-void WebGL::SetContextFlags()
-{
+void WebGL::SetContextFlags() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 }
 
-GfxInterface *WebGL::Create()
-{
+GfxInterface *WebGL::Create() {
     WebGL *interface = new WebGL;
 
     SetContextFlags();
@@ -140,29 +129,26 @@ GfxInterface *WebGL::Create()
     i32 x = SDL_WINDOWPOS_UNDEFINED;
     i32 y = SDL_WINDOWPOS_UNDEFINED;
 
-    if (g_Supervisor.cfg.windowed == 0)
-    {
+    if (g_Supervisor.cfg.windowed == 0) {
         flags |= SDL_WINDOW_FULLSCREEN;
     }
 
-    SDL_Window *window = SDL_CreateWindow(TH_WINDOW_TITLE, x, y, width, height, flags);
+    SDL_Window *window =
+        SDL_CreateWindow(TH_WINDOW_TITLE, x, y, width, height, flags);
     interface->window = window;
-    if (window == NULL)
-    {
+    if (window == NULL) {
         delete interface;
         return NULL;
     }
 
     SDL_GLContext glContext = SDL_GL_CreateContext(window);
     interface->glContext = glContext;
-    if (glContext == NULL)
-    {
+    if (glContext == NULL) {
         delete interface;
         return NULL;
     }
 
-    if (SDL_GL_MakeCurrent(window, glContext) != 0)
-    {
+    if (SDL_GL_MakeCurrent(window, glContext) != 0) {
         delete interface;
         return NULL;
     }
@@ -170,8 +156,7 @@ GfxInterface *WebGL::Create()
     SDL_GL_SetSwapInterval(1);
     g_glFuncTable.ResolveFunctions(true);
 
-    if (!interface->Init())
-    {
+    if (!interface->Init()) {
         delete interface;
         return NULL;
     }
@@ -179,72 +164,83 @@ GfxInterface *WebGL::Create()
     return interface;
 }
 
-void WebGL::Exit()
-{
-    if (this->glContext)
-    {
+void WebGL::Exit() {
+    if (this->glContext) {
         SDL_GL_DeleteContext(this->glContext);
         this->glContext = NULL;
     }
-    if (this->window)
-    {
+    if (this->window) {
         SDL_DestroyWindow(this->window);
         this->window = NULL;
     }
 }
 
-bool WebGL::Init()
-{
+bool WebGL::Init() {
     ZunMatrix identityMatrix;
     std::unordered_set<GlShaderUniform> omittedUniforms;
 
-    while (g_glFuncTable.glGetError() != GL_NO_ERROR)
-    {
+    while (g_glFuncTable.glGetError() != GL_NO_ERROR) {
     }
 
-    // Using a hashset for this is definitely super overkill, but it still feels more right
+    // Using a hashset for this is definitely super overkill, but it still feels
+    // more right
     //   than just using a vector or C array
 
-    this->vertexShaderHandle = createShader(vertShaderBytes, GL_VERTEX_SHADER, "vertex", omittedUniforms);
-    this->fragmentShaderHandle = createShader(fragShaderBytes, GL_FRAGMENT_SHADER, "fragment", omittedUniforms);
+    this->vertexShaderHandle = createShader(vertShaderBytes, GL_VERTEX_SHADER,
+                                            "vertex", omittedUniforms);
+    this->fragmentShaderHandle = createShader(
+        fragShaderBytes, GL_FRAGMENT_SHADER, "fragment", omittedUniforms);
     this->programHandle = g_glFuncTable.glCreateProgram();
 
-    if (this->vertexShaderHandle == 0 || this->fragmentShaderHandle == 0 || this->programHandle == 0)
-    {
+    if (this->vertexShaderHandle == 0 || this->fragmentShaderHandle == 0 ||
+        this->programHandle == 0) {
         goto fail;
     }
 
     g_glFuncTable.glAttachShader(this->programHandle, this->vertexShaderHandle);
-    g_glFuncTable.glAttachShader(this->programHandle, this->fragmentShaderHandle);
+    g_glFuncTable.glAttachShader(this->programHandle,
+                                 this->fragmentShaderHandle);
 
-    g_glFuncTable.glBindAttribLocation(this->programHandle, POSITION_ATTRIBUTE_INDEX, "position");
-    g_glFuncTable.glBindAttribLocation(this->programHandle, TEX_COORDS_ATTRIBUTE_INDEX, "texCoords");
-    g_glFuncTable.glBindAttribLocation(this->programHandle, DIFFUSE_ATTRIBUTE_INDEX, "diffuse");
+    g_glFuncTable.glBindAttribLocation(this->programHandle,
+                                       POSITION_ATTRIBUTE_INDEX, "position");
+    g_glFuncTable.glBindAttribLocation(this->programHandle,
+                                       TEX_COORDS_ATTRIBUTE_INDEX, "texCoords");
+    g_glFuncTable.glBindAttribLocation(this->programHandle,
+                                       DIFFUSE_ATTRIBUTE_INDEX, "diffuse");
 
-    if (!linkProgram(this->programHandle))
-    {
+    if (!linkProgram(this->programHandle)) {
         goto fail;
     }
 
     g_glFuncTable.glUseProgram(this->programHandle);
 
-    this->uniforms[UNIFORM_MODELVIEW] = g_glFuncTable.glGetUniformLocation(programHandle, "modelviewMatrix");
-    this->uniforms[UNIFORM_PROJECTION] = g_glFuncTable.glGetUniformLocation(programHandle, "projectionMatrix");
-    this->uniforms[UNIFORM_TEXTURE_MATRIX] = g_glFuncTable.glGetUniformLocation(programHandle, "textureMatrix");
+    this->uniforms[UNIFORM_MODELVIEW] =
+        g_glFuncTable.glGetUniformLocation(programHandle, "modelviewMatrix");
+    this->uniforms[UNIFORM_PROJECTION] =
+        g_glFuncTable.glGetUniformLocation(programHandle, "projectionMatrix");
+    this->uniforms[UNIFORM_TEXTURE_MATRIX] =
+        g_glFuncTable.glGetUniformLocation(programHandle, "textureMatrix");
 
-    this->uniforms[UNIFORM_ENV_DIFFUSE] = g_glFuncTable.glGetUniformLocation(programHandle, "envDiffuse");
-    this->uniforms[UNIFORM_TEX_COORD_FLAG] = g_glFuncTable.glGetUniformLocation(programHandle, "useTexCoords");
-    this->uniforms[UNIFORM_DIFFUSE_FLAG] = g_glFuncTable.glGetUniformLocation(programHandle, "useDiffuse");
-    this->uniforms[UNIFORM_TEXTURE_SAMPLER] = g_glFuncTable.glGetUniformLocation(programHandle, "tex");
-    this->uniforms[UNIFORM_FOG_NEAR] = g_glFuncTable.glGetUniformLocation(programHandle, "fogNear");
-    this->uniforms[UNIFORM_FOG_FAR] = g_glFuncTable.glGetUniformLocation(programHandle, "fogFar");
-    this->uniforms[UNIFORM_FOG_COLOR] = g_glFuncTable.glGetUniformLocation(programHandle, "fogColor");
-    this->uniforms[UNIFORM_COLOR_OP] = g_glFuncTable.glGetUniformLocation(programHandle, "colorOp");
+    this->uniforms[UNIFORM_ENV_DIFFUSE] =
+        g_glFuncTable.glGetUniformLocation(programHandle, "envDiffuse");
+    this->uniforms[UNIFORM_TEX_COORD_FLAG] =
+        g_glFuncTable.glGetUniformLocation(programHandle, "useTexCoords");
+    this->uniforms[UNIFORM_DIFFUSE_FLAG] =
+        g_glFuncTable.glGetUniformLocation(programHandle, "useDiffuse");
+    this->uniforms[UNIFORM_TEXTURE_SAMPLER] =
+        g_glFuncTable.glGetUniformLocation(programHandle, "tex");
+    this->uniforms[UNIFORM_FOG_NEAR] =
+        g_glFuncTable.glGetUniformLocation(programHandle, "fogNear");
+    this->uniforms[UNIFORM_FOG_FAR] =
+        g_glFuncTable.glGetUniformLocation(programHandle, "fogFar");
+    this->uniforms[UNIFORM_FOG_COLOR] =
+        g_glFuncTable.glGetUniformLocation(programHandle, "fogColor");
+    this->uniforms[UNIFORM_COLOR_OP] =
+        g_glFuncTable.glGetUniformLocation(programHandle, "colorOp");
 
-    for (u32 i = 0; i < ARRAY_SIZE(this->uniforms); i++)
-    {
-        if (this->uniforms[i] == -1 && omittedUniforms.count((GlShaderUniform)i) != 0)
-        {
+    for (u32 i = 0; i < ARRAY_SIZE(this->uniforms); i++) {
+        if (this->uniforms[i] == -1 &&
+            omittedUniforms.count((GlShaderUniform)i) != 0) {
             utils::DebugPrint("Get uniform %i location failed!", i);
         }
     }
@@ -253,9 +249,12 @@ bool WebGL::Init()
     g_glFuncTable.glUniform1i(this->uniforms[UNIFORM_TEXTURE_SAMPLER], 0);
 
     identityMatrix.Identity();
-    g_glFuncTable.glUniformMatrix4fv(this->uniforms[UNIFORM_MODELVIEW], 1, false, (GLfloat *)&identityMatrix.m);
-    g_glFuncTable.glUniformMatrix4fv(this->uniforms[UNIFORM_PROJECTION], 1, false, (GLfloat *)&identityMatrix.m);
-    g_glFuncTable.glUniformMatrix4fv(this->uniforms[UNIFORM_TEXTURE_MATRIX], 1, false, (GLfloat *)&identityMatrix.m);
+    g_glFuncTable.glUniformMatrix4fv(this->uniforms[UNIFORM_MODELVIEW], 1,
+                                     false, (GLfloat *)&identityMatrix.m);
+    g_glFuncTable.glUniformMatrix4fv(this->uniforms[UNIFORM_PROJECTION], 1,
+                                     false, (GLfloat *)&identityMatrix.m);
+    g_glFuncTable.glUniformMatrix4fv(this->uniforms[UNIFORM_TEXTURE_MATRIX], 1,
+                                     false, (GLfloat *)&identityMatrix.m);
 
     g_glFuncTable.glUniform1f(this->uniforms[UNIFORM_FOG_FAR], 1.0f);
 
@@ -271,95 +270,91 @@ fail:
     return false;
 }
 
-void WebGL::SetFogRange(f32 nearPlane, f32 farPlane)
-{
+void WebGL::SetFogRange(f32 nearPlane, f32 farPlane) {
     g_glFuncTable.glUniform1f(this->uniforms[UNIFORM_FOG_NEAR], nearPlane);
     g_glFuncTable.glUniform1f(this->uniforms[UNIFORM_FOG_FAR], farPlane);
 }
 
-void WebGL::SetFogColor(ZunColor color)
-{
-    g_glFuncTable.glUniform4f(this->uniforms[UNIFORM_FOG_COLOR], ((color >> 16) & 0xFF) / 255.0f,
-                              ((color >> 8) & 0xFF) / 255.0f, (color & 0xFF) / 255.0f, ((color >> 24) & 0xFF) / 255.0f);
+void WebGL::SetFogColor(ZunColor color) {
+    g_glFuncTable.glUniform4f(
+        this->uniforms[UNIFORM_FOG_COLOR], ((color >> 16) & 0xFF) / 255.0f,
+        ((color >> 8) & 0xFF) / 255.0f, (color & 0xFF) / 255.0f,
+        ((color >> 24) & 0xFF) / 255.0f);
 }
 
-void WebGL::ToggleVertexAttribute(u8 attr, bool enable)
-{
-    if (attr & VERTEX_ATTR_TEX_COORD)
-    {
-        if (enable)
-        {
+void WebGL::ToggleVertexAttribute(u8 attr, bool enable) {
+    if (attr & VERTEX_ATTR_TEX_COORD) {
+        if (enable) {
             g_glFuncTable.glEnableVertexAttribArray(TEX_COORDS_ATTRIBUTE_INDEX);
-            g_glFuncTable.glUniform1i(this->uniforms[UNIFORM_TEX_COORD_FLAG], true);
-        }
-        else
-        {
-            g_glFuncTable.glDisableVertexAttribArray(TEX_COORDS_ATTRIBUTE_INDEX);
-            g_glFuncTable.glUniform1i(this->uniforms[UNIFORM_TEX_COORD_FLAG], false);
+            g_glFuncTable.glUniform1i(this->uniforms[UNIFORM_TEX_COORD_FLAG],
+                                      true);
+        } else {
+            g_glFuncTable.glDisableVertexAttribArray(
+                TEX_COORDS_ATTRIBUTE_INDEX);
+            g_glFuncTable.glUniform1i(this->uniforms[UNIFORM_TEX_COORD_FLAG],
+                                      false);
         }
     }
 
-    if (attr & VERTEX_ATTR_DIFFUSE)
-    {
-        if (enable)
-        {
+    if (attr & VERTEX_ATTR_DIFFUSE) {
+        if (enable) {
             g_glFuncTable.glEnableVertexAttribArray(DIFFUSE_ATTRIBUTE_INDEX);
-            g_glFuncTable.glUniform1i(this->uniforms[UNIFORM_DIFFUSE_FLAG], true);
-        }
-        else
-        {
+            g_glFuncTable.glUniform1i(this->uniforms[UNIFORM_DIFFUSE_FLAG],
+                                      true);
+        } else {
             g_glFuncTable.glDisableVertexAttribArray(DIFFUSE_ATTRIBUTE_INDEX);
-            g_glFuncTable.glUniform1i(this->uniforms[UNIFORM_DIFFUSE_FLAG], false);
+            g_glFuncTable.glUniform1i(this->uniforms[UNIFORM_DIFFUSE_FLAG],
+                                      false);
         }
     }
 }
 
-void WebGL::SetAttributePointer(VertexAttributeArrays attr, std::size_t stride, void *ptr)
-{
-    switch (attr)
-    {
+void WebGL::SetAttributePointer(VertexAttributeArrays attr, std::size_t stride,
+                                void *ptr) {
+    switch (attr) {
     case VERTEX_ARRAY_POSITION:
-        g_glFuncTable.glVertexAttribPointer(POSITION_ATTRIBUTE_INDEX, 3, GL_FLOAT, false, stride, ptr);
+        g_glFuncTable.glVertexAttribPointer(POSITION_ATTRIBUTE_INDEX, 3,
+                                            GL_FLOAT, false, stride, ptr);
         break;
     case VERTEX_ARRAY_TEX_COORD:
-        g_glFuncTable.glVertexAttribPointer(TEX_COORDS_ATTRIBUTE_INDEX, 2, GL_FLOAT, false, stride, ptr);
+        g_glFuncTable.glVertexAttribPointer(TEX_COORDS_ATTRIBUTE_INDEX, 2,
+                                            GL_FLOAT, false, stride, ptr);
         break;
     case VERTEX_ARRAY_DIFFUSE:
-        g_glFuncTable.glVertexAttribPointer(DIFFUSE_ATTRIBUTE_INDEX, 4, GL_UNSIGNED_BYTE, true, stride, ptr);
+        g_glFuncTable.glVertexAttribPointer(
+            DIFFUSE_ATTRIBUTE_INDEX, 4, GL_UNSIGNED_BYTE, true, stride, ptr);
         break;
     }
 }
 
-void WebGL::SetColorOp(TextureOpComponent component, ColorOp op)
-{
-    if (component == COMPONENT_ALPHA)
-    {
+void WebGL::SetColorOp(TextureOpComponent component, ColorOp op) {
+    if (component == COMPONENT_ALPHA) {
         return;
     }
 
     g_glFuncTable.glUniform1i(this->uniforms[UNIFORM_COLOR_OP], op);
 }
 
-void WebGL::SetTextureFactor(ZunColor factor)
-{
-    g_glFuncTable.glUniform4f(this->uniforms[UNIFORM_ENV_DIFFUSE], ((factor >> 16) & 0xFF) / 255.0f,
-                              ((factor >> 8) & 0xFF) / 255.0f, (factor & 0xFF) / 255.0f,
-                              ((factor >> 24) & 0xFF) / 255.0f);
+void WebGL::SetTextureFactor(ZunColor factor) {
+    g_glFuncTable.glUniform4f(
+        this->uniforms[UNIFORM_ENV_DIFFUSE], ((factor >> 16) & 0xFF) / 255.0f,
+        ((factor >> 8) & 0xFF) / 255.0f, (factor & 0xFF) / 255.0f,
+        ((factor >> 24) & 0xFF) / 255.0f);
 }
 
-void WebGL::SetTransformMatrix(TransformMatrix type, const ZunMatrix &matrix)
-{
-    // I should probably just remove the model matrix from the range of possibilies
-    static const u32 matrixUniformEnum[4] = {UNIFORM_MODELVIEW, UNIFORM_MODELVIEW, UNIFORM_PROJECTION,
-                                             UNIFORM_TEXTURE_MATRIX};
+void WebGL::SetTransformMatrix(TransformMatrix type, const ZunMatrix &matrix) {
+    // I should probably just remove the model matrix from the range of
+    // possibilies
+    static const u32 matrixUniformEnum[4] = {
+        UNIFORM_MODELVIEW, UNIFORM_MODELVIEW, UNIFORM_PROJECTION,
+        UNIFORM_TEXTURE_MATRIX};
 
-    g_glFuncTable.glUniformMatrix4fv(this->uniforms[matrixUniformEnum[type]], 1, false, (const GLfloat *)&matrix.m);
+    g_glFuncTable.glUniformMatrix4fv(this->uniforms[matrixUniformEnum[type]], 1,
+                                     false, (const GLfloat *)&matrix.m);
 }
 
-void WebGL::Enable(Capabilities cap)
-{
-    switch (cap)
-    {
+void WebGL::Enable(Capabilities cap) {
+    switch (cap) {
     case CAPS_BLEND:
         g_glFuncTable.glEnable(GL_BLEND);
         break;
@@ -369,60 +364,44 @@ void WebGL::Enable(Capabilities cap)
     }
 }
 
-bool WebGL::HasError()
-{
-    return g_glFuncTable.glGetError() != GL_NO_ERROR;
+bool WebGL::HasError() { return g_glFuncTable.glGetError() != GL_NO_ERROR; }
+
+void WebGL::SetTextureFilter() {
+    g_glFuncTable.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                                  GL_LINEAR);
 }
 
-void WebGL::SetTextureFilter()
-{
-    g_glFuncTable.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-}
-
-void WebGL::GetViewport(u32 *viewport)
-{
+void WebGL::GetViewport(u32 *viewport) {
     g_glFuncTable.glGetIntegerv(GL_VIEWPORT, (GLint *)viewport);
 }
 
-void WebGL::GetDepthRange(f32 *depthRange)
-{
+void WebGL::GetDepthRange(f32 *depthRange) {
     g_glFuncTable.glGetFloatv(GL_DEPTH_RANGE, depthRange);
 }
 
-void WebGL::SetViewport(i32 x, i32 y, i32 width, i32 height)
-{
+void WebGL::SetViewport(i32 x, i32 y, i32 width, i32 height) {
     g_glFuncTable.glViewport(x, y, width, height);
 }
 
-void WebGL::SetDepthRange(f32 nearPlane, f32 farPlane)
-{
+void WebGL::SetDepthRange(f32 nearPlane, f32 farPlane) {
     g_glFuncTable.glDepthRangef(nearPlane, farPlane);
 }
 
-void WebGL::SetBlendMode(BlendMode mode)
-{
-    if (mode == BLEND_INV_SRC_ALPHA)
-    {
+void WebGL::SetBlendMode(BlendMode mode) {
+    if (mode == BLEND_INV_SRC_ALPHA) {
         g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    }
-    else
-    {
+    } else {
         g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     }
 }
 
-void WebGL::SetClearDepth(f32 depth)
-{
-    g_glFuncTable.glClearDepthf(depth);
-}
+void WebGL::SetClearDepth(f32 depth) { g_glFuncTable.glClearDepthf(depth); }
 
-void WebGL::SetClearColor(f32 r, f32 g, f32 b, f32 a)
-{
+void WebGL::SetClearColor(f32 r, f32 g, f32 b, f32 a) {
     g_glFuncTable.glClearColor(r, g, b, a);
 }
 
-void WebGL::Clear(u32 clearBits)
-{
+void WebGL::Clear(u32 clearBits) {
     GLbitfield mask = 0;
 
     if (clearBits & CLEAR_COLOR_BUFFER)
@@ -433,46 +412,35 @@ void WebGL::Clear(u32 clearBits)
     g_glFuncTable.glClear(mask);
 }
 
-void WebGL::SetDepthMask(bool enable)
-{
-    g_glFuncTable.glDepthMask(enable);
-}
+void WebGL::SetDepthMask(bool enable) { g_glFuncTable.glDepthMask(enable); }
 
-void WebGL::SetDepthFunc(DepthFunc func)
-{
-    if (func == DEPTH_FUNC_ALWAYS)
-    {
+void WebGL::SetDepthFunc(DepthFunc func) {
+    if (func == DEPTH_FUNC_ALWAYS) {
         g_glFuncTable.glDepthFunc(GL_ALWAYS);
-    }
-    else
-    {
+    } else {
         g_glFuncTable.glDepthFunc(GL_LEQUAL);
     }
 }
-GfxTextureHandle WebGL::CreateTexture()
-{
+GfxTextureHandle WebGL::CreateTexture() {
     GLuint texture;
     g_glFuncTable.glGenTextures(1, &texture);
     return texture;
 }
 
-void WebGL::BindTexture(GfxTextureHandle handle)
-{
+void WebGL::BindTexture(GfxTextureHandle handle) {
     g_glFuncTable.glBindTexture(GL_TEXTURE_2D, handle);
 }
 
-void WebGL::DeleteTexture(GfxTextureHandle handle)
-{
+void WebGL::DeleteTexture(GfxTextureHandle handle) {
     g_glFuncTable.glDeleteTextures(1, (GLuint *)&handle);
 }
 
-void WebGL::SetTextureImage(u32 width, u32 height, PixelFormat fmt, PixelDataType type, const void *data)
-{
+void WebGL::SetTextureImage(u32 width, u32 height, PixelFormat fmt,
+                            PixelDataType type, const void *data) {
     GLenum glFmt;
     GLenum glType;
 
-    switch (fmt)
-    {
+    switch (fmt) {
     case PIXEL_RGBA:
         glFmt = GL_RGBA;
         break;
@@ -481,8 +449,7 @@ void WebGL::SetTextureImage(u32 width, u32 height, PixelFormat fmt, PixelDataTyp
         break;
     }
 
-    switch (type)
-    {
+    switch (type) {
     case PIXEL_UNSIGNED_BYTE:
         glType = GL_UNSIGNED_BYTE;
         break;
@@ -497,25 +464,26 @@ void WebGL::SetTextureImage(u32 width, u32 height, PixelFormat fmt, PixelDataTyp
         break;
     }
 
-    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, glFmt, width, height, 0, glFmt, glType, data);
+    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, glFmt, width, height, 0, glFmt,
+                               glType, data);
 }
 
-void WebGL::SetTextureSubImage(i32 xoffset, i32 yoffset, i32 width, i32 height, const void *data)
-{
-    g_glFuncTable.glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+void WebGL::SetTextureSubImage(i32 xoffset, i32 yoffset, i32 width, i32 height,
+                               const void *data) {
+    g_glFuncTable.glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, width,
+                                  height, GL_RGB, GL_UNSIGNED_BYTE, data);
 }
 
-void WebGL::ReadPixels(i32 x, i32 y, i32 width, i32 height, const void *pixels)
-{
-    g_glFuncTable.glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, (void *)pixels);
+void WebGL::ReadPixels(i32 x, i32 y, i32 width, i32 height,
+                       const void *pixels) {
+    g_glFuncTable.glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE,
+                               (void *)pixels);
 }
 
-void WebGL::Draw(PrimitiveType type, i32 start, i32 count)
-{
+void WebGL::Draw(PrimitiveType type, i32 start, i32 count) {
     GLenum glPrim;
 
-    switch (type)
-    {
+    switch (type) {
     case PRIM_TRIANGLE_STRIP:
         glPrim = GL_TRIANGLE_STRIP;
         break;
@@ -527,7 +495,4 @@ void WebGL::Draw(PrimitiveType type, i32 start, i32 count)
     g_glFuncTable.glDrawArrays(glPrim, start, count);
 }
 
-void WebGL::SwapBuffers()
-{
-    SDL_GL_SwapWindow(window);
-}
+void WebGL::SwapBuffers() { SDL_GL_SwapWindow(window); }

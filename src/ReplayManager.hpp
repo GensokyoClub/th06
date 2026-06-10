@@ -5,8 +5,7 @@
 #include "ReplayData.hpp"
 #include "inttypes.hpp"
 
-struct ReplayManager
-{
+struct ReplayManager {
     static ZunResult RegisterChain(i32 isDemo, const char *replayFile);
     static ChainCallbackResult OnUpdate(ReplayManager *mgr);
     static ChainCallbackResult OnUpdateDemoHighPrio(ReplayManager *mgr);
@@ -19,14 +18,9 @@ struct ReplayManager
     static void SaveReplay(const char *replay_path, char *param_2);
     static ZunResult ValidateReplayData(const ReplayHeader *data, i32 fileSize);
 
-    ReplayManager()
-    {
-    }
+    ReplayManager() {}
 
-    i32 IsDemo() const
-    {
-        return this->isDemo;
-    }
+    i32 IsDemo() const { return this->isDemo; }
 
     i32 frameId;
     ReplayData *replayData;

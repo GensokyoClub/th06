@@ -2,13 +2,9 @@
 
 #include "inttypes.hpp"
 
-class IPbg3Parser
-{
+class IPbg3Parser {
   public:
-    IPbg3Parser()
-    {
-        this->Reset();
-    }
+    IPbg3Parser() { this->Reset(); }
     void Reset();
     u32 ReadVarInt();
     u32 ReadMagic();
@@ -19,9 +15,7 @@ class IPbg3Parser
     virtual i32 SeekToOffset(u32 fileOffset) = 0;
     virtual i32 SeekToNextByte() = 0;
     virtual i32 ReadByteAlignedData(u8 *data, u32 bytesToRead) = 0;
-    virtual ~IPbg3Parser()
-    {
-    }
+    virtual ~IPbg3Parser() {}
 
   protected:
     u32 offsetInFile;

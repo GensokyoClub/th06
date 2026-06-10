@@ -6,8 +6,7 @@
 // The MIDI interface used if a specific platform MIDI API is not supported
 // Obviously can't do much, but something needs to be linked
 
-struct MidiDevice
-{
+struct MidiDevice {
   public:
     MidiDevice();
     ~MidiDevice();

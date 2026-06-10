@@ -9,8 +9,7 @@
 #include <mutex>
 #include <thread>
 
-enum SoundIdx
-{
+enum SoundIdx {
     NO_SOUND = -1,
     SOUND_SHOOT = 0,
     SOUND_1 = 1,
@@ -46,22 +45,19 @@ enum SoundIdx
     SOUND_POWERUP = 31,
 };
 
-struct SoundBufferIdxVolume
-{
+struct SoundBufferIdxVolume {
     i32 bufferIdx;
     i16 volume;
 };
 
-struct SoundData
-{
+struct SoundData {
     ma_sound sound;
     bool isLoaded;
     bool isPlaying;
     ma_uint64 pos;
 };
 
-struct LoopingDataSource
-{
+struct LoopingDataSource {
     ma_data_source_base base;
     ma_decoder *decoder;
     ma_uint64 loopStartFrame;
@@ -77,15 +73,13 @@ struct LoopingDataSource
     ma_uint64 cursor;
 };
 
-struct MusicStream
-{
+struct MusicStream {
     LoopingDataSource loopingSource;
     ma_sound sound;
     bool isLoaded;
 };
 
-struct SoundPlayer
-{
+struct SoundPlayer {
     SoundPlayer();
 
     ZunResult InitializeDSound();

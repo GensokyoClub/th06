@@ -8,8 +8,7 @@
 // #include <d3d8.h>
 // #include <d3dx8math.h>
 
-struct RawStageHeader
-{
+struct RawStageHeader {
     LE<i16> nbObjects;
     LE<i16> nbFaces;
     LE<i32> facesOffset;
@@ -20,8 +19,7 @@ struct RawStageHeader
     char songPaths[4][128];
 };
 
-struct RawStageQuadBasic
-{
+struct RawStageQuadBasic {
     LE<i16> type;
     LE<i16> byteSize;
     LE<i16> anmScript;
@@ -30,8 +28,7 @@ struct RawStageQuadBasic
     ZunVec2Raw size;
 };
 
-struct RawStageObject
-{
+struct RawStageObject {
     LE<i16> id;
     i8 zLevel;
     i8 flags;
@@ -40,43 +37,33 @@ struct RawStageObject
     RawStageQuadBasic firstQuad;
 };
 
-struct RawStageObjectInstance
-{
+struct RawStageObjectInstance {
     LE<i16> id;
     LE<i16> unk2;
     ZunVec3Raw position;
 };
 
-struct RawStageInstr
-{
+struct RawStageInstr {
     LE<i32> frame;
     LE<i16> opcode;
     LE<i16> size;
     i32 args[3];
 };
 
-struct StageCameraSky
-{
+struct StageCameraSky {
     f32 nearPlane;
     f32 farPlane;
     ZunColor color;
 };
 
-enum SpellcardState
-{
-    NOT_RUNNING,
-    RUNNING,
-    RAN_FOR_60_FRAMES
-};
+enum SpellcardState { NOT_RUNNING, RUNNING, RAN_FOR_60_FRAMES };
 
-struct StageFile
-{
+struct StageFile {
     const char *anmFile;
     const char *stdFile;
 };
 
-enum StageOpcode
-{
+enum StageOpcode {
     STDOP_CAMERA_POSITION_KEY,
     STDOP_FOG,
     STDOP_CAMERA_FACING,
@@ -85,8 +72,7 @@ enum StageOpcode
     STDOP_PAUSE,
 };
 
-struct Stage
-{
+struct Stage {
     Stage();
     static ZunResult RegisterChain(u32 stage);
     static void CutChain();

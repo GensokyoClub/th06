@@ -3,8 +3,7 @@
 #include "inttypes.hpp"
 #include "pbg3/Pbg3Parser.hpp"
 
-struct Pbg3Entry
-{
+struct Pbg3Entry {
     u32 unk1;
     u32 unk2;
     u32 uncompressedSize;
@@ -13,8 +12,7 @@ struct Pbg3Entry
     char filename[256];
 };
 
-class Pbg3Archive
-{
+class Pbg3Archive {
   public:
     Pbg3Archive();
     ~Pbg3Archive();

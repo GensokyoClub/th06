@@ -2,21 +2,14 @@
 #include "GameErrorContext.hpp"
 #include "i18n.hpp"
 
-MidiDevice::MidiDevice()
-{
-    printedWarning = false;
-}
+MidiDevice::MidiDevice() { printedWarning = false; }
 
-MidiDevice::~MidiDevice()
-{
-}
+MidiDevice::~MidiDevice() {}
 
-bool MidiDevice::OpenDevice(u32 uDeviceId)
-{
+bool MidiDevice::OpenDevice(u32 uDeviceId) {
     (void)uDeviceId;
 
-    if (!printedWarning)
-    {
+    if (!printedWarning) {
         g_GameErrorContext.Log(TH_ERR_NO_MIDI_SUPPORT);
         printedWarning = true;
     }
@@ -24,21 +17,16 @@ bool MidiDevice::OpenDevice(u32 uDeviceId)
     return true;
 }
 
-ZunResult MidiDevice::Close()
-{
-    return ZUN_SUCCESS;
-}
+ZunResult MidiDevice::Close() { return ZUN_SUCCESS; }
 
-bool MidiDevice::SendLongMsg(const u8 *buf, u32 len)
-{
+bool MidiDevice::SendLongMsg(const u8 *buf, u32 len) {
     (void)buf;
     (void)len;
 
     return true;
 }
 
-bool MidiDevice::SendShortMsg(u8 midiStatus, u8 firstByte, u8 secondByte)
-{
+bool MidiDevice::SendShortMsg(u8 midiStatus, u8 firstByte, u8 secondByte) {
     (void)midiStatus;
     (void)firstByte;
     (void)secondByte;

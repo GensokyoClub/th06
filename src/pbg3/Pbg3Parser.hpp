@@ -4,8 +4,7 @@
 #include "pbg3/FileAbstraction.hpp"
 #include "pbg3/IPbg3Parser.hpp"
 
-class Pbg3Parser : public IPbg3Parser, public FileAbstraction
-{
+class Pbg3Parser : public IPbg3Parser, public FileAbstraction {
   public:
     Pbg3Parser();
     i32 OpenArchive(const char *path);

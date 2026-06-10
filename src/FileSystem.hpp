@@ -4,12 +4,12 @@
 #include "inttypes.hpp"
 #include <cstdio>
 
-namespace FileSystem
-{
-// Wrapper to open a UTF-8 path string on systems that might not have first-class UTF-8 support (WINDOWS!!!)
-// This should probably be moved to proper filesystem abstraction interface if / when
-//   std::filesystem needs to be replaced for portability to systems that might not have
-//   proper C++ standard library support
+namespace FileSystem {
+// Wrapper to open a UTF-8 path string on systems that might not have
+// first-class UTF-8 support (WINDOWS!!!) This should probably be moved to
+// proper filesystem abstraction interface if / when
+//   std::filesystem needs to be replaced for portability to systems that might
+//   not have proper C++ standard library support
 FILE *FopenUTF8(const char *filepath, const char *mode);
 void CreateDir(const char *path);
 u8 *OpenPath(const char *filepath, int isExternalResource);

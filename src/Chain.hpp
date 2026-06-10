@@ -3,8 +3,7 @@
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
 
-enum ChainCallbackResult
-{
+enum ChainCallbackResult {
     CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB = (unsigned int)0,
     CHAIN_CALLBACK_RESULT_CONTINUE = (unsigned int)1,
     CHAIN_CALLBACK_RESULT_EXECUTE_AGAIN = (unsigned int)2,
@@ -19,8 +18,7 @@ typedef ChainCallbackResult (*ChainCallback)(void *);
 typedef ZunResult (*ChainAddedCallback)(void *);
 typedef ZunResult (*ChainDeletedCallback)(void *);
 
-class ChainElem
-{
+class ChainElem {
   public:
     short priority;
     u16 isHeapAllocated : 1;
@@ -36,8 +34,7 @@ class ChainElem
     ~ChainElem();
 };
 
-class Chain
-{
+class Chain {
   private:
     ChainElem calcChain;
     ChainElem drawChain;

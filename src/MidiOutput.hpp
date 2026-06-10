@@ -13,8 +13,7 @@
 #include "midi/MidiDefault.hpp"
 #endif
 
-enum MidiOpcode
-{
+enum MidiOpcode {
     MIDI_OPCODE_CHANNEL_1 = 0x01,
     MIDI_OPCODE_CHANNEL_2 = 0x02,
     MIDI_OPCODE_CHANNEL_3 = 0x03,
@@ -55,8 +54,7 @@ enum MidiOpcode
     MIDI_OPCODE_SYSTEM_RESET = 0xFF,
 };
 
-struct MidiTrack
-{
+struct MidiTrack {
     bool trackPlaying;
     u32 nextMessageTimePos;
     u32 trackLength;
@@ -67,8 +65,7 @@ struct MidiTrack
     u32 loopPointTimePos;
 };
 
-struct MidiChannel
-{
+struct MidiChannel {
     u8 keyPressedFlags[16];
     u8 instrument;
     u8 instrumentBank;
@@ -78,8 +75,7 @@ struct MidiChannel
     u8 channelVolume;
 };
 
-struct MidiOutput
-{
+struct MidiOutput {
     MidiOutput();
     ~MidiOutput();
 

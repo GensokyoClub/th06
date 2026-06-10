@@ -25,8 +25,7 @@
 
 #define SCORE_DAT_FILE_BUFFER_SIZE 0xa0000
 
-enum ResultScreenState
-{
+enum ResultScreenState {
     RESULT_SCREEN_STATE_INIT = 0,
     RESULT_SCREEN_STATE_CHOOSING_DIFFICULTY,
     RESULT_SCREEN_STATE_EXITING,
@@ -47,8 +46,7 @@ enum ResultScreenState
     RESULT_SCREEN_STATE_EXIT,
 };
 
-enum ResultScreenMainMenuCursor
-{
+enum ResultScreenMainMenuCursor {
     RESULT_SCREEN_CURSOR_EASY,
     RESULT_SCREEN_CURSOR_NORMAL,
     RESULT_SCREEN_CURSOR_HARD,
@@ -58,15 +56,10 @@ enum ResultScreenMainMenuCursor
     RESULT_SCREEN_CURSOR_EXIT
 };
 
-struct Th6k
-{
-    Th6k *ShiftOneByte() const
-    {
-        return (Th6k *)(((u8 *)this) + 1);
-    };
+struct Th6k {
+    Th6k *ShiftOneByte() const { return (Th6k *)(((u8 *)this) + 1); };
 
-    Th6k *ShiftBytes(i32 value) const
-    {
+    Th6k *ShiftBytes(i32 value) const {
         return (Th6k *)(((u8 *)this) + value);
     };
 
@@ -77,8 +70,7 @@ struct Th6k
     u8 unk_9;
 };
 
-struct Catk
-{
+struct Catk {
     Th6k base;
     i32 captureScore;
     u16 idx;
@@ -91,23 +83,17 @@ struct Catk
     u16 numSuccess;
 };
 
-struct Clrd
-{
+struct Clrd {
     Th6k base;
     u8 difficultyClearedWithRetries[5];
     u8 difficultyClearedWithoutRetries[5];
     u8 characterShotType;
 };
 
-struct Pscr
-{
-    Pscr *ShiftOneByte() const
-    {
-        return (Pscr *)(((u8 *)this) + 1);
-    };
+struct Pscr {
+    Pscr *ShiftOneByte() const { return (Pscr *)(((u8 *)this) + 1); };
 
-    Pscr *ShiftBytes(i32 value) const
-    {
+    Pscr *ShiftBytes(i32 value) const {
         return (Pscr *)(((u8 *)this) + value);
     };
 
@@ -118,10 +104,8 @@ struct Pscr
     u8 stage;
 };
 
-struct Hscr
-{
-    Hscr *ShiftBytes(i32 value) const
-    {
+struct Hscr {
+    Hscr *ShiftBytes(i32 value) const {
         return (Hscr *)(((u8 *)this) + value);
     };
 
@@ -133,10 +117,8 @@ struct Hscr
     char name[9];
 };
 
-struct ScoreListNode
-{
-    ScoreListNode()
-    {
+struct ScoreListNode {
+    ScoreListNode() {
         this->prev = NULL;
         this->next = NULL;
         this->data = NULL;
@@ -147,15 +129,10 @@ struct ScoreListNode
     Hscr *data;
 };
 
-struct ScoreRaw
-{
-    Th6k *ShiftOneByte() const
-    {
-        return (Th6k *)(((u8 *)this) + 1);
-    };
+struct ScoreRaw {
+    Th6k *ShiftOneByte() const { return (Th6k *)(((u8 *)this) + 1); };
 
-    Th6k *ShiftBytes(i32 value) const
-    {
+    Th6k *ShiftBytes(i32 value) const {
         return (Th6k *)(((u8 *)this) + value);
     };
 
@@ -164,21 +141,19 @@ struct ScoreRaw
     u16 unk_8;
     u8 unk[2];
     u32 dataOffset;
-    u32 padding; // Originally used as space for a ScoreListNode pointer, but that caused obvious ABI issues
+    u32 padding; // Originally used as space for a ScoreListNode pointer, but
+                 // that caused obvious ABI issues
     u32 fileLen;
 };
 
-struct ScoreDat
-{
+struct ScoreDat {
     ScoreRaw *rawScoreFile;
     ScoreListNode *scores;
 };
 
-struct ResultScreen
-{
+struct ResultScreen {
     ResultScreen();
-    ~ResultScreen()
-    {
+    ~ResultScreen() {
         ScoreDat *sd = this->scoreDat;
         free(sd);
     };
@@ -196,7 +171,8 @@ struct ResultScreen
 
     static void WriteScore(ResultScreen *r);
     void FreeScore(i32 difficulty, i32 character);
-    static u32 GetHighScore(ScoreDat *s, ScoreListNode *node, u32 character, u32 difficulty);
+    static u32 GetHighScore(ScoreDat *s, ScoreListNode *node, u32 character,
+                            u32 difficulty);
     static void ReleaseScoreDat(ScoreDat *s);
 
     static void MoveCursor(ResultScreen *r, i32 len);
@@ -231,7 +207,8 @@ struct ResultScreen
     AnmVm unk_28a0[16];
     AnmVm unk_39a0;
     ScoreListNode scores[HSCR_NUM_DIFFICULTIES][HSCR_NUM_CHARS_SHOTTYPES];
-    Hscr defaultScore[HSCR_NUM_DIFFICULTIES][HSCR_NUM_CHARS_SHOTTYPES][HSCR_NUM_SCORES_SLOTS];
+    Hscr defaultScore[HSCR_NUM_DIFFICULTIES][HSCR_NUM_CHARS_SHOTTYPES]
+                     [HSCR_NUM_SCORES_SLOTS];
     Hscr hscr;
     Th6k fileHeader;
     ChainElem *calcChain;

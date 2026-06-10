@@ -1,8 +1,7 @@
 #include "pbg3/IPbg3Parser.hpp"
 #include <cstddef>
 
-void IPbg3Parser::Reset()
-{
+void IPbg3Parser::Reset() {
     this->bitIdxInCurByte = 128;
     this->offsetInFile = 0;
     this->fileSize = 0;
@@ -10,23 +9,19 @@ void IPbg3Parser::Reset()
     this->crc = 0;
 }
 
-u32 IPbg3Parser::ReadVarInt()
-{
+u32 IPbg3Parser::ReadVarInt() {
     u32 res = 0;
     i32 varintHdr = 0;
 
-    if (this->ReadBit())
-    {
+    if (this->ReadBit()) {
         varintHdr = 2;
     }
-    if (this->ReadBit())
-    {
+    if (this->ReadBit()) {
         varintHdr |= 1;
     }
 
     u32 intLen;
-    switch (varintHdr)
-    {
+    switch (varintHdr) {
     case 0:
         intLen = 0x80;
         break;
@@ -46,10 +41,8 @@ u32 IPbg3Parser::ReadVarInt()
         goto end;
     }
 
-    do
-    {
-        if (this->ReadBit())
-        {
+    do {
+        if (this->ReadBit()) {
             res |= intLen;
         }
         intLen >>= 1;
@@ -58,8 +51,7 @@ end:
     return res;
 }
 
-u32 IPbg3Parser::ReadMagic()
-{
+u32 IPbg3Parser::ReadMagic() {
     u32 b0 = this->ReadInt(8);
     u32 b1 = b0 + (this->ReadInt(8) << 8);
     u32 b2 = b1 + (this->ReadInt(8) << 16);
@@ -68,16 +60,13 @@ u32 IPbg3Parser::ReadMagic()
     return b3;
 }
 
-u32 IPbg3Parser::ReadString(char *out, u32 maxSize)
-{
+u32 IPbg3Parser::ReadString(char *out, u32 maxSize) {
     if (out == NULL)
         return false;
 
-    for (u32 idx = 0; idx < maxSize; idx++)
-    {
+    for (u32 idx = 0; idx < maxSize; idx++) {
         out[idx] = this->ReadInt(8);
-        if (out[idx] == '\0')
-        {
+        if (out[idx] == '\0') {
             return true;
         }
     }

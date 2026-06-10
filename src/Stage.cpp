@@ -4,6 +4,7 @@
 #include "Chain.hpp"
 #include "ChainPriorities.hpp"
 #include "FileSystem.hpp"
+#include "GameErrorContext.hpp"
 #include "GameManager.hpp"
 #include "Gui.hpp"
 #include "ScreenEffect.hpp"

@@ -5,6 +5,7 @@
 #include "EclManager.hpp"
 #include "EffectManager.hpp"
 #include "EnemyManager.hpp"
+#include "GameErrorContext.hpp"
 #include "Gui.hpp"
 #include "Player.hpp"
 #include "ReplayManager.hpp"

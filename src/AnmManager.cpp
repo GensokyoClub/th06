@@ -9,6 +9,7 @@
 #include "utils.hpp"
 
 #include <cmath>
+#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -460,16 +461,25 @@ ZunResult AnmManager::CreateEmptyTexture(i32 textureIdx, u32 width, u32 height, 
 
 ZunResult AnmManager::LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset) {
     this->ReleaseAnm(anmIdx);
+    size_t anmFileSize;
 #ifdef TRUTH_FFI_INTEGRATION
     this->truthBuffers[anmIdx] = truth_compile_anm("6", path, "th06.anmm");
     this->anmFiles[anmIdx] = (AnmRawEntry *)this->truthBuffers[anmIdx].data;
+    anmFileSize = this->truthBuffers[anmIdx].len;
 #else
     this->anmFiles[anmIdx] = (AnmRawEntry *)FileSystem::OpenPath(path, 0);
+    anmFileSize = g_LastFileSize;
 #endif
 
     AnmRawEntry *anm = this->anmFiles[anmIdx];
 
     if (anm == NULL) {
+        g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_SPRITE_CORRUPTED, path);
+        return ZUN_ERROR;
+    }
+
+    if (anmFileSize < offsetof(AnmRawEntry, spriteOffsets) || (size_t)anm->nameOffset >= anmFileSize ||
+        (anm->alphaNameOffset != 0 && (size_t)anm->alphaNameOffset >= anmFileSize)) {
         g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_SPRITE_CORRUPTED, path);
         return ZUN_ERROR;
     }

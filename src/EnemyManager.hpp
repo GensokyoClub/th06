@@ -5,7 +5,6 @@
 #include "Enemy.hpp"
 #include "ZunResult.hpp"
 #include "inttypes.hpp"
-// #include <Windows.h>
 
 struct RunningSpellcardInfo {
     bool isCapturing;

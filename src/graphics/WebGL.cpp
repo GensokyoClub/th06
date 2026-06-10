@@ -1,6 +1,7 @@
 #include "WebGL.hpp"
 #include "GameWindow.hpp"
 #include "Supervisor.hpp"
+#include "i18n.hpp"
 #include "utils.hpp"
 #include <new>
 #include <unordered_set>

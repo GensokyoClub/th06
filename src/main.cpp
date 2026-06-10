@@ -64,6 +64,7 @@ static bool initialize_game() {
     Controller::ResetKeyboard();
 
     if (Supervisor::RegisterChain() != ZUN_SUCCESS) {
+        g_GameErrorContext.Flush();
         return false;
     }
 

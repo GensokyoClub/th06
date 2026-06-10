@@ -5,7 +5,7 @@ NPROC=$(nproc)
 BUILD_TYPE="Debug"
 OS=""
 C23_EMBED=""
-TRUTH_FFI_INTEGRATION=""
+TRUTH_FFI_INTEGRATION="--truth-integration"
 
 for arg in "$@"; do
     if [ "$arg" = "--clean" ]; then
@@ -14,8 +14,8 @@ for arg in "$@"; do
         OS="emscripten"
     elif [ "$arg" = "--use-c23-embed" ]; then
         C23_EMBED="--use-c23-embed"
-    elif [ "$arg" = "--truth-integration" ]; then
-        TRUTH_FFI_INTEGRATION="--truth-integration"
+    elif [ "$arg" = "--no-truth-integration" ]; then
+        TRUTH_FFI_INTEGRATION=""
     elif [ "$arg" = "Release" ] || [ "$arg" = "Debug" ] || [ "$arg" = "All" ]; then
         BUILD_TYPE=$arg
     fi

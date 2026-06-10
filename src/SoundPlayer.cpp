@@ -2,6 +2,7 @@
 #include "SoundPlayer.hpp"
 
 #include "FileSystem.hpp"
+#include "GameErrorContext.hpp"
 #include "Supervisor.hpp"
 #include "i18n.hpp"
 #include "utils.hpp"
@@ -13,7 +14,6 @@
 #include <cmath>
 #include <cstring>
 #include <new>
-#include <string>
 #include <vector>
 
 static ma_result looping_data_source_read(ma_data_source *pDataSource, void *pFramesOut, ma_uint64 frameCount, ma_uint64 *pFramesRead) {

@@ -9,6 +9,8 @@
 #include "midi/MidiWin32.hpp"
 #elif defined(LIBASOUND_MIDI_SUPPORT)
 #include "midi/MidiAlsa.hpp"
+#elif defined(COREAUDIO_MIDI_SUPPORT)
+#include "midi/MidiCoreAudio.hpp"
 #else
 #include "midi/MidiDefault.hpp"
 #endif

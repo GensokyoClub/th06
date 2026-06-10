@@ -453,7 +453,8 @@ void Software::Draw(PrimitiveType type, i32 start, i32 count)
         i32 texW, texH;
         if (useTexCoord)
         {
-            const ZunVec2 texDim = {boundTexture ? boundTexture->width : 0, boundTexture ? boundTexture->height : 0};
+            const ZunVec2 texDim = {static_cast<f32>(boundTexture ? boundTexture->width : 0),
+                                    static_cast<f32>(boundTexture ? boundTexture->height : 0)};
             tc0 =
                 ProjectTexCoordToNDC(*(ZunVec2 *)((u8 *)texCoordData + texCoordStride * index), textureMatrix) * texDim;
             tc1 = ProjectTexCoordToNDC(*(ZunVec2 *)((u8 *)texCoordData + texCoordStride * (index + 1)), textureMatrix) *

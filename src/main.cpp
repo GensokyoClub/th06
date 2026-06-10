@@ -96,6 +96,15 @@ static void main_loop()
             cleanup();
             return;
         }
+        else if (e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+        {
+            g_ViewportScale.Recompute(e.window.data1, e.window.data2);
+            if (g_Supervisor.cfg.windowed)
+            {
+                g_Supervisor.cfg.windowWidth = (u16)e.window.data1;
+                g_Supervisor.cfg.windowHeight = (u16)e.window.data2;
+            }
+        }
     }
 
     renderResult = g_GameWindow.Render();

@@ -11,37 +11,38 @@
 #define GAME_WINDOW_WIDTH (640)
 #define GAME_WINDOW_HEIGHT (480)
 
-// The actual resolution used for the output window and viewport scaling
-//   At some point there should be a method to change this without recompiling but for now
-//   this'll do
-#ifndef GAME_WINDOW_WIDTH_REAL
-#define GAME_WINDOW_WIDTH_REAL (GAME_WINDOW_WIDTH)
+#ifndef GAME_WINDOW_WIDTH_REAL_DEFAULT
+#define GAME_WINDOW_WIDTH_REAL_DEFAULT (GAME_WINDOW_WIDTH)
 #endif
 
-#ifndef GAME_WINDOW_HEIGHT_REAL
-#define GAME_WINDOW_HEIGHT_REAL (GAME_WINDOW_HEIGHT)
+#ifndef GAME_WINDOW_HEIGHT_REAL_DEFAULT
+#define GAME_WINDOW_HEIGHT_REAL_DEFAULT (GAME_WINDOW_HEIGHT)
 #endif
 
-#define VIEWPORT_WIDTH GAME_WINDOW_WIDTH_REAL
-#define VIEWPORT_OFF_X 0
-#define VIEWPORT_HEIGHT GAME_WINDOW_HEIGHT_REAL
-#define VIEWPORT_OFF_Y 0
+struct ViewportScaling
+{
+    i32 realWidth;
+    i32 realHeight;
+    i32 viewportWidth;
+    i32 viewportHeight;
+    i32 viewportOffX;
+    i32 viewportOffY;
+    f32 widthScale;
+    f32 heightScale;
 
-// Aspect ratio wider than 4:3
-#if (GAME_WINDOW_WIDTH_REAL * 3) > (GAME_WINDOW_HEIGHT_REAL * 4)
-#undef VIEWPORT_WIDTH
-#undef VIEWPORT_OFF_X
-#define VIEWPORT_WIDTH ((u32)((GAME_WINDOW_HEIGHT_REAL / 3.0f) * 4.0f))
-#define VIEWPORT_OFF_X ((GAME_WINDOW_WIDTH_REAL - VIEWPORT_WIDTH) / 2)
-#elif (GAME_WINDOW_WIDTH_REAL * 3) < (GAME_WINDOW_HEIGHT_REAL * 4)
-#undef VIEWPORT_HEIGHT
-#undef VIEWPORT_OFF_Y
-#define VIEWPORT_HEIGHT ((u32)((GAME_WINDOW_WIDTH_REAL / 4.0f) * 3.0f))
-#define VIEWPORT_OFF_Y ((GAME_WINDOW_HEIGHT_REAL - VIEWPORT_HEIGHT) / 2)
-#endif
+    void Recompute(i32 realWidth, i32 realHeight);
+};
 
-#define WIDTH_RESOLUTION_SCALE (((f32)VIEWPORT_WIDTH) / GAME_WINDOW_WIDTH)
-#define HEIGHT_RESOLUTION_SCALE (((f32)VIEWPORT_HEIGHT) / GAME_WINDOW_HEIGHT)
+extern ViewportScaling g_ViewportScale;
+
+#define GAME_WINDOW_WIDTH_REAL (g_ViewportScale.realWidth)
+#define GAME_WINDOW_HEIGHT_REAL (g_ViewportScale.realHeight)
+#define VIEWPORT_WIDTH (g_ViewportScale.viewportWidth)
+#define VIEWPORT_HEIGHT (g_ViewportScale.viewportHeight)
+#define VIEWPORT_OFF_X (g_ViewportScale.viewportOffX)
+#define VIEWPORT_OFF_Y (g_ViewportScale.viewportOffY)
+#define WIDTH_RESOLUTION_SCALE (g_ViewportScale.widthScale)
+#define HEIGHT_RESOLUTION_SCALE (g_ViewportScale.heightScale)
 
 enum RenderResult
 {

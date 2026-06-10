@@ -17,7 +17,7 @@ GfxInterface *FixedFunctionGL::Init()
 
     SDL_Init(SDL_INIT_VIDEO);
 
-    u32 flags = SDL_WINDOW_OPENGL;
+    u32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
     i32 height = GAME_WINDOW_HEIGHT_REAL;
     i32 width = GAME_WINDOW_WIDTH_REAL;
     i32 x = SDL_WINDOWPOS_UNDEFINED;

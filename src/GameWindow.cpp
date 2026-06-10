@@ -21,6 +21,40 @@ GfxInterface *g_GfxBackend;
 i32 g_TickCountToEffectiveFramerate;
 f64 g_LastFrameTime;
 
+ViewportScaling g_ViewportScale = {
+    GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT,
+    0,                 0,                  1.0f,              1.0f,
+};
+
+void ViewportScaling::Recompute(i32 width, i32 height)
+{
+    this->realWidth = width;
+    this->realHeight = height;
+
+    i32 vpWidth = width;
+    i32 vpHeight = height;
+    i32 offX = 0;
+    i32 offY = 0;
+
+    if (width * 3 > height * 4)
+    {
+        vpWidth = (i32)((height / 3.0f) * 4.0f);
+        offX = (width - vpWidth) / 2;
+    }
+    else if (width * 3 < height * 4)
+    {
+        vpHeight = (i32)((width / 4.0f) * 3.0f);
+        offY = (height - vpHeight) / 2;
+    }
+
+    this->viewportWidth = vpWidth;
+    this->viewportHeight = vpHeight;
+    this->viewportOffX = offX;
+    this->viewportOffY = offY;
+    this->widthScale = (f32)vpWidth / GAME_WINDOW_WIDTH;
+    this->heightScale = (f32)vpHeight / GAME_WINDOW_HEIGHT;
+}
+
 #define FRAME_TIME (1000. / 60.)
 
 static const struct
@@ -185,6 +219,16 @@ void GameWindow::Present()
 void GameWindow::CreateGameWindow()
 {
     SDL_Init(SDL_INIT_GAMECONTROLLER);
+
+    i32 realWidth = (i32)g_Supervisor.cfg.windowWidth;
+    i32 realHeight = (i32)g_Supervisor.cfg.windowHeight;
+    if (realWidth < GAME_WINDOW_WIDTH || realHeight < GAME_WINDOW_HEIGHT || realWidth > 16384 ||
+        realHeight > 16384)
+    {
+        realWidth = GAME_WINDOW_WIDTH_REAL_DEFAULT;
+        realHeight = GAME_WINDOW_HEIGHT_REAL_DEFAULT;
+    }
+    g_ViewportScale.Recompute(realWidth, realHeight);
 
     for (u32 i = 0; i < ARRAY_SIZE(s_RenderBackends); i++)
     {

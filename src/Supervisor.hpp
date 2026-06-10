@@ -65,7 +65,9 @@ struct GameConfiguration
     u8 frameskipConfig;
     i16 padXAxis;
     i16 padYAxis;
-    i8 unk[16];
+    u16 windowWidth;
+    u16 windowHeight;
+    i8 unk[12];
     // GameConfigOpts bitfield.
     u32 opts;
 
@@ -74,6 +76,8 @@ struct GameConfiguration
         return (this->opts >> GCOS_NO_COLOR_COMP & 1) | (this->opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING & 1);
     }
 };
+
+static_assert(sizeof(GameConfiguration) == 0x38, "GameConfiguration must remain 0x38 bytes");
 
 #define IN_PBG3_INDEX 0
 #define MD_PBG3_INDEX 1

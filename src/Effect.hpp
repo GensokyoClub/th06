@@ -5,10 +5,7 @@
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
 
-enum EffectCallbackResult {
-    EFFECT_CALLBACK_RESULT_STOP = 0,
-    EFFECT_CALLBACK_RESULT_DONE = 1
-};
+enum EffectCallbackResult { EFFECT_CALLBACK_RESULT_STOP = 0, EFFECT_CALLBACK_RESULT_DONE = 1 };
 
 struct Effect;
 

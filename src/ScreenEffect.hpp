@@ -27,8 +27,7 @@ struct ScreenEffect {
     // In fade effects, effectParam1 is an RGB color to fade to
     // In shake effects, effectParam1 controls the "base" view offset, and
     // effectParam2 controls the shakiness multiplier over time
-    static ScreenEffect *RegisterChain(i32 effect, u32 ticks, u32 effectParam1,
-                                       u32 effectParam2, u32 unusedEffectParam);
+    static ScreenEffect *RegisterChain(i32 effect, u32 ticks, u32 effectParam1, u32 effectParam2, u32 unusedEffectParam);
 
     static ZunResult AddedCallback(ScreenEffect *effect);
     static ZunResult DeletedCallback(ScreenEffect *effect);

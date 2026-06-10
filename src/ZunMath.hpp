@@ -48,9 +48,8 @@ inline u32 CountrZero(u32 n) { return __builtin_ctz(n); }
 #else
 // https://graphics.stanford.edu/%7Eseander/bithacks.html#ZerosOnRightMultLookup
 inline u32 CountrZero(u32 n) {
-    static const int multiplyDeBruijnBitPosition[32] = {
-        0,  1,  28, 2,  29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4,  8,
-        31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6,  11, 5,  10, 9};
+    static const int multiplyDeBruijnBitPosition[32] = {0,  1,  28, 2,  29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4,  8,
+                                                        31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6,  11, 5,  10, 9};
 
     return multiplyDeBruijnBitPosition[((u32)((n & -n) * 0x077CB531U)) >> 27];
 }
@@ -100,9 +99,7 @@ struct ZunVec2 {
         this->y = y;
     }
 
-    ZunVec2 operator+(const ZunVec2 &b) const {
-        return ZunVec2(this->x + b.x, this->y + b.y);
-    }
+    ZunVec2 operator+(const ZunVec2 &b) const { return ZunVec2(this->x + b.x, this->y + b.y); }
 
     ZunVec2 &operator+=(const ZunVec2 &b) {
         this->x += b.x;
@@ -111,22 +108,15 @@ struct ZunVec2 {
         return *this;
     }
 
-    ZunVec2 operator*(const f32 mult) const {
-        return ZunVec2(this->x * mult, this->y * mult);
-    }
+    ZunVec2 operator*(const f32 mult) const { return ZunVec2(this->x * mult, this->y * mult); }
 
-    ZunVec2 operator*(const ZunVec2 &mult) const {
-        return ZunVec2(this->x * mult.x, this->y * mult.y);
-    }
+    ZunVec2 operator*(const ZunVec2 &mult) const { return ZunVec2(this->x * mult.x, this->y * mult.y); }
 
-    f32 VectorLength() const {
-        return std::sqrt((f64)(this->x * this->x + this->y * this->y));
-    }
+    f32 VectorLength() const { return std::sqrt((f64)(this->x * this->x + this->y * this->y)); }
 
     f64 VectorLengthF64() const { return (f64)this->VectorLength(); }
 };
-static_assert(sizeof(ZunVec2) == 0x08 && sizeof(ZunVec2Raw) == 0x08,
-              "ZunVec2 has additional padding between struct members!");
+static_assert(sizeof(ZunVec2) == 0x08 && sizeof(ZunVec2Raw) == 0x08, "ZunVec2 has additional padding between struct members!");
 
 struct ZunVec3Raw {
     LE<f32> x;
@@ -158,9 +148,7 @@ struct ZunVec3 {
 
     ZunVec3 operator-() const { return ZunVec3(-this->x, -this->y, -this->z); }
 
-    ZunVec3 operator+(const ZunVec3 &b) const {
-        return ZunVec3(this->x + b.x, this->y + b.y, this->z + b.z);
-    }
+    ZunVec3 operator+(const ZunVec3 &b) const { return ZunVec3(this->x + b.x, this->y + b.y, this->z + b.z); }
 
     ZunVec3 &operator+=(const ZunVec3 &b) {
         this->x += b.x;
@@ -170,9 +158,7 @@ struct ZunVec3 {
         return *this;
     }
 
-    ZunVec3 operator-(const ZunVec3 &b) const {
-        return ZunVec3(this->x - b.x, this->y - b.y, this->z - b.z);
-    }
+    ZunVec3 operator-(const ZunVec3 &b) const { return ZunVec3(this->x - b.x, this->y - b.y, this->z - b.z); }
 
     ZunVec3 &operator-=(const ZunVec3 &b) {
         this->x -= b.x;
@@ -182,9 +168,7 @@ struct ZunVec3 {
         return *this;
     }
 
-    ZunVec3 operator*(const f32 mult) const {
-        return ZunVec3(this->x * mult, this->y * mult, this->z * mult);
-    }
+    ZunVec3 operator*(const f32 mult) const { return ZunVec3(this->x * mult, this->y * mult, this->z * mult); }
 
     ZunVec3 &operator*=(const f32 mult) {
         this->x *= mult;
@@ -194,9 +178,7 @@ struct ZunVec3 {
         return *this;
     }
 
-    ZunVec3 operator/(const f32 divisor) const {
-        return ZunVec3(this->x / divisor, this->y / divisor, this->z / divisor);
-    }
+    ZunVec3 operator/(const f32 divisor) const { return ZunVec3(this->x / divisor, this->y / divisor, this->z / divisor); }
 
     ZunVec3 &operator/=(const f32 div) {
         this->x /= div;
@@ -206,37 +188,24 @@ struct ZunVec3 {
         return *this;
     }
 
-    f32 getMagnitude() const {
-        return ZUN_SQRTF(this->x * this->x + this->y * this->y +
-                         this->z * this->z);
-    }
+    f32 getMagnitude() const { return ZUN_SQRTF(this->x * this->x + this->y * this->y + this->z * this->z); }
 
-    void getNormalized(ZunVec3 &norm) const {
-        norm = *this / this->getMagnitude();
-    }
+    void getNormalized(ZunVec3 &norm) const { norm = *this / this->getMagnitude(); }
 
     void calcCross(ZunVec3 &dst, const ZunVec3 &vec) const {
-        dst = ZunVec3(this->y * vec.z - this->z * vec.y,
-                      this->z * vec.x - this->x * vec.z,
-                      this->x * vec.y - this->y * vec.x);
+        dst = ZunVec3(this->y * vec.z - this->z * vec.y, this->z * vec.x - this->x * vec.z, this->x * vec.y - this->y * vec.x);
     }
 
-    f32 calcDot(const ZunVec3 &vec) const {
-        return this->x * vec.x + this->y * vec.y + this->z * vec.z;
-    }
+    f32 calcDot(const ZunVec3 &vec) const { return this->x * vec.x + this->y * vec.y + this->z * vec.z; }
 
-    static void SetVecCorners(ZunVec3 *topLeftCorner,
-                              ZunVec3 *bottomRightCorner,
-                              const ZunVec3 *centerPosition,
-                              const ZunVec3 *size) {
+    static void SetVecCorners(ZunVec3 *topLeftCorner, ZunVec3 *bottomRightCorner, const ZunVec3 *centerPosition, const ZunVec3 *size) {
         topLeftCorner->x = centerPosition->x - size->x / 2.0f;
         topLeftCorner->y = centerPosition->y - size->y / 2.0f;
         bottomRightCorner->x = size->x / 2.0f + centerPosition->x;
         bottomRightCorner->y = size->y / 2.0f + centerPosition->y;
     }
 };
-static_assert(sizeof(ZunVec3) == 0x0C && sizeof(ZunVec3Raw) == 0x0C,
-              "ZunVec3 has additional padding between struct members!");
+static_assert(sizeof(ZunVec3) == 0x0C && sizeof(ZunVec3Raw) == 0x0C, "ZunVec3 has additional padding between struct members!");
 
 struct ZunVec4 {
     f32 x;
@@ -259,8 +228,7 @@ struct ZunVec4 {
         this->w = w;
     }
 };
-static_assert(sizeof(ZunVec4) == 0x10,
-              "ZunVec4 has additional padding between struct members!");
+static_assert(sizeof(ZunVec4) == 0x10, "ZunVec4 has additional padding between struct members!");
 
 // Replacing all former uses of D3DXMATRIX
 struct ZunMatrix {
@@ -285,12 +253,9 @@ struct ZunMatrix {
     ZunVec3 operator*(const ZunVec3 &b) const {
         ZunVec3 result(0.0f, 0.0f, 0.0f);
 
-        result.x = this->m[0][0] * b.x + this->m[1][0] * b.y +
-                   this->m[2][0] * b.z + this->m[3][0];
-        result.y = this->m[0][1] * b.x + this->m[1][1] * b.y +
-                   this->m[2][1] * b.z + this->m[3][1];
-        result.z = this->m[0][2] * b.x + this->m[1][2] * b.y +
-                   this->m[2][2] * b.z + this->m[3][2];
+        result.x = this->m[0][0] * b.x + this->m[1][0] * b.y + this->m[2][0] * b.z + this->m[3][0];
+        result.y = this->m[0][1] * b.x + this->m[1][1] * b.y + this->m[2][1] * b.z + this->m[3][1];
+        result.z = this->m[0][2] * b.x + this->m[1][2] * b.y + this->m[2][2] * b.z + this->m[3][2];
 
         return result;
     }
@@ -298,14 +263,10 @@ struct ZunMatrix {
     ZunVec4 operator*(const ZunVec4 &b) const {
         ZunVec4 result(0.0f, 0.0f, 0.0f, 0.0f);
 
-        result.x = this->m[0][0] * b.x + this->m[1][0] * b.y +
-                   this->m[2][0] * b.z + this->m[3][0] * b.w;
-        result.y = this->m[0][1] * b.x + this->m[1][1] * b.y +
-                   this->m[2][1] * b.z + this->m[3][1] * b.w;
-        result.z = this->m[0][2] * b.x + this->m[1][2] * b.y +
-                   this->m[2][2] * b.z + this->m[3][2] * b.w;
-        result.w = this->m[0][3] * b.x + this->m[1][3] * b.y +
-                   this->m[2][3] * b.z + this->m[3][3] * b.w;
+        result.x = this->m[0][0] * b.x + this->m[1][0] * b.y + this->m[2][0] * b.z + this->m[3][0] * b.w;
+        result.y = this->m[0][1] * b.x + this->m[1][1] * b.y + this->m[2][1] * b.z + this->m[3][1] * b.w;
+        result.z = this->m[0][2] * b.x + this->m[1][2] * b.y + this->m[2][2] * b.z + this->m[3][2] * b.w;
+        result.w = this->m[0][3] * b.x + this->m[1][3] * b.y + this->m[2][3] * b.z + this->m[3][3] * b.w;
 
         return result;
     }
@@ -395,8 +356,7 @@ struct ZunMatrix {
         this->m[3][3] = 1.0f;
     }
 };
-static_assert(sizeof(ZunMatrix) == 0x40,
-              "ZunMatrix has additional padding between struct members!");
+static_assert(sizeof(ZunMatrix) == 0x40, "ZunMatrix has additional padding between struct members!");
 
 // A viewport using D3D conventions (x, y is the top left corner of the
 // viewport)
@@ -432,8 +392,7 @@ inline void sincosmul(ZunVec3 *out_vel, f32 input, f32 multiplier) {
 
 inline f32 invertf(f32 x) { return 1.f / x; }
 
-inline f32 mapRange(f32 in, f32 domainLow, f32 domainHigh, f32 rangeLow,
-                    f32 rangeHigh) {
+inline f32 mapRange(f32 in, f32 domainLow, f32 domainHigh, f32 rangeLow, f32 rangeHigh) {
     // Shift domain to start at 0
     in -= domainLow;
     // Scale domain to have range equal to range of range
@@ -445,8 +404,7 @@ inline f32 mapRange(f32 in, f32 domainLow, f32 domainHigh, f32 rangeLow,
 }
 
 // Creates a left handed matrix, using the method from Microsoft's docs
-inline ZunMatrix createViewMatrix(const ZunVec3 &camera, const ZunVec3 &target,
-                                  const ZunVec3 &up) {
+inline ZunMatrix createViewMatrix(const ZunVec3 &camera, const ZunVec3 &target, const ZunVec3 &up) {
     ZunMatrix lookMatrix;
 
     ZunVec3 xAxis;
@@ -484,8 +442,7 @@ inline ZunMatrix createViewMatrix(const ZunVec3 &camera, const ZunVec3 &target,
 }
 
 // Sets matrix mode to projection and clobbers current matrix
-inline ZunMatrix perspectiveMatrixFromFOV(f32 verticalFOV, f32 aspectRatio,
-                                          f32 nearPlane, f32 farPlane) {
+inline ZunMatrix perspectiveMatrixFromFOV(f32 verticalFOV, f32 aspectRatio, f32 nearPlane, f32 farPlane) {
     // D3D has pixels at integer locations, but OpenGL uses half integer pixels.
     // This may need correction
     // https://www.slideshare.net/slideshow/opengl-32-and-more/2172343
@@ -520,9 +477,7 @@ ZunMatrix inverseViewportMatrix();
 
 // Reimplementation of D3DXVec3Project. TODO: Replace if possible once port is
 // working
-inline void projectVec3(ZunVec3 &out, const ZunVec3 &inVec,
-                        const ZunViewport &viewport,
-                        const ZunMatrix &projection, const ZunMatrix &view,
+inline void projectVec3(ZunVec3 &out, const ZunVec3 &inVec, const ZunViewport &viewport, const ZunMatrix &projection, const ZunMatrix &view,
                         const ZunMatrix &world) {
     // WARNING: Runs into issues if matrices do things with W (Zun's never do)
 
@@ -535,9 +490,7 @@ inline void projectVec3(ZunVec3 &out, const ZunVec3 &inVec,
 
     // OpenGL clip space and window coordinates differ from D3D's, so we have to
     // invert Y here
-    out.x = mapRange(clipVector.x, -1.0f, 1.0f, viewport.x,
-                     viewport.x + viewport.width);
-    out.y = mapRange(clipVector.y, -1.0f, 1.0f, viewport.y + viewport.height,
-                     viewport.y);
+    out.x = mapRange(clipVector.x, -1.0f, 1.0f, viewport.x, viewport.x + viewport.width);
+    out.y = mapRange(clipVector.y, -1.0f, 1.0f, viewport.y + viewport.height, viewport.y);
     out.z = mapRange(clipVector.z, -1.0f, 1.0f, viewport.minZ, viewport.maxZ);
 }

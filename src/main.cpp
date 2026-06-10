@@ -56,8 +56,7 @@ static bool initialize_game() {
     }
 
 #ifdef __EMSCRIPTEN__
-    emscripten_set_element_css_size("#canvas", GAME_WINDOW_WIDTH_REAL,
-                                    GAME_WINDOW_HEIGHT_REAL);
+    emscripten_set_element_css_size("#canvas", GAME_WINDOW_WIDTH_REAL, GAME_WINDOW_HEIGHT_REAL);
 #endif
 
     g_SoundPlayer.InitializeDSound();
@@ -90,8 +89,7 @@ static void main_loop() {
 #endif
             cleanup();
             return;
-        } else if (e.type == SDL_WINDOWEVENT &&
-                   e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+        } else if (e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
             g_ViewportScale.Recompute(e.window.data1, e.window.data2);
         }
     }
@@ -127,11 +125,9 @@ static void cleanup() {
     SDL_Quit();
 
 #ifdef __EMSCRIPTEN__
-    FileSystem::WriteDataToFile(EM_TH_CONFIG_FILE, &g_Supervisor.cfg,
-                                sizeof(g_Supervisor.cfg));
+    FileSystem::WriteDataToFile(EM_TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
 #else
-    FileSystem::WriteDataToFile(TH_CONFIG_FILE, &g_Supervisor.cfg,
-                                sizeof(g_Supervisor.cfg));
+    FileSystem::WriteDataToFile(TH_CONFIG_FILE, &g_Supervisor.cfg, sizeof(g_Supervisor.cfg));
 #endif
 
     SDL_ShowCursor(SDL_ENABLE);

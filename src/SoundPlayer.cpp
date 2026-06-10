@@ -16,10 +16,7 @@
 #include <string>
 #include <vector>
 
-static ma_result looping_data_source_read(ma_data_source *pDataSource,
-                                          void *pFramesOut,
-                                          ma_uint64 frameCount,
-                                          ma_uint64 *pFramesRead) {
+static ma_result looping_data_source_read(ma_data_source *pDataSource, void *pFramesOut, ma_uint64 frameCount, ma_uint64 *pFramesRead) {
     LoopingDataSource *pSource = (LoopingDataSource *)pDataSource;
 
     if (pFramesRead) {
@@ -33,9 +30,7 @@ static ma_result looping_data_source_read(ma_data_source *pDataSource,
         ma_uint64 currentPos;
         if (pSource->pcmData) {
             currentPos =
-                pSource->totalFrames -
-                (pSource->pcmSize - pSource->cursor) /
-                    ma_get_bytes_per_frame(pSource->format, pSource->channels);
+                pSource->totalFrames - (pSource->pcmSize - pSource->cursor) / ma_get_bytes_per_frame(pSource->format, pSource->channels);
         } else {
             ma_decoder_get_cursor_in_pcm_frames(pSource->decoder, &currentPos);
         }
@@ -47,30 +42,20 @@ static ma_result looping_data_source_read(ma_data_source *pDataSource,
 
         ma_uint64 framesToReadThisTime = framesToRead;
         if (pSource->shouldLoop && currentPos < pSource->loopEndFrame) {
-            framesToReadThisTime = framesToRead < framesUntilLoopEnd
-                                       ? framesToRead
-                                       : framesUntilLoopEnd;
+            framesToReadThisTime = framesToRead < framesUntilLoopEnd ? framesToRead : framesUntilLoopEnd;
         }
 
         ma_uint64 framesReadThisTime = 0;
         if (pSource->pcmData) {
-            ma_uint64 bytesToRead =
-                framesToReadThisTime *
-                ma_get_bytes_per_frame(pSource->format, pSource->channels);
+            ma_uint64 bytesToRead = framesToReadThisTime * ma_get_bytes_per_frame(pSource->format, pSource->channels);
             ma_uint64 bytesAvailable = pSource->pcmSize - pSource->cursor;
-            ma_uint64 bytesRead =
-                bytesToRead < bytesAvailable ? bytesToRead : bytesAvailable;
+            ma_uint64 bytesRead = bytesToRead < bytesAvailable ? bytesToRead : bytesAvailable;
             memcpy(pFramesOut, pSource->pcmData + pSource->cursor, bytesRead);
-            framesReadThisTime =
-                bytesRead /
-                ma_get_bytes_per_frame(pSource->format, pSource->channels);
+            framesReadThisTime = bytesRead / ma_get_bytes_per_frame(pSource->format, pSource->channels);
             pSource->cursor += bytesRead;
         } else {
             ma_result result = ma_decoder_read_pcm_frames(
-                pSource->decoder,
-                (ma_uint8 *)pFramesOut +
-                    totalFramesRead * ma_get_bytes_per_frame(pSource->format,
-                                                             pSource->channels),
+                pSource->decoder, (ma_uint8 *)pFramesOut + totalFramesRead * ma_get_bytes_per_frame(pSource->format, pSource->channels),
                 framesToReadThisTime, &framesReadThisTime);
 
             if (result != MA_SUCCESS) {
@@ -84,20 +69,15 @@ static ma_result looping_data_source_read(ma_data_source *pDataSource,
         if (pSource->shouldLoop && framesReadThisTime > 0) {
             ma_uint64 newPos;
             if (pSource->pcmData) {
-                newPos =
-                    pSource->cursor /
-                    ma_get_bytes_per_frame(pSource->format, pSource->channels);
+                newPos = pSource->cursor / ma_get_bytes_per_frame(pSource->format, pSource->channels);
             } else {
                 ma_decoder_get_cursor_in_pcm_frames(pSource->decoder, &newPos);
             }
             if (newPos >= pSource->loopEndFrame) {
                 if (pSource->pcmData) {
-                    pSource->cursor = pSource->loopStartFrame *
-                                      ma_get_bytes_per_frame(pSource->format,
-                                                             pSource->channels);
+                    pSource->cursor = pSource->loopStartFrame * ma_get_bytes_per_frame(pSource->format, pSource->channels);
                 } else {
-                    ma_decoder_seek_to_pcm_frame(pSource->decoder,
-                                                 pSource->loopStartFrame);
+                    ma_decoder_seek_to_pcm_frame(pSource->decoder, pSource->loopStartFrame);
                 }
             }
         }
@@ -114,21 +94,18 @@ static ma_result looping_data_source_read(ma_data_source *pDataSource,
     return MA_SUCCESS;
 }
 
-static ma_result looping_data_source_seek(ma_data_source *pDataSource,
-                                          ma_uint64 frameIndex) {
+static ma_result looping_data_source_seek(ma_data_source *pDataSource, ma_uint64 frameIndex) {
     LoopingDataSource *pSource = (LoopingDataSource *)pDataSource;
     if (pSource->pcmData) {
-        pSource->cursor = frameIndex * ma_get_bytes_per_frame(
-                                           pSource->format, pSource->channels);
+        pSource->cursor = frameIndex * ma_get_bytes_per_frame(pSource->format, pSource->channels);
         return MA_SUCCESS;
     } else {
         return ma_decoder_seek_to_pcm_frame(pSource->decoder, frameIndex);
     }
 }
 
-static ma_result looping_data_source_get_data_format(
-    ma_data_source *pDataSource, ma_format *pFormat, ma_uint32 *pChannels,
-    ma_uint32 *pSampleRate, ma_channel *pChannelMap, size_t channelMapCap) {
+static ma_result looping_data_source_get_data_format(ma_data_source *pDataSource, ma_format *pFormat, ma_uint32 *pChannels,
+                                                     ma_uint32 *pSampleRate, ma_channel *pChannelMap, size_t channelMapCap) {
     LoopingDataSource *pSource = (LoopingDataSource *)pDataSource;
     *pFormat = pSource->format;
     *pChannels = pSource->channels;
@@ -136,20 +113,17 @@ static ma_result looping_data_source_get_data_format(
     return MA_SUCCESS;
 }
 
-static ma_result looping_data_source_get_cursor(ma_data_source *pDataSource,
-                                                ma_uint64 *pCursor) {
+static ma_result looping_data_source_get_cursor(ma_data_source *pDataSource, ma_uint64 *pCursor) {
     LoopingDataSource *pSource = (LoopingDataSource *)pDataSource;
     if (pSource->pcmData) {
-        *pCursor = pSource->cursor /
-                   ma_get_bytes_per_frame(pSource->format, pSource->channels);
+        *pCursor = pSource->cursor / ma_get_bytes_per_frame(pSource->format, pSource->channels);
     } else {
         return ma_decoder_get_cursor_in_pcm_frames(pSource->decoder, pCursor);
     }
     return MA_SUCCESS;
 }
 
-static ma_result looping_data_source_get_length(ma_data_source *pDataSource,
-                                                ma_uint64 *pLength) {
+static ma_result looping_data_source_get_length(ma_data_source *pDataSource, ma_uint64 *pLength) {
     LoopingDataSource *pSource = (LoopingDataSource *)pDataSource;
     *pLength = pSource->totalFrames;
     return MA_SUCCESS;
@@ -172,23 +146,17 @@ static ma_data_source_vtable looping_data_source_vtable = {
 //   factor of 10
 
 SoundBufferIdxVolume g_SoundBufferIdxVol[32] = {
-    {0, -1500},  {0, -2000},  {1, -1200},  {1, -1400}, {2, -1000}, {3, -500},
-    {4, -500},   {5, -1700},  {6, -1700},  {7, -1700}, {8, -1000}, {9, -1000},
-    {10, -1900}, {11, -1200}, {12, -900},  {5, -1500}, {13, -900}, {14, -900},
-    {15, -600},  {16, -400},  {17, -1100}, {18, -900}, {5, -1800}, {6, -1800},
-    {7, -1800},  {19, -300},  {20, -600},  {21, -800}, {22, -100}, {23, -500},
-    {24, -1000}, {25, -1000},
+    {0, -1500}, {0, -2000},  {1, -1200},  {1, -1400}, {2, -1000}, {3, -500},  {4, -500},  {5, -1700}, {6, -1700},  {7, -1700},  {8, -1000},
+    {9, -1000}, {10, -1900}, {11, -1200}, {12, -900}, {5, -1500}, {13, -900}, {14, -900}, {15, -600}, {16, -400},  {17, -1100}, {18, -900},
+    {5, -1800}, {6, -1800},  {7, -1800},  {19, -300}, {20, -600}, {21, -800}, {22, -100}, {23, -500}, {24, -1000}, {25, -1000},
 };
 const char *g_SFXList[26] = {
-    "data/wav/plst00.wav",   "data/wav/enep00.wav",   "data/wav/pldead00.wav",
-    "data/wav/power0.wav",   "data/wav/power1.wav",   "data/wav/tan00.wav",
-    "data/wav/tan01.wav",    "data/wav/tan02.wav",    "data/wav/ok00.wav",
-    "data/wav/cancel00.wav", "data/wav/select00.wav", "data/wav/gun00.wav",
-    "data/wav/cat00.wav",    "data/wav/lazer00.wav",  "data/wav/lazer01.wav",
-    "data/wav/enep01.wav",   "data/wav/nep00.wav",    "data/wav/damage00.wav",
-    "data/wav/item00.wav",   "data/wav/kira00.wav",   "data/wav/kira01.wav",
-    "data/wav/kira02.wav",   "data/wav/extend.wav",   "data/wav/timeout.wav",
-    "data/wav/graze.wav",    "data/wav/powerup.wav",
+    "data/wav/plst00.wav",   "data/wav/enep00.wav", "data/wav/pldead00.wav", "data/wav/power0.wav",  "data/wav/power1.wav",
+    "data/wav/tan00.wav",    "data/wav/tan01.wav",  "data/wav/tan02.wav",    "data/wav/ok00.wav",    "data/wav/cancel00.wav",
+    "data/wav/select00.wav", "data/wav/gun00.wav",  "data/wav/cat00.wav",    "data/wav/lazer00.wav", "data/wav/lazer01.wav",
+    "data/wav/enep01.wav",   "data/wav/nep00.wav",  "data/wav/damage00.wav", "data/wav/item00.wav",  "data/wav/kira00.wav",
+    "data/wav/kira01.wav",   "data/wav/kira02.wav", "data/wav/extend.wav",   "data/wav/timeout.wav", "data/wav/graze.wav",
+    "data/wav/powerup.wav",
 };
 SoundPlayer g_SoundPlayer;
 
@@ -256,8 +224,7 @@ void SoundPlayer::StopBGM() {
 
 void SoundPlayer::FadeOut(f32 seconds) {
     if (this->backgroundMusic.isLoaded) {
-        ma_sound_set_fade_in_milliseconds(&this->backgroundMusic.sound, -1.0f,
-                                          0.0f, seconds * 1000.0f);
+        ma_sound_set_fade_in_milliseconds(&this->backgroundMusic.sound, -1.0f, 0.0f, seconds * 1000.0f);
     }
 }
 
@@ -295,8 +262,7 @@ ZunResult SoundPlayer::LoadWav(const char *path) {
 
         if (vi->channels != 2 || vi->rate != 44100) {
             ov_clear(&vf);
-            utils::DebugPrint2("error : format of ogg file not supported %s\n",
-                               path);
+            utils::DebugPrint2("error : format of ogg file not supported %s\n", path);
             return ZUN_ERROR;
         }
 
@@ -304,8 +270,7 @@ ZunResult SoundPlayer::LoadWav(const char *path) {
         char buffer[4096];
         int current_section;
         long bytes_read;
-        while ((bytes_read = ov_read(&vf, buffer, sizeof(buffer), 0, 2, 1,
-                                     &current_section)) > 0) {
+        while ((bytes_read = ov_read(&vf, buffer, sizeof(buffer), 0, 2, 1, &current_section)) > 0) {
             pcmBuffer.insert(pcmBuffer.end(), buffer, buffer + bytes_read);
         }
 
@@ -317,29 +282,25 @@ ZunResult SoundPlayer::LoadWav(const char *path) {
 
         ov_clear(&vf);
 
-        this->backgroundMusic.loopingSource.pcmData =
-            new ma_uint8[pcmBuffer.size()];
-        memcpy(this->backgroundMusic.loopingSource.pcmData, pcmBuffer.data(),
-               pcmBuffer.size());
-        this->backgroundMusic.loopingSource = {
-            .base = {},
-            .decoder = nullptr,
-            .loopStartFrame = 0,
-            .loopEndFrame = this->backgroundMusic.loopingSource.totalFrames,
-            .totalFrames = pcmBuffer.size() / (2 * sizeof(int16_t)),
-            .shouldLoop = false,
-            .format = ma_format_s16,
-            .channels = 2,
-            .sampleRate = 44100,
-            .fileData = nullptr,
-            .pcmData = this->backgroundMusic.loopingSource.pcmData,
-            .pcmSize = pcmBuffer.size(),
-            .cursor = 0};
+        this->backgroundMusic.loopingSource.pcmData = new ma_uint8[pcmBuffer.size()];
+        memcpy(this->backgroundMusic.loopingSource.pcmData, pcmBuffer.data(), pcmBuffer.size());
+        this->backgroundMusic.loopingSource = {.base = {},
+                                               .decoder = nullptr,
+                                               .loopStartFrame = 0,
+                                               .loopEndFrame = this->backgroundMusic.loopingSource.totalFrames,
+                                               .totalFrames = pcmBuffer.size() / (2 * sizeof(int16_t)),
+                                               .shouldLoop = false,
+                                               .format = ma_format_s16,
+                                               .channels = 2,
+                                               .sampleRate = 44100,
+                                               .fileData = nullptr,
+                                               .pcmData = this->backgroundMusic.loopingSource.pcmData,
+                                               .pcmSize = pcmBuffer.size(),
+                                               .cursor = 0};
 
         ma_data_source_config baseConfig = ma_data_source_config_init();
         baseConfig.vtable = &looping_data_source_vtable;
-        ma_result result = ma_data_source_init(
-            &baseConfig, &this->backgroundMusic.loopingSource.base);
+        ma_result result = ma_data_source_init(&baseConfig, &this->backgroundMusic.loopingSource.base);
         if (result != MA_SUCCESS) {
             utils::DebugPrint2("error : data source init error %s\n", path);
             goto fail;
@@ -348,8 +309,7 @@ ZunResult SoundPlayer::LoadWav(const char *path) {
         ma_sound_config soundConfig = ma_sound_config_init();
         soundConfig.pDataSource = &this->backgroundMusic.loopingSource;
         soundConfig.pEndCallbackUserData = nullptr;
-        result = ma_sound_init_ex(&this->engine, &soundConfig,
-                                  &this->backgroundMusic.sound);
+        result = ma_sound_init_ex(&this->engine, &soundConfig, &this->backgroundMusic.sound);
         if (result != MA_SUCCESS) {
             utils::DebugPrint2("error : sound init error %s\n", path);
             ma_data_source_uninit(&this->backgroundMusic.loopingSource.base);
@@ -358,19 +318,16 @@ ZunResult SoundPlayer::LoadWav(const char *path) {
 
         this->backgroundMusic.isLoaded = true;
     } else {
-        ma_decoder_config decoderConfig =
-            ma_decoder_config_init(ma_format_s16, 2, 44100);
+        ma_decoder_config decoderConfig = ma_decoder_config_init(ma_format_s16, 2, 44100);
         this->backgroundMusic.loopingSource.decoder = new ma_decoder();
-        ma_result result = ma_decoder_init_file(
-            path, &decoderConfig, this->backgroundMusic.loopingSource.decoder);
+        ma_result result = ma_decoder_init_file(path, &decoderConfig, this->backgroundMusic.loopingSource.decoder);
         if (result != MA_SUCCESS) {
             utils::DebugPrint2("error : wav decoder init error %s\n", path);
             goto fail;
         }
 
         ma_uint64 lengthInFrames;
-        result = ma_decoder_get_length_in_pcm_frames(
-            this->backgroundMusic.loopingSource.decoder, &lengthInFrames);
+        result = ma_decoder_get_length_in_pcm_frames(this->backgroundMusic.loopingSource.decoder, &lengthInFrames);
         if (result != MA_SUCCESS) {
             utils::DebugPrint2("error : wav get length error %s\n", path);
             ma_decoder_uninit(this->backgroundMusic.loopingSource.decoder);
@@ -391,8 +348,7 @@ ZunResult SoundPlayer::LoadWav(const char *path) {
         // Initialize the data source base
         ma_data_source_config baseConfig = ma_data_source_config_init();
         baseConfig.vtable = &looping_data_source_vtable;
-        result = ma_data_source_init(&baseConfig,
-                                     &this->backgroundMusic.loopingSource.base);
+        result = ma_data_source_init(&baseConfig, &this->backgroundMusic.loopingSource.base);
         if (result != MA_SUCCESS) {
             utils::DebugPrint2("error : data source init error %s\n", path);
             ma_decoder_uninit(this->backgroundMusic.loopingSource.decoder);
@@ -403,8 +359,7 @@ ZunResult SoundPlayer::LoadWav(const char *path) {
         ma_sound_config soundConfig = ma_sound_config_init();
         soundConfig.pDataSource = &this->backgroundMusic.loopingSource;
         soundConfig.pEndCallbackUserData = nullptr;
-        result = ma_sound_init_ex(&this->engine, &soundConfig,
-                                  &this->backgroundMusic.sound);
+        result = ma_sound_init_ex(&this->engine, &soundConfig, &this->backgroundMusic.sound);
         if (result != MA_SUCCESS) {
             utils::DebugPrint2("error : sound init error %s\n", path);
             ma_data_source_uninit(&this->backgroundMusic.loopingSource.base);
@@ -445,13 +400,10 @@ ZunResult SoundPlayer::LoadPos(const char *path) {
     this->backgroundMusic.loopingSource.loopStartFrame = loopStartSamples;
     this->backgroundMusic.loopingSource.loopEndFrame = loopEndSamples;
 
-    if (this->backgroundMusic.loopingSource.loopStartFrame >=
-            this->backgroundMusic.loopingSource.loopEndFrame ||
-        this->backgroundMusic.loopingSource.loopEndFrame >
-            this->backgroundMusic.loopingSource.totalFrames) {
+    if (this->backgroundMusic.loopingSource.loopStartFrame >= this->backgroundMusic.loopingSource.loopEndFrame ||
+        this->backgroundMusic.loopingSource.loopEndFrame > this->backgroundMusic.loopingSource.totalFrames) {
         this->backgroundMusic.loopingSource.loopStartFrame = 0;
-        this->backgroundMusic.loopingSource.loopEndFrame =
-            this->backgroundMusic.loopingSource.totalFrames;
+        this->backgroundMusic.loopingSource.loopEndFrame = this->backgroundMusic.loopingSource.totalFrames;
         return ZUN_ERROR;
     }
 
@@ -460,16 +412,12 @@ ZunResult SoundPlayer::LoadPos(const char *path) {
 }
 
 ZunResult SoundPlayer::InitSoundBuffers() {
-    std::fill_n(this->soundBuffersToPlay, ARRAY_SIZE(this->soundBuffersToPlay),
-                -1);
+    std::fill_n(this->soundBuffersToPlay, ARRAY_SIZE(this->soundBuffersToPlay), -1);
 
     for (int idx = 0; idx < ARRAY_SIZE_SIGNED(g_SoundBufferIdxVol); idx++) {
-        if (this->LoadSound(
-                idx, g_SFXList[g_SoundBufferIdxVol[idx].bufferIdx],
-                1.0f / std::powf(10.0f, (float)g_SoundBufferIdxVol[idx].volume /
-                                            -2000)) != ZUN_SUCCESS) {
-            g_GameErrorContext.Log(TH_ERR_SOUNDPLAYER_FAILED_TO_LOAD_SOUND_FILE,
-                                   g_SFXList[idx]);
+        if (this->LoadSound(idx, g_SFXList[g_SoundBufferIdxVol[idx].bufferIdx],
+                            1.0f / std::powf(10.0f, (float)g_SoundBufferIdxVol[idx].volume / -2000)) != ZUN_SUCCESS) {
+            g_GameErrorContext.Log(TH_ERR_SOUNDPLAYER_FAILED_TO_LOAD_SOUND_FILE, g_SFXList[idx]);
             return ZUN_ERROR;
         }
 
@@ -480,8 +428,7 @@ ZunResult SoundPlayer::InitSoundBuffers() {
     return ZUN_SUCCESS;
 }
 
-ZunResult SoundPlayer::LoadSound(i32 idx, const char *path,
-                                 f32 volumeMultiplier) {
+ZunResult SoundPlayer::LoadSound(i32 idx, const char *path, f32 volumeMultiplier) {
     soundBufMutex.lock();
 
     if (this->soundBuffers[idx].isLoaded) {
@@ -490,11 +437,9 @@ ZunResult SoundPlayer::LoadSound(i32 idx, const char *path,
     }
 
     // Load sound file using miniaudio decoder
-    ma_result result = ma_sound_init_from_file(
-        &this->engine, path, 0, NULL, NULL, &this->soundBuffers[idx].sound);
+    ma_result result = ma_sound_init_from_file(&this->engine, path, 0, NULL, NULL, &this->soundBuffers[idx].sound);
     if (result != MA_SUCCESS) {
-        g_GameErrorContext.Log(TH_ERR_SOUNDPLAYER_FAILED_TO_LOAD_SOUND_FILE,
-                               path);
+        g_GameErrorContext.Log(TH_ERR_SOUNDPLAYER_FAILED_TO_LOAD_SOUND_FILE, path);
         goto fail;
     }
 
@@ -557,8 +502,7 @@ void SoundPlayer::PlaySounds() {
 
     for (int i = 0; i < 64; i++) {
         if (this->soundBuffers[i].isLoaded && this->soundBuffers[i].isPlaying) {
-            ma_bool32 isPlaying =
-                ma_sound_is_playing(&this->soundBuffers[i].sound);
+            ma_bool32 isPlaying = ma_sound_is_playing(&this->soundBuffers[i].sound);
             if (!isPlaying) {
                 this->soundBuffers[i].isPlaying = false;
                 ma_sound_seek_to_pcm_frame(&this->soundBuffers[i].sound, 0);

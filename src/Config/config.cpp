@@ -61,10 +61,8 @@ int WriteDataToFile(const char *path, void *data, size_t size) {
 
 class ConfigUI {
   public:
-    ConfigUI(GameConfiguration &cfg, SDL_Window *window, SDL_Renderer *renderer,
-             TTF_Font *font, const char *cfgPath)
-        : cfg(cfg), window(window), renderer(renderer), font(font),
-          configPath(cfgPath), ctx(renderer, font, kBackgroundColor) {
+    ConfigUI(GameConfiguration &cfg, SDL_Window *window, SDL_Renderer *renderer, TTF_Font *font, const char *cfgPath)
+        : cfg(cfg), window(window), renderer(renderer), font(font), configPath(cfgPath), ctx(renderer, font, kBackgroundColor) {
         SDL_GetWindowSize(window, &windowWidth, &windowHeight);
         buildLayout();
     }
@@ -115,8 +113,7 @@ class ConfigUI {
         Checkbox widget;
         int bit;
 
-        CheckboxBinding(Checkbox &&widget, int bit)
-            : widget(std::move(widget)), bit(bit) {}
+        CheckboxBinding(Checkbox &&widget, int bit) : widget(std::move(widget)), bit(bit) {}
     };
 
     struct RadioBinding {
@@ -124,8 +121,7 @@ class ConfigUI {
         int groupId;
         int optionId;
 
-        RadioBinding(RadioButton &&widget, int groupId, int optionId)
-            : widget(std::move(widget)), groupId(groupId), optionId(optionId) {}
+        RadioBinding(RadioButton &&widget, int groupId, int optionId) : widget(std::move(widget)), groupId(groupId), optionId(optionId) {}
     };
 
     GameConfiguration &cfg;
@@ -161,11 +157,9 @@ class ConfigUI {
             {"No Vertex Buffer", GCOS_DONT_USE_VERTEX_BUF},
             {"No Fog", GCOS_DONT_USE_FOG},
             {"16 Bit Textures", GCOS_FORCE_16BIT_COLOR_MODE},
-            {"Suppress use of gouraud shading",
-             GCOS_SUPPRESS_USE_OF_GOROUD_SHADING},
+            {"Suppress use of gouraud shading", GCOS_SUPPRESS_USE_OF_GOROUD_SHADING},
             {"Don't apply color composition", GCOS_NO_COLOR_COMP},
-            {"Start in reference rasterizer mode",
-             GCOS_REFERENCE_RASTERIZER_MODE},
+            {"Start in reference rasterizer mode", GCOS_REFERENCE_RASTERIZER_MODE},
             {"Clear back buffer on refresh", GCOS_CLEAR_BACKBUFFER_ON_REFRESH},
             {"Display minimum graphics needed", GCOS_DISPLAY_MINIMUM_GRAPHICS},
             {"No Depth test", GCOS_TURN_OFF_DEPTH_TEST},
@@ -180,9 +174,7 @@ class ConfigUI {
         for (const auto &spec : specs) {
             SDL_Rect rect{15, top, 16, 16};
             bool initial = (cfg.opts >> spec.bit) & 1;
-            checkboxBindings.emplace_back(
-                Checkbox(rect, spec.label, initial, font, &hasUnsavedChanges),
-                spec.bit);
+            checkboxBindings.emplace_back(Checkbox(rect, spec.label, initial, font, &hasUnsavedChanges), spec.bit);
             top += 24;
         }
     }
@@ -196,10 +188,9 @@ class ConfigUI {
             int initialIndex;
         };
 
-        const RadioGroupSpec radioGroup[]{
-            {"Screen Mode", {"Fullscreen", "Windowed"}, 130, 0, cfg.windowed},
-            {"Refresh Rate", {"1/1", "1/2", "1/3"}, 70, 1, cfg.frameskipConfig},
-            {"Colors", {"32-bit", "16-bit"}, 120, 2, cfg.colorMode16bit}};
+        const RadioGroupSpec radioGroup[]{{"Screen Mode", {"Fullscreen", "Windowed"}, 130, 0, cfg.windowed},
+                                          {"Refresh Rate", {"1/1", "1/2", "1/3"}, 70, 1, cfg.frameskipConfig},
+                                          {"Colors", {"32-bit", "16-bit"}, 120, 2, cfg.colorMode16bit}};
 
         int totalRadioButtons = 0;
         for (const auto &group : radioGroup) {
@@ -222,15 +213,10 @@ class ConfigUI {
             for (int i = 0; i < group.options.size(); ++i) {
                 SDL_Rect rbRect{buttonX, buttonY, 16, 16};
                 bool selected = (i == group.initialIndex);
-                radioBindings.emplace_back(
-                    RadioButton{rbRect, group.options[i], group.groupId, i,
-                                selected, font, &hasUnsavedChanges},
-                    group.groupId, i);
+                radioBindings.emplace_back(RadioButton{rbRect, group.options[i], group.groupId, i, selected, font, &hasUnsavedChanges},
+                                           group.groupId, i);
                 RadioButton &radio = radioBindings.back().widget;
-                radio.setOnSelected(
-                    [&](int groupId, RadioButton *selectedButton) {
-                        onRadioSelected(groupId, selectedButton);
-                    });
+                radio.setOnSelected([&](int groupId, RadioButton *selectedButton) { onRadioSelected(groupId, selectedButton); });
 
                 buttonX += group.spacing;
             }
@@ -251,16 +237,13 @@ class ConfigUI {
 
         bottomButtons.reserve(2);
 
-        bottomButtons.emplace_back(
-            SDL_Rect{cancelX, top, buttonWidth, buttonHeight}, "Cancel",
-            [&] { requestQuit(); });
+        bottomButtons.emplace_back(SDL_Rect{cancelX, top, buttonWidth, buttonHeight}, "Cancel", [&] { requestQuit(); });
 
-        bottomButtons.emplace_back(
-            SDL_Rect{saveX, top, buttonWidth, buttonHeight}, "Save", [&] {
-                if (saveConfig()) {
-                    shouldExit = true;
-                }
-            });
+        bottomButtons.emplace_back(SDL_Rect{saveX, top, buttonWidth, buttonHeight}, "Save", [&] {
+            if (saveConfig()) {
+                shouldExit = true;
+            }
+        });
     }
 
     void onRadioSelected(int groupId, RadioButton *selectedButton) {
@@ -304,16 +287,12 @@ class ConfigUI {
 
     bool saveConfig() {
         applyUiToConfig();
-        if (FileSystem::WriteDataToFile(configPath, &cfg,
-                                        sizeof(GameConfiguration)) != 0) {
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Save Failed",
-                                     "Could not write configuration file.",
-                                     window);
+        if (FileSystem::WriteDataToFile(configPath, &cfg, sizeof(GameConfiguration)) != 0) {
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Save Failed", "Could not write configuration file.", window);
             return false;
         }
         hasUnsavedChanges = false;
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Save Successful",
-                                 "Configuration saved successfully.", window);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Save Successful", "Configuration saved successfully.", window);
         printf("Saved config to %s\n", configPath);
         return true;
     }
@@ -355,9 +334,7 @@ int main() {
         return 1;
     }
 
-    SDL_Window *window =
-        SDL_CreateWindow("Touhou 6 Config", SDL_WINDOWPOS_CENTERED,
-                         SDL_WINDOWPOS_CENTERED, 450, 600, SDL_WINDOW_SHOWN);
+    SDL_Window *window = SDL_CreateWindow("Touhou 6 Config", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 450, 600, SDL_WINDOW_SHOWN);
 
     if (!window) {
         printf("Failed to create window: %s\n", SDL_GetError());
@@ -366,8 +343,7 @@ int main() {
         return 1;
     }
 
-    SDL_Renderer *renderer =
-        SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (!renderer) {
         printf("Failed to create renderer: %s\n", SDL_GetError());
         SDL_DestroyWindow(window);

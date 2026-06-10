@@ -41,8 +41,7 @@ void ScreenEffect::SetViewport(ZunColor color) {
 
 ChainCallbackResult ScreenEffect::CalcFadeIn(ScreenEffect *effect) {
     if (effect->effectLength != 0) {
-        effect->fadeAlpha = 255.0f - ((effect->timer.AsFramesFloat() * 255.0f) /
-                                      effect->effectLength);
+        effect->fadeAlpha = 255.0f - ((effect->timer.AsFramesFloat() * 255.0f) / effect->effectLength);
         if (effect->fadeAlpha < 0) {
             effect->fadeAlpha = 0;
         }
@@ -68,17 +67,14 @@ void ScreenEffect::DrawSquare(const ZunRect *rect, ZunColor rectColor) {
     vertices[2].position = ZunVec4(rect->left, rect->bottom, 0.0f, 1.0f);
     vertices[3].position = ZunVec4(rect->right, rect->bottom, 0.0f, 1.0f);
 
-    vertices[0].diffuse = vertices[1].diffuse = vertices[2].diffuse =
-        vertices[3].diffuse = ColorData(rectColor);
+    vertices[0].diffuse = vertices[1].diffuse = vertices[2].diffuse = vertices[3].diffuse = ColorData(rectColor);
 
     g_AnmManager->SetProjectionMode(PROJECTION_MODE_ORTHOGRAPHIC);
 
     g_AnmManager->SetVertexAttributes(VERTEX_ATTR_DIFFUSE);
 
-    g_AnmManager->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*vertices),
-                                      &vertices[0].position);
-    g_AnmManager->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*vertices),
-                                      &vertices[0].diffuse);
+    g_AnmManager->SetAttributePointer(VERTEX_ARRAY_POSITION, sizeof(*vertices), &vertices[0].position);
+    g_AnmManager->SetAttributePointer(VERTEX_ARRAY_DIFFUSE, sizeof(*vertices), &vertices[0].diffuse);
 
     g_AnmManager->SetColorOp(COMPONENT_ALPHA, COLOR_OP_REPLACE);
     g_AnmManager->SetColorOp(COMPONENT_RGB, COLOR_OP_REPLACE);
@@ -102,8 +98,7 @@ void ScreenEffect::DrawSquare(const ZunRect *rect, ZunColor rectColor) {
 
 ChainCallbackResult ScreenEffect::CalcFadeOut(ScreenEffect *effect) {
     if (effect->effectLength != 0) {
-        effect->fadeAlpha =
-            (effect->timer.AsFramesFloat() * 255.0f) / effect->effectLength;
+        effect->fadeAlpha = (effect->timer.AsFramesFloat() * 255.0f) / effect->effectLength;
         if (effect->fadeAlpha < 0) {
             effect->fadeAlpha = 0;
         }
@@ -117,9 +112,7 @@ ChainCallbackResult ScreenEffect::CalcFadeOut(ScreenEffect *effect) {
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-ScreenEffect *ScreenEffect::RegisterChain(i32 effect, u32 ticks,
-                                          u32 effectParam1, u32 effectParam2,
-                                          u32 unusedEffectParam) {
+ScreenEffect *ScreenEffect::RegisterChain(i32 effect, u32 ticks, u32 effectParam1, u32 effectParam2, u32 unusedEffectParam) {
     ChainElem *calcChainElem;
     ScreenEffect *createdEffect;
     ChainElem *drawChainElem;
@@ -137,26 +130,19 @@ ScreenEffect *ScreenEffect::RegisterChain(i32 effect, u32 ticks,
 
     switch (effect) {
     case SCREEN_EFFECT_FADE_IN:
-        calcChainElem =
-            g_Chain.CreateElem((ChainCallback)ScreenEffect::CalcFadeIn);
-        drawChainElem =
-            g_Chain.CreateElem((ChainCallback)ScreenEffect::DrawFadeIn);
+        calcChainElem = g_Chain.CreateElem((ChainCallback)ScreenEffect::CalcFadeIn);
+        drawChainElem = g_Chain.CreateElem((ChainCallback)ScreenEffect::DrawFadeIn);
         break;
     case SCREEN_EFFECT_SHAKE:
-        calcChainElem =
-            g_Chain.CreateElem((ChainCallback)ScreenEffect::ShakeScreen);
+        calcChainElem = g_Chain.CreateElem((ChainCallback)ScreenEffect::ShakeScreen);
         break;
     case SCREEN_EFFECT_FADE_OUT:
-        calcChainElem =
-            g_Chain.CreateElem((ChainCallback)ScreenEffect::CalcFadeOut);
-        drawChainElem =
-            g_Chain.CreateElem((ChainCallback)ScreenEffect::DrawFadeOut);
+        calcChainElem = g_Chain.CreateElem((ChainCallback)ScreenEffect::CalcFadeOut);
+        drawChainElem = g_Chain.CreateElem((ChainCallback)ScreenEffect::DrawFadeOut);
     }
 
-    calcChainElem->addedCallback =
-        (ChainAddedCallback)ScreenEffect::AddedCallback;
-    calcChainElem->deletedCallback =
-        (ChainAddedCallback)ScreenEffect::DeletedCallback;
+    calcChainElem->addedCallback = (ChainAddedCallback)ScreenEffect::AddedCallback;
+    calcChainElem->deletedCallback = (ChainAddedCallback)ScreenEffect::DeletedCallback;
     calcChainElem->arg = createdEffect;
     createdEffect->usedEffect = (ScreenEffects)effect;
     createdEffect->effectLength = ticks;
@@ -164,8 +150,7 @@ ScreenEffect *ScreenEffect::RegisterChain(i32 effect, u32 ticks,
     createdEffect->shakinessParam = effectParam2;
     createdEffect->unusedParam = unusedEffectParam;
 
-    if (g_Chain.AddToCalcChain(calcChainElem,
-                               TH_CHAIN_PRIO_CALC_SCREENEFFECT) != 0) {
+    if (g_Chain.AddToCalcChain(calcChainElem, TH_CHAIN_PRIO_CALC_SCREENEFFECT) != 0) {
         return NULL;
     }
 
@@ -192,8 +177,7 @@ ChainCallbackResult ScreenEffect::DrawFadeIn(ScreenEffect *effect) {
     g_Supervisor.viewport.height = GAME_WINDOW_HEIGHT;
     g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
     g_Supervisor.viewport.Set();
-    ScreenEffect::DrawSquare(&fadeRect,
-                             (effect->fadeAlpha << 24) | effect->genericParam);
+    ScreenEffect::DrawSquare(&fadeRect, (effect->fadeAlpha << 24) | effect->genericParam);
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
@@ -204,8 +188,7 @@ ChainCallbackResult ScreenEffect::DrawFadeOut(ScreenEffect *effect) {
     fadeRect.top = 16.0f;
     fadeRect.right = 416.0f;
     fadeRect.bottom = 464.0f;
-    ScreenEffect::DrawSquare(&fadeRect,
-                             (effect->fadeAlpha << 24) | effect->genericParam);
+    ScreenEffect::DrawSquare(&fadeRect, (effect->fadeAlpha << 24) | effect->genericParam);
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
@@ -229,10 +212,8 @@ ChainCallbackResult ScreenEffect::ShakeScreen(ScreenEffect *effect) {
         return CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB;
     }
 
-    screenOffset = ((effect->timer.AsFramesFloat() *
-                     (effect->shakinessParam - effect->genericParam)) /
-                    effect->effectLength) +
-                   effect->genericParam;
+    screenOffset =
+        ((effect->timer.AsFramesFloat() * (effect->shakinessParam - effect->genericParam)) / effect->effectLength) + effect->genericParam;
 
     switch (g_Rng.GetRandomU32InRange(3)) {
     case 0:

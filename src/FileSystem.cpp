@@ -22,8 +22,7 @@ FILE *FileSystem::FopenUTF8(const char *filepath, const char *mode) {
 #ifndef _WIN32
     return std::fopen(filepath, mode);
 #else
-    u32 filepathWLen =
-        MultiByteToWideChar(CP_UTF8, 0, filepath, -1, NULL, 0) * 2;
+    u32 filepathWLen = MultiByteToWideChar(CP_UTF8, 0, filepath, -1, NULL, 0) * 2;
     u32 modeWLen = MultiByteToWideChar(CP_UTF8, 0, mode, -1, NULL, 0) * 2;
 
     if (filepathWLen == 0 || modeWLen == 0) {
@@ -106,8 +105,7 @@ u8 *FileSystem::OpenPath(const char *filepath, int isExternalResource) {
     }
     if (entryIdx >= 0) {
         utils::DebugPrint2("%s Decode ... \n", entryname);
-        data =
-            g_Pbg3Archives[pbg3Idx]->ReadDecompressEntry(entryIdx, entryname);
+        data = g_Pbg3Archives[pbg3Idx]->ReadDecompressEntry(entryIdx, entryname);
         g_LastFileSize = g_Pbg3Archives[pbg3Idx]->GetEntrySize(entryIdx);
     } else {
         utils::DebugPrint2("%s Load ... \n", filepath);
@@ -128,8 +126,7 @@ u8 *FileSystem::OpenPath(const char *filepath, int isExternalResource) {
     return data;
 }
 
-int FileSystem::WriteDataToFile(const char *path, const void *data,
-                                size_t size) {
+int FileSystem::WriteDataToFile(const char *path, const void *data, size_t size) {
     FILE *f;
 
     f = FopenUTF8(path, "wb");

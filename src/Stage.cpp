@@ -50,14 +50,10 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage) {
         // When Sakuya uses her time stop ability, we want to darken her
         // spellcard background a bit, to give a visual indication of what's
         // going on.
-        COLOR_SET_COMPONENT(stage->spellcardBackground.color,
-                            COLOR_ALPHA_BYTE_IDX, 0x60);
-        COLOR_SET_COMPONENT(stage->spellcardBackground.color,
-                            COLOR_BLUE_BYTE_IDX, 0x80);
-        COLOR_SET_COMPONENT(stage->spellcardBackground.color,
-                            COLOR_GREEN_BYTE_IDX, 0x30);
-        COLOR_SET_COMPONENT(stage->spellcardBackground.color,
-                            COLOR_RED_BYTE_IDX, 0x30);
+        COLOR_SET_COMPONENT(stage->spellcardBackground.color, COLOR_ALPHA_BYTE_IDX, 0x60);
+        COLOR_SET_COMPONENT(stage->spellcardBackground.color, COLOR_BLUE_BYTE_IDX, 0x80);
+        COLOR_SET_COMPONENT(stage->spellcardBackground.color, COLOR_GREEN_BYTE_IDX, 0x30);
+        COLOR_SET_COMPONENT(stage->spellcardBackground.color, COLOR_RED_BYTE_IDX, 0x30);
         return CHAIN_CALLBACK_RESULT_CONTINUE;
     }
     for (;;) {
@@ -101,8 +97,7 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage) {
                     //                    *)&stage->skyFog.farPlane);
 
                     g_AnmManager->SetFogColor(stage->skyFog.color);
-                    g_AnmManager->SetFogRange(stage->skyFog.nearPlane,
-                                              stage->skyFog.farPlane);
+                    g_AnmManager->SetFogRange(stage->skyFog.nearPlane, stage->skyFog.farPlane);
                 }
                 stage->instructionIndex++;
                 stage->skyFogInterpFinal = stage->skyFog;
@@ -143,69 +138,45 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage) {
             break;
         }
         if (curInsn->frame != -1) {
-            posInterpRatio =
-                (stage->scriptTime.AsFramesFloat() -
-                 stage->positionInterpStartTime) /
-                (stage->positionInterpEndTime - stage->positionInterpStartTime);
+            posInterpRatio = (stage->scriptTime.AsFramesFloat() - stage->positionInterpStartTime) /
+                             (stage->positionInterpEndTime - stage->positionInterpStartTime);
             pos = stage->positionInterpFinal;
-            stage->position.x =
-                (pos.x - stage->positionInterpInitial.x) * posInterpRatio +
-                stage->positionInterpInitial.x;
-            stage->position.y =
-                (pos.y - stage->positionInterpInitial.y) * posInterpRatio +
-                stage->positionInterpInitial.y;
-            stage->position.z =
-                (pos.z - stage->positionInterpInitial.z) * posInterpRatio +
-                stage->positionInterpInitial.z;
+            stage->position.x = (pos.x - stage->positionInterpInitial.x) * posInterpRatio + stage->positionInterpInitial.x;
+            stage->position.y = (pos.y - stage->positionInterpInitial.y) * posInterpRatio + stage->positionInterpInitial.y;
+            stage->position.z = (pos.z - stage->positionInterpInitial.z) * posInterpRatio + stage->positionInterpInitial.z;
         }
         if (stage->facingDirInterpDuration != 0) {
-            if (stage->facingDirInterpTimer.current <
-                stage->facingDirInterpDuration) {
+            if (stage->facingDirInterpTimer.current < stage->facingDirInterpDuration) {
                 stage->facingDirInterpTimer.Tick();
             } else {
-                stage->facingDirInterpTimer.SetCurrent(
-                    stage->facingDirInterpDuration);
+                stage->facingDirInterpTimer.SetCurrent(stage->facingDirInterpDuration);
             }
             pos = stage->facingDirInterpFinal - stage->facingDirInterpInitial;
-            facingDirInterpRatio = stage->facingDirInterpTimer.AsFramesFloat() /
-                                   stage->facingDirInterpDuration;
-            g_GameManager.stageCameraFacingDir.x =
-                pos.x * facingDirInterpRatio + stage->facingDirInterpInitial.x;
-            g_GameManager.stageCameraFacingDir.y =
-                pos.y * facingDirInterpRatio + stage->facingDirInterpInitial.y;
-            g_GameManager.stageCameraFacingDir.z =
-                pos.z * facingDirInterpRatio + stage->facingDirInterpInitial.z;
+            facingDirInterpRatio = stage->facingDirInterpTimer.AsFramesFloat() / stage->facingDirInterpDuration;
+            g_GameManager.stageCameraFacingDir.x = pos.x * facingDirInterpRatio + stage->facingDirInterpInitial.x;
+            g_GameManager.stageCameraFacingDir.y = pos.y * facingDirInterpRatio + stage->facingDirInterpInitial.y;
+            g_GameManager.stageCameraFacingDir.z = pos.z * facingDirInterpRatio + stage->facingDirInterpInitial.z;
         }
         if (stage->skyFogInterpDuration != 0) {
             stage->skyFogInterpTimer.Tick();
-            skyFogInterpRatio = stage->skyFogInterpTimer.AsFramesFloat() /
-                                stage->skyFogInterpDuration;
+            skyFogInterpRatio = stage->skyFogInterpTimer.AsFramesFloat() / stage->skyFogInterpDuration;
             if (skyFogInterpRatio >= 1.0f) {
                 skyFogInterpRatio = 1.0;
             }
             for (idx = 0; idx < 4; idx++) {
-                COLOR_SET_COMPONENT(
-                    stage->skyFog.color, idx,
-                    (u8)(((f32)COLOR_GET_COMPONENT(
-                              stage->skyFogInterpFinal.color, idx) -
-                          (f32)COLOR_GET_COMPONENT(
-                              stage->skyFogInterpInitial.color, idx)) *
-                             skyFogInterpRatio +
-                         (f32)COLOR_GET_COMPONENT(
-                             stage->skyFogInterpInitial.color, idx)));
+                COLOR_SET_COMPONENT(stage->skyFog.color, idx,
+                                    (u8)(((f32)COLOR_GET_COMPONENT(stage->skyFogInterpFinal.color, idx) -
+                                          (f32)COLOR_GET_COMPONENT(stage->skyFogInterpInitial.color, idx)) *
+                                             skyFogInterpRatio +
+                                         (f32)COLOR_GET_COMPONENT(stage->skyFogInterpInitial.color, idx)));
             }
-            stage->skyFog.nearPlane = (stage->skyFogInterpFinal.nearPlane -
-                                       stage->skyFogInterpInitial.nearPlane) *
-                                          skyFogInterpRatio +
+            stage->skyFog.nearPlane = (stage->skyFogInterpFinal.nearPlane - stage->skyFogInterpInitial.nearPlane) * skyFogInterpRatio +
                                       stage->skyFogInterpInitial.nearPlane;
-            stage->skyFog.farPlane = (stage->skyFogInterpFinal.farPlane -
-                                      stage->skyFogInterpInitial.farPlane) *
-                                         skyFogInterpRatio +
+            stage->skyFog.farPlane = (stage->skyFogInterpFinal.farPlane - stage->skyFogInterpInitial.farPlane) * skyFogInterpRatio +
                                      stage->skyFogInterpInitial.farPlane;
 
             g_AnmManager->SetFogColor(stage->skyFog.color);
-            g_AnmManager->SetFogRange(stage->skyFog.nearPlane,
-                                      stage->skyFog.farPlane);
+            g_AnmManager->SetFogRange(stage->skyFog.nearPlane, stage->skyFog.farPlane);
 
             //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGCOLOR,
             //            stage->skyFog.color);
@@ -213,8 +184,7 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage) {
             //            *(u32 *)&stage->skyFog.nearPlane);
             //            g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGEND,
             //            *(u32 *)&stage->skyFog.farPlane);
-            if (stage->skyFogInterpTimer.current >=
-                stage->skyFogInterpDuration) {
+            if (stage->skyFogInterpTimer.current >= stage->skyFogInterpDuration) {
                 stage->skyFogInterpDuration = 0;
             }
         }
@@ -224,11 +194,9 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage) {
         stage->UpdateObjects();
         if (stage->spellcardState >= RUNNING) {
             if (stage->ticksSinceSpellcardStarted == 60) {
-                stage->spellcardState =
-                    static_cast<SpellcardState>(stage->spellcardState + 1);
+                stage->spellcardState = static_cast<SpellcardState>(stage->spellcardState + 1);
             }
-            stage->ticksSinceSpellcardStarted =
-                stage->ticksSinceSpellcardStarted + 1;
+            stage->ticksSinceSpellcardStarted = stage->ticksSinceSpellcardStarted + 1;
             g_AnmManager->ExecuteScript(&stage->spellcardBackground);
         }
         return CHAIN_CALLBACK_RESULT_CONTINUE;
@@ -278,19 +246,14 @@ ChainCallbackResult Stage::OnDrawLowPrio(Stage *stage) {
                 gameRegion.top = GAME_REGION_TOP;
                 gameRegion.right = GAME_REGION_LEFT + GAME_REGION_WIDTH;
                 gameRegion.bottom = GAME_REGION_TOP + GAME_REGION_HEIGHT;
-                stageToSpellcardBackgroundAlpha =
-                    (stage->ticksSinceSpellcardStarted * 255) / 60;
-                ScreenEffect::DrawSquare(&gameRegion,
-                                         stageToSpellcardBackgroundAlpha << 24);
+                stageToSpellcardBackgroundAlpha = (stage->ticksSinceSpellcardStarted * 255) / 60;
+                ScreenEffect::DrawSquare(&gameRegion, stageToSpellcardBackgroundAlpha << 24);
             }
         }
     }
     if (RUNNING <= stage->spellcardState) {
-        if (stage->ticksSinceSpellcardStarted <=
-            g_Supervisor.cfg.frameskipConfig) {
-            g_AnmManager->SetAndExecuteScriptIdx(
-                &stage->spellcardBackground,
-                ANM_SCRIPT_EFFECTS_SPELLCARD_BACKGROUND);
+        if (stage->ticksSinceSpellcardStarted <= g_Supervisor.cfg.frameskipConfig) {
+            g_AnmManager->SetAndExecuteScriptIdx(&stage->spellcardBackground, ANM_SCRIPT_EFFECTS_SPELLCARD_BACKGROUND);
         }
         g_AnmManager->Draw(&stage->spellcardBackground);
     }
@@ -320,9 +283,8 @@ ZunResult Stage::AddedCallback(Stage *stage) {
     stage->spellcardState = NOT_RUNNING;
     stage->skyFogInterpDuration = 0;
 
-    if (stage->LoadStageData(
-            g_StageFiles[g_GameManager.currentStage].anmFile,
-            g_StageFiles[g_GameManager.currentStage].stdFile) != ZUN_SUCCESS) {
+    if (stage->LoadStageData(g_StageFiles[g_GameManager.currentStage].anmFile, g_StageFiles[g_GameManager.currentStage].stdFile) !=
+        ZUN_SUCCESS) {
         return ZUN_ERROR;
     }
     stage->skyFog.color = COLOR_BLACK;
@@ -373,8 +335,7 @@ ZunResult Stage::RegisterChain(u32 stage) {
     g_StageCalcChain.addedCallback = NULL;
     g_StageCalcChain.deletedCallback = NULL;
     g_StageCalcChain.addedCallback = (ChainAddedCallback)Stage::AddedCallback;
-    g_StageCalcChain.deletedCallback =
-        (ChainDeletedCallback)Stage::DeletedCallback;
+    g_StageCalcChain.deletedCallback = (ChainDeletedCallback)Stage::DeletedCallback;
     g_StageCalcChain.arg = stg;
 
     if (g_Chain.AddToCalcChain(&g_StageCalcChain, TH_CHAIN_PRIO_CALC_STAGE)) {
@@ -384,14 +345,12 @@ ZunResult Stage::RegisterChain(u32 stage) {
     g_StageOnDrawHighPrioChain.addedCallback = NULL;
     g_StageOnDrawHighPrioChain.deletedCallback = NULL;
     g_StageOnDrawHighPrioChain.arg = stg;
-    g_Chain.AddToDrawChain(&g_StageOnDrawHighPrioChain,
-                           TH_CHAIN_PRIO_DRAW_HIGH_PRIO_STAGE);
+    g_Chain.AddToDrawChain(&g_StageOnDrawHighPrioChain, TH_CHAIN_PRIO_DRAW_HIGH_PRIO_STAGE);
     g_StageOnDrawLowPrioChain.callback = (ChainCallback)OnDrawLowPrio;
     g_StageOnDrawLowPrioChain.addedCallback = NULL;
     g_StageOnDrawLowPrioChain.deletedCallback = NULL;
     g_StageOnDrawLowPrioChain.arg = stg;
-    g_Chain.AddToDrawChain(&g_StageOnDrawLowPrioChain,
-                           TH_CHAIN_PRIO_DRAW_LOW_PRIO_STAGE);
+    g_Chain.AddToDrawChain(&g_StageOnDrawLowPrioChain, TH_CHAIN_PRIO_DRAW_LOW_PRIO_STAGE);
 
     return ZUN_SUCCESS;
 }
@@ -429,8 +388,7 @@ ZunResult Stage::LoadStageData(const char *anmpath, const char *stdpath) {
     u32 sizeVmArr;
     u32 padding1, padding2, padding3, padding4, padding5, padding6;
 
-    if (g_AnmManager->LoadAnm(ANM_FILE_STAGEBG, anmpath, ANM_OFFSET_STAGEBG) !=
-        ZUN_SUCCESS) {
+    if (g_AnmManager->LoadAnm(ANM_FILE_STAGEBG, anmpath, ANM_OFFSET_STAGEBG) != ZUN_SUCCESS) {
         return ZUN_ERROR;
     }
     this->stdData = (RawStageHeader *)FileSystem::OpenPath(stdpath, false);
@@ -440,19 +398,14 @@ ZunResult Stage::LoadStageData(const char *anmpath, const char *stdpath) {
     }
     this->objectsCount = this->stdData->nbObjects;
     this->quadCount = this->stdData->nbFaces;
-    this->objectInstances =
-        (RawStageObjectInstance *)(this->stdData->facesOffset +
-                                   ((u8 *)this->stdData));
-    this->beginningOfScript =
-        (RawStageInstr *)(this->stdData->scriptOffset + ((u8 *)this->stdData));
+    this->objectInstances = (RawStageObjectInstance *)(this->stdData->facesOffset + ((u8 *)this->stdData));
+    this->beginningOfScript = (RawStageInstr *)(this->stdData->scriptOffset + ((u8 *)this->stdData));
     const LE<u32> *objectOffsets = (LE<u32> *)(this->stdData + 1);
 
-    this->objects = (RawStageObject **)malloc(sizeof(RawStageObject *) *
-                                              this->objectsCount);
+    this->objects = (RawStageObject **)malloc(sizeof(RawStageObject *) * this->objectsCount);
 
     for (idx = 0; idx < this->objectsCount; idx++) {
-        this->objects[idx] =
-            (RawStageObject *)(((u8 *)this->stdData) + objectOffsets[idx]);
+        this->objects[idx] = (RawStageObject *)(((u8 *)this->stdData) + objectOffsets[idx]);
     }
 
     sizeVmArr = this->quadCount * sizeof(AnmVm);
@@ -462,8 +415,7 @@ ZunResult Stage::LoadStageData(const char *anmpath, const char *stdpath) {
         curObj->flags = 1;
         curQuad = &curObj->firstQuad;
         while (0 <= curQuad->type) {
-            g_AnmManager->ExecuteAnmIdx(
-                &this->quadVms[vmIdx], curQuad->anmScript + ANM_OFFSET_STAGEBG);
+            g_AnmManager->ExecuteAnmIdx(&this->quadVms[vmIdx], curQuad->anmScript + ANM_OFFSET_STAGEBG);
             curQuad->vmIdx = vmIdx++;
             curQuad = (RawStageQuadBasic *)((u8 *)curQuad + curQuad->byteSize);
         }
@@ -501,8 +453,7 @@ ZunResult Stage::UpdateObjects() {
                 if (vm->currentInstruction != NULL) {
                     vmsNotFinished++;
                 }
-                objQuad = (RawStageQuadBasic *)(((i8 *)&objQuad->type) +
-                                                objQuad->byteSize);
+                objQuad = (RawStageQuadBasic *)(((i8 *)&objQuad->type) + objQuad->byteSize);
             }
             if (vmsNotFinished == 0) {
                 obj->flags = obj->flags & ~1;
@@ -562,101 +513,63 @@ ZunResult Stage::RenderObjects(i32 zLevel) {
             // B.
 
             // It first starts by checking point C
-            worldMatrix.m[3][0] =
-                obj->position.x + instance->position.x - this->position.x;
-            worldMatrix.m[3][1] =
-                -(obj->position.y + instance->position.y - this->position.y);
-            worldMatrix.m[3][2] = obj->position.z + instance->position.z -
-                                  this->position.z + obj->size.z;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
+            worldMatrix.m[3][0] = obj->position.x + instance->position.x - this->position.x;
+            worldMatrix.m[3][1] = -(obj->position.y + instance->position.y - this->position.y);
+            worldMatrix.m[3][2] = obj->position.z + instance->position.z - this->position.z + obj->size.z;
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix, worldMatrix);
 
-            if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+            if (quadPos.y >= g_Supervisor.viewport.y && quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
                 goto render;
             }
 
             // Then G:
             worldMatrix.m[3][1] = worldMatrix.m[3][1] - obj->size.y;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
-            if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix, worldMatrix);
+            if (quadPos.y >= g_Supervisor.viewport.y && quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
                 goto render;
             }
 
             // Then E
             worldMatrix.m[3][2] = worldMatrix.m[3][2] - obj->size.z;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
-            if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix, worldMatrix);
+            if (quadPos.y >= g_Supervisor.viewport.y && quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
                 goto render;
             }
 
             // Then A
             worldMatrix.m[3][1] = worldMatrix.m[3][1] + obj->size.y;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
-            if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix, worldMatrix);
+            if (quadPos.y >= g_Supervisor.viewport.y && quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
                 goto render;
             }
 
             // Then D
-            worldMatrix.m[3][0] = obj->position.x + instance->position.x -
-                                  this->position.x + obj->size.x;
-            worldMatrix.m[3][1] =
-                -(obj->position.y + instance->position.y - this->position.y);
-            worldMatrix.m[3][2] = obj->position.z + instance->position.z -
-                                  this->position.z + obj->size.z;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
-            if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+            worldMatrix.m[3][0] = obj->position.x + instance->position.x - this->position.x + obj->size.x;
+            worldMatrix.m[3][1] = -(obj->position.y + instance->position.y - this->position.y);
+            worldMatrix.m[3][2] = obj->position.z + instance->position.z - this->position.z + obj->size.z;
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix, worldMatrix);
+            if (quadPos.y >= g_Supervisor.viewport.y && quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
                 goto render;
             }
 
             // Then H
             worldMatrix.m[3][1] = worldMatrix.m[3][1] - obj->size.y;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
-            if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix, worldMatrix);
+            if (quadPos.y >= g_Supervisor.viewport.y && quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
                 goto render;
             }
 
             // Then F
             worldMatrix.m[3][2] = worldMatrix.m[3][2] - (obj->size).z;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
-            if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix, worldMatrix);
+            if (quadPos.y >= g_Supervisor.viewport.y && quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
                 goto render;
             }
 
             // And finally B
             worldMatrix.m[3][1] = worldMatrix.m[3][1] + (obj->size).y;
-            projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                        g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
-                        worldMatrix);
-            if (quadPos.y >= g_Supervisor.viewport.y &&
-                quadPos.y <=
-                    g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
+            projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix, worldMatrix);
+            if (quadPos.y >= g_Supervisor.viewport.y && quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
                 goto render;
             }
 
@@ -670,19 +583,14 @@ ZunResult Stage::RenderObjects(i32 zLevel) {
                 curQuadVm = this->quadVms + curQuad->vmIdx;
                 switch (curQuad->type) {
                 case 0:
-                    curQuadVm->pos.x = curQuad->position.x +
-                                       instance->position.x - this->position.x;
-                    curQuadVm->pos.y = curQuad->position.y +
-                                       instance->position.y - this->position.y;
-                    curQuadVm->pos.z = curQuad->position.z +
-                                       instance->position.z - this->position.z;
+                    curQuadVm->pos.x = curQuad->position.x + instance->position.x - this->position.x;
+                    curQuadVm->pos.y = curQuad->position.y + instance->position.y - this->position.y;
+                    curQuadVm->pos.z = curQuad->position.z + instance->position.z - this->position.z;
                     if (curQuad->size.x != 0.0f) {
-                        curQuadVm->scaleX =
-                            curQuad->size.x / curQuadVm->sprite->widthPx;
+                        curQuadVm->scaleX = curQuad->size.x / curQuadVm->sprite->widthPx;
                     }
                     if (curQuad->size.y != 0.0f) {
-                        curQuadVm->scaleY =
-                            curQuad->size.y / curQuadVm->sprite->heightPx;
+                        curQuadVm->scaleY = curQuad->size.y / curQuadVm->sprite->heightPx;
                     }
                     if (curQuadVm->autoRotate == 2) {
                         if (curQuad->size.x != 0.0f) {
@@ -693,17 +601,12 @@ ZunResult Stage::RenderObjects(i32 zLevel) {
                         worldMatrix.m[3][0] = curQuadVm->pos.x;
                         worldMatrix.m[3][1] = -curQuadVm->pos.y;
                         worldMatrix.m[3][2] = curQuadVm->pos.z;
-                        projectVec3(quadPos, projectSrc, g_Supervisor.viewport,
-                                    g_Supervisor.projectionMatrix,
+                        projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix,
+                                    worldMatrix);
+                        worldMatrix.m[3][0] = quadWidth * curQuadVm->scaleX + worldMatrix.m[3][0];
+                        projectVec3(quadScaledPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
                                     g_Supervisor.viewMatrix, worldMatrix);
-                        worldMatrix.m[3][0] =
-                            quadWidth * curQuadVm->scaleX + worldMatrix.m[3][0];
-                        projectVec3(quadScaledPos, projectSrc,
-                                    g_Supervisor.viewport,
-                                    g_Supervisor.projectionMatrix,
-                                    g_Supervisor.viewMatrix, worldMatrix);
-                        curQuadVm->scaleX =
-                            (quadScaledPos.x - quadPos.x) / quadWidth;
+                        curQuadVm->scaleX = (quadScaledPos.x - quadPos.x) / quadWidth;
                         curQuadVm->scaleY = curQuadVm->scaleX;
                         curQuadVm->pos = quadPos;
                         g_AnmManager->DrawFacingCamera(curQuadVm);
@@ -712,8 +615,7 @@ ZunResult Stage::RenderObjects(i32 zLevel) {
                     }
                     break;
                 }
-                curQuad = (RawStageQuadBasic *)(((u8 *)&curQuad->type) +
-                                                curQuad->byteSize);
+                curQuad = (RawStageQuadBasic *)(((u8 *)&curQuad->type) + curQuad->byteSize);
             }
             instancesDrawn++;
         }

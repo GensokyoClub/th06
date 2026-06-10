@@ -38,24 +38,12 @@ struct Diffuse {
         this->b = colorData.b;
         this->a = colorData.a;
     }
-    Diffuse operator*(const f32 mult) const {
-        return Diffuse(this->r * mult, this->g * mult, this->b * mult,
-                       this->a * mult);
-    }
+    Diffuse operator*(const f32 mult) const { return Diffuse(this->r * mult, this->g * mult, this->b * mult, this->a * mult); }
 
-    Diffuse operator*(const Diffuse &mult) const {
-        return Diffuse(this->r * mult.r, this->g * mult.g, this->b * mult.b,
-                       this->a * mult.a);
-    }
-    Diffuse operator+(const f32 mult) const {
-        return Diffuse(this->r + mult, this->g + mult, this->b + mult,
-                       this->a + mult);
-    }
+    Diffuse operator*(const Diffuse &mult) const { return Diffuse(this->r * mult.r, this->g * mult.g, this->b * mult.b, this->a * mult.a); }
+    Diffuse operator+(const f32 mult) const { return Diffuse(this->r + mult, this->g + mult, this->b + mult, this->a + mult); }
 
-    Diffuse operator+(const Diffuse &mult) const {
-        return Diffuse(this->r + mult.r, this->g + mult.g, this->b + mult.b,
-                       this->a + mult.a);
-    }
+    Diffuse operator+(const Diffuse &mult) const { return Diffuse(this->r + mult.r, this->g + mult.g, this->b + mult.b, this->a + mult.a); }
 
     Diffuse &operator+=(const Diffuse &b) {
         this->r += b.r;
@@ -75,12 +63,10 @@ struct Software : GfxInterface {
     virtual void SetFogRange(f32 nearPlane, f32 farPlane);
     virtual void SetFogColor(ZunColor color);
     virtual void ToggleVertexAttribute(u8 attr, bool enable);
-    virtual void SetAttributePointer(VertexAttributeArrays attr,
-                                     std::size_t stride, void *ptr);
+    virtual void SetAttributePointer(VertexAttributeArrays attr, std::size_t stride, void *ptr);
     virtual void SetColorOp(TextureOpComponent component, ColorOp op);
     virtual void SetTextureFactor(ZunColor factor);
-    virtual void SetTransformMatrix(TransformMatrix type,
-                                    const ZunMatrix &matrix);
+    virtual void SetTransformMatrix(TransformMatrix type, const ZunMatrix &matrix);
 
     virtual void SetTextureFilter();
 
@@ -102,13 +88,10 @@ struct Software : GfxInterface {
     virtual GfxTextureHandle CreateTexture();
     virtual void BindTexture(GfxTextureHandle handle);
     virtual void DeleteTexture(GfxTextureHandle handle);
-    virtual void SetTextureImage(u32 width, u32 height, PixelFormat fmt,
-                                 PixelDataType type, const void *data);
-    virtual void SetTextureSubImage(i32 xoffset, i32 yoffset, i32 width,
-                                    i32 height, const void *data);
+    virtual void SetTextureImage(u32 width, u32 height, PixelFormat fmt, PixelDataType type, const void *data);
+    virtual void SetTextureSubImage(i32 xoffset, i32 yoffset, i32 width, i32 height, const void *data);
 
-    virtual void ReadPixels(i32 x, i32 y, i32 width, i32 height,
-                            const void *pixels);
+    virtual void ReadPixels(i32 x, i32 y, i32 width, i32 height, const void *pixels);
 
     virtual void Draw(PrimitiveType type, i32 start, i32 count);
     virtual void SwapBuffers();
@@ -160,9 +143,7 @@ struct Software : GfxInterface {
 
     ColorOp colorOp;
 
-    inline ZunVec3 ProjectToNDC(ZunVec3 vertex, ZunMatrix mv, ZunMatrix p,
-                                f32 &viewZ, f32 &W);
-    inline ZunVec2 ProjectTexCoordToNDC(ZunVec2 texCoord,
-                                        ZunMatrix textureMatrix);
+    inline ZunVec3 ProjectToNDC(ZunVec3 vertex, ZunMatrix mv, ZunMatrix p, f32 &viewZ, f32 &W);
+    inline ZunVec2 ProjectTexCoordToNDC(ZunVec2 texCoord, ZunMatrix textureMatrix);
     inline ZunVec3 NDCToScreen(ZunVec3 vertex);
 };

@@ -17,13 +17,10 @@ EnemyManager g_EnemyManager;
 static ChainElem g_EnemyManagerCalcChain;
 static ChainElem g_EnemyManagerDrawChain;
 static const u8 g_RandomItems[32] = {
-    ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,
-    ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,
-    ITEM_POINT,       ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_SMALL,
-    ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POINT,       ITEM_POWER_SMALL,
-    ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,
-    ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL,
-    ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,
+    ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_SMALL,
+    ITEM_POINT,       ITEM_POINT,       ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,
+    ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,
+    ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_SMALL, ITEM_POINT,
     ITEM_POINT,       ITEM_POINT,       ITEM_POWER_SMALL, ITEM_POWER_BIG};
 
 void EnemyManager::Initialize() {
@@ -81,8 +78,7 @@ void EnemyManager::Initialize() {
 
 EnemyManager::EnemyManager() { this->Initialize(); }
 
-Enemy *EnemyManager::SpawnEnemy(i32 eclSubId, const ZunVec3 *pos, i16 life,
-                                i16 itemDrop, i32 score) {
+Enemy *EnemyManager::SpawnEnemy(i32 eclSubId, const ZunVec3 *pos, i16 life, i16 itemDrop, i32 score) {
     Enemy *newEnemy;
     i32 idx;
 
@@ -150,8 +146,7 @@ void EnemyManager::RunEclTimeline() {
         // number of lives lost?
         subrankIncreaseFrame = 10 * 4 * 60;
         subrankIncreaseFrame -= g_GameManager.livesRemaining * 4 * 60;
-        if (this->timelineTime.HasTicked() &&
-            this->timelineTime.AsFrames() % subrankIncreaseFrame == 0) {
+        if (this->timelineTime.HasTicked() && this->timelineTime.AsFrames() % subrankIncreaseFrame == 0) {
             g_GameManager.IncreaseSubrank(100);
         }
     }
@@ -162,34 +157,28 @@ void EnemyManager::RunEclTimeline() {
                 if (!g_Gui.BossPresent()) {
                     args1 = &this->timelineInstr->args;
                     tmpVec3 = *args1->Var1AsVec();
-                    this->SpawnEnemy(this->timelineInstr->arg0, &tmpVec3,
-                                     args1->ushortVar1, args1->ushortVar2,
-                                     args1->uintVar4);
+                    this->SpawnEnemy(this->timelineInstr->arg0, &tmpVec3, args1->ushortVar1, args1->ushortVar2, args1->uintVar4);
                 }
                 break;
             case 1:
                 if (!g_Gui.BossPresent()) {
                     tmpVec3 = *this->timelineInstr->args.Var1AsVec();
-                    this->SpawnEnemy(this->timelineInstr->arg0, &tmpVec3, -1,
-                                     ITEM_NO_ITEM, -1);
+                    this->SpawnEnemy(this->timelineInstr->arg0, &tmpVec3, -1, ITEM_NO_ITEM, -1);
                 }
                 break;
             case 2:
                 if (!g_Gui.BossPresent()) {
                     args2 = &this->timelineInstr->args;
                     tmpVec3 = *args2->Var1AsVec();
-                    spawnedEnemy = this->SpawnEnemy(
-                        this->timelineInstr->arg0, &tmpVec3, args2->ushortVar1,
-                        args2->ushortVar2, args2->uintVar4);
+                    spawnedEnemy =
+                        this->SpawnEnemy(this->timelineInstr->arg0, &tmpVec3, args2->ushortVar1, args2->ushortVar2, args2->uintVar4);
                     spawnedEnemy->flags.unk4 = 1;
                 }
                 break;
             case 3:
                 if (!g_Gui.BossPresent()) {
                     tmpVec3 = *this->timelineInstr->args.Var1AsVec();
-                    spawnedEnemy =
-                        this->SpawnEnemy(this->timelineInstr->arg0, &tmpVec3,
-                                         -1, ITEM_NO_ITEM, -1);
+                    spawnedEnemy = this->SpawnEnemy(this->timelineInstr->arg0, &tmpVec3, -1, ITEM_NO_ITEM, -1);
                     spawnedEnemy->flags.unk4 = 1;
                 }
                 break;
@@ -198,37 +187,30 @@ void EnemyManager::RunEclTimeline() {
                     args3 = &this->timelineInstr->args;
                     pos1 = *args3->Var1AsVec();
                     if (args3->Var1AsVec()->x <= -990.0f) {
-                        pos1.x = g_Rng.GetRandomF32InRange(
-                            g_GameManager.playerMovementAreaSize.x);
+                        pos1.x = g_Rng.GetRandomF32InRange(g_GameManager.playerMovementAreaSize.x);
                     }
                     if (args3->Var1AsVec()->y <= -990.0f) {
-                        pos1.y = g_Rng.GetRandomF32InRange(
-                            g_GameManager.playerMovementAreaSize.y);
+                        pos1.y = g_Rng.GetRandomF32InRange(g_GameManager.playerMovementAreaSize.y);
                     }
                     if (args3->Var1AsVec()->z <= -990.0f) {
                         pos1.z = g_Rng.GetRandomF32InRange(800.0f);
                     }
-                    this->SpawnEnemy(this->timelineInstr->arg0, &pos1,
-                                     args3->ushortVar1, args3->ushortVar2,
-                                     args3->uintVar4);
+                    this->SpawnEnemy(this->timelineInstr->arg0, &pos1, args3->ushortVar1, args3->ushortVar2, args3->uintVar4);
                 }
                 break;
             case 5:
                 if (!g_Gui.BossPresent()) {
                     pos2 = *this->timelineInstr->args.Var1AsVec();
                     if (pos2.x <= -990.0f) {
-                        pos2.x = g_Rng.GetRandomF32InRange(
-                            g_GameManager.playerMovementAreaSize.x);
+                        pos2.x = g_Rng.GetRandomF32InRange(g_GameManager.playerMovementAreaSize.x);
                     }
                     if (pos2.y <= -990.0f) {
-                        pos2.y = g_Rng.GetRandomF32InRange(
-                            g_GameManager.playerMovementAreaSize.y);
+                        pos2.y = g_Rng.GetRandomF32InRange(g_GameManager.playerMovementAreaSize.y);
                     }
                     if (pos2.z <= -990.0f) {
                         pos2.z = g_Rng.GetRandomF32InRange(800.0f);
                     }
-                    this->SpawnEnemy(this->timelineInstr->arg0, &pos2, -1,
-                                     ITEM_NO_ITEM, -1);
+                    this->SpawnEnemy(this->timelineInstr->arg0, &pos2, -1, ITEM_NO_ITEM, -1);
                 }
                 break;
             case 6:
@@ -236,19 +218,16 @@ void EnemyManager::RunEclTimeline() {
                     args4 = &this->timelineInstr->args;
                     pos3 = *args4->Var1AsVec();
                     if (args4->Var1AsVec()->x <= -990.0f) {
-                        pos3.x = g_Rng.GetRandomF32InRange(
-                            g_GameManager.playerMovementAreaSize.x);
+                        pos3.x = g_Rng.GetRandomF32InRange(g_GameManager.playerMovementAreaSize.x);
                     }
                     if (args4->Var1AsVec()->y <= -990.0f) {
-                        pos3.y = g_Rng.GetRandomF32InRange(
-                            g_GameManager.playerMovementAreaSize.y);
+                        pos3.y = g_Rng.GetRandomF32InRange(g_GameManager.playerMovementAreaSize.y);
                     }
                     if (args4->Var1AsVec()->z <= -990.0f) {
                         pos3.z = g_Rng.GetRandomF32InRange(800.0f);
                     }
-                    spawnedEnemy = this->SpawnEnemy(
-                        this->timelineInstr->arg0, &pos3, args4->ushortVar1,
-                        args4->ushortVar2, args4->uintVar4);
+                    spawnedEnemy =
+                        this->SpawnEnemy(this->timelineInstr->arg0, &pos3, args4->ushortVar1, args4->ushortVar2, args4->uintVar4);
                     spawnedEnemy->flags.unk4 = 1;
                 }
                 break;
@@ -256,29 +235,23 @@ void EnemyManager::RunEclTimeline() {
                 if (!g_Gui.BossPresent()) {
                     pos4 = *this->timelineInstr->args.Var1AsVec();
                     if (pos4.x <= -990.0f) {
-                        pos4.x = g_Rng.GetRandomF32InRange(
-                            g_GameManager.playerMovementAreaSize.x);
+                        pos4.x = g_Rng.GetRandomF32InRange(g_GameManager.playerMovementAreaSize.x);
                     }
                     if (pos4.y <= -990.0f) {
-                        pos4.y = g_Rng.GetRandomF32InRange(
-                            g_GameManager.playerMovementAreaSize.y);
+                        pos4.y = g_Rng.GetRandomF32InRange(g_GameManager.playerMovementAreaSize.y);
                     }
                     if (pos4.z <= -990.0f) {
                         pos4.z = g_Rng.GetRandomF32InRange(800.0f);
                     }
-                    spawnedEnemy = this->SpawnEnemy(
-                        this->timelineInstr->arg0, &pos4, -1, ITEM_NO_ITEM, -1);
+                    spawnedEnemy = this->SpawnEnemy(this->timelineInstr->arg0, &pos4, -1, ITEM_NO_ITEM, -1);
                     spawnedEnemy->flags.unk4 = 1;
                 }
                 break;
             case 8:
-                if (g_GameManager.difficulty == EASY &&
-                    g_GameManager.currentStage == 5 &&
-                    this->timelineInstr->arg0 == 1) {
+                if (g_GameManager.difficulty == EASY && g_GameManager.currentStage == 5 && this->timelineInstr->arg0 == 1) {
                     g_Gui.MsgRead(g_GameManager.character * 10 + 3);
                 } else {
-                    g_Gui.MsgRead(this->timelineInstr->arg0 +
-                                  g_GameManager.character * 10);
+                    g_Gui.MsgRead(this->timelineInstr->arg0 + g_GameManager.character * 10);
                 }
                 break;
             case 9:
@@ -288,15 +261,13 @@ void EnemyManager::RunEclTimeline() {
                 }
                 break;
             case 10:
-                this->bosses[this->timelineInstr->args.uintVar1]->runInterrupt =
-                    this->timelineInstr->args.uintVar2;
+                this->bosses[this->timelineInstr->args.uintVar1]->runInterrupt = this->timelineInstr->args.uintVar2;
                 break;
             case 0xb:
                 g_GameManager.currentPower = this->timelineInstr->arg0;
                 break;
             case 0xc:
-                if (this->bosses[this->timelineInstr->arg0] != NULL &&
-                    this->bosses[this->timelineInstr->arg0]->flags.active) {
+                if (this->bosses[this->timelineInstr->arg0] != NULL && this->bosses[this->timelineInstr->arg0]->flags.active) {
                     this->timelineTime.Decrement(1);
                     return;
                 }
@@ -305,8 +276,7 @@ void EnemyManager::RunEclTimeline() {
             break;
         }
 
-        this->timelineInstr = (EclTimelineInstr *)(((u8 *)this->timelineInstr) +
-                                                   this->timelineInstr->size);
+        this->timelineInstr = (EclTimelineInstr *)(((u8 *)this->timelineInstr) + this->timelineInstr->size);
     }
     if (!g_Gui.HasCurrentMsgIdx()) {
         g_GameManager.counat++;
@@ -333,8 +303,7 @@ bool Enemy::HandleLifeCallback() {
         this->stackDepth = 0;
 
         curEnemy = g_EnemyManager.enemies;
-        for (i = 0; i < ARRAY_SIZE_SIGNED(g_EnemyManager.enemies) - 1;
-             i++, curEnemy++) {
+        for (i = 0; i < ARRAY_SIZE_SIGNED(g_EnemyManager.enemies) - 1; i++, curEnemy++) {
             if (!curEnemy->flags.active) {
                 continue;
             }
@@ -344,8 +313,7 @@ bool Enemy::HandleLifeCallback() {
             curEnemy->life = 0;
 
             if (!curEnemy->flags.unk6 && curEnemy->deathCallbackSub >= 0) {
-                g_EclManager.CallEclSub(&curEnemy->currentContext,
-                                        curEnemy->deathCallbackSub);
+                g_EclManager.CallEclSub(&curEnemy->currentContext, curEnemy->deathCallbackSub);
                 curEnemy->deathCallbackSub = -1;
             }
         }
@@ -361,8 +329,7 @@ bool Enemy::HandleTimerCallback() {
     i32 i;
 
     if (this->flags.isBoss) {
-        g_Gui.SetSpellcardSeconds(
-            (this->timerCallbackThreshold - this->bossTimer.AsFrames()) / 60);
+        g_Gui.SetSpellcardSeconds((this->timerCallbackThreshold - this->bossTimer.AsFrames()) / 60);
     }
 
     if (this->HasBossTimerFinished()) {
@@ -383,8 +350,7 @@ bool Enemy::HandleTimerCallback() {
         }
 
         curEnemy = g_EnemyManager.enemies;
-        for (i = 0; i < ARRAY_SIZE_SIGNED(g_EnemyManager.enemies) - 1;
-             i++, curEnemy++) {
+        for (i = 0; i < ARRAY_SIZE_SIGNED(g_EnemyManager.enemies) - 1; i++, curEnemy++) {
             if (!curEnemy->flags.active) {
                 continue;
             }
@@ -394,8 +360,7 @@ bool Enemy::HandleTimerCallback() {
             curEnemy->life = 0;
 
             if (!curEnemy->flags.unk6 && curEnemy->deathCallbackSub >= 0) {
-                g_EclManager.CallEclSub(&curEnemy->currentContext,
-                                        curEnemy->deathCallbackSub);
+                g_EclManager.CallEclSub(&curEnemy->currentContext, curEnemy->deathCallbackSub);
                 curEnemy->deathCallbackSub = -1;
             }
         }
@@ -441,8 +406,7 @@ void Enemy::ClampPos() {
     }
 }
 
-ZunResult EnemyManager::RegisterChain(const char *stgEnm1,
-                                      const char *stgEnm2) {
+ZunResult EnemyManager::RegisterChain(const char *stgEnm1, const char *stgEnm2) {
     EnemyManager *mgr = &g_EnemyManager;
     mgr->Initialize();
     mgr->stgEnmAnmFilename = stgEnm1;
@@ -450,21 +414,17 @@ ZunResult EnemyManager::RegisterChain(const char *stgEnm1,
     g_EnemyManagerCalcChain.callback = (ChainCallback)mgr->OnUpdate;
     g_EnemyManagerCalcChain.addedCallback = NULL;
     g_EnemyManagerCalcChain.deletedCallback = NULL;
-    g_EnemyManagerCalcChain.addedCallback =
-        (ChainAddedCallback)mgr->AddedCallback;
-    g_EnemyManagerCalcChain.deletedCallback =
-        (ChainAddedCallback)mgr->DeletedCallback;
+    g_EnemyManagerCalcChain.addedCallback = (ChainAddedCallback)mgr->AddedCallback;
+    g_EnemyManagerCalcChain.deletedCallback = (ChainAddedCallback)mgr->DeletedCallback;
     g_EnemyManagerCalcChain.arg = mgr;
-    if (g_Chain.AddToCalcChain(&g_EnemyManagerCalcChain,
-                               TH_CHAIN_PRIO_CALC_ENEMYMANAGER)) {
+    if (g_Chain.AddToCalcChain(&g_EnemyManagerCalcChain, TH_CHAIN_PRIO_CALC_ENEMYMANAGER)) {
         return ZUN_ERROR;
     }
     g_EnemyManagerDrawChain.callback = (ChainCallback)mgr->OnDraw;
     g_EnemyManagerDrawChain.addedCallback = NULL;
     g_EnemyManagerDrawChain.deletedCallback = NULL;
     g_EnemyManagerDrawChain.arg = mgr;
-    if (g_Chain.AddToDrawChain(&g_EnemyManagerDrawChain,
-                               TH_CHAIN_PRIO_DRAW_ENEMYMANAGER)) {
+    if (g_Chain.AddToDrawChain(&g_EnemyManagerDrawChain, TH_CHAIN_PRIO_DRAW_ENEMYMANAGER)) {
         return ZUN_ERROR;
     }
     return ZUN_SUCCESS;
@@ -481,8 +441,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr) {
 
     local_8 = false;
     mgr->RunEclTimeline();
-    for (curEnemy = &mgr->enemies[0], mgr->enemyCount = 0, enemyIdx = 0;
-         enemyIdx < ARRAY_SIZE_SIGNED(mgr->enemies) - 1;
+    for (curEnemy = &mgr->enemies[0], mgr->enemyCount = 0, enemyIdx = 0; enemyIdx < ARRAY_SIZE_SIGNED(mgr->enemies) - 1;
          enemyIdx++, curEnemy++) {
         if (!curEnemy->flags.active) {
             continue;
@@ -492,15 +451,12 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr) {
 
         curEnemy->ClampPos();
         if (curEnemy->flags.unk8 == 0 &&
-            g_GameManager.IsInBounds(curEnemy->position.x, curEnemy->position.y,
-                                     curEnemy->primaryVm.sprite->widthPx,
+            g_GameManager.IsInBounds(curEnemy->position.x, curEnemy->position.y, curEnemy->primaryVm.sprite->widthPx,
                                      curEnemy->primaryVm.sprite->heightPx)) {
             curEnemy->flags.unk8 = 1;
         }
         if (curEnemy->flags.unk8 == 1 &&
-            !g_GameManager.IsInBounds(curEnemy->position.x,
-                                      curEnemy->position.y,
-                                      curEnemy->primaryVm.sprite->widthPx,
+            !g_GameManager.IsInBounds(curEnemy->position.x, curEnemy->position.y, curEnemy->primaryVm.sprite->widthPx,
                                       curEnemy->primaryVm.sprite->heightPx)) {
             curEnemy->flags.active = 0;
             curEnemy->Despawn();
@@ -522,8 +478,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr) {
         g_AnmManager->ExecuteScript(&curEnemy->primaryVm);
         curEnemy->color = curEnemy->primaryVm.color;
         for (enemyVmIdx = 0; enemyVmIdx < 8; enemyVmIdx++) {
-            if (0 <= curEnemy->vms[enemyVmIdx].anmFileIndex &&
-                g_AnmManager->ExecuteScript(&curEnemy->vms[enemyVmIdx])) {
+            if (0 <= curEnemy->vms[enemyVmIdx].anmFileIndex && g_AnmManager->ExecuteScript(&curEnemy->vms[enemyVmIdx])) {
                 curEnemy->vms[enemyVmIdx].anmFileIndex = -1;
             }
         }
@@ -533,15 +488,13 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr) {
             if (curEnemy->flags.unk7 && curEnemy->flags.unk6) {
                 // There's something weird going on here, stack-wise.
                 enemyHitbox = curEnemy->HitboxDimensions(1.5f);
-                if (g_Player.CalcKillBoxCollision(&curEnemy->position,
-                                                  &enemyHitbox) == 1 &&
-                    curEnemy->flags.unk6 && !curEnemy->flags.isBoss) {
+                if (g_Player.CalcKillBoxCollision(&curEnemy->position, &enemyHitbox) == 1 && curEnemy->flags.unk6 &&
+                    !curEnemy->flags.isBoss) {
                     curEnemy->life -= 10;
                 }
             }
             if (curEnemy->flags.unk6 != 0) {
-                damage = g_Player.CalcDamageToEnemy(
-                    &curEnemy->position, &curEnemy->hitboxDimensions, &local_8);
+                damage = g_Player.CalcDamageToEnemy(&curEnemy->position, &curEnemy->hitboxDimensions, &local_8);
                 if (70 <= damage) {
                     damage = 70;
                 }
@@ -579,15 +532,9 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr) {
                     curEnemy->flags.unk10 = 0;
                     curEnemy->flags.unk11 = 0;
                     g_Gui.bossPresent = 0;
-                    g_EffectManager.SpawnParticles(curEnemy->deathAnm1,
-                                                   &curEnemy->position, 1,
-                                                   COLOR_WHITE);
-                    g_EffectManager.SpawnParticles(curEnemy->deathAnm1,
-                                                   &curEnemy->position, 1,
-                                                   COLOR_WHITE);
-                    g_EffectManager.SpawnParticles(curEnemy->deathAnm1,
-                                                   &curEnemy->position, 1,
-                                                   COLOR_WHITE);
+                    g_EffectManager.SpawnParticles(curEnemy->deathAnm1, &curEnemy->position, 1, COLOR_WHITE);
+                    g_EffectManager.SpawnParticles(curEnemy->deathAnm1, &curEnemy->position, 1, COLOR_WHITE);
+                    g_EffectManager.SpawnParticles(curEnemy->deathAnm1, &curEnemy->position, 1, COLOR_WHITE);
                     break;
                 case 1:
                     g_GameManager.AddScore(curEnemy->score);
@@ -603,44 +550,28 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr) {
                     }
                 case 2:
                     if (curEnemy->itemDrop >= 0) {
-                        g_EffectManager.SpawnParticles(curEnemy->deathAnm2 + 4,
-                                                       &curEnemy->position, 3,
-                                                       0xffffffff);
-                        g_ItemManager.SpawnItem(&curEnemy->position,
-                                                (ItemType)curEnemy->itemDrop,
-                                                local_8);
+                        g_EffectManager.SpawnParticles(curEnemy->deathAnm2 + 4, &curEnemy->position, 3, 0xffffffff);
+                        g_ItemManager.SpawnItem(&curEnemy->position, (ItemType)curEnemy->itemDrop, local_8);
                     } else if (curEnemy->itemDrop == ITEM_NO_ITEM) {
                         if (mgr->randomItemSpawnIndex % 3 == 0) {
-                            g_EffectManager.SpawnParticles(
-                                curEnemy->deathAnm2 + 4, &curEnemy->position, 6,
-                                COLOR_WHITE);
-                            g_ItemManager.SpawnItem(
-                                &curEnemy->position,
-                                (ItemType)
-                                    g_RandomItems[mgr->randomItemTableIndex],
-                                local_8);
+                            g_EffectManager.SpawnParticles(curEnemy->deathAnm2 + 4, &curEnemy->position, 6, COLOR_WHITE);
+                            g_ItemManager.SpawnItem(&curEnemy->position, (ItemType)g_RandomItems[mgr->randomItemTableIndex], local_8);
                             mgr->randomItemTableIndex++;
-                            if (ARRAY_SIZE_SIGNED(g_RandomItems) <=
-                                mgr->randomItemTableIndex) {
+                            if (ARRAY_SIZE_SIGNED(g_RandomItems) <= mgr->randomItemTableIndex) {
                                 mgr->randomItemTableIndex = 0;
                             }
                         }
                         mgr->randomItemSpawnIndex++;
                     }
-                    if (curEnemy->flags.isBoss &&
-                        g_EnemyManager.spellcardInfo.isActive == 0) {
+                    if (curEnemy->flags.isBoss && g_EnemyManager.spellcardInfo.isActive == 0) {
                         g_BulletManager.DespawnBullets(12800, false);
                     }
                     curEnemy->life = 0;
                     break;
                 }
-                g_SoundPlayer.PlaySoundByIdx(
-                    (SoundIdx)((enemyIdx % 2) + SOUND_2));
-                g_EffectManager.SpawnParticles(
-                    curEnemy->deathAnm1, &curEnemy->position, 1, 0xffffffff);
-                g_EffectManager.SpawnParticles(curEnemy->deathAnm2 + 4,
-                                               &curEnemy->position, 4,
-                                               0xffffffff);
+                g_SoundPlayer.PlaySoundByIdx((SoundIdx)((enemyIdx % 2) + SOUND_2));
+                g_EffectManager.SpawnParticles(curEnemy->deathAnm1, &curEnemy->position, 1, 0xffffffff);
+                g_EffectManager.SpawnParticles(curEnemy->deathAnm2 + 4, &curEnemy->position, 4, 0xffffffff);
                 if (0 <= curEnemy->deathCallbackSub) {
                     curEnemy->bulletRankSpeedLow = -0.5;
                     curEnemy->bulletRankSpeedHigh = 0.5;
@@ -649,8 +580,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr) {
                     curEnemy->bulletRankAmount2Low = 0;
                     curEnemy->bulletRankAmount2High = 0;
                     curEnemy->stackDepth = 0;
-                    g_EclManager.CallEclSub(&curEnemy->currentContext,
-                                            curEnemy->deathCallbackSub);
+                    g_EclManager.CallEclSub(&curEnemy->currentContext, curEnemy->deathCallbackSub);
                     curEnemy->deathCallbackSub = -1;
                 }
             }
@@ -692,8 +622,7 @@ void Enemy::UpdateEffects(Enemy *enemy) {
             effect->unk_15c += 0.3f;
         }
 
-        effect->angleRelated =
-            utils::AddNormalizeAngle(effect->angleRelated, ZUN_PI / 100);
+        effect->angleRelated = utils::AddNormalizeAngle(effect->angleRelated, ZUN_PI / 100);
     }
 }
 
@@ -703,9 +632,7 @@ ChainCallbackResult EnemyManager::OnDraw(EnemyManager *mgr) {
     i32 curEnemyVmIdx;
     i32 curEnemyIdx;
 
-    for (curEnemy = &mgr->enemies[0], curEnemyIdx = 0;
-         curEnemyIdx < ARRAY_SIZE_SIGNED(mgr->enemies) - 1;
-         curEnemyIdx++, curEnemy++) {
+    for (curEnemy = &mgr->enemies[0], curEnemyIdx = 0; curEnemyIdx < ARRAY_SIZE_SIGNED(mgr->enemies) - 1; curEnemyIdx++, curEnemy++) {
         if (!curEnemy->flags.active) {
             continue;
         }
@@ -713,8 +640,7 @@ ChainCallbackResult EnemyManager::OnDraw(EnemyManager *mgr) {
             continue;
         }
 
-        for (curEnemyVm = &curEnemy->vms[0], curEnemyVmIdx = 0;
-             curEnemyVmIdx < 4; curEnemyVmIdx++, curEnemyVm++) {
+        for (curEnemyVm = &curEnemy->vms[0], curEnemyVmIdx = 0; curEnemyVmIdx < 4; curEnemyVmIdx++, curEnemyVm++) {
             if (0 <= curEnemyVm->anmFileIndex) {
                 if (curEnemyVm->autoRotate != 0) {
                     curEnemyVm->rotation.z = curEnemy->angle;
@@ -728,13 +654,11 @@ ChainCallbackResult EnemyManager::OnDraw(EnemyManager *mgr) {
         if (curEnemy->flags.unk13 != 0) {
             curEnemy->primaryVm.rotation.z = curEnemy->angle;
         }
-        curEnemy->primaryVm.pos =
-            curEnemy->position + curEnemy->primaryVm.posOffset;
+        curEnemy->primaryVm.pos = curEnemy->position + curEnemy->primaryVm.posOffset;
         curEnemy->primaryVm.pos.z = 0.494f;
         g_AnmManager->Draw2(&curEnemy->primaryVm);
         g_AnmManager->FlushVertexBuffer();
-        for (curEnemyVmIdx = 4; curEnemyVmIdx < 8;
-             curEnemyVmIdx++, curEnemyVm++) {
+        for (curEnemyVmIdx = 4; curEnemyVmIdx < 8; curEnemyVmIdx++, curEnemyVm++) {
             if (0 <= curEnemyVm->anmFileIndex) {
                 if (curEnemyVm->autoRotate != 0) {
                     curEnemyVm->rotation.z = curEnemy->angle;
@@ -752,13 +676,11 @@ ZunResult EnemyManager::AddedCallback(EnemyManager *enemyManager) {
     Enemy *enemies = enemyManager->enemies;
 
     if (enemyManager->stgEnmAnmFilename &&
-        g_AnmManager->LoadAnm(ANM_FILE_ENEMY, enemyManager->stgEnmAnmFilename,
-                              ANM_OFFSET_ENEMY) != ZUN_SUCCESS) {
+        g_AnmManager->LoadAnm(ANM_FILE_ENEMY, enemyManager->stgEnmAnmFilename, ANM_OFFSET_ENEMY) != ZUN_SUCCESS) {
         return ZUN_ERROR;
     }
     if (enemyManager->stgEnm2AnmFilename &&
-        g_AnmManager->LoadAnm(ANM_FILE_ENEMY2, enemyManager->stgEnm2AnmFilename,
-                              ANM_OFFSET_ENEMY) != ZUN_SUCCESS) {
+        g_AnmManager->LoadAnm(ANM_FILE_ENEMY2, enemyManager->stgEnm2AnmFilename, ANM_OFFSET_ENEMY) != ZUN_SUCCESS) {
         return ZUN_ERROR;
     }
 
@@ -785,14 +707,10 @@ void EnemyManager::CutChain() {
 
 void Enemy::Move() {
     if (!this->flags.unk4) {
-        this->position.x +=
-            g_Supervisor.effectiveFramerateMultiplier * this->axisSpeed.x;
+        this->position.x += g_Supervisor.effectiveFramerateMultiplier * this->axisSpeed.x;
     } else {
-        this->position.x -=
-            g_Supervisor.effectiveFramerateMultiplier * this->axisSpeed.x;
+        this->position.x -= g_Supervisor.effectiveFramerateMultiplier * this->axisSpeed.x;
     }
-    this->position.y +=
-        g_Supervisor.effectiveFramerateMultiplier * this->axisSpeed.y;
-    this->position.z +=
-        g_Supervisor.effectiveFramerateMultiplier * this->axisSpeed.z;
+    this->position.y += g_Supervisor.effectiveFramerateMultiplier * this->axisSpeed.y;
+    this->position.z += g_Supervisor.effectiveFramerateMultiplier * this->axisSpeed.z;
 }

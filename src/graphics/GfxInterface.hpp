@@ -13,22 +13,13 @@ enum VertexAttributeFlags {
     VERTEX_ATTR_DIFFUSE = (1 << 1),
 };
 
-enum VertexAttributeArrays {
-    VERTEX_ARRAY_POSITION,
-    VERTEX_ARRAY_TEX_COORD,
-    VERTEX_ARRAY_DIFFUSE
-};
+enum VertexAttributeArrays { VERTEX_ARRAY_POSITION, VERTEX_ARRAY_TEX_COORD, VERTEX_ARRAY_DIFFUSE };
 
 enum ColorOp { COLOR_OP_MODULATE, COLOR_OP_ADD, COLOR_OP_REPLACE };
 
 enum TextureOpComponent { COMPONENT_RGB, COMPONENT_ALPHA };
 
-enum TransformMatrix {
-    MATRIX_MODEL,
-    MATRIX_VIEW,
-    MATRIX_PROJECTION,
-    MATRIX_TEXTURE
-};
+enum TransformMatrix { MATRIX_MODEL, MATRIX_VIEW, MATRIX_PROJECTION, MATRIX_TEXTURE };
 enum BlendMode {
     BLEND_INV_SRC_ALPHA,
     BLEND_ONE,
@@ -44,12 +35,7 @@ enum ClearBits { CLEAR_COLOR_BUFFER = 1, CLEAR_DEPTH_BUFFER = 2 };
 
 enum PixelFormat { PIXEL_RGBA, PIXEL_RGB };
 
-enum PixelDataType {
-    PIXEL_UNSIGNED_BYTE,
-    PIXEL_UNSIGNED_SHORT_5_5_5_1,
-    PIXEL_UNSIGNED_SHORT_5_6_5,
-    PIXEL_UNSIGNED_SHORT_4_4_4_4
-};
+enum PixelDataType { PIXEL_UNSIGNED_BYTE, PIXEL_UNSIGNED_SHORT_5_5_5_1, PIXEL_UNSIGNED_SHORT_5_6_5, PIXEL_UNSIGNED_SHORT_4_4_4_4 };
 struct GfxTextureHandle {
     u32 id = 0;
 
@@ -79,12 +65,10 @@ struct GfxInterface {
     virtual void SetFogRange(f32 nearPlane, f32 farPlane) = 0;
     virtual void SetFogColor(ZunColor color) = 0;
     virtual void ToggleVertexAttribute(u8 attr, bool enable) = 0;
-    virtual void SetAttributePointer(VertexAttributeArrays attr,
-                                     std::size_t stride, void *ptr) = 0;
+    virtual void SetAttributePointer(VertexAttributeArrays attr, std::size_t stride, void *ptr) = 0;
     virtual void SetColorOp(TextureOpComponent component, ColorOp op) = 0;
     virtual void SetTextureFactor(ZunColor factor) = 0;
-    virtual void SetTransformMatrix(TransformMatrix type,
-                                    const ZunMatrix &matrix) = 0;
+    virtual void SetTransformMatrix(TransformMatrix type, const ZunMatrix &matrix) = 0;
 
     virtual void SetTextureFilter() = 0;
 
@@ -108,15 +92,12 @@ struct GfxInterface {
     virtual GfxTextureHandle CreateTexture() = 0;
     virtual void BindTexture(GfxTextureHandle handle) = 0;
     virtual void DeleteTexture(GfxTextureHandle handle) = 0;
-    virtual void SetTextureImage(u32 width, u32 height, PixelFormat fmt,
-                                 PixelDataType type, const void *data) = 0;
+    virtual void SetTextureImage(u32 width, u32 height, PixelFormat fmt, PixelDataType type, const void *data) = 0;
 
     // should read as unsigned byte RGB
-    virtual void SetTextureSubImage(i32 xoffset, i32 yoffset, i32 width,
-                                    i32 height, const void *data) = 0;
+    virtual void SetTextureSubImage(i32 xoffset, i32 yoffset, i32 width, i32 height, const void *data) = 0;
 
-    virtual void ReadPixels(i32 x, i32 y, i32 width, i32 height,
-                            const void *pixels) = 0;
+    virtual void ReadPixels(i32 x, i32 y, i32 width, i32 height, const void *pixels) = 0;
 
     virtual void Draw(PrimitiveType type, i32 start, i32 count) = 0;
     virtual void SwapBuffers() = 0;

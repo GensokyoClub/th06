@@ -8,23 +8,17 @@
 #include <cstring>
 #include <type_traits>
 
-static_assert(SDL_BYTEORDER == SDL_LIL_ENDIAN ||
-                  SDL_BYTEORDER == SDL_BIG_ENDIAN,
-              "System endian must be either big or little!");
+static_assert(SDL_BYTEORDER == SDL_LIL_ENDIAN || SDL_BYTEORDER == SDL_BIG_ENDIAN, "System endian must be either big or little!");
 
-static_assert(SDL_FLOATWORDORDER == SDL_LIL_ENDIAN ||
-                  SDL_FLOATWORDORDER == SDL_BIG_ENDIAN,
-              "Float endian must be either big or little!");
+static_assert(SDL_FLOATWORDORDER == SDL_LIL_ENDIAN || SDL_FLOATWORDORDER == SDL_BIG_ENDIAN, "Float endian must be either big or little!");
 
 template <typename T>
 using UIForSize = typename std::conditional<
     sizeof(T) == sizeof(u8), u8,
     typename std::conditional<
         sizeof(T) == sizeof(u16), u16,
-        typename std::conditional<
-            sizeof(T) == sizeof(u32), u32,
-            typename std::conditional<sizeof(T) == sizeof(u64), u64,
-                                      void>::type>::type>::type>::type;
+        typename std::conditional<sizeof(T) == sizeof(u32), u32,
+                                  typename std::conditional<sizeof(T) == sizeof(u64), u64, void>::type>::type>::type>::type;
 
 // GCC-ARM without aligned access and GCC-SuperH both fail to inline a
 // fixed-size unaligned memcpy,
@@ -33,27 +27,21 @@ using UIForSize = typename std::conditional<
 //    So this check exists Is this hyperspecific? Yes, but I spent way too much
 //    time looking at godbolt for this header in general and I'll be damned if
 //    it's going to have suboptimal codegen
-#if (defined(__GNUC__) && !defined(__clang__) &&                               \
-     !defined(__INTEL_COMPILER)) &&                                            \
-    ((defined(__arm__) && !defined(__ARM_FEATURE_UNALIGNED)) ||                \
-     (defined(__sh__)))
+#if (defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER)) &&                                                            \
+    ((defined(__arm__) && !defined(__ARM_FEATURE_UNALIGNED)) || (defined(__sh__)))
 #define DO_MANUAL_MEMCPY 1
 #else
 #define DO_MANUAL_MEMCPY 0
 #endif
 
 #if !DO_MANUAL_MEMCPY
-template <typename T>
-static inline constexpr UIForSize<T> read_to_ui_unaligned(void *value) {
+template <typename T> static inline constexpr UIForSize<T> read_to_ui_unaligned(void *value) {
     UIForSize<T> ret;
     std::memcpy(&ret, value, sizeof(T));
     return ret;
 }
 
-template <typename T>
-static inline constexpr void write_from_ui_unaligned(void *dst, const T &src) {
-    std::memcpy(dst, &src, sizeof(T));
-}
+template <typename T> static inline constexpr void write_from_ui_unaligned(void *dst, const T &src) { std::memcpy(dst, &src, sizeof(T)); }
 #else
 
 // Since we have to go byte-by-byte anyway we do the accesses here as little
@@ -62,8 +50,7 @@ static inline constexpr void write_from_ui_unaligned(void *dst, const T &src) {
 //   thinks we're doing a memcpy it'll "helpfully" outline it to the libc's
 //   memcpy :|
 
-template <typename T>
-static inline constexpr UIForSize<T> read_to_ui_unaligned(void *value) {
+template <typename T> static inline constexpr UIForSize<T> read_to_ui_unaligned(void *value) {
     UIForSize<T> ret = 0;
 
     for (i32 i = sizeof(T) - 1; i >= 0; i--) {
@@ -74,8 +61,7 @@ static inline constexpr UIForSize<T> read_to_ui_unaligned(void *value) {
     return ret;
 }
 
-template <typename T>
-static inline constexpr void write_from_ui_unaligned(void *dst, const T &src) {
+template <typename T> static inline constexpr void write_from_ui_unaligned(void *dst, const T &src) {
     T n = src;
 
     for (size_t i = 0; i < sizeof(T); i++) {
@@ -85,15 +71,13 @@ static inline constexpr void write_from_ui_unaligned(void *dst, const T &src) {
 }
 #endif
 
-template <typename T>
-static inline constexpr UIForSize<T> bit_cast_from_size(const T &a) {
+template <typename T> static inline constexpr UIForSize<T> bit_cast_from_size(const T &a) {
     UIForSize<T> ret;
     std::memcpy(&ret, &a, sizeof(T));
     return ret;
 }
 
-template <typename T>
-static inline constexpr T bit_cast_to_size(UIForSize<T> value) {
+template <typename T> static inline constexpr T bit_cast_to_size(UIForSize<T> value) {
     T ret;
     std::memcpy(&ret, &value, sizeof(value));
     return ret;
@@ -116,10 +100,7 @@ template <typename T> struct LE {
     inline constexpr operator T() const {
         UIForSize<T> ui = read_to_ui_unaligned<T>((void *)&raw);
 
-        if constexpr ((std::is_floating_point<T>::value
-                           ? SDL_FLOATWORDORDER
-                           : SDL_BYTEORDER) == SDL_BIG_ENDIAN &&
-                      !DO_MANUAL_MEMCPY) {
+        if constexpr ((std::is_floating_point<T>::value ? SDL_FLOATWORDORDER : SDL_BYTEORDER) == SDL_BIG_ENDIAN && !DO_MANUAL_MEMCPY) {
             ui = ZunByteswap(ui);
         }
 
@@ -129,10 +110,7 @@ template <typename T> struct LE {
     inline constexpr LE &operator=(const T &a) {
         UIForSize<T> ui = bit_cast_from_size<T>(a);
 
-        if constexpr ((std::is_floating_point<T>::value
-                           ? SDL_FLOATWORDORDER
-                           : SDL_BYTEORDER) == SDL_BIG_ENDIAN &&
-                      !DO_MANUAL_MEMCPY) {
+        if constexpr ((std::is_floating_point<T>::value ? SDL_FLOATWORDORDER : SDL_BYTEORDER) == SDL_BIG_ENDIAN && !DO_MANUAL_MEMCPY) {
             ui = ZunByteswap(ui);
         }
 

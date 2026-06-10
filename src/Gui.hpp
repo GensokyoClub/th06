@@ -153,9 +153,7 @@ struct Gui {
 
     void SetSpellcardSeconds(i32 val) { this->spellcardSecondsRemaining = val; }
 
-    i32 SpellcardSecondsRemaining() const {
-        return this->spellcardSecondsRemaining;
-    }
+    i32 SpellcardSecondsRemaining() const { return this->spellcardSecondsRemaining; }
 
     void TickTimer(ZunTimer *timer) { timer->NextTick(); }
 

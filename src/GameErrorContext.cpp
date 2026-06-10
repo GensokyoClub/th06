@@ -17,8 +17,7 @@ const char *GameErrorContext::Log(const char *fmt, ...) {
 
     tmpBufferSize = std::strlen(tmpBuffer);
 
-    if (this->m_BufferEnd + tmpBufferSize <
-        &this->m_Buffer[sizeof(this->m_Buffer) - 1]) {
+    if (this->m_BufferEnd + tmpBufferSize < &this->m_Buffer[sizeof(this->m_Buffer) - 1]) {
         std::strcpy(this->m_BufferEnd, tmpBuffer);
 
         this->m_BufferEnd += tmpBufferSize;
@@ -40,8 +39,7 @@ const char *GameErrorContext::Fatal(const char *fmt, ...) {
 
     tmpBufferSize = std::strlen(tmpBuffer);
 
-    if (this->m_BufferEnd + tmpBufferSize <
-        &this->m_Buffer[sizeof(this->m_Buffer) - 1]) {
+    if (this->m_BufferEnd + tmpBufferSize < &this->m_Buffer[sizeof(this->m_Buffer) - 1]) {
         std::strcpy(this->m_BufferEnd, tmpBuffer);
 
         this->m_BufferEnd += tmpBufferSize;
@@ -62,8 +60,7 @@ void GameErrorContext::Flush() {
         g_GameErrorContext.Log(TH_ERR_LOGGER_END);
 
         if (m_ShowMessageBox) {
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "log", m_Buffer,
-                                     NULL);
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "log", m_Buffer, NULL);
         }
 
         logFile = FileSystem::FopenUTF8("./log.txt", "w");

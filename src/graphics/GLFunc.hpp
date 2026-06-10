@@ -21,10 +21,8 @@ struct GLFuncTable {
     void(GLAPIENTRY *glBindTexture)(GLenum target, GLuint texture);
     void(GLAPIENTRY *glBlendFunc)(GLenum sfactor, GLenum dfactor);
     void(GLAPIENTRY *glClear)(GLbitfield mask);
-    void(GLAPIENTRY *glClearColor)(GLclampf red, GLclampf green, GLclampf blue,
-                                   GLclampf alpha);
-    void(GLAPIENTRY *glColorPointer)(GLint size, GLenum type, GLsizei stride,
-                                     const GLvoid *ptr);
+    void(GLAPIENTRY *glClearColor)(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
+    void(GLAPIENTRY *glColorPointer)(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr);
     void(GLAPIENTRY *glDeleteTextures)(GLsizei n, const GLuint *textures);
     void(GLAPIENTRY *glDepthFunc)(GLenum func);
     void(GLAPIENTRY *glDepthMask)(GLboolean flag);
@@ -44,28 +42,18 @@ struct GLFuncTable {
     void(GLAPIENTRY *glMultMatrixf)(const GLfloat *m);
     void(GLAPIENTRY *glPopMatrix)(void);
     void(GLAPIENTRY *glPushMatrix)(void);
-    void(GLAPIENTRY *glReadPixels)(GLint x, GLint y, GLsizei width,
-                                   GLsizei height, GLenum format, GLenum type,
-                                   GLvoid *pixels);
+    void(GLAPIENTRY *glReadPixels)(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid *pixels);
     void(GLAPIENTRY *glShadeModel)(GLenum mode);
-    void(GLAPIENTRY *glTexCoordPointer)(GLint size, GLenum type, GLsizei stride,
-                                        const GLvoid *ptr);
-    void(GLAPIENTRY *glTexEnvfv)(GLenum target, GLenum pname,
-                                 const GLfloat *params);
+    void(GLAPIENTRY *glTexCoordPointer)(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr);
+    void(GLAPIENTRY *glTexEnvfv)(GLenum target, GLenum pname, const GLfloat *params);
     void(GLAPIENTRY *glTexEnvi)(GLenum target, GLenum pname, GLint param);
-    void(GLAPIENTRY *glTexImage2D)(GLenum target, GLint level,
-                                   GLint internalFormat, GLsizei width,
-                                   GLsizei height, GLint border, GLenum format,
-                                   GLenum type, const GLvoid *pixels);
+    void(GLAPIENTRY *glTexImage2D)(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLint border,
+                                   GLenum format, GLenum type, const GLvoid *pixels);
     void(GLAPIENTRY *glTexParameteri)(GLenum target, GLenum pname, GLint param);
-    void(GLAPIENTRY *glTexSubImage2D)(GLenum target, GLint level, GLint xoffset,
-                                      GLint yoffset, GLsizei width,
-                                      GLsizei height, GLenum format,
-                                      GLenum type, const GLvoid *pixels);
-    void(GLAPIENTRY *glVertexPointer)(GLint size, GLenum type, GLsizei stride,
-                                      const GLvoid *ptr);
-    void(GLAPIENTRY *glViewport)(GLint x, GLint y, GLsizei width,
-                                 GLsizei height);
+    void(GLAPIENTRY *glTexSubImage2D)(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height,
+                                      GLenum format, GLenum type, const GLvoid *pixels);
+    void(GLAPIENTRY *glVertexPointer)(GLint size, GLenum type, GLsizei stride, const GLvoid *ptr);
+    void(GLAPIENTRY *glViewport)(GLint x, GLint y, GLsizei width, GLsizei height);
 
     // GL(ES) 2.X / WebGL
     PFNGLATTACHSHADERPROC glAttachShader;

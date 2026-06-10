@@ -60,12 +60,9 @@ struct MainMenu {
 
     static ZunResult LoadTitleAnm(MainMenu *menu);
     static CursorMovement MoveCursor(MainMenu *menu, i32 menuLength);
-    static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor,
-                             ZunColor activeItemColor,
-                             ZunColor inactiveItemColor,
+    static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor, ZunColor activeItemColor, ZunColor inactiveItemColor,
                              i32 spriteIdx /* I think*/);
-    static void SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping,
-                            bool unk);
+    static void SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, bool unk);
 
     i32 ReplayHandling();
     static ZunResult LoadReplayMenu(MainMenu *menu);

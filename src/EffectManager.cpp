@@ -19,24 +19,15 @@ static const EffectInfo g_Effects[20] = {
     {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_SMALL, NULL},
     {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_SPIRAL, NULL},
     {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_NORMAL, NULL},
-    {ANM_SCRIPT_BULLET4_SPAWN_GLOW_1,
-     EffectManager::EffectCallbackRandomSplashBig},
-    {ANM_SCRIPT_BULLET4_SPAWN_WHITE_PARTICLE,
-     EffectManager::EffectCallbackRandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_RED_PARTICLE,
-     EffectManager::EffectCallbackRandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_GREEN_PARTICLE,
-     EffectManager::EffectCallbackRandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_BLUE_PARTICLE,
-     EffectManager::EffectCallbackRandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_WHITE_PARTICLE_SMALL,
-     EffectManager::EffectCallbackRandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_RED_PARTICLE_SMALL,
-     EffectManager::EffectCallbackRandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_GREEN_PARTICLE_SMALL,
-     EffectManager::EffectCallbackRandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_BLUE_PARTICLE_SMALL,
-     EffectManager::EffectCallbackRandomSplash},
+    {ANM_SCRIPT_BULLET4_SPAWN_GLOW_1, EffectManager::EffectCallbackRandomSplashBig},
+    {ANM_SCRIPT_BULLET4_SPAWN_WHITE_PARTICLE, EffectManager::EffectCallbackRandomSplash},
+    {ANM_SCRIPT_BULLET4_SPAWN_RED_PARTICLE, EffectManager::EffectCallbackRandomSplash},
+    {ANM_SCRIPT_BULLET4_SPAWN_GREEN_PARTICLE, EffectManager::EffectCallbackRandomSplash},
+    {ANM_SCRIPT_BULLET4_SPAWN_BLUE_PARTICLE, EffectManager::EffectCallbackRandomSplash},
+    {ANM_SCRIPT_BULLET4_SPAWN_WHITE_PARTICLE_SMALL, EffectManager::EffectCallbackRandomSplash},
+    {ANM_SCRIPT_BULLET4_SPAWN_RED_PARTICLE_SMALL, EffectManager::EffectCallbackRandomSplash},
+    {ANM_SCRIPT_BULLET4_SPAWN_GREEN_PARTICLE_SMALL, EffectManager::EffectCallbackRandomSplash},
+    {ANM_SCRIPT_BULLET4_SPAWN_BLUE_PARTICLE_SMALL, EffectManager::EffectCallbackRandomSplash},
     {ANM_SCRIPT_BULLET4_SCRIPT_17, NULL},
     {ANM_SCRIPT_BULLET4_SCRIPT_18, EffectManager::EffectUpdateCallback4},
     {ANM_SCRIPT_BULLET4_SCRIPT_18, EffectManager::EffectUpdateCallback4},
@@ -53,44 +44,37 @@ void EffectManager::Reset() { memset(this, 0, sizeof(*this)); }
 
 i32 EffectManager::EffectCallbackRandomSplash(Effect *effect) {
     if (effect->timer == 0 && effect->timer.HasTicked()) {
-        effect->unk_11c.x =
-            (g_Rng.GetRandomF32ZeroToOne() * 256.0f - 128.0f) / 12.0f;
-        effect->unk_11c.y =
-            (g_Rng.GetRandomF32ZeroToOne() * 256.0f - 128.0f) / 12.0f;
+        effect->unk_11c.x = (g_Rng.GetRandomF32ZeroToOne() * 256.0f - 128.0f) / 12.0f;
+        effect->unk_11c.y = (g_Rng.GetRandomF32ZeroToOne() * 256.0f - 128.0f) / 12.0f;
         effect->unk_11c.z = 0.0f;
 
         effect->unk_128 = -effect->unk_11c / 19.0f;
     }
 
     effect->pos1 += effect->unk_11c * g_Supervisor.effectiveFramerateMultiplier;
-    effect->unk_11c +=
-        effect->unk_128 * g_Supervisor.effectiveFramerateMultiplier;
+    effect->unk_11c += effect->unk_128 * g_Supervisor.effectiveFramerateMultiplier;
 
     return EFFECT_CALLBACK_RESULT_DONE;
 }
 
 i32 EffectManager::EffectCallbackRandomSplashBig(Effect *effect) {
     if (effect->timer == 0 && effect->timer.HasTicked()) {
-        effect->unk_11c.x =
-            (g_Rng.GetRandomF32ZeroToOne() * 256.0f - 128.0f) * 4.0f / 33.0f;
-        effect->unk_11c.y =
-            (g_Rng.GetRandomF32ZeroToOne() * 256.0f - 128.0f) * 4.0f / 33.0f;
+        effect->unk_11c.x = (g_Rng.GetRandomF32ZeroToOne() * 256.0f - 128.0f) * 4.0f / 33.0f;
+        effect->unk_11c.y = (g_Rng.GetRandomF32ZeroToOne() * 256.0f - 128.0f) * 4.0f / 33.0f;
         effect->unk_11c.z = 0.0f;
 
         effect->unk_128 = -effect->unk_11c / 20.0f;
     }
 
     effect->pos1 += effect->unk_11c * g_Supervisor.effectiveFramerateMultiplier;
-    effect->unk_11c +=
-        effect->unk_128 * g_Supervisor.effectiveFramerateMultiplier;
+    effect->unk_11c += effect->unk_128 * g_Supervisor.effectiveFramerateMultiplier;
 
     return EFFECT_CALLBACK_RESULT_DONE;
 }
 
 i32 EffectManager::EffectCallbackStill(Effect *effect) {
     effect->pos1 += effect->unk_11c * g_Supervisor.effectiveFramerateMultiplier;
-    effect->unk_11c +=
-        effect->unk_128 * g_Supervisor.effectiveFramerateMultiplier;
+    effect->unk_11c += effect->unk_128 * g_Supervisor.effectiveFramerateMultiplier;
 
     return EFFECT_CALLBACK_RESULT_DONE;
 }
@@ -146,8 +130,7 @@ i32 EffectManager::EffectUpdateCallback4(Effect *effect) {
         }
 
         alpha = 1.0f - effect->unk_17b / 16.0f;
-        effect->vm.color =
-            COLOR_SET_ALPHA3(effect->vm.color, (i32)(alpha * 255.0f));
+        effect->vm.color = COLOR_SET_ALPHA3(effect->vm.color, (i32)(alpha * 255.0f));
 
         effect->vm.scaleY = 2.0f - alpha;
         effect->vm.scaleX = effect->vm.scaleY;
@@ -194,8 +177,7 @@ i32 EffectManager::EffectCallbackAttractSlow(Effect *effect) {
     return EFFECT_CALLBACK_RESULT_DONE;
 }
 
-Effect *EffectManager::SpawnParticles(i32 effectIdx, const ZunVec3 *pos,
-                                      i32 count, ZunColor color) {
+Effect *EffectManager::SpawnParticles(i32 effectIdx, const ZunVec3 *pos, i32 count, ZunColor color) {
     i32 idx;
     Effect *effect;
 
@@ -218,8 +200,7 @@ Effect *EffectManager::SpawnParticles(i32 effectIdx, const ZunVec3 *pos,
         effect->effectId = effectIdx;
         effect->pos1 = *pos;
 
-        g_AnmManager->SetAndExecuteScriptIdx(&effect->vm,
-                                             g_Effects[effectIdx].anmIdx);
+        g_AnmManager->SetAndExecuteScriptIdx(&effect->vm, g_Effects[effectIdx].anmIdx);
 
         effect->vm.color = color;
         effect->updateCallback = g_Effects[effectIdx].updateCallback;
@@ -238,8 +219,7 @@ Effect *EffectManager::SpawnParticles(i32 effectIdx, const ZunVec3 *pos,
         }
     }
 
-    return idx >= ARRAY_SIZE_SIGNED(this->effects) - 1 ? &this->effects[512]
-                                                       : effect;
+    return idx >= ARRAY_SIZE_SIGNED(this->effects) - 1 ? &this->effects[512] : effect;
 }
 
 ChainCallbackResult EffectManager::OnUpdate(EffectManager *mgr) {
@@ -248,15 +228,13 @@ ChainCallbackResult EffectManager::OnUpdate(EffectManager *mgr) {
 
     effect = &mgr->effects[0];
     mgr->activeEffects = 0;
-    for (effectIdx = 0; effectIdx < ARRAY_SIZE_SIGNED(mgr->effects) - 1;
-         effectIdx++, effect++) {
+    for (effectIdx = 0; effectIdx < ARRAY_SIZE_SIGNED(mgr->effects) - 1; effectIdx++, effect++) {
         if (effect->inUseFlag == 0) {
             continue;
         }
 
         mgr->activeEffects++;
-        if (effect->updateCallback != NULL &&
-            (effect->updateCallback)(effect) != EFFECT_CALLBACK_RESULT_DONE) {
+        if (effect->updateCallback != NULL && (effect->updateCallback)(effect) != EFFECT_CALLBACK_RESULT_DONE) {
             effect->inUseFlag = 0;
         }
 
@@ -275,8 +253,7 @@ ChainCallbackResult EffectManager::OnDraw(EffectManager *mgr) {
     Effect *effect;
 
     effect = &mgr->effects[0];
-    for (effectIdx = 0; effectIdx < ARRAY_SIZE_SIGNED(mgr->effects) - 1;
-         effectIdx++, effect++) {
+    for (effectIdx = 0; effectIdx < ARRAY_SIZE_SIGNED(mgr->effects) - 1; effectIdx++, effect++) {
         if (effect->inUseFlag == 0) {
             continue;
         }
@@ -293,44 +270,37 @@ ZunResult EffectManager::AddedCallback(EffectManager *mgr) {
     switch (g_GameManager.currentStage) {
     case 0:
     case 1:
-        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff01.anm",
-                                  ANM_OFFSET_EFFECTS) != ZUN_SUCCESS) {
+        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff01.anm", ANM_OFFSET_EFFECTS) != ZUN_SUCCESS) {
             return ZUN_ERROR;
         }
         break;
     case 2:
-        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff02.anm",
-                                  ANM_OFFSET_EFFECTS) != ZUN_SUCCESS) {
+        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff02.anm", ANM_OFFSET_EFFECTS) != ZUN_SUCCESS) {
             return ZUN_ERROR;
         }
         break;
     case 3:
-        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff03.anm",
-                                  ANM_OFFSET_EFFECTS) != ZUN_SUCCESS) {
+        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff03.anm", ANM_OFFSET_EFFECTS) != ZUN_SUCCESS) {
             return ZUN_ERROR;
         }
         break;
     case 4:
-        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff04.anm",
-                                  ANM_OFFSET_EFFECTS) != ZUN_SUCCESS) {
+        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff04.anm", ANM_OFFSET_EFFECTS) != ZUN_SUCCESS) {
             return ZUN_ERROR;
         }
         break;
     case 5:
-        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff05.anm",
-                                  ANM_OFFSET_EFFECTS) != ZUN_SUCCESS) {
+        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff05.anm", ANM_OFFSET_EFFECTS) != ZUN_SUCCESS) {
             return ZUN_ERROR;
         }
         break;
     case 6:
-        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff05.anm",
-                                  ANM_OFFSET_EFFECTS) != ZUN_SUCCESS) {
+        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff05.anm", ANM_OFFSET_EFFECTS) != ZUN_SUCCESS) {
             return ZUN_ERROR;
         }
         break;
     case 7:
-        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff04.anm",
-                                  ANM_OFFSET_EFFECTS) != ZUN_SUCCESS) {
+        if (g_AnmManager->LoadAnm(ANM_FILE_EFFECTS, "data/eff04.anm", ANM_OFFSET_EFFECTS) != ZUN_SUCCESS) {
             return ZUN_ERROR;
         }
         break;
@@ -351,14 +321,11 @@ ZunResult EffectManager::RegisterChain() {
     g_EffectManagerCalcChain.callback = (ChainCallback)mgr->OnUpdate;
     g_EffectManagerCalcChain.addedCallback = NULL;
     g_EffectManagerCalcChain.deletedCallback = NULL;
-    g_EffectManagerCalcChain.addedCallback =
-        (ChainAddedCallback)mgr->AddedCallback;
-    g_EffectManagerCalcChain.deletedCallback =
-        (ChainAddedCallback)mgr->DeletedCallback;
+    g_EffectManagerCalcChain.addedCallback = (ChainAddedCallback)mgr->AddedCallback;
+    g_EffectManagerCalcChain.deletedCallback = (ChainAddedCallback)mgr->DeletedCallback;
     g_EffectManagerCalcChain.arg = mgr;
 
-    if (g_Chain.AddToCalcChain(&g_EffectManagerCalcChain,
-                               TH_CHAIN_PRIO_CALC_EFFECTMANAGER)) {
+    if (g_Chain.AddToCalcChain(&g_EffectManagerCalcChain, TH_CHAIN_PRIO_CALC_EFFECTMANAGER)) {
         return ZUN_ERROR;
     }
 
@@ -366,8 +333,7 @@ ZunResult EffectManager::RegisterChain() {
     g_EffectManagerDrawChain.addedCallback = NULL;
     g_EffectManagerDrawChain.deletedCallback = NULL;
     g_EffectManagerDrawChain.arg = mgr;
-    g_Chain.AddToDrawChain(&g_EffectManagerDrawChain,
-                           TH_CHAIN_PRIO_DRAW_EFFECTMANAGER);
+    g_Chain.AddToDrawChain(&g_EffectManagerDrawChain, TH_CHAIN_PRIO_DRAW_EFFECTMANAGER);
 
     return ZUN_SUCCESS;
 }

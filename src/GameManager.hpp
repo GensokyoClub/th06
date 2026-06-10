@@ -65,9 +65,7 @@ struct GameManager {
 
     void AddScore(i32 points) { this->score += points; }
 
-    static i32 CharacterShotType() {
-        return g_GameManager.shotType + g_GameManager.character * 2;
-    }
+    static i32 CharacterShotType() { return g_GameManager.shotType + g_GameManager.character * 2; }
 
     u32 guiScore;
     u32 score;

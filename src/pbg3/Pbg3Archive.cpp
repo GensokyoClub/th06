@@ -48,8 +48,7 @@ i32 Pbg3Archive::ParseHeader() {
         this->entries[idx].checksum = this->parser->ReadVarInt();
         this->entries[idx].dataOffset = this->parser->ReadVarInt();
         this->entries[idx].uncompressedSize = this->parser->ReadVarInt();
-        if (!this->parser->ReadString(this->entries[idx].filename,
-                                      sizeof(this->entries[idx].filename))) {
+        if (!this->parser->ReadString(this->entries[idx].filename, sizeof(this->entries[idx].filename))) {
             if (this->parser != NULL) {
                 delete this->parser;
                 this->parser = NULL;
@@ -121,8 +120,7 @@ u8 *Pbg3Archive::ReadEntryRaw(u32 *outSize, u32 *outChecksum, i32 entryIdx) {
     if (entryIdx == this->numOfEntries - 1) {
         size = this->fileTableOffset - this->entries[entryIdx].dataOffset;
     } else {
-        size = this->entries[entryIdx + 1].dataOffset -
-               this->entries[entryIdx].dataOffset;
+        size = this->entries[entryIdx + 1].dataOffset - this->entries[entryIdx].dataOffset;
     }
 
     u8 *data = (u8 *)malloc(size);
@@ -166,43 +164,43 @@ i32 Pbg3Archive::Load(const char *path) {
 #define LZSS_DICTSIZE_MASK 0x1fff
 #define LZSS_MIN_MATCH 3
 
-#define DEC_NEXT_BIT()                                                         \
-    inBitMask >>= 1;                                                           \
-    if (inBitMask == 0) {                                                      \
-        inBitMask = 0x80;                                                      \
+#define DEC_NEXT_BIT()                                                                                                                     \
+    inBitMask >>= 1;                                                                                                                       \
+    if (inBitMask == 0) {                                                                                                                  \
+        inBitMask = 0x80;                                                                                                                  \
     }
 
-#define DEC_WRITE_BYTE(data)                                                   \
-    *outCursor++ = data;                                                       \
-    dict[dictHead] = data;                                                     \
+#define DEC_WRITE_BYTE(data)                                                                                                               \
+    *outCursor++ = data;                                                                                                                   \
+    dict[dictHead] = data;                                                                                                                 \
     dictHead = (dictHead + 1) & LZSS_DICTSIZE_MASK;
 
-#define DEC_HANDLE_FETCH_NEW_BYTE()                                            \
-    if (inBitMask == 0x80) {                                                   \
-        currByte = *inCursor;                                                  \
-        if (inCursor - rawData >= (i32)size) {                                 \
-            currByte = 0;                                                      \
-        } else {                                                               \
-            inCursor++;                                                        \
-        }                                                                      \
-        checksum += currByte;                                                  \
+#define DEC_HANDLE_FETCH_NEW_BYTE()                                                                                                        \
+    if (inBitMask == 0x80) {                                                                                                               \
+        currByte = *inCursor;                                                                                                              \
+        if (inCursor - rawData >= (i32)size) {                                                                                             \
+            currByte = 0;                                                                                                                  \
+        } else {                                                                                                                           \
+            inCursor++;                                                                                                                    \
+        }                                                                                                                                  \
+        checksum += currByte;                                                                                                              \
     }
 
-#define DEC_READ_FLAG_BIT()                                                    \
-    DEC_HANDLE_FETCH_NEW_BYTE();                                               \
-    opcode = currByte & inBitMask;                                             \
+#define DEC_READ_FLAG_BIT()                                                                                                                \
+    DEC_HANDLE_FETCH_NEW_BYTE();                                                                                                           \
+    opcode = currByte & inBitMask;                                                                                                         \
     DEC_NEXT_BIT();
 
-#define DEC_READ_BITS(bitsCount)                                               \
-    outBitMask = 0x01 << (bitsCount - 1);                                      \
-    inBits = 0;                                                                \
-    while (outBitMask != 0) {                                                  \
-        DEC_HANDLE_FETCH_NEW_BYTE();                                           \
-        if ((currByte & inBitMask) != 0) {                                     \
-            inBits |= outBitMask;                                              \
-        }                                                                      \
-        outBitMask >>= 1;                                                      \
-        DEC_NEXT_BIT();                                                        \
+#define DEC_READ_BITS(bitsCount)                                                                                                           \
+    outBitMask = 0x01 << (bitsCount - 1);                                                                                                  \
+    inBits = 0;                                                                                                                            \
+    while (outBitMask != 0) {                                                                                                              \
+        DEC_HANDLE_FETCH_NEW_BYTE();                                                                                                       \
+        if ((currByte & inBitMask) != 0) {                                                                                                 \
+            inBits |= outBitMask;                                                                                                          \
+        }                                                                                                                                  \
+        outBitMask >>= 1;                                                                                                                  \
+        DEC_NEXT_BIT();                                                                                                                    \
     }
 
 u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, const char *filename) {

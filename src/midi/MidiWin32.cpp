@@ -29,8 +29,7 @@ bool MidiDevice::OpenDevice(u32 uDeviceId) {
 
     // TODO: Write callback function. Windows EoSD used WndProc for this, but we
     // obviously can't do that here
-    return midiOutOpen(&this->handle, uDeviceId, (DWORD_PTR)NULL,
-                       (DWORD_PTR)NULL, CALLBACK_NULL) == MMSYSERR_NOERROR;
+    return midiOutOpen(&this->handle, uDeviceId, (DWORD_PTR)NULL, (DWORD_PTR)NULL, CALLBACK_NULL) == MMSYSERR_NOERROR;
 }
 
 ZunResult MidiDevice::Close() {
@@ -70,8 +69,7 @@ bool MidiDevice::SendLongMsg(const u8 *buf, u32 len) {
         this->UnprepareHeader(this->midiHeaders[this->midiHeadersCursor]);
     }
 
-    MIDIHDR *midiHdr = this->midiHeaders[this->midiHeadersCursor] =
-        (MIDIHDR *)std::malloc(sizeof(MIDIHDR));
+    MIDIHDR *midiHdr = this->midiHeaders[this->midiHeadersCursor] = (MIDIHDR *)std::malloc(sizeof(MIDIHDR));
 
     std::memset(midiHdr, 0, sizeof(*midiHdr));
     midiHdr->lpData = (LPSTR)std::malloc(len);
@@ -79,17 +77,14 @@ bool MidiDevice::SendLongMsg(const u8 *buf, u32 len) {
     midiHdr->dwFlags = 0;
     midiHdr->dwBufferLength = len;
 
-    if (midiOutPrepareHeader(this->handle, midiHdr, sizeof(*midiHdr)) !=
-        MMSYSERR_NOERROR) {
+    if (midiOutPrepareHeader(this->handle, midiHdr, sizeof(*midiHdr)) != MMSYSERR_NOERROR) {
         return false;
     }
 
     this->midiHeadersCursor++;
-    this->midiHeadersCursor =
-        this->midiHeadersCursor % ARRAY_SIZE(this->midiHeaders);
+    this->midiHeadersCursor = this->midiHeadersCursor % ARRAY_SIZE(this->midiHeaders);
 
-    return midiOutLongMsg(this->handle, midiHdr, sizeof(*midiHdr)) ==
-           MMSYSERR_NOERROR;
+    return midiOutLongMsg(this->handle, midiHdr, sizeof(*midiHdr)) == MMSYSERR_NOERROR;
 }
 
 bool MidiDevice::SendShortMsg(u8 midiStatus, u8 firstByte, u8 secondByte) {

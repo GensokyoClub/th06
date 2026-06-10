@@ -27,15 +27,9 @@
 
 Supervisor g_Supervisor;
 ControllerMapping g_ControllerMapping = {
-    (i16)SDL_CONTROLLER_BUTTON_A,
-    (i16)SDL_CONTROLLER_BUTTON_B,
-    (i16)SDL_CONTROLLER_BUTTON_LEFTSHOULDER,
-    (i16)SDL_CONTROLLER_BUTTON_START,
-    (i16)SDL_CONTROLLER_BUTTON_DPAD_UP,
-    (i16)SDL_CONTROLLER_BUTTON_DPAD_DOWN,
-    (i16)SDL_CONTROLLER_BUTTON_DPAD_LEFT,
-    (i16)SDL_CONTROLLER_BUTTON_DPAD_RIGHT,
-    (i16)SDL_CONTROLLER_BUTTON_RIGHTSHOULDER,
+    (i16)SDL_CONTROLLER_BUTTON_A,         (i16)SDL_CONTROLLER_BUTTON_B,          (i16)SDL_CONTROLLER_BUTTON_LEFTSHOULDER,
+    (i16)SDL_CONTROLLER_BUTTON_START,     (i16)SDL_CONTROLLER_BUTTON_DPAD_UP,    (i16)SDL_CONTROLLER_BUTTON_DPAD_DOWN,
+    (i16)SDL_CONTROLLER_BUTTON_DPAD_LEFT, (i16)SDL_CONTROLLER_BUTTON_DPAD_RIGHT, (i16)SDL_CONTROLLER_BUTTON_RIGHTSHOULDER,
 };
 SDL_Surface *g_TextBufferSurface;
 u16 g_LastFrameInput;
@@ -269,8 +263,7 @@ ZunResult Supervisor::RegisterChain() {
 ZunResult Supervisor::AddedCallback(Supervisor *s) {
     i32 i;
 
-    for (i = 0; i < (i32)(sizeof(s->pbg3Archives) / sizeof(s->pbg3Archives[0]));
-         i++) {
+    for (i = 0; i < (i32)(sizeof(s->pbg3Archives) / sizeof(s->pbg3Archives[0])); i++) {
         s->pbg3Archives[i] = NULL;
     }
 
@@ -307,8 +300,7 @@ ZunResult Supervisor::AddedCallback(Supervisor *s) {
     g_Rng.Initialize((u16)std::time(NULL));
 
     g_SoundPlayer.InitSoundBuffers();
-    if (g_AnmManager->LoadAnm(ANM_FILE_TEXT, "data/text.anm",
-                              ANM_OFFSET_TEXT) != 0) {
+    if (g_AnmManager->LoadAnm(ANM_FILE_TEXT, "data/text.anm", ANM_OFFSET_TEXT) != 0) {
         return ZUN_ERROR;
     }
 
@@ -409,8 +401,7 @@ ZunResult Supervisor::SetupDInput(Supervisor *supervisor) {
     int numSticks = SDL_NumJoysticks();
 
     for (int i = 0; i < numSticks; i++) {
-        if (SDL_IsGameController(i) &&
-            (supervisor->gameController = SDL_GameControllerOpen(i)) != NULL) {
+        if (SDL_IsGameController(i) && (supervisor->gameController = SDL_GameControllerOpen(i)) != NULL) {
 
             break;
         }
@@ -458,8 +449,7 @@ ZunResult Supervisor::DeletedCallback(Supervisor *s) {
     i32 pbg3Idx;
 
     //    g_AnmManager->ReleaseVertexBuffer();
-    for (pbg3Idx = 0; pbg3Idx < ARRAY_SIZE_SIGNED(s->pbg3Archives);
-         pbg3Idx += 1) {
+    for (pbg3Idx = 0; pbg3Idx < ARRAY_SIZE_SIGNED(s->pbg3Archives); pbg3Idx += 1) {
         s->ReleasePbg3(pbg3Idx);
     }
     g_AnmManager->ReleaseAnm(0);
@@ -509,8 +499,7 @@ void Supervisor::DrawFpsCounter() {
     static char g_FpsCounterBuffer[256];
 
     curTime = SDL_GetTicks();
-    g_NumFramesSinceLastTime =
-        g_NumFramesSinceLastTime + 1 + (u32)g_Supervisor.cfg.frameskipConfig;
+    g_NumFramesSinceLastTime = g_NumFramesSinceLastTime + 1 + (u32)g_Supervisor.cfg.frameskipConfig;
     if (500 <= curTime - g_LastTime) {
         elapsed = (curTime - g_LastTime) / 1000.f;
         fps = g_NumFramesSinceLastTime / elapsed;
@@ -572,8 +561,7 @@ void Supervisor::ReleasePbg3(i32 pbg3FileIdx) {
 }
 
 i32 Supervisor::LoadPbg3(i32 pbg3FileIdx, const char *filename) {
-    if (this->pbg3Archives[pbg3FileIdx] == NULL ||
-        strcmp(filename, this->pbg3ArchiveNames[pbg3FileIdx]) != 0) {
+    if (this->pbg3Archives[pbg3FileIdx] == NULL || strcmp(filename, this->pbg3ArchiveNames[pbg3FileIdx]) != 0) {
         this->ReleasePbg3(pbg3FileIdx);
         this->pbg3Archives[pbg3FileIdx] = new Pbg3Archive();
         utils::DebugPrint("%s open ...\n", filename);
@@ -584,8 +572,7 @@ i32 Supervisor::LoadPbg3(i32 pbg3FileIdx, const char *filename) {
             std::sprintf(verPath, "ver%.4x.dat", GAME_VERSION);
             i32 res = this->pbg3Archives[pbg3FileIdx]->FindEntry(verPath);
             if (res < 0) {
-                g_GameErrorContext.Fatal(
-                    "error : データのバージョンが違います\n");
+                g_GameErrorContext.Fatal("error : データのバージョンが違います\n");
                 return 1;
             }
         } else {
@@ -607,8 +594,7 @@ ZunResult Supervisor::LoadConfig(const char *path) {
     FILE *wavFile2;
 
     std::memset(&g_Supervisor.cfg, 0, sizeof(GameConfiguration));
-    g_Supervisor.cfg.opts =
-        g_Supervisor.cfg.opts | (1 << GCOS_USE_D3D_HW_TEXTURE_BLENDING);
+    g_Supervisor.cfg.opts = g_Supervisor.cfg.opts | (1 << GCOS_USE_D3D_HW_TEXTURE_BLENDING);
     data = (GameConfiguration *)FileSystem::OpenPath(path, 1);
     if (data == NULL) {
         g_Supervisor.cfg.lifeCount = 2;
@@ -633,15 +619,9 @@ ZunResult Supervisor::LoadConfig(const char *path) {
         g_GameErrorContext.Log(TH_ERR_CONFIG_NOT_FOUND);
     } else {
         g_Supervisor.cfg = *data;
-        if ((g_Supervisor.cfg.lifeCount >= 5) ||
-            (g_Supervisor.cfg.bombCount >= 4) ||
-            (g_Supervisor.cfg.colorMode16bit >= 2) ||
-            (g_Supervisor.cfg.musicMode >= 3) ||
-            (g_Supervisor.cfg.defaultDifficulty >= 5) ||
-            (g_Supervisor.cfg.playSounds >= 2) ||
-            (g_Supervisor.cfg.windowed >= 2) ||
-            (g_Supervisor.cfg.frameskipConfig >= 3) ||
-            (g_Supervisor.cfg.version != GAME_VERSION) ||
+        if ((g_Supervisor.cfg.lifeCount >= 5) || (g_Supervisor.cfg.bombCount >= 4) || (g_Supervisor.cfg.colorMode16bit >= 2) ||
+            (g_Supervisor.cfg.musicMode >= 3) || (g_Supervisor.cfg.defaultDifficulty >= 5) || (g_Supervisor.cfg.playSounds >= 2) ||
+            (g_Supervisor.cfg.windowed >= 2) || (g_Supervisor.cfg.frameskipConfig >= 3) || (g_Supervisor.cfg.version != GAME_VERSION) ||
             (g_LastFileSize != 0x38)) {
             g_Supervisor.cfg.lifeCount = 2;
             g_Supervisor.cfg.bombCount = 3;
@@ -662,8 +642,7 @@ ZunResult Supervisor::LoadConfig(const char *path) {
             g_Supervisor.cfg.windowed = false;
             g_Supervisor.cfg.frameskipConfig = 0;
             g_Supervisor.cfg.controllerMapping = g_ControllerMapping;
-            std::memset(&g_Supervisor.cfg.opts, 0,
-                        sizeof(GameConfigOptsShifts));
+            std::memset(&g_Supervisor.cfg.opts, 0, sizeof(GameConfigOptsShifts));
             g_Supervisor.cfg.opts |= (1 << GCOS_USE_D3D_HW_TEXTURE_BLENDING);
             g_GameErrorContext.Log(TH_ERR_CONFIG_CORRUPTED);
         }
@@ -707,8 +686,7 @@ ZunResult Supervisor::LoadConfig(const char *path) {
     if (((this->cfg.opts >> GCOS_NO_DIRECTINPUT_PAD) & 1) != 0) {
         g_GameErrorContext.Log(TH_ERR_DO_NOT_USE_DIRECTINPUT);
     }
-    if (FileSystem::WriteDataToFile(path, &g_Supervisor.cfg,
-                                    sizeof(GameConfiguration)) != 0) {
+    if (FileSystem::WriteDataToFile(path, &g_Supervisor.cfg, sizeof(GameConfiguration)) != 0) {
         g_GameErrorContext.Fatal(TH_ERR_FILE_CANNOT_BE_EXPORTED, path);
         g_GameErrorContext.Fatal(TH_ERR_FOLDER_HAS_WRITE_PROTECT_OR_DISK_FULL);
         return ZUN_ERROR;
@@ -807,8 +785,7 @@ ZunResult Supervisor::FadeOutMusic(f32 fadeOutSeconds) {
                 if (this->effectiveFramerateMultiplier > 1.0f) {
                     g_SoundPlayer.FadeOut(fadeOutSeconds);
                 } else {
-                    g_SoundPlayer.FadeOut(fadeOutSeconds /
-                                          this->effectiveFramerateMultiplier);
+                    g_SoundPlayer.FadeOut(fadeOutSeconds / this->effectiveFramerateMultiplier);
                 }
             }
         } else {

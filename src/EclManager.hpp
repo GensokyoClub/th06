@@ -55,9 +55,7 @@ struct EclTimelineInstrArgs {
     LE<u16> ushortVar2;
     LE<u32> uintVar4;
 
-    const ZunVec3Raw *Var1AsVec() const {
-        return (const ZunVec3Raw *)&this->uintVar1;
-    }
+    const ZunVec3Raw *Var1AsVec() const { return (const ZunVec3Raw *)&this->uintVar1; }
 };
 
 struct EclTimelineInstr {

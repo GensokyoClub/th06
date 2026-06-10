@@ -13,6 +13,4 @@ u16 Rng::GetRandomU16(void) {
 
 u32 Rng::GetRandomU32(void) { return GetRandomU16() << 16 | GetRandomU16(); }
 
-f32 Rng::GetRandomF32ZeroToOne(void) {
-    return (f32)GetRandomU32() / (f32)0xFFFFFFFFu;
-}
+f32 Rng::GetRandomF32ZeroToOne(void) { return (f32)GetRandomU32() / (f32)0xFFFFFFFFu; }

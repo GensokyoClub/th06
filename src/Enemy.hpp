@@ -128,46 +128,30 @@ struct Enemy {
 
     f32 LifePercent() const { return (f32)this->life / (f32)this->maxLife; }
 
-    ZunVec3 HitboxDimensions(f32 shrinkFactor) const {
-        return this->hitboxDimensions * (1.0f / shrinkFactor);
-    }
+    ZunVec3 HitboxDimensions(f32 shrinkFactor) const { return this->hitboxDimensions * (1.0f / shrinkFactor); }
 
-    bool HasBossTimerFinished() const {
-        return this->bossTimer.current >= this->timerCallbackThreshold;
-    }
+    bool HasBossTimerFinished() const { return this->bossTimer.current >= this->timerCallbackThreshold; }
 
-    static i32 BulletRankAmountInner(i32 low, i32 high, i32 scaleFactor) {
-        return scaleFactor * (high - low) / 32 + low;
-    }
+    static i32 BulletRankAmountInner(i32 low, i32 high, i32 scaleFactor) { return scaleFactor * (high - low) / 32 + low; }
 
     i32 BulletRankAmount1(i32 scaleFactor) const {
-        return Enemy::BulletRankAmountInner(this->bulletRankAmount1Low,
-                                            this->bulletRankAmount1High,
-                                            scaleFactor);
+        return Enemy::BulletRankAmountInner(this->bulletRankAmount1Low, this->bulletRankAmount1High, scaleFactor);
     }
 
     i32 BulletRankAmount2(i32 scaleFactor) const {
-        return Enemy::BulletRankAmountInner(this->bulletRankAmount2Low,
-                                            this->bulletRankAmount2High,
-                                            scaleFactor);
+        return Enemy::BulletRankAmountInner(this->bulletRankAmount2Low, this->bulletRankAmount2High, scaleFactor);
     }
 
-    static f32 BulletRankSpeedInner(f32 low, f32 high, f32 scaleFactor) {
-        return scaleFactor * (high - low) / 32 + low;
-    }
+    static f32 BulletRankSpeedInner(f32 low, f32 high, f32 scaleFactor) { return scaleFactor * (high - low) / 32 + low; }
 
     f32 BulletRankSpeed(f32 scaleFactor) const {
-        return Enemy::BulletRankSpeedInner(
-            this->bulletRankSpeedLow, this->bulletRankSpeedHigh, scaleFactor);
+        return Enemy::BulletRankSpeedInner(this->bulletRankSpeedLow, this->bulletRankSpeedHigh, scaleFactor);
     }
 
-    static i32 ShootIntervalInner(i32 low, i32 high, i32 scaleFactor) {
-        return scaleFactor * (high - low) / 32 + low;
-    }
+    static i32 ShootIntervalInner(i32 low, i32 high, i32 scaleFactor) { return scaleFactor * (high - low) / 32 + low; }
 
     i32 ShootInterval(i32 scaleFactor) const {
-        return Enemy::ShootIntervalInner(this->shootInterval / 5,
-                                         -this->shootInterval / 5, scaleFactor);
+        return Enemy::ShootIntervalInner(this->shootInterval / 5, -this->shootInterval / 5, scaleFactor);
     }
 
     AnmVm primaryVm;

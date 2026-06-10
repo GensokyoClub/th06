@@ -16,22 +16,19 @@ bool MidiDevice::OpenDevice(u32 uDeviceId) {
 
     this->Reset();
 
-    if (this->sequencer == NULL && snd_seq_open(&this->sequencer, "default",
-                                                SND_SEQ_OPEN_OUTPUT, 0) != 0) {
+    if (this->sequencer == NULL && snd_seq_open(&this->sequencer, "default", SND_SEQ_OPEN_OUTPUT, 0) != 0) {
         this->sequencer = NULL;
         goto fail;
     }
 
-    if (this->encoder == NULL &&
-        snd_midi_event_new(1024, &this->encoder) != 0) {
+    if (this->encoder == NULL && snd_midi_event_new(1024, &this->encoder) != 0) {
         this->encoder = NULL;
         goto fail;
     }
 
     if (this->sourcePort < 0) {
-        this->sourcePort = snd_seq_create_simple_port(
-            this->sequencer, "TH06 MIDI Out", SND_SEQ_PORT_CAP_WRITE,
-            SND_SEQ_PORT_TYPE_MIDI_GENERIC);
+        this->sourcePort =
+            snd_seq_create_simple_port(this->sequencer, "TH06 MIDI Out", SND_SEQ_PORT_CAP_WRITE, SND_SEQ_PORT_TYPE_MIDI_GENERIC);
 
         if (this->sourcePort < 0) {
             goto fail;
@@ -47,9 +44,7 @@ bool MidiDevice::OpenDevice(u32 uDeviceId) {
     //   with playback for certain clients. We still treat it as a success, in
     //   case the client we're outputting to can work without a connection
     //   without issues.
-    this->hasConnection =
-        snd_seq_connect_to(this->sequencer, this->sourcePort, this->destClient,
-                           this->destPort) == 0;
+    this->hasConnection = snd_seq_connect_to(this->sequencer, this->sourcePort, this->destClient, this->destPort) == 0;
 
     this->encoderBufferSize = 1024;
 
@@ -128,8 +123,7 @@ void MidiDevice::Reset() {
         }
 
         if (this->hasConnection) {
-            snd_seq_disconnect_to(this->sequencer, this->sourcePort,
-                                  this->destClient, this->destPort);
+            snd_seq_disconnect_to(this->sequencer, this->sourcePort, this->destClient, this->destPort);
             this->hasConnection = false;
         }
     }
@@ -150,28 +144,23 @@ bool MidiDevice::GetDestPort() {
     //   require some sort of UI to select the ouput port(s)
 
     while (snd_seq_query_next_client(this->sequencer, clientInfo) == 0) {
-        snd_seq_port_info_set_client(
-            portInfo, snd_seq_client_info_get_client(clientInfo));
+        snd_seq_port_info_set_client(portInfo, snd_seq_client_info_get_client(clientInfo));
         snd_seq_port_info_set_port(portInfo, -1);
 
         while (snd_seq_query_next_port(this->sequencer, portInfo) == 0) {
             unsigned int portCaps = snd_seq_port_info_get_capability(portInfo);
             unsigned int portType = snd_seq_port_info_get_type(portInfo);
 
-            if (!(portCaps & SND_SEQ_PORT_CAP_WRITE) ||
-                !(portType & SND_SEQ_PORT_TYPE_MIDI_GENERIC) ||
-                !(portType & (SND_SEQ_PORT_TYPE_HARDWARE |
-                              SND_SEQ_PORT_TYPE_SYNTHESIZER))) {
+            if (!(portCaps & SND_SEQ_PORT_CAP_WRITE) || !(portType & SND_SEQ_PORT_TYPE_MIDI_GENERIC) ||
+                !(portType & (SND_SEQ_PORT_TYPE_HARDWARE | SND_SEQ_PORT_TYPE_SYNTHESIZER))) {
                 continue;
             }
 
             this->destClient = snd_seq_client_info_get_client(clientInfo);
             this->destPort = snd_seq_port_info_get_port(portInfo);
 
-            utils::DebugPrint2("Playing midi on address %i:%i (%s : %s)",
-                               this->destClient, this->destPort,
-                               snd_seq_client_info_get_name(clientInfo),
-                               snd_seq_port_info_get_name(portInfo));
+            utils::DebugPrint2("Playing midi on address %i:%i (%s : %s)", this->destClient, this->destPort,
+                               snd_seq_client_info_get_name(clientInfo), snd_seq_port_info_get_name(portInfo));
 
             return true;
         }

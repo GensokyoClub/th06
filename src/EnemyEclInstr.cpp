@@ -21,8 +21,7 @@ struct PatchouliShottypeVars {
     } shotVars[2];
 };
 
-static const PatchouliShottypeVars g_PatchouliShottypeVars[2] = {
-    {{{0, 3, 1}, {2, 3, 4}}}, {{{1, 4, 0}, {4, 2, 3}}}};
+static const PatchouliShottypeVars g_PatchouliShottypeVars[2] = {{{{0, 3, 1}, {2, 3, 4}}}, {{{1, 4, 0}, {4, 2, 3}}}};
 static i32 g_PlayerShot;
 static f32 g_PlayerDistance;
 static f32 g_PlayerAngle;
@@ -37,10 +36,8 @@ void MoveDirTime(Enemy *enemy, EclRawInstr *instr) {
     alu = &instr->args.alu;
     angle = GetVarFloatValue(enemy, alu->arg1.f32Param, NULL);
 
-    enemy->moveInterp.x =
-        ZUN_COSF(angle) * alu->arg2.f32Param * (i32)alu->res / 2.0f;
-    enemy->moveInterp.y =
-        ZUN_SINF(angle) * alu->arg2.f32Param * (i32)alu->res / 2.0f;
+    enemy->moveInterp.x = ZUN_COSF(angle) * alu->arg2.f32Param * (i32)alu->res / 2.0f;
+    enemy->moveInterp.y = ZUN_SINF(angle) * alu->arg2.f32Param * (i32)alu->res / 2.0f;
     enemy->moveInterp.z = 0.0f;
 
     enemy->moveInterpStartPos = enemy->position;
@@ -205,8 +202,7 @@ i32 *GetVar(Enemy *enemy, EclVarId *eclVarId, EclValueType *valueType) {
         return &enemy->bossTimer.current;
 
     case ECL_VAR_PLAYER_DISTANCE:
-        g_PlayerDistance =
-            (g_Player.positionCenter - enemy->position).getMagnitude();
+        g_PlayerDistance = (g_Player.positionCenter - enemy->position).getMagnitude();
         if (valueType != NULL)
             *valueType = ECL_VALUE_TYPE_READONLY;
         return (i32 *)&g_PlayerDistance;
@@ -250,8 +246,7 @@ void SetVar(Enemy *enemy, EclVarId lhs, const void *rhs) {
     return;
 }
 
-void MathAdd(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId,
-             EclVarId *rhsVarId) {
+void MathAdd(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId) {
     EclValueType outType;
     i32 *outPtr;
     const i32 *lhsPtr;
@@ -271,8 +266,7 @@ void MathAdd(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId,
     return;
 }
 
-void MathSub(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId,
-             EclVarId *rhsVarId) {
+void MathSub(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId) {
     EclValueType outType;
     i32 *outPtr;
     const i32 *lhsPtr;
@@ -291,8 +285,7 @@ void MathSub(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId,
     return;
 }
 
-void MathMul(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId,
-             EclVarId *rhsVarId) {
+void MathMul(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId) {
     EclValueType outType;
     i32 *outPtr;
     const i32 *lhsPtr;
@@ -313,8 +306,7 @@ void MathMul(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId,
     return;
 }
 
-void MathDiv(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId,
-             EclVarId *rhsVarId) {
+void MathDiv(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId) {
     EclValueType outType;
     i32 *outPtr;
     const i32 *lhsPtr;
@@ -333,8 +325,7 @@ void MathDiv(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId,
     return;
 }
 
-void MathMod(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId,
-             EclVarId *rhsVarId) {
+void MathMod(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId) {
     EclValueType outType;
     i32 *outPtr;
     const i32 *lhsPtr;
@@ -353,8 +344,7 @@ void MathMod(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId,
     return;
 }
 
-void MathAtan2(Enemy *enemy, EclVarId outVarId, f32 x1, f32 y1, f32 y2,
-               f32 x2) {
+void MathAtan2(Enemy *enemy, EclVarId outVarId, f32 x1, f32 y1, f32 y2, f32 x2) {
     EclValueType outType;
     f32 *outPtr;
     const f32 *y1Ptr;
@@ -385,19 +375,15 @@ void ExInsCirnoRainbowBallJank(Enemy *enemy, EclRawInstr *instr) {
     currentBullet = g_BulletManager.bullets;
     effectIndex = instr->args.exInstr.i32Param;
 
-    g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &enemy->position, 1,
-                                   COLOR_WHITE);
-    for (i = 0; i < ARRAY_SIZE_SIGNED(g_BulletManager.bullets);
-         i++, currentBullet++) {
+    g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &enemy->position, 1, COLOR_WHITE);
+    for (i = 0; i < ARRAY_SIZE_SIGNED(g_BulletManager.bullets); i++, currentBullet++) {
         if (currentBullet->state == 0 || currentBullet->state == 5) {
             continue;
         }
 
         currentBullet->spriteOffset = 15;
-        g_AnmManager->SetActiveSprite(
-            &currentBullet->sprites.spriteBullet,
-            currentBullet->sprites.spriteBullet.baseSpriteIndex +
-                currentBullet->spriteOffset);
+        g_AnmManager->SetActiveSprite(&currentBullet->sprites.spriteBullet,
+                                      currentBullet->sprites.spriteBullet.baseSpriteIndex + currentBullet->spriteOffset);
         switch (effectIndex) {
         case 0:
             currentBullet->speed = 0.0;
@@ -414,10 +400,8 @@ void ExInsCirnoRainbowBallJank(Enemy *enemy, EclRawInstr *instr) {
             bulletTimer->subFrame = 0.0;
             bulletTimer->previous = -999;
             accelerationMultiplier = 0.01;
-            accelerationAngle =
-                g_Rng.GetRandomF32ZeroToOne() * (2 * ZUN_PI) - ZUN_PI;
-            sincosmul(&currentBullet->ex4Acceleration, accelerationAngle,
-                      accelerationMultiplier);
+            accelerationAngle = g_Rng.GetRandomF32ZeroToOne() * (2 * ZUN_PI) - ZUN_PI;
+            sincosmul(&currentBullet->ex4Acceleration, accelerationAngle, accelerationMultiplier);
             break;
         }
     }
@@ -428,13 +412,9 @@ void ExInsShootAtRandomArea(Enemy *enemy, EclRawInstr *instr) {
 
     bulletSpeed = instr->args.exInstr.i32Param;
     enemy->bulletProps.position = enemy->position + enemy->shootOffset;
-    enemy->bulletProps.position.x =
-        (g_Rng.GetRandomF32ZeroToOne() * bulletSpeed + (enemy->position).x) -
-        bulletSpeed / 2.0f;
+    enemy->bulletProps.position.x = (g_Rng.GetRandomF32ZeroToOne() * bulletSpeed + (enemy->position).x) - bulletSpeed / 2.0f;
     bulletSpeed *= 0.75f;
-    enemy->bulletProps.position.y =
-        (g_Rng.GetRandomF32ZeroToOne() * bulletSpeed + (enemy->position).y) -
-        bulletSpeed / 2.0f;
+    enemy->bulletProps.position.y = (g_Rng.GetRandomF32ZeroToOne() * bulletSpeed + (enemy->position).y) - bulletSpeed / 2.0f;
     g_BulletManager.SpawnBulletPattern(&enemy->bulletProps);
 }
 
@@ -457,32 +437,22 @@ void ExInsShootStarPattern(Enemy *enemy, EclRawInstr *instr) {
     if (enemy->currentContext.var2 == 0) {
         g_EnemyPosVector = enemy->position;
         g_PlayerPosVector = g_Player.positionCenter;
-        g_StarAngleTable[0] =
-            g_Rng.GetRandomF32ZeroToOne() * (ZUN_PI * 2) - ZUN_PI;
-        g_StarAngleTable[1] =
-            utils::AddNormalizeAngle(g_StarAngleTable[0], 4 * ZUN_PI / 5);
+        g_StarAngleTable[0] = g_Rng.GetRandomF32ZeroToOne() * (ZUN_PI * 2) - ZUN_PI;
+        g_StarAngleTable[1] = utils::AddNormalizeAngle(g_StarAngleTable[0], 4 * ZUN_PI / 5);
     }
     if (enemy->currentContext.var2 % 30 == 0) {
         g_StarAngleTable[0] = g_StarAngleTable[1];
-        g_StarAngleTable[1] =
-            utils::AddNormalizeAngle(g_StarAngleTable[1], 4 * ZUN_PI / 5);
-        g_StarAngleTable[2] =
-            utils::AddNormalizeAngle(g_StarAngleTable[1], 4 * ZUN_PI / 5);
-        g_StarAngleTable[3] =
-            utils::AddNormalizeAngle(g_StarAngleTable[2], 4 * ZUN_PI / 5);
-        g_StarAngleTable[4] =
-            utils::AddNormalizeAngle(g_StarAngleTable[3], 4 * ZUN_PI / 5);
-        g_StarAngleTable[5] =
-            utils::AddNormalizeAngle(g_StarAngleTable[4], 4 * ZUN_PI / 5);
+        g_StarAngleTable[1] = utils::AddNormalizeAngle(g_StarAngleTable[1], 4 * ZUN_PI / 5);
+        g_StarAngleTable[2] = utils::AddNormalizeAngle(g_StarAngleTable[1], 4 * ZUN_PI / 5);
+        g_StarAngleTable[3] = utils::AddNormalizeAngle(g_StarAngleTable[2], 4 * ZUN_PI / 5);
+        g_StarAngleTable[4] = utils::AddNormalizeAngle(g_StarAngleTable[3], 4 * ZUN_PI / 5);
+        g_StarAngleTable[5] = utils::AddNormalizeAngle(g_StarAngleTable[4], 4 * ZUN_PI / 5);
     }
     if (enemy->currentContext.var2 % 6 == 0) {
-        patternPosition =
-            (f32)enemy->currentContext.var2 / (f32)enemy->currentContext.var3;
+        patternPosition = (f32)enemy->currentContext.var2 / (f32)enemy->currentContext.var3;
         targetDistance = patternPosition * 0.1f;
 
-        baseTargetPosition =
-            (g_PlayerPosVector - g_EnemyPosVector) * targetDistance +
-            g_EnemyPosVector;
+        baseTargetPosition = (g_PlayerPosVector - g_EnemyPosVector) * targetDistance + g_EnemyPosVector;
         baseTargetPosition.z = 0.0f;
 
         patternPosition += 0.5f;
@@ -490,20 +460,13 @@ void ExInsShootStarPattern(Enemy *enemy, EclRawInstr *instr) {
 
         for (i = 0; i < 5; i++) {
             targetDistance = (enemy->currentContext.var2 % 30) / 30.0f;
-            sincosmul(&starPatternTarget0, g_StarAngleTable[i],
-                      enemy->currentContext.float3);
-            sincosmul(&starPatterTarget1, g_StarAngleTable[i + 1],
-                      enemy->currentContext.float3);
-            starPatternTarget0 =
-                (starPatterTarget1 - starPatternTarget0) * targetDistance +
-                starPatternTarget0;
+            sincosmul(&starPatternTarget0, g_StarAngleTable[i], enemy->currentContext.float3);
+            sincosmul(&starPatterTarget1, g_StarAngleTable[i + 1], enemy->currentContext.float3);
+            starPatternTarget0 = (starPatterTarget1 - starPatternTarget0) * targetDistance + starPatternTarget0;
             starPatternTarget0.z = 0;
-            enemy->bulletProps.position =
-                baseTargetPosition + starPatternTarget0;
+            enemy->bulletProps.position = baseTargetPosition + starPatternTarget0;
             propsSpeedBackup = enemy->bulletProps.speed1;
-            enemy->bulletProps.speed1 =
-                g_Rng.GetRandomF32InRange(enemy->bulletProps.speed2) +
-                enemy->bulletProps.speed1;
+            enemy->bulletProps.speed1 = g_Rng.GetRandomF32InRange(enemy->bulletProps.speed2) + enemy->bulletProps.speed1;
             g_BulletManager.SpawnBulletPattern(&enemy->bulletProps);
             enemy->bulletProps.speed1 = propsSpeedBackup;
             enemy->bulletProps.angle1 -= (ZUN_PI / 6) * patternPosition;
@@ -514,18 +477,9 @@ void ExInsShootStarPattern(Enemy *enemy, EclRawInstr *instr) {
 }
 
 void ExInsPatchouliShottypeSetVars(Enemy *enemy, EclRawInstr *instr) {
-    enemy->currentContext.var1 =
-        g_PatchouliShottypeVars[g_GameManager.character]
-            .shotVars[g_GameManager.shotType]
-            .var1;
-    enemy->currentContext.var2 =
-        g_PatchouliShottypeVars[g_GameManager.character]
-            .shotVars[g_GameManager.shotType]
-            .var2;
-    enemy->currentContext.var3 =
-        g_PatchouliShottypeVars[g_GameManager.character]
-            .shotVars[g_GameManager.shotType]
-            .var3;
+    enemy->currentContext.var1 = g_PatchouliShottypeVars[g_GameManager.character].shotVars[g_GameManager.shotType].var1;
+    enemy->currentContext.var2 = g_PatchouliShottypeVars[g_GameManager.character].shotVars[g_GameManager.shotType].var2;
+    enemy->currentContext.var3 = g_PatchouliShottypeVars[g_GameManager.character].shotVars[g_GameManager.shotType].var3;
 }
 
 void ExInsStage56Func4(Enemy *enemy, EclRawInstr *instr) {
@@ -535,48 +489,34 @@ void ExInsStage56Func4(Enemy *enemy, EclRawInstr *instr) {
     ZunVec2 playerBulletOffset;
 
     if (instr->args.exInstr.i32Param < 2) {
-        g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &enemy->position,
-                                       1, COLOR_WHITE);
+        g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &enemy->position, 1, COLOR_WHITE);
         g_GameManager.isTimeStopped = instr->args.exInstr.u8Param;
     } else {
         bulletsLeft = 14;
         currentBullet = g_BulletManager.bullets;
         if (g_GameManager.difficulty <= NORMAL) {
-            for (i = 0; i < ARRAY_SIZE_SIGNED(g_BulletManager.bullets);
-                 i++, currentBullet++) {
+            for (i = 0; i < ARRAY_SIZE_SIGNED(g_BulletManager.bullets); i++, currentBullet++) {
                 if (currentBullet->state == 0 || currentBullet->state == 5) {
                     continue;
                 }
 
-                if (currentBullet->sprites.spriteBullet.sprite != NULL &&
-                    currentBullet->sprites.spriteBullet.sprite->heightPx >=
-                        30.0f &&
-                    currentBullet->spriteOffset != 5 &&
-                    (g_Rng.GetRandomU16() % 4 == 0)) {
+                if (currentBullet->sprites.spriteBullet.sprite != NULL && currentBullet->sprites.spriteBullet.sprite->heightPx >= 30.0f &&
+                    currentBullet->spriteOffset != 5 && (g_Rng.GetRandomU16() % 4 == 0)) {
                     currentBullet->spriteOffset = 5;
-                    g_AnmManager->SetActiveSprite(
-                        &currentBullet->sprites.spriteBullet,
-                        currentBullet->sprites.spriteBullet.baseSpriteIndex +
-                            currentBullet->spriteOffset);
+                    g_AnmManager->SetActiveSprite(&currentBullet->sprites.spriteBullet,
+                                                  currentBullet->sprites.spriteBullet.baseSpriteIndex + currentBullet->spriteOffset);
 
-                    playerBulletOffset.x =
-                        (currentBullet->pos.x) - g_Player.positionCenter.x;
-                    playerBulletOffset.y =
-                        (currentBullet->pos.y) - g_Player.positionCenter.y;
+                    playerBulletOffset.x = (currentBullet->pos.x) - g_Player.positionCenter.x;
+                    playerBulletOffset.y = (currentBullet->pos.y) - g_Player.positionCenter.y;
 
                     if (playerBulletOffset.VectorLength() > 128.0f) {
-                        currentBullet->angle =
-                            g_Rng.GetRandomF32ZeroToOne() * ((ZUN_PI * 3) / 4) +
-                            (ZUN_PI / 4);
+                        currentBullet->angle = g_Rng.GetRandomF32ZeroToOne() * ((ZUN_PI * 3) / 4) + (ZUN_PI / 4);
                     } else {
                         currentBullet->angle =
-                            g_Player.AngleFromPlayer(&currentBullet->pos) +
-                            (ZUN_PI / 2) +
-                            g_Rng.GetRandomF32InRange(ZUN_PI * 2);
+                            g_Player.AngleFromPlayer(&currentBullet->pos) + (ZUN_PI / 2) + g_Rng.GetRandomF32InRange(ZUN_PI * 2);
                     }
 
-                    sincosmul(&currentBullet->velocity, currentBullet->angle,
-                              currentBullet->speed);
+                    sincosmul(&currentBullet->velocity, currentBullet->angle, currentBullet->speed);
                     bulletsLeft--;
                     if (bulletsLeft == 0) {
                         break;
@@ -585,40 +525,28 @@ void ExInsStage56Func4(Enemy *enemy, EclRawInstr *instr) {
             }
         } else {
             bulletsLeft = 52;
-            for (i = 0; i < ARRAY_SIZE_SIGNED(g_BulletManager.bullets);
-                 i++, currentBullet++) {
+            for (i = 0; i < ARRAY_SIZE_SIGNED(g_BulletManager.bullets); i++, currentBullet++) {
                 if (currentBullet->state == 0 || currentBullet->state == 5) {
                     continue;
                 }
 
-                if (currentBullet->sprites.spriteBullet.sprite != NULL &&
-                    currentBullet->sprites.spriteBullet.sprite->heightPx >=
-                        30.0f &&
-                    currentBullet->spriteOffset != 5 &&
-                    (g_Rng.GetRandomU16() % 4 == 0)) {
+                if (currentBullet->sprites.spriteBullet.sprite != NULL && currentBullet->sprites.spriteBullet.sprite->heightPx >= 30.0f &&
+                    currentBullet->spriteOffset != 5 && (g_Rng.GetRandomU16() % 4 == 0)) {
                     currentBullet->spriteOffset = 5;
-                    g_AnmManager->SetActiveSprite(
-                        &currentBullet->sprites.spriteBullet,
-                        currentBullet->sprites.spriteBullet.baseSpriteIndex +
-                            currentBullet->spriteOffset);
+                    g_AnmManager->SetActiveSprite(&currentBullet->sprites.spriteBullet,
+                                                  currentBullet->sprites.spriteBullet.baseSpriteIndex + currentBullet->spriteOffset);
 
-                    playerBulletOffset.x =
-                        (currentBullet->pos.x) - g_Player.positionCenter.x;
-                    playerBulletOffset.y =
-                        (currentBullet->pos.y) - g_Player.positionCenter.y;
+                    playerBulletOffset.x = (currentBullet->pos.x) - g_Player.positionCenter.x;
+                    playerBulletOffset.y = (currentBullet->pos.y) - g_Player.positionCenter.y;
 
                     if (playerBulletOffset.VectorLength() > 128.0f) {
-                        currentBullet->angle =
-                            g_Rng.GetRandomF32ZeroToOne() * (ZUN_PI * 2);
+                        currentBullet->angle = g_Rng.GetRandomF32ZeroToOne() * (ZUN_PI * 2);
                     } else {
                         currentBullet->angle =
-                            g_Player.AngleFromPlayer(&currentBullet->pos) +
-                            (ZUN_PI / 2) +
-                            g_Rng.GetRandomF32InRange(ZUN_PI * 2);
+                            g_Player.AngleFromPlayer(&currentBullet->pos) + (ZUN_PI / 2) + g_Rng.GetRandomF32InRange(ZUN_PI * 2);
                     }
 
-                    sincosmul(&currentBullet->velocity, currentBullet->angle,
-                              currentBullet->speed);
+                    sincosmul(&currentBullet->velocity, currentBullet->angle, currentBullet->speed);
                     bulletsLeft--;
                     if (bulletsLeft == 0) {
                         break;
@@ -688,11 +616,9 @@ void ExInsStage5Func5(Enemy *enemy, EclRawInstr *instr) {
             matrixIn.x = matrixOut.x * cosOut + matrixOut.y * sinOut;
             matrixIn.y = -matrixOut.x * sinOut + matrixOut.y * cosOut;
 
-            bulletProps.position =
-                matrixIn + enemy->position + bpPositionOffset;
+            bulletProps.position = matrixIn + enemy->position + bpPositionOffset;
             bulletProps.speed1 = 2.0;
-            if ((patternPosition & 1) != 0 &&
-                g_GameManager.difficulty <= NORMAL) {
+            if ((patternPosition & 1) != 0 && g_GameManager.difficulty <= NORMAL) {
                 bulletProps.angle1 = bulletAngle;
             }
             bulletProps.spriteOffset = 3;
@@ -722,18 +648,12 @@ void ExInsStage6XFunc6(Enemy *enemy, EclRawInstr *instr) {
     // Run every 8 frames for first 30 frames, then every 4 for next 30, then
     // every 2 for next 60, then every frame
     if (enemy->exInsFunc6Timer.HasTicked() &&
-        (enemy->exInsFunc6Timer > 120 ||
-         (enemy->exInsFunc6Timer > 60 &&
-          enemy->exInsFunc6Timer.current % 2 == 0) ||
-         (enemy->exInsFunc6Timer > 30 &&
-          enemy->exInsFunc6Timer.current % 4 == 0) ||
-         enemy->exInsFunc6Timer.current % 8 == 0)) {
+        (enemy->exInsFunc6Timer > 120 || (enemy->exInsFunc6Timer > 60 && enemy->exInsFunc6Timer.current % 2 == 0) ||
+         (enemy->exInsFunc6Timer > 30 && enemy->exInsFunc6Timer.current % 4 == 0) || enemy->exInsFunc6Timer.current % 8 == 0)) {
         baseAngleModifier = enemy->exInsFunc6Timer.current % 16;
-        baseAngleModifier = g_Rng.GetRandomU16InRange(baseAngleModifier / 2) +
-                            baseAngleModifier / 2;
+        baseAngleModifier = g_Rng.GetRandomU16InRange(baseAngleModifier / 2) + baseAngleModifier / 2;
         distanceModifier = (baseAngleModifier * 160.0f) / 16.0f + 32.0f;
-        finalAngle = enemy->exInsFunc6Angle -
-                     (baseAngleModifier * RADIANS(180.0f)) / 40.0f;
+        finalAngle = enemy->exInsFunc6Angle - (baseAngleModifier * RADIANS(180.0f)) / 40.0f;
         if (distanceModifier < RADIANS(-45.0f)) {
             distanceModifier += RADIANS(90.0f);
         }
@@ -741,10 +661,8 @@ void ExInsStage6XFunc6(Enemy *enemy, EclRawInstr *instr) {
         particlePos = enemy->position;
         particlePos.x += ZUN_COSF(finalAngle) * distanceModifier;
         particlePos.y += ZUN_SINF(finalAngle) * distanceModifier;
-        effect = g_EffectManager.SpawnParticles(
-            PARTICLE_EFFECT_UNK_19, &particlePos, 1, COLOR_DEEPBLUE);
-        effect->unk_11c.x =
-            (g_Rng.GetRandomF32ZeroToOne() * 40.0f - 20.0f) / 60.0f;
+        effect = g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_19, &particlePos, 1, COLOR_DEEPBLUE);
+        effect->unk_11c.x = (g_Rng.GetRandomF32ZeroToOne() * 40.0f - 20.0f) / 60.0f;
         effect->unk_11c.y = (8.0f * baseAngleModifier) / 60.0f - (4.0f / 15.0f);
         effect->unk_11c.z = 0.0;
         effect->unk_128 = -effect->unk_11c / 120.0f;
@@ -752,10 +670,8 @@ void ExInsStage6XFunc6(Enemy *enemy, EclRawInstr *instr) {
         particlePos = enemy->position;
         particlePos.x -= ZUN_COSF(finalAngle) * distanceModifier;
         particlePos.y += ZUN_SINF(finalAngle) * distanceModifier;
-        effect = g_EffectManager.SpawnParticles(
-            PARTICLE_EFFECT_UNK_19, &particlePos, 1, COLOR_DEEPBLUE);
-        effect->unk_11c.x =
-            (g_Rng.GetRandomF32ZeroToOne() * 40.0f - 20.0f) / 60.0f;
+        effect = g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_19, &particlePos, 1, COLOR_DEEPBLUE);
+        effect->unk_11c.x = (g_Rng.GetRandomF32ZeroToOne() * 40.0f - 20.0f) / 60.0f;
         effect->unk_11c.y = (8.0f * baseAngleModifier) / 60.0f - (4.0f / 15.0f);
         effect->unk_11c.z = 0.0;
         effect->unk_128 = -effect->unk_11c / 120.0f;
@@ -864,14 +780,12 @@ void ExInsStage6Func8(Enemy *enemy, EclRawInstr *instr) {
 
     EnemyBulletShooter bulletProps;
 
-    for (i = 0; i < ARRAY_SIZE_SIGNED(g_BulletManager.bullets);
-         i++, currentBullet++) {
+    for (i = 0; i < ARRAY_SIZE_SIGNED(g_BulletManager.bullets); i++, currentBullet++) {
         if (currentBullet->state == 0 || currentBullet->state == 5) {
             continue;
         }
 
-        if (currentBullet->sprites.spriteBullet.sprite != NULL &&
-            currentBullet->sprites.spriteBullet.sprite->heightPx >= 30.0f) {
+        if (currentBullet->sprites.spriteBullet.sprite != NULL && currentBullet->sprites.spriteBullet.sprite->heightPx >= 30.0f) {
             bulletProps.position = currentBullet->pos;
             bulletProps.sprite = 3;
             bulletProps.spriteOffset = 1;
@@ -899,40 +813,31 @@ void ExInsStage6Func9(Enemy *enemy, EclRawInstr *instr) {
     EnemyBulletShooter unusedBulletProps;
 
     randomAngleModifier = g_Rng.GetRandomF32InRange(ZUN_PI * 2) - ZUN_PI;
-    g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &enemy->position, 1,
-                                   COLOR_WHITE);
+    g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &enemy->position, 1, COLOR_WHITE);
 
-    for (i = 0; i < ARRAY_SIZE_SIGNED(g_BulletManager.bullets);
-         i++, currentBullet++) {
+    for (i = 0; i < ARRAY_SIZE_SIGNED(g_BulletManager.bullets); i++, currentBullet++) {
         if (currentBullet->state == 0 || currentBullet->state == 5) {
             continue;
         }
 
-        if (currentBullet->sprites.spriteBullet.sprite != NULL &&
-            currentBullet->sprites.spriteBullet.sprite->heightPx < 30.0f &&
+        if (currentBullet->sprites.spriteBullet.sprite != NULL && currentBullet->sprites.spriteBullet.sprite->heightPx < 30.0f &&
             currentBullet->speed == 0.0f) {
             currentBullet->exFlags |= 0x10;
             currentBullet->spriteOffset = 2;
-            g_AnmManager->SetActiveSprite(
-                &currentBullet->sprites.spriteBullet,
-                currentBullet->sprites.spriteBullet.baseSpriteIndex +
-                    currentBullet->spriteOffset);
+            g_AnmManager->SetActiveSprite(&currentBullet->sprites.spriteBullet,
+                                          currentBullet->sprites.spriteBullet.baseSpriteIndex + currentBullet->spriteOffset);
             currentBullet->speed = 0.01f;
             currentBullet->timer.InitializeForPopup();
             currentBullet->ex5Int0 = 120;
-            distance = (enemy->position.x - currentBullet->pos.x) *
-                           (enemy->position.x - currentBullet->pos.x) +
-                       (enemy->position.y - currentBullet->pos.y) *
-                           (enemy->position.y - currentBullet->pos.y);
+            distance = (enemy->position.x - currentBullet->pos.x) * (enemy->position.x - currentBullet->pos.x) +
+                       (enemy->position.y - currentBullet->pos.y) * (enemy->position.y - currentBullet->pos.y);
             if (distance > 0.1f) {
                 distance = ZUN_SQRTF(distance);
             } else {
                 distance = 0.0f;
             }
 
-            sincosmul(&currentBullet->ex4Acceleration,
-                      (distance * ZUN_PI) / 256.0f + randomAngleModifier,
-                      0.01f);
+            sincosmul(&currentBullet->ex4Acceleration, (distance * ZUN_PI) / 256.0f + randomAngleModifier, 0.01f);
         }
     }
 }
@@ -946,30 +851,24 @@ void ExInsStage6Func11(Enemy *enemy, EclRawInstr *instr) {
     EnemyBulletShooter unusedBulletProps;
 
     unusedRandomNumber = g_Rng.GetRandomF32InRange(ZUN_PI * 2) - ZUN_PI;
-    g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &enemy->position, 1,
-                                   COLOR_WHITE);
+    g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &enemy->position, 1, COLOR_WHITE);
 
-    for (i = 0; i < ARRAY_SIZE_SIGNED(g_BulletManager.bullets);
-         i++, currentBullet++) {
+    for (i = 0; i < ARRAY_SIZE_SIGNED(g_BulletManager.bullets); i++, currentBullet++) {
         if (currentBullet->state == 0 || currentBullet->state == 5) {
             continue;
         }
 
-        if (currentBullet->sprites.spriteBullet.sprite != NULL &&
-            currentBullet->sprites.spriteBullet.sprite->heightPx < 30.0f &&
+        if (currentBullet->sprites.spriteBullet.sprite != NULL && currentBullet->sprites.spriteBullet.sprite->heightPx < 30.0f &&
             currentBullet->speed == 0.0f) {
             currentBullet->exFlags |= 0x10;
             currentBullet->spriteOffset = 2;
-            g_AnmManager->SetActiveSprite(
-                &currentBullet->sprites.spriteBullet,
-                currentBullet->sprites.spriteBullet.baseSpriteIndex +
-                    currentBullet->spriteOffset);
+            g_AnmManager->SetActiveSprite(&currentBullet->sprites.spriteBullet,
+                                          currentBullet->sprites.spriteBullet.baseSpriteIndex + currentBullet->spriteOffset);
             currentBullet->speed = 0.01f;
             currentBullet->timer.InitializeForPopup();
             currentBullet->ex5Int0 = 120;
 
-            sincosmul(&currentBullet->ex4Acceleration,
-                      g_Rng.GetRandomF32InRange(ZUN_PI * 2) - ZUN_PI, 0.01f);
+            sincosmul(&currentBullet->ex4Acceleration, g_Rng.GetRandomF32InRange(ZUN_PI * 2) - ZUN_PI, 0.01f);
         }
     }
 }
@@ -982,20 +881,16 @@ void ExInsStage6XFunc10(Enemy *enemy, EclRawInstr *instr) {
     ExInsStage6XFunc6(enemy, instr);
     if (g_Player.bombInfo.isInUse != 0) {
         if (enemy->anmExLeft >= 0) {
-            g_AnmManager->SetAndExecuteScriptIdx(&enemy->primaryVm,
-                                                 ANM_SCRIPT_ENEMY_END);
+            g_AnmManager->SetAndExecuteScriptIdx(&enemy->primaryVm, ANM_SCRIPT_ENEMY_END);
             enemy->anmExLeft = -1;
         }
 
         enemy->flags.unk6 = 0;
         enemy->exInsFunc10Timer.SetCurrent(60);
     } else {
-        if (enemy->exInsFunc10Timer > 0 &&
-            (enemy->exInsFunc10Timer.Decrement(1),
-             enemy->exInsFunc10Timer == 0)) {
+        if (enemy->exInsFunc10Timer > 0 && (enemy->exInsFunc10Timer.Decrement(1), enemy->exInsFunc10Timer == 0)) {
             if (enemy->anmExLeft < 0) {
-                g_AnmManager->SetAndExecuteScriptIdx(&enemy->primaryVm,
-                                                     ANM_OFFSET_ENEMY + 0xa0);
+                g_AnmManager->SetAndExecuteScriptIdx(&enemy->primaryVm, ANM_OFFSET_ENEMY + 0xa0);
                 enemy->anmExLeft = 0xa1;
             }
 
@@ -1010,9 +905,7 @@ void ExInsStage4Func12(Enemy *enemy, EclRawInstr *instr) {
     for (i = 0; i < 8; i++) {
         if (enemy->lasers[i] != NULL && enemy->lasers[i]->inUse != 0) {
             enemy->bulletProps.position = ZunVec3(64.0, 0.0, 0.0);
-            utils::Rotate(&enemy->bulletProps.position,
-                          &enemy->bulletProps.position,
-                          enemy->lasers[i]->angle);
+            utils::Rotate(&enemy->bulletProps.position, &enemy->bulletProps.position, enemy->lasers[i]->angle);
             enemy->bulletProps.position += enemy->position;
             g_BulletManager.SpawnBulletPattern(&enemy->bulletProps);
         }
@@ -1028,14 +921,11 @@ void ExInsStageXFunc13(Enemy *enemy, EclRawInstr *instr) {
     numPatterns = instr->args.exInstr.i32Param;
     basePatternAngle = enemy->currentContext.float2;
     if (enemy->currentContext.var3 % 6 == 0) {
-        for (i = 0; i < numPatterns;
-             i++, basePatternAngle += (ZUN_PI * 2) / numPatterns) {
-            sincosmul(&bulletProps.position, basePatternAngle,
-                      enemy->currentContext.float3);
+        for (i = 0; i < numPatterns; i++, basePatternAngle += (ZUN_PI * 2) / numPatterns) {
+            sincosmul(&bulletProps.position, basePatternAngle, enemy->currentContext.float3);
             bulletProps.position.x += 192.0f;
             bulletProps.position.y += 224.0f;
-            bulletProps.angle1 =
-                basePatternAngle + enemy->currentContext.float1;
+            bulletProps.angle1 = basePatternAngle + enemy->currentContext.float1;
             g_BulletManager.SpawnBulletPattern(&bulletProps);
         }
     }
@@ -1058,10 +948,8 @@ void ExInsStageXFunc14(Enemy *enemy, EclRawInstr *instr) {
             fsincos_wrapper(&angleSin, &angleCos, currentLaser->angle);
 
             while (currentLaser->endOffset > positionMultiplier) {
-                bulletPosition.x =
-                    angleCos * positionMultiplier + currentLaser->pos.x;
-                bulletPosition.y =
-                    angleSin * positionMultiplier + currentLaser->pos.y;
+                bulletPosition.x = angleCos * positionMultiplier + currentLaser->pos.x;
+                bulletPosition.y = angleSin * positionMultiplier + currentLaser->pos.y;
                 bulletPosition.z = 0.0f;
                 enemy->bulletProps.position = bulletPosition;
                 g_BulletManager.SpawnBulletPattern(&enemy->bulletProps);
@@ -1087,51 +975,35 @@ void ExInsStageXFunc15(Enemy *enemy, EclRawInstr *instr) {
     currentBullet = g_BulletManager.bullets;
     EnemyBulletShooter unusedBulletProps;
 
-    for (i = 0; i < ARRAY_SIZE_SIGNED(g_BulletManager.bullets);
-         i++, currentBullet++) {
+    for (i = 0; i < ARRAY_SIZE_SIGNED(g_BulletManager.bullets); i++, currentBullet++) {
         if (currentBullet->state == 0 || currentBullet->state == 5) {
             continue;
         }
 
-        if (currentBullet->sprites.spriteBullet.sprite != NULL &&
-            currentBullet->sprites.spriteBullet.sprite->heightPx >= 30.0f) {
+        if (currentBullet->sprites.spriteBullet.sprite != NULL && currentBullet->sprites.spriteBullet.sprite->heightPx >= 30.0f) {
             totalIterations++;
-            enemyAngle = ZUN_ATAN2F(currentBullet->pos.y - enemy->position.y,
-                                    currentBullet->pos.x - enemy->position.x);
+            enemyAngle = ZUN_ATAN2F(currentBullet->pos.y - enemy->position.y, currentBullet->pos.x - enemy->position.x);
 
-            for (j = 0, innerBullet = g_BulletManager.bullets;
-                 j < ARRAY_SIZE_SIGNED(g_BulletManager.bullets);
-                 j++, innerBullet++) {
+            for (j = 0, innerBullet = g_BulletManager.bullets; j < ARRAY_SIZE_SIGNED(g_BulletManager.bullets); j++, innerBullet++) {
                 if (innerBullet->state == 0 || innerBullet->state == 5) {
                     continue;
                 }
 
-                if (innerBullet->sprites.spriteBullet.sprite != NULL &&
-                    innerBullet->sprites.spriteBullet.sprite->heightPx <
-                        30.0f &&
+                if (innerBullet->sprites.spriteBullet.sprite != NULL && innerBullet->sprites.spriteBullet.sprite->heightPx < 30.0f &&
                     innerBullet->speed == 0.0f &&
-                    (distance = ZUN_SQRTF(
-                         (innerBullet->pos.x - currentBullet->pos.x) *
-                             (innerBullet->pos.x - currentBullet->pos.x) +
-                         (innerBullet->pos.y - currentBullet->pos.y) *
-                             (innerBullet->pos.y - currentBullet->pos.y))) <
+                    (distance = ZUN_SQRTF((innerBullet->pos.x - currentBullet->pos.x) * (innerBullet->pos.x - currentBullet->pos.x) +
+                                          (innerBullet->pos.y - currentBullet->pos.y) * (innerBullet->pos.y - currentBullet->pos.y))) <
                         64.0f) {
                     innerBullet->exFlags |= 0x10;
                     innerBullet->speed = 0.01f;
                     innerBullet->timer.InitializeForPopup();
                     innerBullet->ex5Int0 = 120;
-                    bulletsAngle =
-                        ZUN_ATAN2F(innerBullet->pos.y - enemy->position.y,
-                                   innerBullet->pos.x - enemy->position.x);
-                    innerBullet->angle =
-                        (bulletsAngle - enemyAngle) * 2.2f + enemyAngle;
-                    sincosmul(&innerBullet->ex4Acceleration, innerBullet->angle,
-                              0.01f);
+                    bulletsAngle = ZUN_ATAN2F(innerBullet->pos.y - enemy->position.y, innerBullet->pos.x - enemy->position.x);
+                    innerBullet->angle = (bulletsAngle - enemyAngle) * 2.2f + enemyAngle;
+                    sincosmul(&innerBullet->ex4Acceleration, innerBullet->angle, 0.01f);
                     innerBullet->spriteOffset += 1;
-                    g_AnmManager->SetActiveSprite(
-                        &innerBullet->sprites.spriteBullet,
-                        innerBullet->sprites.spriteBullet.baseSpriteIndex +
-                            innerBullet->spriteOffset);
+                    g_AnmManager->SetActiveSprite(&innerBullet->sprites.spriteBullet,
+                                                  innerBullet->sprites.spriteBullet.baseSpriteIndex + innerBullet->spriteOffset);
                 }
             }
         }
@@ -1155,13 +1027,9 @@ void ExInsStageXFunc16(Enemy *enemy, EclRawInstr *instr) {
         enemy->currentContext.var5 = (remainingLife * 240) / 6000 + 40;
     } else {
         rangeModifier = 320.0f - (remainingLife * 160.0f) / 6000.0f;
-        enemy->currentContext.float2 =
-            g_Rng.GetRandomF32InRange(rangeModifier) +
-            (192.0f - rangeModifier / 2.0f);
+        enemy->currentContext.float2 = g_Rng.GetRandomF32InRange(rangeModifier) + (192.0f - rangeModifier / 2.0f);
         rangeModifier = 128.0f - (remainingLife * 64.0f) / 6000.0f;
-        enemy->currentContext.float3 =
-            g_Rng.GetRandomF32InRange(rangeModifier) +
-            (96.0f - rangeModifier / 2.0f);
+        enemy->currentContext.float3 = g_Rng.GetRandomF32InRange(rangeModifier) + (96.0f - rangeModifier / 2.0f);
     }
 }
 }; // namespace EnemyEclInstr

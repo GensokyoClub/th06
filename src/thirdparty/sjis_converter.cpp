@@ -35,8 +35,7 @@ char *sjis2utf8(const char *input) {
         arrayOffset <<= 1;
 
         // unicode number is...
-        uint16_t unicodeValue = (shiftJIS_convTable[arrayOffset] << 8) |
-                                shiftJIS_convTable[arrayOffset + 1];
+        uint16_t unicodeValue = (shiftJIS_convTable[arrayOffset] << 8) | shiftJIS_convTable[arrayOffset + 1];
 
         // converting to UTF8
         if (unicodeValue < 0x80) {

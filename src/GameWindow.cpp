@@ -23,14 +23,7 @@ i32 g_TickCountToEffectiveFramerate;
 f64 g_LastFrameTime;
 
 ViewportScaling g_ViewportScale = {
-    GAME_WINDOW_WIDTH,
-    GAME_WINDOW_HEIGHT,
-    GAME_WINDOW_WIDTH,
-    GAME_WINDOW_HEIGHT,
-    0,
-    0,
-    1.0f,
-    1.0f,
+    GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, 0, 0, 1.0f, 1.0f,
 };
 
 void ViewportScaling::Recompute(i32 width, i32 height) {
@@ -89,11 +82,8 @@ RenderResult GameWindow::Render() {
                 viewport.minZ = 0.0;
                 viewport.maxZ = 1.0;
                 viewport.Set();
-                g_GfxBackend->SetClearColor(
-                    ((g_Stage.skyFog.color >> 16) & 0xFF) / 255.0f,
-                    ((g_Stage.skyFog.color >> 8) & 0xFF) / 255.0f,
-                    (g_Stage.skyFog.color & 0xFF) / 255.0f,
-                    (g_Stage.skyFog.color >> 24) / 255.0f);
+                g_GfxBackend->SetClearColor(((g_Stage.skyFog.color >> 16) & 0xFF) / 255.0f, ((g_Stage.skyFog.color >> 8) & 0xFF) / 255.0f,
+                                            (g_Stage.skyFog.color & 0xFF) / 255.0f, (g_Stage.skyFog.color >> 24) / 255.0f);
                 g_GfxBackend->Clear(CLEAR_COLOR_BUFFER | CLEAR_DEPTH_BUFFER);
                 g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
                 g_Supervisor.viewport.Set();
@@ -172,8 +162,7 @@ RenderResult GameWindow::Render() {
                 g_TickCountToEffectiveFramerate = 0;
             }
         } else {
-            g_Supervisor.effectiveFramerateMultiplier =
-                g_Supervisor.framerateMultiplier;
+            g_Supervisor.effectiveFramerateMultiplier = g_Supervisor.framerateMultiplier;
         }
         this->curFrame = 0;
         g_TickCountToEffectiveFramerate = g_TickCountToEffectiveFramerate + 1;
@@ -221,19 +210,16 @@ void GameWindow::CreateGameWindow() {
     SDL_Init(SDL_INIT_GAMECONTROLLER);
 
     f32 resolutionScale = GetStartupResolutionScale();
-    g_ViewportScale.Recompute(
-        (i32)(GAME_WINDOW_WIDTH_REAL_DEFAULT * resolutionScale),
-        (i32)(GAME_WINDOW_HEIGHT_REAL_DEFAULT * resolutionScale));
+    g_ViewportScale.Recompute((i32)(GAME_WINDOW_WIDTH_REAL_DEFAULT * resolutionScale),
+                              (i32)(GAME_WINDOW_HEIGHT_REAL_DEFAULT * resolutionScale));
 
     for (u32 i = 0; i < ARRAY_SIZE(s_RenderBackends); i++) {
         g_GfxBackend = s_RenderBackends[i].TryInit();
         if (g_GfxBackend) {
-            utils::DebugPrint2("Using renderer backend %s",
-                               s_RenderBackends[i].name);
+            utils::DebugPrint2("Using renderer backend %s", s_RenderBackends[i].name);
             break;
         }
-        utils::DebugPrint2("Renderer creation for backend %s failed",
-                           s_RenderBackends[i].name);
+        utils::DebugPrint2("Renderer creation for backend %s failed", s_RenderBackends[i].name);
     }
 
     g_GameWindow.lastActiveAppValue = 1;
@@ -320,8 +306,7 @@ ZunResult GameWindow::InitD3dRendering() {
     //    g_Supervisor.d3dIface->GetAdapterDisplayMode(D3DADAPTER_DEFAULT,
     //    &display_mode);
     if (!g_Supervisor.cfg.windowed) {
-        if ((((g_Supervisor.cfg.opts >> GCOS_FORCE_16BIT_COLOR_MODE) & 1) ==
-             1)) {
+        if ((((g_Supervisor.cfg.opts >> GCOS_FORCE_16BIT_COLOR_MODE) & 1) == 1)) {
             //            present_params.BackBufferFormat = D3DFMT_R5G6B5;
             g_Supervisor.cfg.colorMode16bit = 1;
         } else if (g_Supervisor.cfg.colorMode16bit == 0xff) {
@@ -502,8 +487,7 @@ ZunResult GameWindow::InitD3dRendering() {
     g_AnmManager->SetTransformMatrix(MATRIX_VIEW, viewMatrix);
     g_Supervisor.viewMatrix = viewMatrix;
 
-    ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(
-        field_of_view_y, aspect_ratio, 100.0f, 10000.0f);
+    ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(field_of_view_y, aspect_ratio, 100.0f, 10000.0f);
     g_AnmManager->SetTransformMatrix(MATRIX_PROJECTION, perspectiveMatrix);
     g_Supervisor.projectionMatrix = perspectiveMatrix;
 

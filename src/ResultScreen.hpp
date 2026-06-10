@@ -59,9 +59,7 @@ enum ResultScreenMainMenuCursor {
 struct Th6k {
     Th6k *ShiftOneByte() const { return (Th6k *)(((u8 *)this) + 1); };
 
-    Th6k *ShiftBytes(i32 value) const {
-        return (Th6k *)(((u8 *)this) + value);
-    };
+    Th6k *ShiftBytes(i32 value) const { return (Th6k *)(((u8 *)this) + value); };
 
     u32 magic;
     u16 th6kLen;
@@ -93,9 +91,7 @@ struct Clrd {
 struct Pscr {
     Pscr *ShiftOneByte() const { return (Pscr *)(((u8 *)this) + 1); };
 
-    Pscr *ShiftBytes(i32 value) const {
-        return (Pscr *)(((u8 *)this) + value);
-    };
+    Pscr *ShiftBytes(i32 value) const { return (Pscr *)(((u8 *)this) + value); };
 
     Th6k base;
     i32 score;
@@ -105,9 +101,7 @@ struct Pscr {
 };
 
 struct Hscr {
-    Hscr *ShiftBytes(i32 value) const {
-        return (Hscr *)(((u8 *)this) + value);
-    };
+    Hscr *ShiftBytes(i32 value) const { return (Hscr *)(((u8 *)this) + value); };
 
     Th6k base;
     u32 score;
@@ -132,9 +126,7 @@ struct ScoreListNode {
 struct ScoreRaw {
     Th6k *ShiftOneByte() const { return (Th6k *)(((u8 *)this) + 1); };
 
-    Th6k *ShiftBytes(i32 value) const {
-        return (Th6k *)(((u8 *)this) + value);
-    };
+    Th6k *ShiftBytes(i32 value) const { return (Th6k *)(((u8 *)this) + value); };
 
     u8 xorseed[2];
     u16 csum;
@@ -171,8 +163,7 @@ struct ResultScreen {
 
     static void WriteScore(ResultScreen *r);
     void FreeScore(i32 difficulty, i32 character);
-    static u32 GetHighScore(ScoreDat *s, ScoreListNode *node, u32 character,
-                            u32 difficulty);
+    static u32 GetHighScore(ScoreDat *s, ScoreListNode *node, u32 character, u32 difficulty);
     static void ReleaseScoreDat(ScoreDat *s);
 
     static void MoveCursor(ResultScreen *r, i32 len);
@@ -207,8 +198,7 @@ struct ResultScreen {
     AnmVm unk_28a0[16];
     AnmVm unk_39a0;
     ScoreListNode scores[HSCR_NUM_DIFFICULTIES][HSCR_NUM_CHARS_SHOTTYPES];
-    Hscr defaultScore[HSCR_NUM_DIFFICULTIES][HSCR_NUM_CHARS_SHOTTYPES]
-                     [HSCR_NUM_SCORES_SLOTS];
+    Hscr defaultScore[HSCR_NUM_DIFFICULTIES][HSCR_NUM_CHARS_SHOTTYPES][HSCR_NUM_SCORES_SLOTS];
     Hscr hscr;
     Th6k fileHeader;
     ChainElem *calcChain;

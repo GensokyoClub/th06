@@ -7,8 +7,7 @@
 void FixedFunctionGL::SetContextFlags() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
-                        SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 }
 
 GfxInterface *FixedFunctionGL::Init() {
@@ -27,8 +26,7 @@ GfxInterface *FixedFunctionGL::Init() {
     }
     FixedFunctionGL *self = new FixedFunctionGL();
 
-    SDL_Window *window =
-        SDL_CreateWindow(TH_WINDOW_TITLE, x, y, width, height, flags);
+    SDL_Window *window = SDL_CreateWindow(TH_WINDOW_TITLE, x, y, width, height, flags);
     self->window = window;
     if (window == NULL) {
         delete self;
@@ -57,8 +55,7 @@ GfxInterface *FixedFunctionGL::Init() {
     g_glFuncTable.glEnable(GL_ALPHA_TEST);
     g_glFuncTable.glAlphaFunc(GL_GEQUAL, 4 / 255.0f);
 
-    if (((g_Supervisor.cfg.opts >> GCOS_SUPPRESS_USE_OF_GOROUD_SHADING) & 1) ==
-        1) {
+    if (((g_Supervisor.cfg.opts >> GCOS_SUPPRESS_USE_OF_GOROUD_SHADING) & 1) == 1) {
         g_glFuncTable.glShadeModel(GL_FLAT);
     }
 
@@ -82,8 +79,7 @@ GfxInterface *FixedFunctionGL::Init() {
     if (((g_Supervisor.cfg.opts >> GCOS_DONT_USE_VERTEX_BUF) & 1) == 0) {
         g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_CONSTANT);
     } else {
-        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_ALPHA,
-                                GL_PRIMARY_COLOR);
+        g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_PRIMARY_COLOR);
     }
 
     g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
@@ -124,9 +120,8 @@ void FixedFunctionGL::SetFogRange(f32 nearPlane, f32 farPlane) {
 }
 
 void FixedFunctionGL::SetFogColor(ZunColor color) {
-    GLfloat normalizedFogColor[4] = {
-        ((color >> 16) & 0xFF) / 255.0f, ((color >> 8) & 0xFF) / 255.0f,
-        (color & 0xFF) / 255.0f, ((color >> 24) & 0xFF) / 255.0f};
+    GLfloat normalizedFogColor[4] = {((color >> 16) & 0xFF) / 255.0f, ((color >> 8) & 0xFF) / 255.0f, (color & 0xFF) / 255.0f,
+                                     ((color >> 24) & 0xFF) / 255.0f};
 
     g_glFuncTable.glFogfv(GL_FOG_COLOR, normalizedFogColor);
 }
@@ -140,10 +135,8 @@ void FixedFunctionGL::ToggleVertexAttribute(u8 attr, bool enable) {
             g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE);
             g_glFuncTable.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         } else {
-            g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA,
-                                    GL_PRIMARY_COLOR);
-            g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB,
-                                    GL_PRIMARY_COLOR);
+            g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_PRIMARY_COLOR);
+            g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_PRIMARY_COLOR);
             g_glFuncTable.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         }
     }
@@ -157,8 +150,7 @@ void FixedFunctionGL::ToggleVertexAttribute(u8 attr, bool enable) {
     }
 }
 
-void FixedFunctionGL::SetAttributePointer(VertexAttributeArrays attr,
-                                          std::size_t stride, void *ptr) {
+void FixedFunctionGL::SetAttributePointer(VertexAttributeArrays attr, std::size_t stride, void *ptr) {
     switch (attr) {
     case VERTEX_ARRAY_POSITION:
         g_glFuncTable.glVertexPointer(3, GL_FLOAT, stride, ptr);
@@ -179,26 +171,21 @@ void FixedFunctionGL::SetColorOp(TextureOpComponent component, ColorOp op) {
         return;
     }
 
-    GLenum componentEnum =
-        component == COMPONENT_ALPHA ? GL_COMBINE_ALPHA : GL_COMBINE_RGB;
+    GLenum componentEnum = component == COMPONENT_ALPHA ? GL_COMBINE_ALPHA : GL_COMBINE_RGB;
 
     g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, componentEnum, opEnums[op]);
 }
 
 void FixedFunctionGL::SetTextureFactor(ZunColor factor) {
-    GLfloat tfactorColor[4] = {
-        ((factor >> 16) & 0xFF) / 255.0f, ((factor >> 8) & 0xFF) / 255.0f,
-        (factor & 0xFF) / 255.0f, ((factor >> 24) & 0xFF) / 255.0f};
+    GLfloat tfactorColor[4] = {((factor >> 16) & 0xFF) / 255.0f, ((factor >> 8) & 0xFF) / 255.0f, (factor & 0xFF) / 255.0f,
+                               ((factor >> 24) & 0xFF) / 255.0f};
 
-    g_glFuncTable.glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR,
-                             tfactorColor);
+    g_glFuncTable.glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, tfactorColor);
 }
 
-void FixedFunctionGL::SetTransformMatrix(TransformMatrix type,
-                                         const ZunMatrix &matrix) {
+void FixedFunctionGL::SetTransformMatrix(TransformMatrix type, const ZunMatrix &matrix) {
     // This is not going to work for modelview
-    GLenum matrixEnum[4] = {GL_MODELVIEW, GL_MODELVIEW, GL_PROJECTION,
-                            GL_TEXTURE};
+    GLenum matrixEnum[4] = {GL_MODELVIEW, GL_MODELVIEW, GL_PROJECTION, GL_TEXTURE};
 
     g_glFuncTable.glMatrixMode(matrixEnum[type]);
     g_glFuncTable.glLoadMatrixf((const GLfloat *)&matrix);
@@ -215,9 +202,7 @@ void FixedFunctionGL::Enable(Capabilities cap) {
     }
 }
 
-bool FixedFunctionGL::HasError() {
-    return g_glFuncTable.glGetError() != GL_NO_ERROR;
-}
+bool FixedFunctionGL::HasError() { return g_glFuncTable.glGetError() != GL_NO_ERROR; }
 
 void FixedFunctionGL::SetBlendMode(BlendMode mode) {
     if (mode == BLEND_INV_SRC_ALPHA) {
@@ -227,30 +212,17 @@ void FixedFunctionGL::SetBlendMode(BlendMode mode) {
     }
 }
 
-void FixedFunctionGL::SetViewport(i32 x, i32 y, i32 width, i32 height) {
-    g_glFuncTable.glViewport(x, y, width, height);
-}
+void FixedFunctionGL::SetViewport(i32 x, i32 y, i32 width, i32 height) { g_glFuncTable.glViewport(x, y, width, height); }
 
-void FixedFunctionGL::GetViewport(u32 *viewport) {
-    g_glFuncTable.glGetIntegerv(GL_VIEWPORT, (GLint *)viewport);
-}
+void FixedFunctionGL::GetViewport(u32 *viewport) { g_glFuncTable.glGetIntegerv(GL_VIEWPORT, (GLint *)viewport); }
 
-void FixedFunctionGL::GetDepthRange(f32 *depthRange) {
-    g_glFuncTable.glGetFloatv(GL_DEPTH_RANGE, depthRange);
-}
+void FixedFunctionGL::GetDepthRange(f32 *depthRange) { g_glFuncTable.glGetFloatv(GL_DEPTH_RANGE, depthRange); }
 
-void FixedFunctionGL::SetClearColor(f32 r, f32 g, f32 b, f32 a) {
-    g_glFuncTable.glClearColor(r, g, b, a);
-}
+void FixedFunctionGL::SetClearColor(f32 r, f32 g, f32 b, f32 a) { g_glFuncTable.glClearColor(r, g, b, a); }
 
-void FixedFunctionGL::SetTextureFilter() {
-    g_glFuncTable.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                                  GL_LINEAR);
-}
+void FixedFunctionGL::SetTextureFilter() { g_glFuncTable.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }
 
-void FixedFunctionGL::SetClearDepth(f32 depth) {
-    g_glFuncTable.glClearDepthf(depth);
-}
+void FixedFunctionGL::SetClearDepth(f32 depth) { g_glFuncTable.glClearDepthf(depth); }
 
 void FixedFunctionGL::Clear(u32 clearBits) {
     GLbitfield mask = 0;
@@ -263,13 +235,9 @@ void FixedFunctionGL::Clear(u32 clearBits) {
     g_glFuncTable.glClear(mask);
 }
 
-void FixedFunctionGL::SetDepthRange(f32 nearPlane, f32 farPlane) {
-    g_glFuncTable.glDepthRangef(nearPlane, farPlane);
-}
+void FixedFunctionGL::SetDepthRange(f32 nearPlane, f32 farPlane) { g_glFuncTable.glDepthRangef(nearPlane, farPlane); }
 
-void FixedFunctionGL::SetDepthMask(bool enable) {
-    g_glFuncTable.glDepthMask(enable);
-}
+void FixedFunctionGL::SetDepthMask(bool enable) { g_glFuncTable.glDepthMask(enable); }
 
 void FixedFunctionGL::SetDepthFunc(DepthFunc func) {
     if (func == DEPTH_FUNC_ALWAYS) {
@@ -286,16 +254,11 @@ GfxTextureHandle FixedFunctionGL::CreateTexture() {
     return texture;
 }
 
-void FixedFunctionGL::BindTexture(GfxTextureHandle handle) {
-    g_glFuncTable.glBindTexture(GL_TEXTURE_2D, handle);
-}
+void FixedFunctionGL::BindTexture(GfxTextureHandle handle) { g_glFuncTable.glBindTexture(GL_TEXTURE_2D, handle); }
 
-void FixedFunctionGL::DeleteTexture(GfxTextureHandle handle) {
-    g_glFuncTable.glDeleteTextures(1, (GLuint *)&handle);
-}
+void FixedFunctionGL::DeleteTexture(GfxTextureHandle handle) { g_glFuncTable.glDeleteTextures(1, (GLuint *)&handle); }
 
-void FixedFunctionGL::SetTextureImage(u32 width, u32 height, PixelFormat fmt,
-                                      PixelDataType type, const void *data) {
+void FixedFunctionGL::SetTextureImage(u32 width, u32 height, PixelFormat fmt, PixelDataType type, const void *data) {
     GLenum glFmt;
     GLenum glType;
 
@@ -323,20 +286,15 @@ void FixedFunctionGL::SetTextureImage(u32 width, u32 height, PixelFormat fmt,
         break;
     }
 
-    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, glFmt, width, height, 0, glFmt,
-                               glType, data);
+    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, glFmt, width, height, 0, glFmt, glType, data);
 }
 
-void FixedFunctionGL::SetTextureSubImage(i32 xoffset, i32 yoffset, i32 width,
-                                         i32 height, const void *data) {
-    g_glFuncTable.glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, width,
-                                  height, GL_RGB, GL_UNSIGNED_BYTE, data);
+void FixedFunctionGL::SetTextureSubImage(i32 xoffset, i32 yoffset, i32 width, i32 height, const void *data) {
+    g_glFuncTable.glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
 }
 
-void FixedFunctionGL::ReadPixels(i32 x, i32 y, i32 width, i32 height,
-                                 const void *pixels) {
-    g_glFuncTable.glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE,
-                               (void *)pixels);
+void FixedFunctionGL::ReadPixels(i32 x, i32 y, i32 width, i32 height, const void *pixels) {
+    g_glFuncTable.glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, (void *)pixels);
 }
 
 void FixedFunctionGL::Draw(PrimitiveType type, i32 start, i32 count) {

@@ -7,8 +7,7 @@
 #include <string>
 #include <unordered_map>
 
-#define SET_DRAW_COLOR(renderer, color)                                        \
-    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+#define SET_DRAW_COLOR(renderer, color) SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 
 struct TextureLabel {
     SDL_Rect rect{};
@@ -20,8 +19,7 @@ class LabelCache {
     explicit LabelCache(TTF_Font *font);
     ~LabelCache();
 
-    TextureLabel render(SDL_Renderer *renderer, const std::string &text,
-                        SDL_Color color);
+    TextureLabel render(SDL_Renderer *renderer, const std::string &text, SDL_Color color);
     void clear();
 
   private:
@@ -42,8 +40,7 @@ class LabelCache {
 
 class UIContext {
   public:
-    UIContext(SDL_Renderer *renderer, TTF_Font *font,
-              SDL_Color backgroundColor);
+    UIContext(SDL_Renderer *renderer, TTF_Font *font, SDL_Color backgroundColor);
 
     SDL_Color Foreground() const;
     SDL_Color ButtonBg() const;
@@ -63,8 +60,7 @@ class Widget {
 
 class ToggleBase : public Widget {
   public:
-    ToggleBase(SDL_Rect rect, std::string label, TTF_Font *font,
-               bool *dirtyFlag);
+    ToggleBase(SDL_Rect rect, std::string label, TTF_Font *font, bool *dirtyFlag);
     ~ToggleBase() override = default;
 
   protected:
@@ -81,8 +77,7 @@ class ToggleBase : public Widget {
 
 class Checkbox : public ToggleBase {
   public:
-    Checkbox(SDL_Rect rect, std::string label, bool initial, TTF_Font *font,
-             bool *dirtyFlag);
+    Checkbox(SDL_Rect rect, std::string label, bool initial, TTF_Font *font, bool *dirtyFlag);
 
     void handleEvent(const SDL_Event &e) override;
     void render(UIContext &ctx) override;
@@ -96,8 +91,7 @@ class Checkbox : public ToggleBase {
 
 class RadioButton : public ToggleBase {
   public:
-    RadioButton(SDL_Rect rect, std::string label, int groupId, int optionId,
-                bool initial, TTF_Font *font, bool *dirtyFlag);
+    RadioButton(SDL_Rect rect, std::string label, int groupId, int optionId, bool initial, TTF_Font *font, bool *dirtyFlag);
 
     void handleEvent(const SDL_Event &e) override;
     void render(UIContext &ctx) override;

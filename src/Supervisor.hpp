@@ -61,10 +61,7 @@ struct GameConfiguration {
     // GameConfigOpts bitfield.
     u32 opts;
 
-    u32 IsSoftwareTexturing() {
-        return (this->opts >> GCOS_NO_COLOR_COMP & 1) |
-               (this->opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING & 1);
-    }
+    u32 IsSoftwareTexturing() { return (this->opts >> GCOS_NO_COLOR_COMP & 1) | (this->opts >> GCOS_USE_D3D_HW_TEXTURE_BLENDING & 1); }
 };
 
 #define IN_PBG3_INDEX 0
@@ -112,22 +109,17 @@ struct Supervisor {
 
     void TickTimer(i32 *frames, f32 *subframes);
 
-    f32 FramerateMultiplier() const {
-        return this->effectiveFramerateMultiplier;
-    }
+    f32 FramerateMultiplier() const { return this->effectiveFramerateMultiplier; }
 
     u32 RedrawWholeFrame() const {
         // SDL makes no guarantees about frame state after buffer swap,
         //   and Wayland will "reuse" old framebuffers in a nondeterministic
         //   way, so we're basically required to always redraw to avoid UI
         //   corruption
-        return (this->cfg.opts >> GCOS_CLEAR_BACKBUFFER_ON_REFRESH & 1) |
-               (this->cfg.opts >> GCOS_DISPLAY_MINIMUM_GRAPHICS & 1) | 1;
+        return (this->cfg.opts >> GCOS_CLEAR_BACKBUFFER_ON_REFRESH & 1) | (this->cfg.opts >> GCOS_DISPLAY_MINIMUM_GRAPHICS & 1) | 1;
     }
 
-    u32 ShouldRunAt60Fps() const {
-        return (this->cfg.opts >> GCOS_FORCE_60FPS & 1) || this->vsyncEnabled;
-    }
+    u32 ShouldRunAt60Fps() const { return (this->cfg.opts >> GCOS_FORCE_60FPS & 1) || this->vsyncEnabled; }
 
     //    HINSTANCE hInstance;
     //    PDIRECT3D8 d3dIface;

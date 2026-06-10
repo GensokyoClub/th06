@@ -19,8 +19,7 @@
 // #include <d3d8types.h>
 // #include <d3dx8math.h>
 
-static const u32 g_ExtraLivesScores[5] = {10000000, 20000000, 40000000,
-                                          60000000, 1900000000};
+static const u32 g_ExtraLivesScores[5] = {10000000, 20000000, 40000000, 60000000, 1900000000};
 
 static const char *const g_EclFiles[9] = {"dummy",
                                           "data/ecldata1.ecl",
@@ -114,15 +113,13 @@ ChainCallbackResult GameManager::OnUpdate(GameManager *gameManager) {
         }
         gameManager->demoFrames++;
         if (gameManager->demoFrames == DEMO_FADEOUT_FRAMES) {
-            ScreenEffect::RegisterChain(SCREEN_EFFECT_FADE_OUT, 120, 0x000000,
-                                        0, 0);
+            ScreenEffect::RegisterChain(SCREEN_EFFECT_FADE_OUT, 120, 0x000000, 0, 0);
         }
         if (gameManager->demoFrames >= DEMO_FRAMES) {
             g_Supervisor.curState = SUPERVISOR_STATE_MAINMENU;
         }
     }
-    if (!gameManager->isInRetryMenu && !gameManager->isInGameMenu &&
-        !gameManager->demoMode && WAS_PRESSED(TH_BUTTON_MENU)) {
+    if (!gameManager->isInRetryMenu && !gameManager->isInGameMenu && !gameManager->demoMode && WAS_PRESSED(TH_BUTTON_MENU)) {
         gameManager->isInGameMenu = 1;
         g_GameManager.arcadeRegionTopLeftPos.x = GAME_REGION_LEFT;
         g_GameManager.arcadeRegionTopLeftPos.y = GAME_REGION_TOP;
@@ -158,8 +155,7 @@ ChainCallbackResult GameManager::OnUpdate(GameManager *gameManager) {
 
     // Seems like gameManager->isInGameMenu was supposed to have 3 states, but
     // all the times it ends up checking both
-    if (gameManager->isInGameMenu == 1 || gameManager->isInGameMenu == 2 ||
-        gameManager->isInRetryMenu) {
+    if (gameManager->isInGameMenu == 1 || gameManager->isInGameMenu == 2 || gameManager->isInRetryMenu) {
         return CHAIN_CALLBACK_RESULT_BREAK;
     }
 
@@ -182,10 +178,8 @@ ChainCallbackResult GameManager::OnUpdate(GameManager *gameManager) {
         if (gameManager->nextScoreIncrement < scoreIncrement) {
             gameManager->nextScoreIncrement = scoreIncrement;
         }
-        if (gameManager->guiScore + gameManager->nextScoreIncrement >
-            gameManager->score) {
-            gameManager->nextScoreIncrement =
-                gameManager->score - gameManager->guiScore;
+        if (gameManager->guiScore + gameManager->nextScoreIncrement > gameManager->score) {
+            gameManager->nextScoreIncrement = gameManager->score - gameManager->guiScore;
         }
 
         gameManager->guiScore += gameManager->nextScoreIncrement;
@@ -193,9 +187,7 @@ ChainCallbackResult GameManager::OnUpdate(GameManager *gameManager) {
             gameManager->nextScoreIncrement = 0;
             gameManager->guiScore = gameManager->score;
         }
-        if (gameManager->extraLives >= 0 &&
-            g_ExtraLivesScores[gameManager->extraLives] <=
-                gameManager->guiScore) {
+        if (gameManager->extraLives >= 0 && g_ExtraLivesScores[gameManager->extraLives] <= gameManager->guiScore) {
             if (gameManager->livesRemaining < MAX_LIVES) {
                 gameManager->livesRemaining++;
                 g_SoundPlayer.PlaySoundByIdx(SOUND_1UP);
@@ -225,24 +217,20 @@ ZunResult GameManager::RegisterChain() {
     g_GameManagerCalcChain.callback = (ChainCallback)GameManager::OnUpdate;
     g_GameManagerCalcChain.addedCallback = NULL;
     g_GameManagerCalcChain.deletedCallback = NULL;
-    g_GameManagerCalcChain.addedCallback =
-        (ChainAddedCallback)GameManager::AddedCallback;
-    g_GameManagerCalcChain.deletedCallback =
-        (ChainDeletedCallback)GameManager::DeletedCallback;
+    g_GameManagerCalcChain.addedCallback = (ChainAddedCallback)GameManager::AddedCallback;
+    g_GameManagerCalcChain.deletedCallback = (ChainDeletedCallback)GameManager::DeletedCallback;
     g_GameManagerCalcChain.arg = mgr;
 
     mgr->gameFrames = 0;
 
-    if (g_Chain.AddToCalcChain(&g_GameManagerCalcChain,
-                               TH_CHAIN_PRIO_CALC_GAMEMANAGER)) {
+    if (g_Chain.AddToCalcChain(&g_GameManagerCalcChain, TH_CHAIN_PRIO_CALC_GAMEMANAGER)) {
         return ZUN_ERROR;
     }
     g_GameManagerDrawChain.callback = (ChainCallback)GameManager::OnDraw;
     g_GameManagerDrawChain.addedCallback = NULL;
     g_GameManagerDrawChain.deletedCallback = NULL;
     g_GameManagerDrawChain.arg = mgr;
-    g_Chain.AddToDrawChain(&g_GameManagerDrawChain,
-                           TH_CHAIN_PRIO_DRAW_GAMEMANAGER);
+    g_Chain.AddToDrawChain(&g_GameManagerDrawChain, TH_CHAIN_PRIO_DRAW_GAMEMANAGER);
     return ZUN_SUCCESS;
 }
 
@@ -287,11 +275,9 @@ ZunResult GameManager::AddedCallback(GameManager *mgr) {
         mgr->rank = 8;
         mgr->grazeInTotal = 0;
         mgr->pointItemsCollected = 0;
-        for (catk = mgr->catk, i = 0; i < ARRAY_SIZE_SIGNED(mgr->catk);
-             i++, catk++) {
+        for (catk = mgr->catk, i = 0; i < ARRAY_SIZE_SIGNED(mgr->catk); i++, catk++) {
             // Randomize catk content.
-            for (catkCursor = 0; catkCursor < sizeof(Catk) / sizeof(u16);
-                 catkCursor++) {
+            for (catkCursor = 0; catkCursor < sizeof(Catk) / sizeof(u16); catkCursor++) {
                 ((u16 *)catk)[catkCursor] = g_Rng.GetRandomU16();
             }
             catk->base.magic = CATK_MAGIC;
@@ -307,17 +293,13 @@ ZunResult GameManager::AddedCallback(GameManager *mgr) {
 #else
         scoredat = ResultScreen::OpenScore("score.dat");
 #endif
-        g_GameManager.highScore = ResultScreen::GetHighScore(
-            scoredat, NULL, g_GameManager.CharacterShotType(),
-            g_GameManager.difficulty);
+        g_GameManager.highScore = ResultScreen::GetHighScore(scoredat, NULL, g_GameManager.CharacterShotType(), g_GameManager.difficulty);
         ResultScreen::ParseCatk(scoredat, mgr->catk);
         ResultScreen::ParseClrd(scoredat, mgr->clrd);
         ResultScreen::ParsePscr(scoredat, (Pscr *)mgr->pscr);
         if (mgr->isInPracticeMode != 0) {
             g_GameManager.highScore =
-                mgr->pscr[g_GameManager.CharacterShotType()]
-                         [g_GameManager.currentStage][g_GameManager.difficulty]
-                             .score;
+                mgr->pscr[g_GameManager.CharacterShotType()][g_GameManager.currentStage][g_GameManager.difficulty].score;
         }
         ResultScreen::ReleaseScoreDat(scoredat);
         mgr->rank = g_DifficultyInfo[g_GameManager.difficulty].rank;
@@ -337,20 +319,11 @@ ZunResult GameManager::AddedCallback(GameManager *mgr) {
     mgr->currentStage = mgr->currentStage + 1;
     if (g_GameManager.isInReplay == 0) {
         clrdIdx = g_GameManager.CharacterShotType();
-        if (mgr->numRetries == 0 &&
-            mgr->clrd[clrdIdx]
-                    .difficultyClearedWithRetries[g_GameManager.difficulty] <
-                mgr->currentStage - 1) {
-            mgr->clrd[clrdIdx]
-                .difficultyClearedWithRetries[g_GameManager.difficulty] =
-                mgr->currentStage - 1;
+        if (mgr->numRetries == 0 && mgr->clrd[clrdIdx].difficultyClearedWithRetries[g_GameManager.difficulty] < mgr->currentStage - 1) {
+            mgr->clrd[clrdIdx].difficultyClearedWithRetries[g_GameManager.difficulty] = mgr->currentStage - 1;
         }
-        if (mgr->clrd[clrdIdx]
-                .difficultyClearedWithoutRetries[g_GameManager.difficulty] <
-            mgr->currentStage - 1) {
-            mgr->clrd[clrdIdx]
-                .difficultyClearedWithoutRetries[g_GameManager.difficulty] =
-                mgr->currentStage - 1;
+        if (mgr->clrd[clrdIdx].difficultyClearedWithoutRetries[g_GameManager.difficulty] < mgr->currentStage - 1) {
+            mgr->clrd[clrdIdx].difficultyClearedWithoutRetries[g_GameManager.difficulty] = mgr->currentStage - 1;
         }
     }
     if (mgr->isInPracticeMode != 0) {
@@ -367,17 +340,14 @@ ZunResult GameManager::AddedCallback(GameManager *mgr) {
     g_Supervisor.LoadPbg3(CM_PBG3_INDEX, TH_CM_DAT_FILE);
     g_Supervisor.LoadPbg3(ST_PBG3_INDEX, TH_ST_DAT_FILE);
     if (g_GameManager.isInReplay == 1) {
-        if (ReplayManager::RegisterChain(1, (char *)g_GameManager.replayFile) !=
-            ZUN_SUCCESS) {
+        if (ReplayManager::RegisterChain(1, (char *)g_GameManager.replayFile) != ZUN_SUCCESS) {
             failedToLoadReplay = true;
         }
         while (g_ExtraLivesScores[mgr->extraLives] <= mgr->guiScore) {
             mgr->extraLives++;
         }
-        mgr->minRank =
-            g_DifficultyInfoForReplay[g_GameManager.difficulty].minRank;
-        mgr->maxRank =
-            g_DifficultyInfoForReplay[g_GameManager.difficulty].maxRank;
+        mgr->minRank = g_DifficultyInfoForReplay[g_GameManager.difficulty].minRank;
+        mgr->maxRank = g_DifficultyInfoForReplay[g_GameManager.difficulty].maxRank;
     }
     g_Rng.generationCount = 0;
     mgr->randomSeed = g_Rng.seed;
@@ -391,25 +361,19 @@ ZunResult GameManager::AddedCallback(GameManager *mgr) {
         return ZUN_ERROR;
     }
     if (BulletManager::RegisterChain("data/etama.anm") != ZUN_SUCCESS) {
-        g_GameErrorContext.Log(
-            TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_BULLETMANAGER);
+        g_GameErrorContext.Log(TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_BULLETMANAGER);
         return ZUN_ERROR;
     }
-    if (EnemyManager::RegisterChain(g_AnmStageFiles[mgr->currentStage].file1,
-                                    g_AnmStageFiles[mgr->currentStage].file2) !=
-        ZUN_SUCCESS) {
-        g_GameErrorContext.Log(
-            TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_ENEMYMANAGER);
+    if (EnemyManager::RegisterChain(g_AnmStageFiles[mgr->currentStage].file1, g_AnmStageFiles[mgr->currentStage].file2) != ZUN_SUCCESS) {
+        g_GameErrorContext.Log(TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_ENEMYMANAGER);
         return ZUN_ERROR;
     }
     if (g_EclManager.Load(g_EclFiles[mgr->currentStage]) != ZUN_SUCCESS) {
-        g_GameErrorContext.Log(
-            TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_ECLMANAGER);
+        g_GameErrorContext.Log(TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_ECLMANAGER);
         return ZUN_ERROR;
     }
     if (EffectManager::RegisterChain() != ZUN_SUCCESS) {
-        g_GameErrorContext.Log(
-            TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_EFFECTMANAGER);
+        g_GameErrorContext.Log(TH_ERR_GAMEMANAGER_FAILED_TO_INITIALIZE_EFFECTMANAGER);
         return ZUN_ERROR;
     }
     if (Gui::RegisterChain() != ZUN_SUCCESS) {
@@ -481,8 +445,7 @@ void GameManager::SetupCameraStageBackground(f32 extraRenderDistance) {
 
     viewportMiddleWidth = g_Supervisor.viewport.width / 2.0f;
     viewportMiddleHeight = g_Supervisor.viewport.height / 2.0f;
-    aspectRatio =
-        (f32)g_Supervisor.viewport.width / (f32)g_Supervisor.viewport.height;
+    aspectRatio = (f32)g_Supervisor.viewport.width / (f32)g_Supervisor.viewport.height;
     fov = ZUN_PI * (30.0f / 180.0f);
     cameraDistance = viewportMiddleHeight / ZUN_TANF(fov / 2);
     upVec.x = 0.0f;
@@ -500,8 +463,7 @@ void GameManager::SetupCameraStageBackground(f32 extraRenderDistance) {
 
     g_GameManager.cameraDistance = ZUN_FABSF(cameraDistance);
 
-    ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(
-        fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
+    ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
     g_AnmManager->SetTransformMatrix(MATRIX_PROJECTION, perspectiveMatrix);
     g_Supervisor.projectionMatrix = perspectiveMatrix;
     return;
@@ -525,8 +487,7 @@ void GameManager::SetupCamera(f32 extraRenderDistance) {
 
     viewportMiddleWidth = g_Supervisor.viewport.width / 2.0f;
     viewportMiddleHeight = g_Supervisor.viewport.height / 2.0f;
-    aspectRatio =
-        (f32)g_Supervisor.viewport.width / (f32)g_Supervisor.viewport.height;
+    aspectRatio = (f32)g_Supervisor.viewport.width / (f32)g_Supervisor.viewport.height;
     fov = ZUN_PI * (30.0f / 180.0f);
     cameraDistance = viewportMiddleHeight / ZUN_TANF(fov / 2);
     upVec.x = 0.0f;
@@ -548,8 +509,7 @@ void GameManager::SetupCamera(f32 extraRenderDistance) {
 
     g_GameManager.cameraDistance = ZUN_FABSF(cameraDistance);
 
-    ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(
-        fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
+    ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
     g_AnmManager->SetTransformMatrix(MATRIX_PROJECTION, perspectiveMatrix);
     g_Supervisor.projectionMatrix = perspectiveMatrix;
 
@@ -589,11 +549,7 @@ GameManager::GameManager() {
 }
 
 i32 GameManager::HasReachedMaxClears(i32 character, i32 shottype) const {
-    return (
-        this->clrd[shottype + character * 2].difficultyClearedWithRetries[1] ==
-            MAX_CLEARS ||
-        this->clrd[shottype + character * 2].difficultyClearedWithRetries[2] ==
-            MAX_CLEARS ||
-        this->clrd[shottype + character * 2].difficultyClearedWithRetries[3] ==
-            MAX_CLEARS);
+    return (this->clrd[shottype + character * 2].difficultyClearedWithRetries[1] == MAX_CLEARS ||
+            this->clrd[shottype + character * 2].difficultyClearedWithRetries[2] == MAX_CLEARS ||
+            this->clrd[shottype + character * 2].difficultyClearedWithRetries[3] == MAX_CLEARS);
 }

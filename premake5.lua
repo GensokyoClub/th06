@@ -1,4 +1,7 @@
 require "premake-ninja/ninja"
+
+require "ecc/ecc"
+
 premake.path = premake.path .. "/premake-ninja"
 
 function embedResource (inputFilename, variableName, outFile)

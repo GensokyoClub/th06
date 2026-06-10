@@ -92,7 +92,23 @@ static void main_loop() {
             return;
         } else if (e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
             g_ViewportScale.Recompute(e.window.data1, e.window.data2);
+        } else if (e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_MAXIMIZED) {
+            g_ViewportScale.maximized = true;
+        } else if (e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_RESTORED) {
+            g_ViewportScale.maximized = false;
         }
+#ifdef DEBUG
+        else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_r && (e.key.keysym.mod & KMOD_CTRL) != 0 &&
+                 e.key.repeat == 0 &&
+                 (g_Supervisor.curState == SUPERVISOR_STATE_MAINMENU ||
+                  g_Supervisor.curState == SUPERVISOR_STATE_MAINMENU_REPLAY ||
+                  g_Supervisor.curState == SUPERVISOR_STATE_MUSICROOM)) {
+            running = false;
+            cleanup();
+            restart_game();
+            return;
+        }
+#endif
     }
 
     renderResult = g_GameWindow.Render();

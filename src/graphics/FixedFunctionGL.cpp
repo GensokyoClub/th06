@@ -23,6 +23,8 @@ GfxInterface *FixedFunctionGL::Init() {
 
     if (g_Supervisor.cfg.windowed == 0) {
         flags |= SDL_WINDOW_FULLSCREEN;
+    } else if (g_ViewportScale.maximized) {
+        flags |= SDL_WINDOW_MAXIMIZED;
     }
     FixedFunctionGL *self = new FixedFunctionGL();
 
@@ -46,6 +48,15 @@ GfxInterface *FixedFunctionGL::Init() {
     }
 
     SDL_GL_SetSwapInterval(1);
+
+    if (g_ViewportScale.maximized) {
+        i32 drawableWidth = 0;
+        i32 drawableHeight = 0;
+        SDL_GL_GetDrawableSize(window, &drawableWidth, &drawableHeight);
+        if (drawableWidth > 0 && drawableHeight > 0) {
+            g_ViewportScale.Recompute(drawableWidth, drawableHeight);
+        }
+    }
 
     g_glFuncTable.ResolveFunctions(false);
 

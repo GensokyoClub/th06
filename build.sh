@@ -32,6 +32,9 @@ if [ "$OS" = "emscripten" ]; then
 else
     premake5 --cc=clang ninja $C23_EMBED $TRUTH_FFI_INTEGRATION
 fi;
+
+premake5 clang ecc
+
 cd build
 
 if [ "$BUILD_TYPE" = "All" ]; then

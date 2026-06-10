@@ -23,7 +23,7 @@ i32 g_TickCountToEffectiveFramerate;
 f64 g_LastFrameTime;
 
 ViewportScaling g_ViewportScale = {
-    GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, 0, 0, 1.0f, 1.0f,
+    GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, 0, 0, 1.0f, 1.0f, false,
 };
 
 void ViewportScaling::Recompute(i32 width, i32 height) {
@@ -209,9 +209,15 @@ static f32 GetStartupResolutionScale() {
 void GameWindow::CreateGameWindow() {
     SDL_Init(SDL_INIT_GAMECONTROLLER);
 
-    f32 resolutionScale = GetStartupResolutionScale();
-    g_ViewportScale.Recompute((i32)(GAME_WINDOW_WIDTH_REAL_DEFAULT * resolutionScale),
-                              (i32)(GAME_WINDOW_HEIGHT_REAL_DEFAULT * resolutionScale));
+    static bool s_ResolutionInitialized = false;
+    if (!s_ResolutionInitialized) {
+        f32 resolutionScale = GetStartupResolutionScale();
+        g_ViewportScale.Recompute((i32)(GAME_WINDOW_WIDTH_REAL_DEFAULT * resolutionScale),
+                                  (i32)(GAME_WINDOW_HEIGHT_REAL_DEFAULT * resolutionScale));
+        s_ResolutionInitialized = true;
+    } else {
+        g_ViewportScale.Recompute(g_ViewportScale.realWidth, g_ViewportScale.realHeight);
+    }
 
     for (u32 i = 0; i < ARRAY_SIZE(s_RenderBackends); i++) {
         g_GfxBackend = s_RenderBackends[i].TryInit();

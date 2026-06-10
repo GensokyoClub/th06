@@ -127,6 +127,8 @@ GfxInterface *WebGL::Create() {
 
     if (g_Supervisor.cfg.windowed == 0) {
         flags |= SDL_WINDOW_FULLSCREEN;
+    } else if (g_ViewportScale.maximized) {
+        flags |= SDL_WINDOW_MAXIMIZED;
     }
 
     SDL_Window *window = SDL_CreateWindow(TH_WINDOW_TITLE, x, y, width, height, flags);
@@ -150,6 +152,15 @@ GfxInterface *WebGL::Create() {
 
     SDL_GL_SetSwapInterval(1);
     g_glFuncTable.ResolveFunctions(true);
+
+    if (g_ViewportScale.maximized) {
+        i32 drawableWidth = 0;
+        i32 drawableHeight = 0;
+        SDL_GL_GetDrawableSize(window, &drawableWidth, &drawableHeight);
+        if (drawableWidth > 0 && drawableHeight > 0) {
+            g_ViewportScale.Recompute(drawableWidth, drawableHeight);
+        }
+    }
 
     if (!interface->Init()) {
         delete interface;

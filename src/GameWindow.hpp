@@ -29,6 +29,7 @@ struct ViewportScaling {
     i32 viewportOffY;
     f32 widthScale;
     f32 heightScale;
+    bool maximized;
 
     void Recompute(i32 realWidth, i32 realHeight);
 };

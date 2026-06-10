@@ -14,6 +14,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_timer.h>
+#include <cstdlib>
 #include <cstring>
 
 GameWindow g_GameWindow;
@@ -194,11 +195,35 @@ void GameWindow::Present() {
     return;
 }
 
+static f32 GetStartupResolutionScale() {
+    f32 scale = 1.0f;
+
+    const char *env = SDL_getenv("TH06_RESOLUTION_SCALE");
+    if (env != NULL && env[0] != '\0') {
+        char *end = NULL;
+        f32 parsed = std::strtof(env, &end);
+        if (end != env && parsed > 0.0f) {
+            scale = parsed;
+        }
+    }
+
+    if (scale < 1.0f) {
+        scale = 1.0f;
+    }
+    if (scale > 8.0f) {
+        scale = 8.0f;
+    }
+
+    return scale;
+}
+
 void GameWindow::CreateGameWindow() {
     SDL_Init(SDL_INIT_GAMECONTROLLER);
 
-    g_ViewportScale.Recompute(GAME_WINDOW_WIDTH_REAL_DEFAULT,
-                              GAME_WINDOW_HEIGHT_REAL_DEFAULT);
+    f32 resolutionScale = GetStartupResolutionScale();
+    g_ViewportScale.Recompute(
+        (i32)(GAME_WINDOW_WIDTH_REAL_DEFAULT * resolutionScale),
+        (i32)(GAME_WINDOW_HEIGHT_REAL_DEFAULT * resolutionScale));
 
     for (u32 i = 0; i < ARRAY_SIZE(s_RenderBackends); i++) {
         g_GfxBackend = s_RenderBackends[i].TryInit();

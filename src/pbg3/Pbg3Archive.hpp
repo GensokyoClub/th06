@@ -1,7 +1,7 @@
 #pragma once
 
-#include "inttypes.hpp"
-#include "pbg3/Pbg3Parser.hpp"
+#include "../inttypes.hpp"
+#include "Pbg3Parser.hpp"
 
 struct Pbg3Entry {
     u32 unk1;

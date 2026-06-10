@@ -8,6 +8,7 @@
 #include "i18n.hpp"
 #include "utils.hpp"
 
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -336,24 +337,33 @@ ZunResult AnmManager::LoadTexture(i32 textureIdx, const char *textureName,
         textureName, g_TextureFormatSDLMapping[textureFormat],
         (u8 **)&this->textures[textureIdx].fileData);
 
-    // Hideous hack to account for ANM entries that report a different texture
-    // size than the actual size
+    if (textureSurface == NULL) {
+        return ZUN_ERROR;
+    }
+
     const AnmRawEntry *entry = this->anmFiles[textureIdx];
     if (textureSurface->w != entry->width ||
         textureSurface->h != entry->height) {
-        SDL_Surface *textureSurface2 = SDL_CreateRGBSurfaceWithFormat(
-            0, entry->width, entry->height,
-            g_TextureFormatBytesPerPixel[textureFormat] * 8,
-            g_TextureFormatSDLMapping[textureFormat]);
-        SDL_Rect srcRect = {0, 0, textureSurface->w, textureSurface->h};
-        SDL_Rect dstRect = {0, 0, entry->width, entry->height};
-        SDL_BlitScaled(textureSurface, &srcRect, textureSurface2, &dstRect);
-        SDL_FreeSurface(textureSurface);
-        textureSurface = textureSurface2;
-    }
+        const bool largerThanDeclared =
+            textureSurface->w >= entry->width &&
+            textureSurface->h >= entry->height;
+        const float declaredAspect = (float)entry->width / (float)entry->height;
+        const float actualAspect =
+            (float)textureSurface->w / (float)textureSurface->h;
+        const bool aspectMatches =
+            std::fabs(declaredAspect - actualAspect) <= 0.01f;
 
-    if (textureSurface == NULL) {
-        return ZUN_ERROR;
+        if (!(largerThanDeclared && aspectMatches)) {
+            SDL_Surface *textureSurface2 = SDL_CreateRGBSurfaceWithFormat(
+                0, entry->width, entry->height,
+                g_TextureFormatBytesPerPixel[textureFormat] * 8,
+                g_TextureFormatSDLMapping[textureFormat]);
+            SDL_Rect srcRect = {0, 0, textureSurface->w, textureSurface->h};
+            SDL_Rect dstRect = {0, 0, entry->width, entry->height};
+            SDL_BlitScaled(textureSurface, &srcRect, textureSurface2, &dstRect);
+            SDL_FreeSurface(textureSurface);
+            textureSurface = textureSurface2;
+        }
     }
 
     CreateTextureObject();
@@ -555,6 +565,14 @@ ZunResult AnmManager::LoadAnm(i32 anmIdx, const char *path,
 
     anm->spriteIdxOffset = spriteIdxOffset;
 
+    const bool isEmptyTexture = *(char *)((u8 *)anm + anm->nameOffset) == '@';
+    f32 texelScaleX =
+        isEmptyTexture ? 1.0f
+                       : (f32)anm->width / (f32)this->textures[anmIdx].width;
+    f32 texelScaleY =
+        isEmptyTexture ? 1.0f
+                       : (f32)anm->height / (f32)this->textures[anmIdx].height;
+
     const LE<u32> *curSpriteOffset = anm->spriteOffsets;
 
     i32 index;
@@ -574,7 +592,8 @@ ZunResult AnmManager::LoadAnm(i32 anmIdx, const char *path,
             rawSprite->offset.y + rawSprite->size.y;
         loadedSprite.textureWidth = (float)anm->width;
         loadedSprite.textureHeight = (float)anm->height;
-        this->LoadSprite(rawSprite->id + spriteIdxOffset, &loadedSprite);
+        this->LoadSprite(rawSprite->id + spriteIdxOffset, &loadedSprite,
+                         texelScaleX, texelScaleY);
     }
 
     for (index = 0; index < anm->numScripts; index++, curSpriteOffset += 2) {
@@ -641,7 +660,8 @@ void AnmManager::ReleaseTexture(i32 textureIdx) {
     this->textures[textureIdx].textureData = NULL;
 }
 
-void AnmManager::LoadSprite(u32 spriteIdx, const AnmLoadedSprite *sprite) {
+void AnmManager::LoadSprite(u32 spriteIdx, const AnmLoadedSprite *sprite,
+                            f32 texelScaleX, f32 texelScaleY) {
     this->sprites[spriteIdx] = *sprite;
     this->sprites[spriteIdx].spriteId = this->maybeLoadedSpriteCount++;
 
@@ -658,16 +678,16 @@ void AnmManager::LoadSprite(u32 spriteIdx, const AnmLoadedSprite *sprite) {
     //   else in the ANM code, but it causes orthographic draws to look visually
     //   correct, so ¯\_(ツ)_/¯
     this->sprites[spriteIdx].uvStart.x =
-        (this->sprites[spriteIdx].startPixelInclusive.x + 0.5f) /
+        (this->sprites[spriteIdx].startPixelInclusive.x + 0.5f * texelScaleX) /
         this->sprites[spriteIdx].textureWidth;
     this->sprites[spriteIdx].uvEnd.x =
-        (this->sprites[spriteIdx].endPixelInclusive.x - 0.5f) /
+        (this->sprites[spriteIdx].endPixelInclusive.x - 0.5f * texelScaleX) /
         this->sprites[spriteIdx].textureWidth;
     this->sprites[spriteIdx].uvStart.y =
-        (this->sprites[spriteIdx].startPixelInclusive.y + 0.5f) /
+        (this->sprites[spriteIdx].startPixelInclusive.y + 0.5f * texelScaleY) /
         this->sprites[spriteIdx].textureHeight;
     this->sprites[spriteIdx].uvEnd.y =
-        (this->sprites[spriteIdx].endPixelInclusive.y - 0.5f) /
+        (this->sprites[spriteIdx].endPixelInclusive.y - 0.5f * texelScaleY) /
         this->sprites[spriteIdx].textureHeight;
 
     this->sprites[spriteIdx].widthPx =
@@ -2004,7 +2024,8 @@ void AnmManager::CopySurfaceToBackBuffer(i32 surfaceIdx, i32 srcX, i32 srcY,
     }
 
     CopySurfaceRectToBackBuffer(surfaceIdx, dstX, dstY, srcX, srcY,
-                                srcSurface->w - srcX, srcSurface->h - srcY);
+                                GAME_WINDOW_WIDTH - srcX,
+                                GAME_WINDOW_HEIGHT - srcY);
     //
     //    IDirect3DSurface8 *destSurface;
     //    if (g_Supervisor.d3dDevice->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO,
@@ -2062,10 +2083,14 @@ void AnmManager::CopySurfaceRectToBackBuffer(i32 surfaceIdx, i32 dstX, i32 dstY,
         return;
     }
 
+    f32 srcScale = (f32)srcSurface->w / (f32)GAME_WINDOW_WIDTH;
+
     ApplySurfaceToColorBuffer(
         srcSurface,
-        (SDL_Rect){
-            .x = rectLeft, .y = rectTop, .w = rectWidth, .h = rectHeight},
+        (SDL_Rect){.x = (i32)(rectLeft * srcScale),
+                   .y = (i32)(rectTop * srcScale),
+                   .w = (i32)(rectWidth * srcScale),
+                   .h = (i32)(rectHeight * srcScale)},
         (SDL_Rect){.x = dstX, .y = dstY, .w = rectWidth, .h = rectHeight});
     //
     //    IDirect3DSurface8 *D3D_Surface;
@@ -2252,11 +2277,15 @@ void AnmManager::ApplySurfaceToColorBuffer(SDL_Surface *src,
     verts[3].position =
         ZunVec3(dstRect.x + dstRect.w, dstRect.y + dstRect.h, 0.0f);
 
-    verts[0].textureUV = ZunVec2(0.0f, 0.0f);
-    verts[1].textureUV = ZunVec2(((f32)src->w) / textureWidth, 0.0f);
-    verts[2].textureUV = ZunVec2(0.0f, ((f32)src->h) / textureHeight);
-    verts[3].textureUV =
-        ZunVec2(((f32)src->w) / textureWidth, ((f32)src->h) / textureHeight);
+    f32 uvLeft = (f32)srcRect.x / textureWidth;
+    f32 uvTop = (f32)srcRect.y / textureHeight;
+    f32 uvRight = (f32)(srcRect.x + srcRect.w) / textureWidth;
+    f32 uvBottom = (f32)(srcRect.y + srcRect.h) / textureHeight;
+
+    verts[0].textureUV = ZunVec2(uvLeft, uvTop);
+    verts[1].textureUV = ZunVec2(uvRight, uvTop);
+    verts[2].textureUV = ZunVec2(uvLeft, uvBottom);
+    verts[3].textureUV = ZunVec2(uvRight, uvBottom);
 
     this->SetVertexAttributes(VERTEX_ATTR_TEX_COORD);
 

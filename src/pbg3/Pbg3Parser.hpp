@@ -1,8 +1,8 @@
 #pragma once
 
-#include "inttypes.hpp"
-#include "pbg3/FileAbstraction.hpp"
-#include "pbg3/IPbg3Parser.hpp"
+#include "../inttypes.hpp"
+#include "FileAbstraction.hpp"
+#include "IPbg3Parser.hpp"
 
 class Pbg3Parser : public IPbg3Parser, public FileAbstraction {
   public:

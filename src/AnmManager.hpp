@@ -377,7 +377,8 @@ struct AnmManager {
     ZunResult Draw2(const AnmVm *vm);
     ZunResult Draw3(const AnmVm *vm);
 
-    void LoadSprite(u32 spriteIdx, const AnmLoadedSprite *sprite);
+    void LoadSprite(u32 spriteIdx, const AnmLoadedSprite *sprite,
+                    f32 texelScaleX, f32 texelScaleY);
     ZunResult SetActiveSprite(AnmVm *vm, u32 spriteIdx);
 
     void ReleaseSurfaces(void);

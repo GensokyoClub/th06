@@ -156,7 +156,7 @@ for ecl_file in "${GAME_LOCATION%/}/data"/*.ecl; do
 done
 
 echo "Converting WAV files to OGG..."
-for wav_file in ./wav/*.wav; do
+for wav_file in ./bgm/*.wav; do
     if [ -f "$wav_file" ]; then
         ogg_file="${wav_file%.wav}.ogg"
         ffmpeg -i "$wav_file" -c:a libvorbis -q:a 4 "$ogg_file" -y -loglevel quiet

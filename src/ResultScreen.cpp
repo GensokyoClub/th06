@@ -30,13 +30,14 @@ static const u32 g_DefaultMagic = 'DMYS';
 static const char *const g_AlphabetList =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ.,:;\xA5@abcdefghijklmnopqrstuvwxyz+-/*=%0123456789(){}[]<>#!?'\"$      --";
 
-static const char *const g_CharacterList[6] = {
-                            TH_HAKUREI_REIMU_SPIRIT, TH_HAKUREI_REIMU_DREAM, TH_KIRISAME_MARISA_DEVIL,
-                            TH_KIRISAME_MARISA_LOVE, TH_SATSUKI_RIN_FLOWER,  TH_SATSUKI_RIN_WIND};
+static const char *const g_CharacterList[6] = {TH_HAKUREI_REIMU_SPIRIT,  TH_HAKUREI_REIMU_DREAM,
+                                               TH_KIRISAME_MARISA_DEVIL, TH_KIRISAME_MARISA_LOVE,
+                                               TH_SATSUKI_RIN_FLOWER,    TH_SATSUKI_RIN_WIND};
 
 static const f32 g_SpellcardsWeightsList[5] = {1.0f, 1.5f, 1.5f, 2.0f, 2.5f};
 
-static const char *const g_RightAlignedDifficultyList[5] = {"     Easy", "   Normal", "     Hard", "  Lunatic", "    Extra"};
+static const char *const g_RightAlignedDifficultyList[5] = {"     Easy", "   Normal", "     Hard", "  Lunatic",
+                                                            "    Extra"};
 
 static const char *const g_ShortCharacterList2[4] = {"ReimuA ", "ReimuB ", "MarisaA", "MarisaB"};
 
@@ -551,14 +552,14 @@ i32 ResultScreen::HandleResultKeyboard()
         }
 
         g_AnmManager->DrawStringFormat2(this->unk_28a0, COLOR_RGB(COLOR_WHITE), COLOR_RGB(COLOR_BLACK),
-                                      g_CharacterList[this->charUsed * 2]);
+                                        g_CharacterList[this->charUsed * 2]);
         if (g_GameManager.shotType != SHOT_TYPE_A)
         {
             this->unk_28a0[0].color = COLOR_TRANSPARENT_WHITE;
         }
 
         g_AnmManager->DrawStringFormat2(&this->unk_28a0[1], COLOR_RGB(COLOR_WHITE), COLOR_RGB(COLOR_BLACK),
-                                      g_CharacterList[this->charUsed * 2]);
+                                        g_CharacterList[this->charUsed * 2]);
         if (g_GameManager.shotType != SHOT_TYPE_B)
         {
             this->unk_28a0[1].color = COLOR_TRANSPARENT_WHITE;
@@ -872,7 +873,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
                 {
                     this->replays[idx] = *replayLoaded;
                 }
-                std::free((void*)replayLoaded);
+                std::free((void *)replayLoaded);
             }
         }
 
@@ -1597,10 +1598,10 @@ ChainCallbackResult ResultScreen::OnUpdate(ResultScreen *resultScreen)
         if (resultScreen->charUsed != resultScreen->cursor && resultScreen->frameTimer == 20)
         {
             resultScreen->charUsed = resultScreen->cursor;
-            g_AnmManager->DrawStringFormat2(&resultScreen->unk_28a0[0], COLOR_RGB(COLOR_WHITE),
-                                          COLOR_RGB(COLOR_BLACK), g_CharacterList[resultScreen->charUsed * 2]);
-            g_AnmManager->DrawStringFormat2(&resultScreen->unk_28a0[1], COLOR_RGB(COLOR_WHITE),
-                                          COLOR_RGB(COLOR_BLACK), g_CharacterList[resultScreen->charUsed * 2 + 1]);
+            g_AnmManager->DrawStringFormat2(&resultScreen->unk_28a0[0], COLOR_RGB(COLOR_WHITE), COLOR_RGB(COLOR_BLACK),
+                                            g_CharacterList[resultScreen->charUsed * 2]);
+            g_AnmManager->DrawStringFormat2(&resultScreen->unk_28a0[1], COLOR_RGB(COLOR_WHITE), COLOR_RGB(COLOR_BLACK),
+                                            g_CharacterList[resultScreen->charUsed * 2 + 1]);
         }
         if (resultScreen->frameTimer < 30)
         {
@@ -1646,12 +1647,12 @@ ChainCallbackResult ResultScreen::OnUpdate(ResultScreen *resultScreen)
                 if (g_GameManager.catk[i].numAttempts == 0)
                 {
                     g_AnmManager->DrawVmTextFmt(&resultScreen->unk_28a0[i % 10], COLOR_RGB(COLOR_WHITE),
-                                              COLOR_RGB(COLOR_BLACK), TH_UNKNOWN_SPELLCARD);
+                                                COLOR_RGB(COLOR_BLACK), TH_UNKNOWN_SPELLCARD);
                 }
                 else
                 {
                     g_AnmManager->DrawVmTextFmt(&resultScreen->unk_28a0[i % 10], COLOR_RGB(COLOR_WHITE),
-                                              COLOR_RGB(COLOR_BLACK), g_GameManager.catk[i].name);
+                                                COLOR_RGB(COLOR_BLACK), g_GameManager.catk[i].name);
                 }
             }
         }

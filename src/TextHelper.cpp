@@ -297,8 +297,8 @@ void TextHelper::RenderTextToTexture(i32 xPos, i32 yPos, i32 spriteWidth, i32 sp
 
     g_AnmManager->SetCurrentTexture(outTexture->handle);
 
-    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, outTexture->width, outTexture->height, 0, GL_RGBA,
-                               GL_UNSIGNED_BYTE, outTexture->textureData);
+    g_GfxBackend->SetTextureImage(outTexture->width, outTexture->height, PIXEL_RGBA, PIXEL_UNSIGNED_BYTE,
+                                  outTexture->textureData);
 
     SDL_FreeSurface(textureSurface);
 

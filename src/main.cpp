@@ -56,7 +56,7 @@ restart:
 
     g_AnmManager = new AnmManager();
 
-    if (GameWindow::InitD3dRendering())
+    if (GameWindow::InitD3dRendering() != ZUN_SUCCESS)
     {
         g_GameErrorContext.Flush();
         return 1;
@@ -134,8 +134,8 @@ stop:
     delete g_AnmManager;
     g_AnmManager = NULL;
 
-    SDL_DestroyWindow(g_GameWindow.window);
-    SDL_GL_DeleteContext(g_GameWindow.glContext);
+    if (g_GfxBackend != NULL)
+        delete g_GfxBackend;
     SDL_Quit();
 
     if (renderResult == 2)

@@ -1289,7 +1289,8 @@ i32 Player::CalcKillBoxCollision(const ZunVec3 *bulletCenter, const ZunVec3 *bul
     }
 }
 
-i32 Player::CalcLaserHitbox(const ZunVec3 *laserCenter, const ZunVec3 *laserSize, const ZunVec3 *rotation, f32 angle, i32 canGraze)
+i32 Player::CalcLaserHitbox(const ZunVec3 *laserCenter, const ZunVec3 *laserSize, const ZunVec3 *rotation, f32 angle,
+                            i32 canGraze)
 {
     ZunVec3 laserTopLeft;
     ZunVec3 laserBottomRight;

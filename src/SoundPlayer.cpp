@@ -47,7 +47,7 @@ SoundPlayer g_SoundPlayer;
 SoundPlayer::SoundPlayer()
 {
     // Note: memset of an std::mutex crashes on windows
-    //std::memset(this, 0, sizeof(SoundPlayer));
+    // std::memset(this, 0, sizeof(SoundPlayer));
 }
 
 ZunResult SoundPlayer::InitializeDSound()

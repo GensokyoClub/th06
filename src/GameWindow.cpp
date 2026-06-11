@@ -7,6 +7,7 @@
 #include "Supervisor.hpp"
 #include "ZunMath.hpp"
 #include "graphics/FixedFunctionGL.hpp"
+#include "graphics/Software.hpp"
 #include "graphics/WebGL.hpp"
 #include "i18n.hpp"
 #include "utils.hpp"
@@ -16,6 +17,7 @@
 #include <cstring>
 
 GameWindow g_GameWindow;
+GfxInterface *g_GfxBackend;
 i32 g_TickCountToEffectiveFramerate;
 f64 g_LastFrameTime;
 
@@ -24,11 +26,10 @@ f64 g_LastFrameTime;
 static const struct
 {
     const char *name;
-    bool isEsContext;
-    void (*setContextFlags)();
-    GfxInterface *(*init)();
-} s_RenderBackends[] = {{"GL(ES) 2.0 / WebGL", true, WebGL::SetContextFlags, WebGL::Create},
-                        {"Fixed function GL(ES)", false, FixedFunctionGL::SetContextFlags, FixedFunctionGL::Init}};
+    GfxInterface *(*TryInit)();
+} s_RenderBackends[] = {{"GL(ES) 2.0 / WebGL", WebGL::Create},
+                        {"Fixed function GL(ES)", FixedFunctionGL::Init},
+                        {"Software fallback (VERY SLOW)", Software::Init}};
 
 RenderResult GameWindow::Render()
 {
@@ -57,18 +58,21 @@ RenderResult GameWindow::Render()
                 viewport.minZ = 0.0;
                 viewport.maxZ = 1.0;
                 viewport.Set();
-                g_glFuncTable.glClearColor(
+                g_GfxBackend->SetClearColor(
                     ((g_Stage.skyFog.color >> 16) & 0xFF) / 255.0f, ((g_Stage.skyFog.color >> 8) & 0xFF) / 255.0f,
                     (g_Stage.skyFog.color & 0xFF) / 255.0f, (g_Stage.skyFog.color >> 24) / 255.0f);
-                g_glFuncTable.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                g_GfxBackend->Clear(CLEAR_COLOR_BUFFER | CLEAR_DEPTH_BUFFER);
                 g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
                 g_Supervisor.viewport.Set();
             }
 
+            g_AnmManager->ClearVertexBuffer();
+            g_AnmManager->flushesThisFrame = 0;
             g_Chain.RunDrawChain();
             g_AnmManager->SetCurrentTexture(0);
         }
 
+        g_AnmManager->FlushVertexBuffer();
         g_Supervisor.viewport.x = 0;
         g_Supervisor.viewport.y = 0;
         g_Supervisor.viewport.width = GAME_WINDOW_WIDTH;
@@ -173,73 +177,25 @@ void GameWindow::Present()
         g_Supervisor.unk198--;
     }
 
-    SDL_GL_SwapWindow(g_GameWindow.window);
+    g_GfxBackend->SwapBuffers();
 
     return;
 }
 
 void GameWindow::CreateGameWindow()
 {
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER);
-
-    u32 flags = SDL_WINDOW_OPENGL;
-    i32 height = GAME_WINDOW_HEIGHT_REAL;
-    i32 width = GAME_WINDOW_WIDTH_REAL;
-    i32 x = SDL_WINDOWPOS_UNDEFINED;
-    i32 y = SDL_WINDOWPOS_UNDEFINED;
-
-    g_GameWindow.window = NULL;
-    g_GameWindow.glContext = NULL;
-
-    if (g_Supervisor.cfg.windowed == 0)
-    {
-        flags |= SDL_WINDOW_FULLSCREEN;
-    }
+    SDL_Init(SDL_INIT_GAMECONTROLLER);
 
     for (u32 i = 0; i < ARRAY_SIZE(s_RenderBackends); i++)
     {
-        s_RenderBackends[i].setContextFlags();
-
-        g_GameWindow.window = SDL_CreateWindow(TH_WINDOW_TITLE, x, y, width, height, flags);
-
-        if (g_GameWindow.window == NULL)
+        g_GfxBackend = s_RenderBackends[i].TryInit();
+        if (g_GfxBackend)
         {
-            goto fail;
+            utils::DebugPrint2("Using renderer backend %s", s_RenderBackends[i].name);
+            break;
         }
-
-        g_GameWindow.glContext = SDL_GL_CreateContext(g_GameWindow.window);
-
-        if (g_GameWindow.glContext == NULL)
-        {
-            goto fail;
-        }
-
-        if (SDL_GL_MakeCurrent(g_GameWindow.window, g_GameWindow.glContext) != 0)
-        {
-            goto fail;
-        }
-
-        utils::DebugPrint2("Using renderer backend %s", s_RenderBackends[i].name);
-        g_glFuncTable.ResolveFunctions(s_RenderBackends[i].isEsContext);
-        g_GameWindow.renderBackendIndex = i;
-        break;
-    fail:
-        if (g_GameWindow.glContext != NULL)
-        {
-            SDL_GL_DeleteContext(g_GameWindow.glContext);
-            g_GameWindow.glContext = NULL;
-        }
-
-        if (g_GameWindow.window != NULL)
-        {
-            SDL_DestroyWindow(g_GameWindow.window);
-            g_GameWindow.window = NULL;
-        }
-
         utils::DebugPrint2("Renderer creation for backend %s failed", s_RenderBackends[i].name);
     }
-
-    g_Supervisor.gameWindow = g_GameWindow.window;
 
     g_GameWindow.lastActiveAppValue = 1;
 }
@@ -293,8 +249,13 @@ void GameWindow::CreateGameWindow()
 //     return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 // }
 
-i32 GameWindow::InitD3dRendering(void)
+ZunResult GameWindow::InitD3dRendering()
 {
+    if (!g_GfxBackend)
+    {
+        g_GameErrorContext.Fatal(TH_ERR_D3D_INIT_FAILED);
+        return ZUN_ERROR;
+    }
     //    u8 using_d3d_hal;
     //    D3DPRESENT_PARAMETERS present_params;
     //    D3DDISPLAYMODE display_mode;
@@ -307,7 +268,13 @@ i32 GameWindow::InitD3dRendering(void)
     f32 field_of_view_y;
     f32 camera_distance;
 
-    g_AnmManager->gfxBackend = s_RenderBackends[g_GameWindow.renderBackendIndex].init();
+    // OpenGL considers textures to be incomplete if the bound texture has no image defined
+    // Incomplete textures result in texturing being turned off, but EoSD has places where it
+    // uses the texturing engine to color fragments without using the texture itself. The dummy
+    // texture is necessary to ensure the texture can't be considered incomplete in these cases.
+    g_AnmManager->CreateTextureObject();
+    g_AnmManager->dummyTextureHandle = g_AnmManager->currentTextureHandle;
+    g_GfxBackend->SetTextureImage(1, 1, PIXEL_RGBA, PIXEL_UNSIGNED_BYTE, NULL);
 
     //    using_d3d_hal = 1;
     //    std::memset(&present_params, 0, sizeof(D3DPRESENT_PARAMETERS));
@@ -354,8 +321,6 @@ i32 GameWindow::InitD3dRendering(void)
             //            GameErrorContext::Log(&g_GameErrorContext, TH_ERR_SET_REFRESH_RATE_60HZ);
         }
 
-        SDL_GL_SetSwapInterval(1);
-
         //        if (g_Supervisor.cfg.frameskipConfig == 0)
         //        {
         //            present_params.SwapEffect = D3DSWAPEFFECT_FLIP;
@@ -377,7 +342,6 @@ i32 GameWindow::InitD3dRendering(void)
     //    present_params.AutoDepthStencilFormat = D3DFMT_D16;
     //    present_params.Flags = D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
 
-    SDL_GL_SetSwapInterval(1);
     g_Supervisor.vsyncEnabled = 1;
 
     g_Supervisor.lockableBackbuffer = 1;
@@ -520,7 +484,7 @@ i32 GameWindow::InitD3dRendering(void)
     g_GameWindow.isAppClosing = 0;
     g_Supervisor.lastFrameTime = 0;
     g_Supervisor.framerateMultiplier = 0.0;
-    return 0;
+    return ZUN_SUCCESS;
 }
 
 void GameWindow::InitD3dDevice(void)
@@ -530,21 +494,19 @@ void GameWindow::InitD3dDevice(void)
     AnmManager *anm3;
     AnmManager *anm4;
 
-    g_glFuncTable.glEnable(GL_BLEND);
+    g_GfxBackend->Enable(CAPS_BLEND);
 
-    g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    g_GfxBackend->SetBlendMode(BLEND_INV_SRC_ALPHA);
 
     if (((g_Supervisor.cfg.opts >> GCOS_TURN_OFF_DEPTH_TEST) & 1) == 0)
     {
-        g_glFuncTable.glEnable(GL_DEPTH_TEST);
+        g_GfxBackend->Enable(CAPS_DEPTH_TEST);
         g_AnmManager->SetDepthMask(true);
         g_AnmManager->SetDepthFunc(DEPTH_FUNC_LEQUAL);
     }
 
     g_AnmManager->SetFogColor(0xFF'A0'A0'A0);
     g_AnmManager->SetFogRange(1'000.0f, 5'000.0f);
-
-    //    g_AnmManager->gfxBackend->Init();
 
     // All of these are set per texture object in OpenGL (and also most are defaults)
     //    g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_NONE);

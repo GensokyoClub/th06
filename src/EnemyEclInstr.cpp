@@ -38,7 +38,7 @@ void MoveDirTime(Enemy *enemy, EclRawInstr *instr)
     f32 angle;
 
     alu = &instr->args.alu;
-    angle = *GetVarFloat(enemy, &alu->arg1.f32Param, NULL);
+    angle = GetVarFloatValue(enemy, alu->arg1.f32Param, NULL);
 
     enemy->moveInterp.x = ZUN_COSF(angle) * alu->arg2.f32Param * (i32)alu->res / 2.0f;
     enemy->moveInterp.y = ZUN_SINF(angle) * alu->arg2.f32Param * (i32)alu->res / 2.0f;
@@ -57,9 +57,9 @@ void MovePosTime(Enemy *enemy, EclRawInstr *instr)
     ZunVec3 newPos;
     EclRawInstrAluArgs *alu = &instr->args.alu;
 
-    newPos.x = *GetVarFloat(enemy, &alu->arg1.f32Param, NULL);
-    newPos.y = *GetVarFloat(enemy, &alu->arg2.f32Param, NULL);
-    newPos.z = *GetVarFloat(enemy, &alu->arg3.f32Param, NULL);
+    newPos.x = GetVarFloatValue(enemy, alu->arg1.f32Param, NULL);
+    newPos.y = GetVarFloatValue(enemy, alu->arg2.f32Param, NULL);
+    newPos.z = GetVarFloatValue(enemy, alu->arg3.f32Param, NULL);
 
     enemy->moveInterp = newPos - enemy->position;
     enemy->moveInterpStartPos = enemy->position;
@@ -380,7 +380,7 @@ void MathMod(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsV
     return;
 }
 
-void MathAtan2(Enemy *enemy, EclVarId outVarId, f32 *x1, f32 *y1, f32 *y2, f32 *x2)
+void MathAtan2(Enemy *enemy, EclVarId outVarId, f32 x1, f32 y1, f32 y2, f32 x2)
 {
     EclValueType outType;
     f32 *outPtr;
@@ -392,10 +392,10 @@ void MathAtan2(Enemy *enemy, EclVarId outVarId, f32 *x1, f32 *y1, f32 *y2, f32 *
     outPtr = (f32 *)GetVar(enemy, &outVarId, &outType);
     if (outType == ECL_VALUE_TYPE_FLOAT)
     {
-        y1Ptr = GetVarFloat(enemy, x1, NULL);
-        x1Ptr = GetVarFloat(enemy, y1, NULL);
-        y2Ptr = GetVarFloat(enemy, y2, NULL);
-        x2Ptr = GetVarFloat(enemy, x2, NULL);
+        y1Ptr = GetVarFloat(enemy, &x1, NULL);
+        x1Ptr = GetVarFloat(enemy, &y1, NULL);
+        y2Ptr = GetVarFloat(enemy, &y2, NULL);
+        x2Ptr = GetVarFloat(enemy, &x2, NULL);
         *outPtr = ZUN_ATAN2F(*x2Ptr - *x1Ptr, *y2Ptr - *y1Ptr);
     }
     return;

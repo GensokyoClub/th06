@@ -50,7 +50,6 @@ project "th06"
     "src/GameErrorContext.cpp",
     "src/GameManager.cpp",
     "src/GameWindow.cpp",
-    "src/GLFunc.cpp",
     "src/Gui.cpp",
     "src/ItemManager.cpp",
     "src/main.cpp",
@@ -66,10 +65,13 @@ project "th06"
     "src/Stage.cpp",
     "src/Supervisor.cpp",
     "src/TextHelper.cpp",
+    "src/ZunMath.cpp",
     "src/utils.cpp",
     "src/ZunTimer.cpp",
+    "src/graphics/GLFunc.cpp",
     "src/graphics/FixedFunctionGL.cpp",
     "src/graphics/WebGL.cpp",
+    "src/graphics/Software.cpp",
     "src/pbg3/FileAbstraction.cpp",
     "src/pbg3/IPbg3Parser.cpp",
     "src/pbg3/Pbg3Archive.cpp",
@@ -171,8 +173,8 @@ project "th06"
 
   filter "configurations:Release"
     defines { "NDEBUG" }
-    optimize "Speed"
     symbols "Off"
+    optimize "Speed"
 
   filter {}
 

@@ -612,6 +612,7 @@ void StageMenu::OnDrawGameMenu()
             }
         }
     }
+    g_AnmManager->FlushVertexBuffer();
     return;
 }
 
@@ -832,6 +833,7 @@ void StageMenu::OnDrawRetryMenu()
             }
         }
     }
+    g_AnmManager->FlushVertexBuffer();
     return;
 }
 

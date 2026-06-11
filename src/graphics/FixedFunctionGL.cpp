@@ -1,6 +1,7 @@
 #include "FixedFunctionGL.hpp"
-#include "GLFunc.hpp"
+#include "GameWindow.hpp"
 #include "Supervisor.hpp"
+#include "i18n.hpp"
 #include <SDL2/SDL.h>
 
 void FixedFunctionGL::SetContextFlags()
@@ -12,6 +13,48 @@ void FixedFunctionGL::SetContextFlags()
 
 GfxInterface *FixedFunctionGL::Init()
 {
+    SetContextFlags();
+
+    SDL_Init(SDL_INIT_VIDEO);
+
+    u32 flags = SDL_WINDOW_OPENGL;
+    i32 height = GAME_WINDOW_HEIGHT_REAL;
+    i32 width = GAME_WINDOW_WIDTH_REAL;
+    i32 x = SDL_WINDOWPOS_UNDEFINED;
+    i32 y = SDL_WINDOWPOS_UNDEFINED;
+
+    if (g_Supervisor.cfg.windowed == 0)
+    {
+        flags |= SDL_WINDOW_FULLSCREEN;
+    }
+    FixedFunctionGL *self = new FixedFunctionGL();
+
+    SDL_Window *window = SDL_CreateWindow(TH_WINDOW_TITLE, x, y, width, height, flags);
+    self->window = window;
+    if (window == NULL)
+    {
+        delete self;
+        return NULL;
+    }
+
+    SDL_GLContext glContext = SDL_GL_CreateContext(window);
+    self->glContext = glContext;
+    if (glContext == NULL)
+    {
+        delete self;
+        return NULL;
+    }
+
+    if (SDL_GL_MakeCurrent(window, glContext) != 0)
+    {
+        delete self;
+        return NULL;
+    }
+
+    SDL_GL_SetSwapInterval(1);
+
+    g_glFuncTable.ResolveFunctions(false);
+
     g_glFuncTable.glEnable(GL_TEXTURE_2D);
     g_glFuncTable.glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -77,7 +120,21 @@ GfxInterface *FixedFunctionGL::Init()
 
     g_glFuncTable.glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
 
-    return new FixedFunctionGL();
+    return self;
+}
+
+void FixedFunctionGL::Exit()
+{
+    if (this->glContext)
+    {
+        SDL_GL_DeleteContext(this->glContext);
+        this->glContext = NULL;
+    }
+    if (this->window)
+    {
+        SDL_DestroyWindow(this->window);
+        this->window = NULL;
+    }
 }
 
 void FixedFunctionGL::SetFogRange(f32 nearPlane, f32 farPlane)
@@ -173,6 +230,180 @@ void FixedFunctionGL::SetTransformMatrix(TransformMatrix type, const ZunMatrix &
     g_glFuncTable.glLoadMatrixf((const GLfloat *)&matrix);
 }
 
-void FixedFunctionGL::Draw()
+void FixedFunctionGL::Enable(Capabilities cap)
 {
+    switch (cap)
+    {
+    case CAPS_BLEND:
+        g_glFuncTable.glEnable(GL_BLEND);
+        break;
+    case CAPS_DEPTH_TEST:
+        g_glFuncTable.glEnable(GL_DEPTH_TEST);
+        break;
+    }
+}
+
+bool FixedFunctionGL::HasError()
+{
+    return g_glFuncTable.glGetError() != GL_NO_ERROR;
+}
+
+void FixedFunctionGL::SetBlendMode(BlendMode mode)
+{
+    if (mode == BLEND_INV_SRC_ALPHA)
+    {
+        g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+    else
+    {
+        g_glFuncTable.glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    }
+}
+
+void FixedFunctionGL::SetViewport(i32 x, i32 y, i32 width, i32 height)
+{
+    g_glFuncTable.glViewport(x, y, width, height);
+}
+
+void FixedFunctionGL::GetViewport(u32 *viewport)
+{
+    g_glFuncTable.glGetIntegerv(GL_VIEWPORT, (GLint *)viewport);
+}
+
+void FixedFunctionGL::GetDepthRange(f32 *depthRange)
+{
+    g_glFuncTable.glGetFloatv(GL_DEPTH_RANGE, depthRange);
+}
+
+void FixedFunctionGL::SetClearColor(f32 r, f32 g, f32 b, f32 a)
+{
+    g_glFuncTable.glClearColor(r, g, b, a);
+}
+
+void FixedFunctionGL::SetTextureFilter()
+{
+    g_glFuncTable.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+}
+
+void FixedFunctionGL::SetClearDepth(f32 depth)
+{
+    g_glFuncTable.glClearDepthf(depth);
+}
+
+void FixedFunctionGL::Clear(u32 clearBits)
+{
+    GLbitfield mask = 0;
+
+    if (clearBits & CLEAR_COLOR_BUFFER)
+        mask |= GL_COLOR_BUFFER_BIT;
+    if (clearBits & CLEAR_DEPTH_BUFFER)
+        mask |= GL_DEPTH_BUFFER_BIT;
+
+    g_glFuncTable.glClear(mask);
+}
+
+void FixedFunctionGL::SetDepthRange(f32 nearPlane, f32 farPlane)
+{
+    g_glFuncTable.glDepthRangef(nearPlane, farPlane);
+}
+
+void FixedFunctionGL::SetDepthMask(bool enable)
+{
+    g_glFuncTable.glDepthMask(enable);
+}
+
+void FixedFunctionGL::SetDepthFunc(DepthFunc func)
+{
+    if (func == DEPTH_FUNC_ALWAYS)
+    {
+        g_glFuncTable.glDepthFunc(GL_ALWAYS);
+    }
+    else
+    {
+        g_glFuncTable.glDepthFunc(GL_LEQUAL);
+    }
+}
+
+GfxTextureHandle FixedFunctionGL::CreateTexture()
+{
+    GLuint texture;
+    g_glFuncTable.glGenTextures(1, &texture);
+
+    return texture;
+}
+
+void FixedFunctionGL::BindTexture(GfxTextureHandle handle)
+{
+    g_glFuncTable.glBindTexture(GL_TEXTURE_2D, handle);
+}
+
+void FixedFunctionGL::DeleteTexture(GfxTextureHandle handle)
+{
+    g_glFuncTable.glDeleteTextures(1, (GLuint *)&handle);
+}
+
+void FixedFunctionGL::SetTextureImage(u32 width, u32 height, PixelFormat fmt, PixelDataType type, const void *data)
+{
+    GLenum glFmt;
+    GLenum glType;
+
+    switch (fmt)
+    {
+    case PIXEL_RGBA:
+        glFmt = GL_RGBA;
+        break;
+    case PIXEL_RGB:
+        glFmt = GL_RGB;
+        break;
+    }
+
+    switch (type)
+    {
+    case PIXEL_UNSIGNED_BYTE:
+        glType = GL_UNSIGNED_BYTE;
+        break;
+    case PIXEL_UNSIGNED_SHORT_5_5_5_1:
+        glType = GL_UNSIGNED_SHORT_5_5_5_1;
+        break;
+    case PIXEL_UNSIGNED_SHORT_5_6_5:
+        glType = GL_UNSIGNED_SHORT_5_6_5;
+        break;
+    case PIXEL_UNSIGNED_SHORT_4_4_4_4:
+        glType = GL_UNSIGNED_SHORT_4_4_4_4;
+        break;
+    }
+
+    g_glFuncTable.glTexImage2D(GL_TEXTURE_2D, 0, glFmt, width, height, 0, glFmt, glType, data);
+}
+
+void FixedFunctionGL::SetTextureSubImage(i32 xoffset, i32 yoffset, i32 width, i32 height, const void *data)
+{
+    g_glFuncTable.glTexSubImage2D(GL_TEXTURE_2D, 0, xoffset, yoffset, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+}
+
+void FixedFunctionGL::ReadPixels(i32 x, i32 y, i32 width, i32 height, const void *pixels)
+{
+    g_glFuncTable.glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, (void *)pixels);
+}
+
+void FixedFunctionGL::Draw(PrimitiveType type, i32 start, i32 count)
+{
+    GLenum glPrim;
+
+    switch (type)
+    {
+    case PRIM_TRIANGLE_STRIP:
+        glPrim = GL_TRIANGLE_STRIP;
+        break;
+    case PRIM_TRIANGLES:
+        glPrim = GL_TRIANGLES;
+        break;
+    }
+
+    g_glFuncTable.glDrawArrays(glPrim, start, count);
+}
+
+void FixedFunctionGL::SwapBuffers()
+{
+    SDL_GL_SwapWindow(window);
 }

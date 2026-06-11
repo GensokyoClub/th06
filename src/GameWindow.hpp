@@ -53,7 +53,9 @@ enum RenderResult {
 
 struct GameWindow {
     RenderResult Render();
+    RenderResult RenderInterpolated();
     static void Present();
+    static void RedrawScene();
 
     static void CreateGameWindow();
     static ZunResult InitD3dRendering();
@@ -73,3 +75,6 @@ extern GameWindow g_GameWindow;
 extern i32 g_TickCountToEffectiveFramerate;
 extern double g_LastFrameTime;
 extern GfxInterface *g_GfxBackend;
+extern bool g_UncappedPresent;
+extern float g_RenderAlpha;
+extern bool g_SuppressAnmAdvance;

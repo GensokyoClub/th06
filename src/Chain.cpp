@@ -160,7 +160,7 @@ restart_from_first_job:
 }
 
 int Chain::RunDrawChain(void) {
-    ChainElem *tmp1;
+    ChainElem *tmp;
     ChainElem *current;
     int updatedCount;
 
@@ -172,9 +172,9 @@ int Chain::RunDrawChain(void) {
         execute_again:
             switch (current->callback(current->arg)) {
             case CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB:
-                tmp1 = current;
+                tmp = current;
                 current = current->next;
-                Cut(tmp1);
+                Cut(tmp);
 
                 updatedCount++;
                 continue;

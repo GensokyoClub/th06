@@ -217,4 +217,5 @@ struct Enemy {
     i32 timerCallbackSub;
     f32 exInsFunc6Angle;
     ZunTimer exInsFunc6Timer;
+    ZunVec3 prevPosition;
 };

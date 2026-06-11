@@ -21,6 +21,11 @@ GameWindow g_GameWindow;
 GfxInterface *g_GfxBackend;
 i32 g_TickCountToEffectiveFramerate;
 f64 g_LastFrameTime;
+bool g_UncappedPresent = true;
+f32 g_RenderAlpha = 1.0f;
+bool g_SuppressAnmAdvance = false;
+static f64 g_RenderAccumulator = 0.0;
+static bool g_RenderInitialized = false;
 
 ViewportScaling g_ViewportScale = {
     GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, 0, 0, 1.0f, 1.0f, false,
@@ -51,7 +56,7 @@ void ViewportScaling::Recompute(i32 width, i32 height) {
     this->heightScale = (f32)vpHeight / GAME_WINDOW_HEIGHT;
 }
 
-#define FRAME_TIME (1000. / 60.)
+#define FRAME_TIME (1000.0f / 60.0f)
 
 static const struct {
     const char *name;
@@ -63,7 +68,6 @@ static const struct {
 RenderResult GameWindow::Render() {
     i32 res;
     f64 slowdown;
-    ZunViewport viewport;
     f64 delta;
     u32 curtime;
 
@@ -71,37 +75,13 @@ RenderResult GameWindow::Render() {
         return RENDER_RESULT_KEEP_RUNNING;
     }
 
+    if (g_UncappedPresent) {
+        return this->RenderInterpolated();
+    }
+
     if (this->curFrame == 0) {
     RUN_CHAINS:
-        if (g_Supervisor.cfg.frameskipConfig <= this->curFrame) {
-            if (g_Supervisor.RedrawWholeFrame()) {
-                viewport.x = 0;
-                viewport.y = 0;
-                viewport.width = GAME_WINDOW_WIDTH;
-                viewport.height = GAME_WINDOW_HEIGHT;
-                viewport.minZ = 0.0;
-                viewport.maxZ = 1.0;
-                viewport.Set();
-                g_GfxBackend->SetClearColor(((g_Stage.skyFog.color >> 16) & 0xFF) / 255.0f, ((g_Stage.skyFog.color >> 8) & 0xFF) / 255.0f,
-                                            (g_Stage.skyFog.color & 0xFF) / 255.0f, (g_Stage.skyFog.color >> 24) / 255.0f);
-                g_GfxBackend->Clear(CLEAR_COLOR_BUFFER | CLEAR_DEPTH_BUFFER);
-                g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
-                g_Supervisor.viewport.Set();
-            }
-
-            g_AnmManager->ClearVertexBuffer();
-            g_AnmManager->flushesThisFrame = 0;
-            g_Chain.RunDrawChain();
-            g_AnmManager->SetCurrentTexture(0);
-        }
-
-        g_AnmManager->FlushVertexBuffer();
-        g_Supervisor.viewport.x = 0;
-        g_Supervisor.viewport.y = 0;
-        g_Supervisor.viewport.width = GAME_WINDOW_WIDTH;
-        g_Supervisor.viewport.height = GAME_WINDOW_HEIGHT;
-        g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
-        g_Supervisor.viewport.Set();
+        RedrawScene();
         res = g_Chain.RunCalcChain();
         g_SoundPlayer.PlaySounds();
 
@@ -170,6 +150,94 @@ RenderResult GameWindow::Render() {
     return RENDER_RESULT_KEEP_RUNNING;
 }
 
+RenderResult GameWindow::RenderInterpolated() {
+    i32 res;
+    u32 now;
+    f64 frameDelta;
+    bool didTick;
+
+    g_Supervisor.framerateMultiplier = 1.0f;
+    g_Supervisor.effectiveFramerateMultiplier = 1.0f;
+
+    now = SDL_GetTicks();
+
+    if (!g_RenderInitialized) {
+        g_RenderInitialized = true;
+        g_LastFrameTime = now;
+        g_RenderAccumulator = FRAME_TIME;
+    } else {
+        frameDelta = (f64)now - g_LastFrameTime;
+        g_LastFrameTime = now;
+        if (frameDelta < 0.0) {
+            frameDelta = 0.0;
+        }
+        if (frameDelta > FRAME_TIME * 5.0) {
+            frameDelta = FRAME_TIME * 5.0;
+        }
+        g_RenderAccumulator += frameDelta;
+    }
+
+    didTick = false;
+    while (g_RenderAccumulator >= FRAME_TIME) {
+        res = g_Chain.RunCalcChain();
+        g_SoundPlayer.PlaySounds();
+        if (res == 0) {
+            return RENDER_RESULT_EXIT_SUCCESS;
+        }
+        if (res == -1) {
+            return RENDER_RESULT_EXIT_ERROR;
+        }
+        if (this->curFrame < 255) {
+            this->curFrame++;
+        }
+        g_RenderAccumulator -= FRAME_TIME;
+        didTick = true;
+    }
+
+    g_RenderAlpha = (f32)(g_RenderAccumulator / FRAME_TIME);
+
+    g_SuppressAnmAdvance = !didTick;
+    RedrawScene();
+    g_SuppressAnmAdvance = false;
+
+    Present();
+    return RENDER_RESULT_KEEP_RUNNING;
+}
+
+void GameWindow::RedrawScene() {
+    ZunViewport viewport;
+
+    if (g_Supervisor.cfg.frameskipConfig <= g_GameWindow.curFrame) {
+        if (g_Supervisor.RedrawWholeFrame()) {
+            viewport.x = 0;
+            viewport.y = 0;
+            viewport.width = GAME_WINDOW_WIDTH;
+            viewport.height = GAME_WINDOW_HEIGHT;
+            viewport.minZ = 0.0;
+            viewport.maxZ = 1.0;
+            viewport.Set();
+            g_GfxBackend->SetClearColor(((g_Stage.skyFog.color >> 16) & 0xFF) / 255.0f, ((g_Stage.skyFog.color >> 8) & 0xFF) / 255.0f,
+                                        (g_Stage.skyFog.color & 0xFF) / 255.0f, (g_Stage.skyFog.color >> 24) / 255.0f);
+            g_GfxBackend->Clear(CLEAR_COLOR_BUFFER | CLEAR_DEPTH_BUFFER);
+            g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
+            g_Supervisor.viewport.Set();
+        }
+
+        g_AnmManager->ClearVertexBuffer();
+        g_AnmManager->flushesThisFrame = 0;
+        g_Chain.RunDrawChain();
+        g_AnmManager->SetCurrentTexture(0);
+    }
+
+    g_AnmManager->FlushVertexBuffer();
+    g_Supervisor.viewport.x = 0;
+    g_Supervisor.viewport.y = 0;
+    g_Supervisor.viewport.width = GAME_WINDOW_WIDTH;
+    g_Supervisor.viewport.height = GAME_WINDOW_HEIGHT;
+    g_AnmManager->SetProjectionMode(PROJECTION_MODE_PERSPECTIVE);
+    g_Supervisor.viewport.Set();
+}
+
 void GameWindow::Present() {
     // In D3D, this was done after the present call, but SDL makes no guarantees
     // about the color buffer state immediately after a swap, so it has to be
@@ -206,12 +274,21 @@ static f32 GetStartupResolutionScale() {
     return scale;
 }
 
+static bool GetStartupUncappedPresent() {
+    const char *env = SDL_getenv("TH06_CAPPED_PRESENT");
+    if (env == NULL || env[0] == '\0') {
+        return true;
+    }
+    return env[0] == '0';
+}
+
 void GameWindow::CreateGameWindow() {
     SDL_Init(SDL_INIT_GAMECONTROLLER);
 
     static bool s_ResolutionInitialized = false;
     if (!s_ResolutionInitialized) {
         f32 resolutionScale = GetStartupResolutionScale();
+        g_UncappedPresent = GetStartupUncappedPresent();
         g_ViewportScale.Recompute((i32)(GAME_WINDOW_WIDTH_REAL_DEFAULT * resolutionScale),
                                   (i32)(GAME_WINDOW_HEIGHT_REAL_DEFAULT * resolutionScale));
         s_ResolutionInitialized = true;

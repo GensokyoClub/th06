@@ -13,6 +13,7 @@
 #include "EffectManager.hpp"
 #include "EnemyManager.hpp"
 #include "GameManager.hpp"
+#include "GameWindow.hpp"
 #include "Gui.hpp"
 #include "ItemManager.hpp"
 #include "Rng.hpp"
@@ -94,6 +95,9 @@ ZunResult Player::AddedCallback(Player *p) {
     p->positionCenter.z = 0.49;
     p->orbsPosition[0].z = 0.49;
     p->orbsPosition[1].z = 0.49;
+    p->prevPositionCenter = p->positionCenter;
+    p->prevOrbsPosition[0] = p->orbsPosition[0];
+    p->prevOrbsPosition[1] = p->orbsPosition[1];
     for (idx = 0; idx < ARRAY_SIZE_SIGNED(p->bombRegionSizes); idx++) {
         p->bombRegionSizes[idx].x = 0.0;
     }
@@ -142,6 +146,11 @@ ChainCallbackResult Player::OnUpdate(Player *p) {
     i32 idx;
     ZunVec3 lastEnemyHit;
 
+    if (g_UncappedPresent) {
+        p->prevPositionCenter = p->positionCenter;
+        p->prevOrbsPosition[0] = p->orbsPosition[0];
+        p->prevOrbsPosition[1] = p->orbsPosition[1];
+    }
     if (g_GameManager.isTimeStopped) {
         return CHAIN_CALLBACK_RESULT_CONTINUE;
     }
@@ -497,14 +506,28 @@ ChainCallbackResult Player::OnDrawHighPrio(Player *p) {
     if (p->bombInfo.isInUse != 0 && p->bombInfo.draw != NULL) {
         p->bombInfo.draw(p);
     }
-    p->playerSprite.pos.x = g_GameManager.arcadeRegionTopLeftPos.x + p->positionCenter.x;
-    p->playerSprite.pos.y = g_GameManager.arcadeRegionTopLeftPos.y + p->positionCenter.y;
+    if (g_UncappedPresent) {
+        p->playerSprite.pos.x = g_GameManager.arcadeRegionTopLeftPos.x + p->prevPositionCenter.x +
+                                (p->positionCenter.x - p->prevPositionCenter.x) * g_RenderAlpha;
+        p->playerSprite.pos.y = g_GameManager.arcadeRegionTopLeftPos.y + p->prevPositionCenter.y +
+                                (p->positionCenter.y - p->prevPositionCenter.y) * g_RenderAlpha;
+    } else {
+        p->playerSprite.pos.x = g_GameManager.arcadeRegionTopLeftPos.x + p->positionCenter.x;
+        p->playerSprite.pos.y = g_GameManager.arcadeRegionTopLeftPos.y + p->positionCenter.y;
+    }
     p->playerSprite.pos.z = 0.49;
     if (!g_GameManager.isInRetryMenu) {
         g_AnmManager->DrawNoRotation(&p->playerSprite);
         if (p->orbState != ORB_HIDDEN && (p->playerState == PLAYER_STATE_ALIVE || p->playerState == PLAYER_STATE_INVULNERABLE)) {
-            p->orbsSprite[0].pos = p->orbsPosition[0];
-            p->orbsSprite[1].pos = p->orbsPosition[1];
+            if (g_UncappedPresent) {
+                p->orbsSprite[0].pos.x = p->prevOrbsPosition[0].x + (p->orbsPosition[0].x - p->prevOrbsPosition[0].x) * g_RenderAlpha;
+                p->orbsSprite[0].pos.y = p->prevOrbsPosition[0].y + (p->orbsPosition[0].y - p->prevOrbsPosition[0].y) * g_RenderAlpha;
+                p->orbsSprite[1].pos.x = p->prevOrbsPosition[1].x + (p->orbsPosition[1].x - p->prevOrbsPosition[1].x) * g_RenderAlpha;
+                p->orbsSprite[1].pos.y = p->prevOrbsPosition[1].y + (p->orbsPosition[1].y - p->prevOrbsPosition[1].y) * g_RenderAlpha;
+            } else {
+                p->orbsSprite[0].pos = p->orbsPosition[0];
+                p->orbsSprite[1].pos = p->orbsPosition[1];
+            }
             f32 *x1 = &p->orbsSprite[0].pos.x;
             *x1 += g_GameManager.arcadeRegionTopLeftPos.x;
             f32 *y1 = &p->orbsSprite[0].pos.y;

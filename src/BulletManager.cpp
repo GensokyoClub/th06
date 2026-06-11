@@ -5,6 +5,7 @@
 #include "ChainPriorities.hpp"
 #include "Enemy.hpp"
 #include "GameManager.hpp"
+#include "GameWindow.hpp"
 #include "Gui.hpp"
 #include "ItemManager.hpp"
 #include "Player.hpp"
@@ -140,6 +141,7 @@ u32 BulletManager::SpawnSingleBullet(const EnemyBulletShooter *bulletProps, i32 
     bullet->angle = utils::AddNormalizeAngle(bulletAngle, 0.0f);
     bullet->pos = bulletProps->position;
     bullet->pos.z = 0.1f;
+    bullet->prevPos = bullet->pos;
     sincosmul(&bullet->velocity, bullet->angle, bulletSpeed);
     bullet->exFlags = bulletProps->flags;
     bullet->spriteOffset = bulletProps->spriteOffset;
@@ -520,6 +522,14 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr) {
     i32 grazeState;
 
     curBullet = &mgr->bullets[0];
+
+    if (g_UncappedPresent) {
+        for (idx = 0; idx < ARRAY_SIZE_SIGNED(mgr->bullets); idx++) {
+            if (mgr->bullets[idx].state != 0) {
+                mgr->bullets[idx].prevPos = mgr->bullets[idx].pos;
+            }
+        }
+    }
 
     if (g_GameManager.isTimeStopped) {
         return CHAIN_CALLBACK_RESULT_CONTINUE;
@@ -1006,8 +1016,13 @@ void BulletManager::DrawBullet(Bullet *bullet) {
         break;
     }
 
-    anmVm->pos.x = bullet->pos.x;
-    anmVm->pos.y = bullet->pos.y;
+    if (g_UncappedPresent) {
+        anmVm->pos.x = bullet->prevPos.x + (bullet->pos.x - bullet->prevPos.x) * g_RenderAlpha;
+        anmVm->pos.y = bullet->prevPos.y + (bullet->pos.y - bullet->prevPos.y) * g_RenderAlpha;
+    } else {
+        anmVm->pos.x = bullet->pos.x;
+        anmVm->pos.y = bullet->pos.y;
+    }
     anmVm->pos.z = 0.0;
     anmVm->color = COLOR_COMBINE_ALPHA(COLOR_WHITE, anmVm->color);
 
@@ -1039,8 +1054,13 @@ void BulletManager::DrawBulletNoHwVertex(Bullet *bullet) {
         break;
     }
 
-    anmVm->pos.x = g_GameManager.arcadeRegionTopLeftPos.x + bullet->pos.x;
-    anmVm->pos.y = g_GameManager.arcadeRegionTopLeftPos.y + bullet->pos.y;
+    if (g_UncappedPresent) {
+        anmVm->pos.x = g_GameManager.arcadeRegionTopLeftPos.x + bullet->prevPos.x + (bullet->pos.x - bullet->prevPos.x) * g_RenderAlpha;
+        anmVm->pos.y = g_GameManager.arcadeRegionTopLeftPos.y + bullet->prevPos.y + (bullet->pos.y - bullet->prevPos.y) * g_RenderAlpha;
+    } else {
+        anmVm->pos.x = g_GameManager.arcadeRegionTopLeftPos.x + bullet->pos.x;
+        anmVm->pos.y = g_GameManager.arcadeRegionTopLeftPos.y + bullet->pos.y;
+    }
     anmVm->pos.z = 0.0;
     anmVm->color = COLOR_COMBINE_ALPHA(COLOR_WHITE, anmVm->color);
 

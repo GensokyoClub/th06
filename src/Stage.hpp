@@ -117,6 +117,8 @@ struct Stage {
     i32 positionInterpEndTime;
     ZunVec3 positionInterpInitial;
     i32 positionInterpStartTime;
+    i32 lastDrawnSpellcardBgTick;
+    ZunVec3 prevPosition;
 };
 
 extern Stage g_Stage;

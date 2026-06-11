@@ -11,11 +11,11 @@
 #include "FileSystem.hpp"
 #include "GameErrorContext.hpp"
 #include "GameManager.hpp"
-#include "i18n.hpp"
 #include "Player.hpp"
 #include "SoundPlayer.hpp"
 #include "Stage.hpp"
 #include "ZunColor.hpp"
+#include "i18n.hpp"
 #include "utils.hpp"
 
 Gui g_Gui;

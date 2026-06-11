@@ -54,6 +54,7 @@ struct Bullet {
     u16 unk_5c0;
     u8 unk_5c2;
     u8 isGrazed;
+    ZunVec3 prevPos;
 };
 
 struct Laser {

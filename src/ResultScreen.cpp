@@ -1027,7 +1027,7 @@ u32 ResultScreen::DrawFinalStats() const {
         g_AsciiManager.color = color;
         unknownFloat = 0.0;
 
-        completion = g_GameManager.difficulty < 4 ? g_GameManager.counat / 39600.0f : g_GameManager.counat / 89500.0f;
+        completion = g_GameManager.difficulty < 4 ? g_GameManager.counat / 89500.0f : g_GameManager.counat / 39600.0f;
         strPos = viewport->pos;
         strPos.x += 224.0f;
         strPos.y += 32.0f;

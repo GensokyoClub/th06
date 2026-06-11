@@ -6,6 +6,7 @@
 #include "FileSystem.hpp"
 #include "GameErrorContext.hpp"
 #include "GameManager.hpp"
+#include "GameWindow.hpp"
 #include "Gui.hpp"
 #include "ScreenEffect.hpp"
 #include "Supervisor.hpp"
@@ -43,6 +44,10 @@ ChainCallbackResult Stage::OnUpdate(Stage *stage) {
     i32 idx;
     f32 skyFogInterpRatio;
     const RawStageInstr *curInsn;
+
+    if (g_UncappedPresent) {
+        stage->prevPosition = stage->position;
+    }
 
     if (stage->stdData == NULL) {
         return CHAIN_CALLBACK_RESULT_CONTINUE;
@@ -253,8 +258,10 @@ ChainCallbackResult Stage::OnDrawLowPrio(Stage *stage) {
         }
     }
     if (RUNNING <= stage->spellcardState) {
-        if (stage->ticksSinceSpellcardStarted <= g_Supervisor.cfg.frameskipConfig) {
+        if (stage->ticksSinceSpellcardStarted <= g_Supervisor.cfg.frameskipConfig &&
+            stage->lastDrawnSpellcardBgTick != stage->ticksSinceSpellcardStarted) {
             g_AnmManager->SetAndExecuteScriptIdx(&stage->spellcardBackground, ANM_SCRIPT_EFFECTS_SPELLCARD_BACKGROUND);
+            stage->lastDrawnSpellcardBgTick = stage->ticksSinceSpellcardStarted;
         }
         g_AnmManager->Draw(&stage->spellcardBackground);
     }
@@ -327,6 +334,7 @@ ZunResult Stage::RegisterChain(u32 stage) {
     memset(stg, 0, sizeof(Stage));
     stg->stdData = NULL;
     stg->objects = NULL;
+    stg->lastDrawnSpellcardBgTick = -1;
 
     timer = &stg->timer;
     timer->InitializeForPopup();
@@ -487,6 +495,11 @@ ZunResult Stage::RenderObjects(i32 zLevel) {
     //    D3DXMatrixIdentity(&worldMatrix);
     worldMatrix.Identity();
 
+    ZunVec3 drawPosition = this->position;
+    if (g_UncappedPresent) {
+        drawPosition = this->prevPosition + (this->position - this->prevPosition) * g_RenderAlpha;
+    }
+
     while (instance->id >= 0) {
         obj = this->objects[instance->id];
         if (obj->zLevel == zLevel) {
@@ -514,9 +527,9 @@ ZunResult Stage::RenderObjects(i32 zLevel) {
             // B.
 
             // It first starts by checking point C
-            worldMatrix.m[3][0] = obj->position.x + instance->position.x - this->position.x;
-            worldMatrix.m[3][1] = -(obj->position.y + instance->position.y - this->position.y);
-            worldMatrix.m[3][2] = obj->position.z + instance->position.z - this->position.z + obj->size.z;
+            worldMatrix.m[3][0] = obj->position.x + instance->position.x - drawPosition.x;
+            worldMatrix.m[3][1] = -(obj->position.y + instance->position.y - drawPosition.y);
+            worldMatrix.m[3][2] = obj->position.z + instance->position.z - drawPosition.z + obj->size.z;
             projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix, worldMatrix);
 
             if (quadPos.y >= g_Supervisor.viewport.y && quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
@@ -545,9 +558,9 @@ ZunResult Stage::RenderObjects(i32 zLevel) {
             }
 
             // Then D
-            worldMatrix.m[3][0] = obj->position.x + instance->position.x - this->position.x + obj->size.x;
-            worldMatrix.m[3][1] = -(obj->position.y + instance->position.y - this->position.y);
-            worldMatrix.m[3][2] = obj->position.z + instance->position.z - this->position.z + obj->size.z;
+            worldMatrix.m[3][0] = obj->position.x + instance->position.x - drawPosition.x + obj->size.x;
+            worldMatrix.m[3][1] = -(obj->position.y + instance->position.y - drawPosition.y);
+            worldMatrix.m[3][2] = obj->position.z + instance->position.z - drawPosition.z + obj->size.z;
             projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix, g_Supervisor.viewMatrix, worldMatrix);
             if (quadPos.y >= g_Supervisor.viewport.y && quadPos.y <= g_Supervisor.viewport.y + g_Supervisor.viewport.height) {
                 goto render;
@@ -584,9 +597,9 @@ ZunResult Stage::RenderObjects(i32 zLevel) {
                 curQuadVm = this->quadVms + curQuad->vmIdx;
                 switch (curQuad->type) {
                 case 0:
-                    curQuadVm->pos.x = curQuad->position.x + instance->position.x - this->position.x;
-                    curQuadVm->pos.y = curQuad->position.y + instance->position.y - this->position.y;
-                    curQuadVm->pos.z = curQuad->position.z + instance->position.z - this->position.z;
+                    curQuadVm->pos.x = curQuad->position.x + instance->position.x - drawPosition.x;
+                    curQuadVm->pos.y = curQuad->position.y + instance->position.y - drawPosition.y;
+                    curQuadVm->pos.z = curQuad->position.z + instance->position.z - drawPosition.z;
                     if (curQuad->size.x != 0.0f) {
                         curQuadVm->scaleX = curQuad->size.x / curQuadVm->sprite->widthPx;
                     }

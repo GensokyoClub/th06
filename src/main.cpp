@@ -98,10 +98,8 @@ static void main_loop() {
             g_ViewportScale.maximized = false;
         }
 #ifdef DEBUG
-        else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_r && (e.key.keysym.mod & KMOD_CTRL) != 0 &&
-                 e.key.repeat == 0 &&
-                 (g_Supervisor.curState == SUPERVISOR_STATE_MAINMENU ||
-                  g_Supervisor.curState == SUPERVISOR_STATE_MAINMENU_REPLAY ||
+        else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_r && (e.key.keysym.mod & KMOD_CTRL) != 0 && e.key.repeat == 0 &&
+                 (g_Supervisor.curState == SUPERVISOR_STATE_MAINMENU || g_Supervisor.curState == SUPERVISOR_STATE_MAINMENU_REPLAY ||
                   g_Supervisor.curState == SUPERVISOR_STATE_MUSICROOM)) {
             running = false;
             cleanup();

@@ -214,6 +214,8 @@ struct Player {
     ChainElem *chainCalc;
     ChainElem *chainDraw1;
     ChainElem *chainDraw2;
+    ZunVec3 prevPositionCenter;
+    ZunVec3 prevOrbsPosition[2];
 
     inline void SetToTopLeftPos(AnmVm *sprite) const {
 

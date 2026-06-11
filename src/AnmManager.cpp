@@ -24,6 +24,8 @@ static VertexTex1DiffuseXyzrhw g_PrimitivesToDrawNoVertexBuf[4];
 static VertexTex1DiffuseXyz g_PrimitivesToDrawUnknown[4];
 AnmManager *g_AnmManager;
 
+extern bool g_SuppressAnmAdvance;
+
 static const SDL_PixelFormatEnum g_TextureFormatSDLMapping[6] = {SDL_PIXELFORMAT_UNKNOWN, SDL_PIXELFORMAT_RGBA32, SDL_PIXELFORMAT_RGBA5551,
                                                                  SDL_PIXELFORMAT_RGB565,  SDL_PIXELFORMAT_RGB24,  SDL_PIXELFORMAT_RGBA4444};
 
@@ -1294,6 +1296,10 @@ i32 AnmManager::ExecuteScript(AnmVm *vm) {
 
     if (vm->currentInstruction == NULL) {
         return 1;
+    }
+
+    if (g_SuppressAnmAdvance) {
+        return 0;
     }
 
     if (vm->pendingInterrupt != 0) {

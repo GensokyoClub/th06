@@ -6,6 +6,7 @@
 #include "EffectManager.hpp"
 #include "EnemyManager.hpp"
 #include "GameErrorContext.hpp"
+#include "GameWindow.hpp"
 #include "Gui.hpp"
 #include "Player.hpp"
 #include "ReplayManager.hpp"
@@ -209,6 +210,18 @@ ChainCallbackResult GameManager::OnDraw(GameManager *gameManager) {
     if (gameManager->isInGameMenu) {
         gameManager->isInGameMenu = 2;
     }
+
+    if (g_UncappedPresent) {
+        g_Supervisor.viewport.x = gameManager->arcadeRegionTopLeftPos.x;
+        g_Supervisor.viewport.y = gameManager->arcadeRegionTopLeftPos.y;
+        g_Supervisor.viewport.width = gameManager->arcadeRegionSize.x;
+        g_Supervisor.viewport.height = gameManager->arcadeRegionSize.y;
+        g_Supervisor.viewport.minZ = 0.5;
+        g_Supervisor.viewport.maxZ = 1.0;
+        SetupCamera(0);
+        g_Supervisor.viewport.Set();
+    }
+
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 

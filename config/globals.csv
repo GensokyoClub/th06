@@ -1,6 +1,8 @@
 _g_BulletTypeInfos,                     0x0046a6e8
 _g_DifficultyWeightsList,               0x0046bca4
 _g_DefaultMagic,                        0x0046bdf4
+_g_HscrMagic,                           0x0042b2e7
+_g_ReplayMagic,                         0x0046baf4
 _g_TextureFormatD3D8Mapping,            0x0046c220
 _g_StageFiles,                          0x004760e0
 _g_SpellcardScore,                      0x00476120

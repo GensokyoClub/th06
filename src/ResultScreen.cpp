@@ -25,6 +25,7 @@ namespace th06
 DIFFABLE_STATIC_ARRAY_ASSIGN(f32, 5, g_DifficultyWeightsList) = {-30.0f, -10.0f, 20.0f, 30.0f, 30.0f};
 
 DIFFABLE_STATIC_ASSIGN(u32, g_DefaultMagic) = 'DMYS';
+DIFFABLE_STATIC_ASSIGN(u32, g_HscrMagic) = HSCR_MAGIC;
 
 DIFFABLE_STATIC_ASSIGN(char *, g_AlphabetList) =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ.,:;･@abcdefghijklmnopqrstuvwxyz+-/*=%0123456789(){}[]<>#!?'\"$      --";
@@ -570,7 +571,7 @@ i32 ResultScreen::HandleResultKeyboard()
         this->hscr.difficulty = this->diffSelected;
         this->hscr.score = g_GameManager.score;
         this->hscr.base.version = 16;
-        this->hscr.base.magic = *(i32 *)"HSCR";
+        this->hscr.base.magic = g_HscrMagic;
 
         if (g_GameManager.isGameCompleted == 0)
         {
@@ -889,7 +890,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
             this->frameTimer = 0;
             _strdate(this->defaultReplay.date);
             (this->defaultReplay).score = g_GameManager.score;
-            if (*(i32 *)&this->replays[this->cursor].magic != *(i32 *)&"T6RP" ||
+            if (this->replays[this->cursor].magic != g_ReplayMagic ||
                 this->replays[this->cursor].version != GAME_VERSION)
             {
                 sprite = &this->unk_40[0];
@@ -2013,7 +2014,7 @@ ChainCallbackResult th06::ResultScreen::OnDraw(ResultScreen *resultScreen)
                 name[resultScreen->cursor >= 8 ? 7 : resultScreen->cursor] = '_';
                 g_AsciiManager.AddFormatText(spritePos.AsD3dXVec(), "      %8s", &name);
             }
-            else if (*(i32 *)&resultScreen->replays[row].magic != *(i32 *)"T6RP" ||
+            else if (resultScreen->replays[row].magic != g_ReplayMagic ||
                      resultScreen->replays[row].version != GAME_VERSION)
             {
                 g_AsciiManager.AddFormatText(spritePos.AsD3dXVec(), "No.%.2d -------- --/--/-- -------         0",

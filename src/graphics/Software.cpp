@@ -369,8 +369,13 @@ inline ZunVec3 Software::ProjectToNDC(ZunVec3 vertex, ZunMatrix mv, ZunMatrix p,
     viewZ = clip.z;
     clip = p * clip;
     ZunVec3 ndc = {clip.x, clip.y, clip.z};
-    if (clip.w != 0)
+
+    //this is probably incorrect but at least it prevents background on stage 2 from breaking without adding complexity
+    if (clip.w <= 0)
     {
+        W = 1.0f;
+        return ndc;
+    } else {
         ndc /= clip.w;
         W = 1.0f / clip.w;
     }
@@ -446,12 +451,6 @@ void Software::Draw(PrimitiveType type, i32 start, i32 count)
                                   viewZ1, invw1);
         ZunVec3 v2 = ProjectToNDC(*(ZunVec3 *)((u8 *)vertexData + vertexStride * (index + 2)), modelview, projection,
                                   viewZ2, invw2);
-
-        if(invw0 < 0 || invw1 < 0 || invw2 < 0)
-        {
-            index += increment;
-            continue;
-        }
 
         ZunVec2 tc0, tc1, tc2;
         Diffuse diffuse0, diffuse1, diffuse2;

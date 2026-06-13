@@ -370,12 +370,14 @@ inline ZunVec3 Software::ProjectToNDC(ZunVec3 vertex, ZunMatrix mv, ZunMatrix p,
     clip = p * clip;
     ZunVec3 ndc = {clip.x, clip.y, clip.z};
 
-    //this is probably incorrect but at least it prevents background on stage 2 from breaking without adding complexity
+    // this is probably incorrect but at least it prevents background on stage 2 from breaking without adding complexity
     if (clip.w <= 0)
     {
         W = 1.0f;
         return ndc;
-    } else {
+    }
+    else
+    {
         ndc /= clip.w;
         W = 1.0f / clip.w;
     }
@@ -573,7 +575,8 @@ void Software::Draw(PrimitiveType type, i32 start, i32 count)
                     f32 depth;
                     if (useDepthTest)
                     {
-                        depth = ZUN_MAX(ZUN_MIN(((ndcZ * clipW) * 0.5f + 0.5f) * depthDif + depthNear, depthFar), depthNear);
+                        depth = ZUN_MAX(ZUN_MIN(((ndcZ * clipW) * 0.5f + 0.5f) * depthDif + depthNear, depthFar),
+                                        depthNear);
                         if (depthFunc == DEPTH_FUNC_LEQUAL && depth > depthBuffer[pixelCoord])
                         {
                             continue;

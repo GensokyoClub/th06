@@ -447,6 +447,12 @@ void Software::Draw(PrimitiveType type, i32 start, i32 count)
         ZunVec3 v2 = ProjectToNDC(*(ZunVec3 *)((u8 *)vertexData + vertexStride * (index + 2)), modelview, projection,
                                   viewZ2, invw2);
 
+        if(invw0 < 0 || invw1 < 0 || invw2 < 0)
+        {
+            index += increment;
+            continue;
+        }
+
         ZunVec2 tc0, tc1, tc2;
         Diffuse diffuse0, diffuse1, diffuse2;
         u32 *texels;
@@ -568,7 +574,7 @@ void Software::Draw(PrimitiveType type, i32 start, i32 count)
                     f32 depth;
                     if (useDepthTest)
                     {
-                        depth = ((ndcZ * clipW) * 0.5f + 0.5f) * depthDif + depthNear;
+                        depth = ZUN_MAX(ZUN_MIN(((ndcZ * clipW) * 0.5f + 0.5f) * depthDif + depthNear, depthFar), depthNear);
                         if (depthFunc == DEPTH_FUNC_LEQUAL && depth > depthBuffer[pixelCoord])
                         {
                             continue;

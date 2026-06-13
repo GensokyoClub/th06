@@ -789,15 +789,11 @@ i32 Supervisor::PlayMidiFile(i32 midiFileIdx)
 ZunResult Supervisor::SetupMidiPlayback(char *path)
 {
     if (g_Supervisor.cfg.musicMode == MIDI)
-    {
-    }
+        ;
     else if (g_Supervisor.cfg.musicMode == WAV)
-    {
-    }
+        ;
     else
-    {
         return ZUN_ERROR;
-    }
     return ZUN_SUCCESS;
 }
 
@@ -855,16 +851,13 @@ ZunResult Supervisor::StopAudio()
             g_Supervisor.midiOutput->StopPlayback();
         }
     }
+    else if (g_Supervisor.cfg.musicMode == WAV)
+    {
+        g_SoundPlayer.StopBGM();
+    }
     else
     {
-        if (g_Supervisor.cfg.musicMode == WAV)
-        {
-            g_SoundPlayer.StopBGM();
-        }
-        else
-        {
-            return ZUN_ERROR;
-        }
+        return ZUN_ERROR;
     }
 
     return ZUN_SUCCESS;
@@ -879,30 +872,24 @@ ZunResult Supervisor::FadeOutMusic(f32 fadeOutSeconds)
             g_Supervisor.midiOutput->SetFadeOut(1000.0f * fadeOutSeconds);
         }
     }
-    else
+    else if (g_Supervisor.cfg.musicMode == WAV)
     {
-        if (g_Supervisor.cfg.musicMode == WAV)
+        if (this->effectiveFramerateMultiplier == 0.0f)
         {
-            if (this->effectiveFramerateMultiplier == 0.0f)
-            {
-                g_SoundPlayer.FadeOut(fadeOutSeconds);
-            }
-            else
-            {
-                if (this->effectiveFramerateMultiplier > 1.0f)
-                {
-                    g_SoundPlayer.FadeOut(fadeOutSeconds);
-                }
-                else
-                {
-                    g_SoundPlayer.FadeOut(fadeOutSeconds / this->effectiveFramerateMultiplier);
-                }
-            }
+            g_SoundPlayer.FadeOut(fadeOutSeconds);
+        }
+        else if (this->effectiveFramerateMultiplier > 1.0f)
+        {
+            g_SoundPlayer.FadeOut(fadeOutSeconds);
         }
         else
         {
-            return ZUN_ERROR;
+            g_SoundPlayer.FadeOut(fadeOutSeconds / this->effectiveFramerateMultiplier);
         }
+    }
+    else
+    {
+        return ZUN_ERROR;
     }
 
     return ZUN_SUCCESS;

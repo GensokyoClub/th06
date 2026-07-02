@@ -72,6 +72,7 @@ struct WebGL : GfxInterface
   private:
     SDL_Window *window;
     SDL_GLContext glContext;
+    bool glesContext;
 
     GLuint fragmentShaderHandle;
     GLuint vertexShaderHandle;

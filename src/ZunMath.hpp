@@ -1,7 +1,7 @@
 #pragma once
 
-#include "inttypes.hpp"
 #include "ZunEndian.hpp"
+#include "inttypes.hpp"
 #include <cmath>
 #include <cstring>
 
@@ -155,7 +155,8 @@ struct ZunVec2
         return (f64)this->VectorLength();
     }
 };
-static_assert(sizeof(ZunVec2) == 0x08 && sizeof(ZunVec2Raw) == 0x08, "ZunVec2 has additional padding between struct members!");
+static_assert(sizeof(ZunVec2) == 0x08 && sizeof(ZunVec2Raw) == 0x08,
+              "ZunVec2 has additional padding between struct members!");
 
 struct ZunVec3Raw
 {
@@ -282,7 +283,8 @@ struct ZunVec3
         bottomRightCorner->y = size->y / 2.0f + centerPosition->y;
     }
 };
-static_assert(sizeof(ZunVec3) == 0x0C && sizeof(ZunVec3Raw) == 0x0C, "ZunVec3 has additional padding between struct members!");
+static_assert(sizeof(ZunVec3) == 0x0C && sizeof(ZunVec3Raw) == 0x0C,
+              "ZunVec3 has additional padding between struct members!");
 
 struct ZunVec4
 {

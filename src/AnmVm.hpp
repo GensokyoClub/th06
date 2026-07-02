@@ -1,11 +1,11 @@
 #pragma once
 
-#include <cstring>
 #include "ZunColor.hpp"
 #include "ZunMath.hpp"
 #include "ZunResult.hpp"
 #include "ZunTimer.hpp"
 #include "inttypes.hpp"
+#include <cstring>
 
 struct AnmLoadedSprite
 {
@@ -82,7 +82,8 @@ enum AnmVmAnchor
     AnmVmAnchor_TopLeft,
 };
 
-struct AnmVmFlags {
+struct AnmVmFlags
+{
     u32 isVisible : 1;
     u32 flag1 : 1;
     u32 blendMode : 1;

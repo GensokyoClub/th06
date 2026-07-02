@@ -1,5 +1,3 @@
-precision mediump float;
-
 uniform bool useTexCoords;
 // uniform bool useDiffuse;
 uniform sampler2D tex;

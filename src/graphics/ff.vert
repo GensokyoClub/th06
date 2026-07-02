@@ -1,5 +1,3 @@
-precision mediump float;
-
 attribute vec3 position;
 attribute vec2 texCoords;
 attribute vec4 diffuse;

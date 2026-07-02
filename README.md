@@ -6,15 +6,15 @@
 This is the readme for the portable fork of EoSD. For the readme of the decomp project, see [here](https://github.com/GensokyoClub/th06/blob/master/README.md).
 
 EoSD-portable is a port of Touhou 6 using SDL2 and OpenGL (with a more general renderer abstraction layer hopefully on the way).
-This enables theoretical portability to any system supported by SDL2, with Linux and Windows in particular being known to work.
-Builds for OS X, the BSDs, and other Unices are also almost certainly possible, but may require some slight modifications to the build system.
+This enables theoretical portability to any system supported by SDL2, with Linux, Windows, and macOS in particular being known to work.
+Builds for the BSDs and other Unices are also almost certainly possible, but may require some slight modifications to the build system.
 
 ### Platform Requirements
 
 - SDL2, SDL2-image, and SDL2-ttf support
 - C++20 standard library support
 - A little endian architecture (though big endian support is currently being worked on)
-- OpenGL ES 1.1, OpenGL 1.3, or GL ES 2.0 / WebGL support
+- OpenGL ES 1.1, OpenGL 1.3, or GL 2.1 / GL ES 2.0 / WebGL support
 
 ### Dependencies
 
@@ -24,6 +24,8 @@ EoSD-portable has the following dependencies:
 - `SDL2_image`
 - `SDL2_ttf`
 - `libasound` (Optional and Linux-only, enables MIDI support. This will almost always be present as part of a desktop distro.)
+
+On Windows and macOS, MIDI support uses the system APIs and needs no extra dependencies.
 
 In addition, building uses [`premake5`](https://premake.github.io/download) and a compiler that supports C++20.
 
@@ -41,6 +43,24 @@ This will output the build files to the `build` directory, and then compilation 
 Obtain dependencies:
 
 `sudo apt install build-essential libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libasound2-dev`
+
+Generate makefile:
+
+`premake5 gmake`
+
+Compile:
+
+`cd build && make -j16`
+
+##### Build Example (macOS)
+
+Install the Xcode Command Line Tools (provides the compiler), if not already present:
+
+`xcode-select --install`
+
+Obtain dependencies (using [Homebrew](https://brew.sh)):
+
+`brew install premake sdl2 sdl2_image sdl2_ttf`
 
 Generate makefile:
 

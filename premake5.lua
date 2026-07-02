@@ -97,6 +97,10 @@ project "th06"
     defines { "LIBASOUND_MIDI_SUPPORT" }
     files { "src/midi/MidiAlsa.cpp" }
     links { "asound" }
+  elseif os.target() == "macosx" then
+    defines { "COREAUDIO_MIDI_SUPPORT" }
+    files { "src/midi/MidiCoreAudio.cpp" }
+    links { "AudioToolbox.framework" }
   else
     print("Note: Build won't include MIDI support")
     files { "src/midi/MidiDefault.cpp" }
@@ -117,11 +121,15 @@ project "th06"
     embedFile:close()
   end
 
-  filter "system:linux"
+  filter "system:linux or system:macosx"
     local sdl2_cflags = os.outputof("sdl2-config --cflags") or ""
     local sdl2_libs   = os.outputof("sdl2-config --libs")   or ""
     if #sdl2_cflags > 0 then buildoptions { sdl2_cflags } end
     if #sdl2_libs   > 0 then linkoptions  { sdl2_libs }   end
+    local sdl2_prefix = os.outputof("sdl2-config --prefix") or ""
+    if #sdl2_prefix > 0 and sdl2_prefix ~= "/usr" then
+      externalincludedirs { sdl2_prefix .. "/include" }
+    end
     links { "SDL2_image", "SDL2_ttf", "m" }
   filter {}
 
@@ -204,12 +212,17 @@ project "th06_config"
     }
   filter {}
 
-  filter "system:linux"
+  filter "system:linux or system:macosx"
     local sdl2_cflags = os.outputof("sdl2-config --cflags") or ""
     local sdl2_libs   = os.outputof("sdl2-config --libs")   or ""
 
     if #sdl2_cflags > 0 then buildoptions { sdl2_cflags } end
     if #sdl2_libs   > 0 then linkoptions  { sdl2_libs }   end
+
+    local sdl2_prefix = os.outputof("sdl2-config --prefix") or ""
+    if #sdl2_prefix > 0 and sdl2_prefix ~= "/usr" then
+      externalincludedirs { sdl2_prefix .. "/include" }
+    end
 
     links {
       "SDL2_ttf",

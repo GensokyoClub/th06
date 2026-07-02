@@ -2,6 +2,7 @@
 #include "GameWindow.hpp"
 #include "Supervisor.hpp"
 #include "utils.hpp"
+#include <cstring>
 #include <new>
 #include <unordered_set>
 
@@ -22,7 +23,7 @@ static const char vertShaderBytes[] = {
 #define TEX_COORDS_ATTRIBUTE_INDEX 1
 #define DIFFUSE_ATTRIBUTE_INDEX 2
 
-GLuint createShader(const char *source, GLenum type, const char *descString,
+GLuint createShader(const char *source, GLenum type, const char *descString, bool glesContext,
                     std::unordered_set<GlShaderUniform> &omittedUniforms)
 {
     const char *fullShaderSource[32];
@@ -35,11 +36,24 @@ GLuint createShader(const char *source, GLenum type, const char *descString,
         goto fail;
     }
 
-    fullShaderSource[0] = "#version 100\n";
-
-    if (SDL_GL_ExtensionSupported("GL_EXT_frag_depth"))
+    // There are platforms (eg. macOS) where, even when ES 2.0 context
+    // is requested, 2.1 is returned.
+    // This adds a preamble which is slightly different between ES 2.0 and 2.1.
+    if (glesContext)
     {
-        fullShaderSource[shaderSourceIndex++] = "#extension GL_EXT_frag_depth : require\n";
+        fullShaderSource[0] = "#version 100\n"
+                              "precision mediump float;\n";
+
+        if (SDL_GL_ExtensionSupported("GL_EXT_frag_depth"))
+        {
+            fullShaderSource[shaderSourceIndex++] = "#extension GL_EXT_frag_depth : require\n";
+            fullShaderSource[shaderSourceIndex++] = "#define USE_FRAG_DEPTH\n";
+        }
+    }
+    else
+    {
+        fullShaderSource[0] = "#version 120\n"
+                              "#define gl_FragDepthEXT gl_FragDepth\n";
         fullShaderSource[shaderSourceIndex++] = "#define USE_FRAG_DEPTH\n";
     }
 
@@ -168,7 +182,18 @@ GfxInterface *WebGL::Create()
     }
 
     SDL_GL_SetSwapInterval(1);
-    g_glFuncTable.ResolveFunctions(true);
+
+    // The ES profile request is not always honored,
+    // so check if we really got it or the desktop one.
+    const GLubyte *(GLAPIENTRY * getString)(GLenum) =
+        (const GLubyte *(GLAPIENTRY *)(GLenum))SDL_GL_GetProcAddress("glGetString");
+    const char *glVersion = getString != NULL ? (const char *)getString(GL_VERSION) : NULL;
+    interface->glesContext = glVersion != NULL && std::strncmp(glVersion, "OpenGL ES", 9) == 0;
+
+    utils::DebugPrint("Got a %s context (GL_VERSION: %s)\n", interface->glesContext ? "GL ES" : "desktop GL",
+                      glVersion != NULL ? glVersion : "unknown");
+
+    g_glFuncTable.ResolveFunctions(interface->glesContext);
 
     if (!interface->Init())
     {
@@ -205,8 +230,10 @@ bool WebGL::Init()
     // Using a hashset for this is definitely super overkill, but it still feels more right
     //   than just using a vector or C array
 
-    this->vertexShaderHandle = createShader(vertShaderBytes, GL_VERTEX_SHADER, "vertex", omittedUniforms);
-    this->fragmentShaderHandle = createShader(fragShaderBytes, GL_FRAGMENT_SHADER, "fragment", omittedUniforms);
+    this->vertexShaderHandle =
+        createShader(vertShaderBytes, GL_VERTEX_SHADER, "vertex", this->glesContext, omittedUniforms);
+    this->fragmentShaderHandle =
+        createShader(fragShaderBytes, GL_FRAGMENT_SHADER, "fragment", this->glesContext, omittedUniforms);
     this->programHandle = g_glFuncTable.glCreateProgram();
 
     if (this->vertexShaderHandle == 0 || this->fragmentShaderHandle == 0 || this->programHandle == 0)

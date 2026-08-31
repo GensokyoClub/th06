@@ -4036,7 +4036,7 @@ class PE:
             )
         except PEFormatError:
             self.__warnings.append(
-                "Invalid TLS information. Can't read " "data at RVA: 0x%x" % rva
+                "Invalid TLS information. Can't read data at RVA: 0x%x" % rva
             )
             tls_struct = None
 
@@ -4081,7 +4081,7 @@ class PE:
             )
         except PEFormatError:
             self.__warnings.append(
-                "Invalid LOAD_CONFIG information. Can't read " "data at RVA: 0x%x" % rva
+                "Invalid LOAD_CONFIG information. Can't read data at RVA: 0x%x" % rva
             )
 
         if not load_config_struct:
@@ -4155,8 +4155,7 @@ class PE:
                 )
             except PEFormatError:
                 self.__warnings.append(
-                    "Invalid relocation information. Can't read "
-                    "data at RVA: 0x%x" % rva
+                    "Invalid relocation information. Can't read data at RVA: 0x%x" % rva
                 )
                 dynamic_rlc = None
 
@@ -4213,8 +4212,7 @@ class PE:
         )
         if not func_header:
             self.__warnings.append(
-                "Invalid function override header. Can't read "
-                "data at RVA: 0x%x" % rva
+                "Invalid function override header. Can't read data at RVA: 0x%x" % rva
             )
             return func_relocs, bdd_relocs
         rva += Structure(format).sizeof()
@@ -4230,8 +4228,7 @@ class PE:
             )
             if not func_info:
                 self.__warnings.append(
-                    "Invalid function override info. Can't read "
-                    "data at RVA: 0x%x" % rva
+                    "Invalid function override info. Can't read data at RVA: 0x%x" % rva
                 )
                 return func_relocs, bdd_relocs
             rva += Structure(format).sizeof()
@@ -4263,7 +4260,7 @@ class PE:
         )
         if not bdd_info:
             self.__warnings.append(
-                "Invalid bdd info. Can't read " "data at RVA: 0x%x" % rva
+                "Invalid bdd info. Can't read data at RVA: 0x%x" % rva
             )
             return func_relocs, bdd_relocs
         rva += Structure(format).sizeof()
@@ -4277,8 +4274,7 @@ class PE:
             )
             if not bdd_reloc:
                 self.__warnings.append(
-                    "Invalid bdd dynamic relocation. Can't read "
-                    "data at RVA: 0x%x" % rva
+                    "Invalid bdd dynamic relocation. Can't read data at RVA: 0x%x" % rva
                 )
                 return func_relocs, bdd_relocs
             rva += Structure(format).sizeof()
@@ -4309,8 +4305,7 @@ class PE:
                 )
             except PEFormatError:
                 self.__warnings.append(
-                    "Invalid relocation information. Can't read "
-                    "data at RVA: 0x%x" % rva
+                    "Invalid relocation information. Can't read data at RVA: 0x%x" % rva
                 )
                 rlc = None
 
@@ -4444,7 +4439,7 @@ class PE:
                 data = self.get_data(rva + dbg_size * idx, dbg_size)
             except PEFormatError:
                 self.__warnings.append(
-                    "Invalid debug information. Can't read " "data at RVA: 0x%x" % rva
+                    "Invalid debug information. Can't read data at RVA: 0x%x" % rva
                 )
                 return None
 
@@ -6220,7 +6215,7 @@ class PE:
 
             if failed or len(data) != expected_size:
                 self.__warnings.append(
-                    "Error parsing the import table. " "Invalid data at RVA: 0x%x" % rva
+                    "Error parsing the import table. Invalid data at RVA: 0x%x" % rva
                 )
                 return None
 

@@ -87,31 +87,3 @@ jobs:
         path: |
           build/objdiff/reimpl
 
-  build-dll:
-    needs: ['devenv']
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: true
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.4'
-    - name: Get toolchain from cache
-      id: cache-toolchain
-      uses: actions/cache/restore@v3
-      with:
-        # A directory to store and save the cache
-        path: scripts/prefix
-        # An explicit key for restoring and saving the cache
-        key: prefix-${{hashFiles('scripts/create_devenv.py')}}
-        # This should never happen, as the devenv step plays before us.
-        fail-on-cache-miss: true
-    - name: Build binary
-      run: python scripts/build.py -j0 --build-type dllbuild
-    - uses: actions/upload-artifact@v4
-      with:
-        name: th06-dll
-        path: |
-          build/th06.dll
-          build/th06.pdb

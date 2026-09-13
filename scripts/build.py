@@ -22,8 +22,6 @@ def build(build_type, verbose=False, jobs=1, target=None):
         ninja_args += [target]
     elif build_type == BuildType.TESTS:
         ninja_args += ["build/th06-tests.exe"]
-    elif build_type == BuildType.DLLBUILD:
-        ninja_args += ["build/th06.dll"]
     elif build_type == BuildType.OBJDIFFBUILD:
         ninja_args += ["objdiff"]
     else:
@@ -48,7 +46,6 @@ def main():
             "normal",
             "diffbuild",
             "tests",
-            "dllbuild",
             "objdiffbuild",
             "binary_matchbuild",
         ],
@@ -72,7 +69,6 @@ def main():
         help=textwrap.dedent("""
         Ninja target to build. Default depends on the build type:
           - Normal and diff builds will build th06.exe
-          - dll builds will build th06.dll
           - Test builds will build th06-tests.exe
           - objdiff builds will build all the object files necessary for objdiff.
     """),
@@ -87,8 +83,6 @@ def main():
         build_type = BuildType.DIFFBUILD
     elif args.build_type == "tests":
         build_type = BuildType.TESTS
-    elif args.build_type == "dllbuild":
-        build_type = BuildType.DLLBUILD
     elif args.build_type == "objdiffbuild":
         build_type = BuildType.OBJDIFFBUILD
     elif args.build_type == "binary_matchbuild":

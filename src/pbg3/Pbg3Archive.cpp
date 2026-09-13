@@ -320,7 +320,7 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
         DEC_READ_FLAG_BIT();
     }
 
-    FREE(rawData);
+    free(rawData);
 
     if (this->entries[entryIdx].checksum != checksum)
     {

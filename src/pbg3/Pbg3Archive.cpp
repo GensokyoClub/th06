@@ -262,8 +262,7 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
     if (rawData == NULL)
     {
         free(out);
-        out = NULL;
-        goto hi;
+        return NULL;
     }
 
     u8 *inCursor = rawData;
@@ -294,25 +293,24 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
         {
             DEC_READ_BITS(8);
             DEC_WRITE_BYTE(inBits);
+            continue;
         }
         // Copy from dictionary, 13 bit offset, then 4 bit length
-        else
+
+        DEC_READ_BITS(13);
+
+        matchOffset = inBits;
+        if (matchOffset == 0)
         {
-            DEC_READ_BITS(13);
+            break;
+        }
 
-            matchOffset = inBits;
-            if (matchOffset == 0)
-            {
-                break;
-            }
+        DEC_READ_BITS(4);
 
-            DEC_READ_BITS(4);
-
-            for (i32 i = 0; i <= (i32)inBits + 2; i++)
-            {
-                u32 c = dict[(matchOffset + i) & LZSS_DICTSIZE_MASK];
-                DEC_WRITE_BYTE(c);
-            }
+        for (i32 i = 0; i <= (i32)inBits + 2; i++)
+        {
+            u32 c = dict[(matchOffset + i) & LZSS_DICTSIZE_MASK];
+            DEC_WRITE_BYTE(c);
         }
     }
 
@@ -327,9 +325,9 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
     if (this->entries[entryIdx].checksum != checksum)
     {
         free(out);
-        out = NULL;
+        return NULL;
     }
-hi:
+
     return out;
 }
 }; // namespace th06

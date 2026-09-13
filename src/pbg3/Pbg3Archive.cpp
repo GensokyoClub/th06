@@ -243,6 +243,7 @@ i32 Pbg3Archive::Load(char *path)
         outBitMask >>= 1;                                                                                              \
         DEC_NEXT_BIT();                                                                                                \
     }
+
 u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
 {
     u32 size;

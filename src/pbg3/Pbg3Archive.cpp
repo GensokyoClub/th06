@@ -243,67 +243,65 @@ i32 Pbg3Archive::Load(char *path)
         outBitMask >>= 1;                                                                                              \
         DEC_NEXT_BIT();                                                                                                \
     }
-
 u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
 {
-    if (entryIdx >= this->numOfEntries || this->parser == NULL)
-        return NULL;
-
-    u32 size = this->GetEntrySize(entryIdx);
-    u8 *out = (u8 *)malloc(size);
-    if (out == NULL)
-        return NULL;
-
-    u8 *outCursor = out;
-
+    u32 size;
+    u8 *out;
+    u8 *outCursor;
     u32 expectedCsum;
-    u8 *rawData = this->ReadEntryRaw(&size, &expectedCsum, entryIdx);
-
-    if (rawData == NULL)
-    {
-        free(out);
-        return NULL;
-    }
-
-    u8 *inCursor = rawData;
-    u8 inBitMask = 0x80;
-    u32 checksum = 0;
-    u32 dictHead = 1;
-
+    u8 *rawData;
+    u8 *inCursor;
+    u8 inBitMask;
+    u32 checksum;
+    u32 dictHead;
     u8 dict[LZSS_DICTSIZE];
-
-    // Memset doesn't produce matching assembly
-    for (i32 i = 0; i < LZSS_DICTSIZE; i++)
-    {
-        dict[i] = 0;
-    }
-
     u32 currByte;
     u32 inBits;
     u32 outBitMask;
     u32 matchOffset;
     u32 opcode;
 
+    if (entryIdx >= this->numOfEntries || this->parser == NULL)
+        return NULL;
+
+    size = this->GetEntrySize(entryIdx);
+    out = (u8 *)malloc(size);
+    if (out == NULL)
+        return NULL;
+
+    outCursor = out;
+
+    rawData = this->ReadEntryRaw(&size, &expectedCsum, entryIdx);
+    if (rawData == NULL)
+    {
+        free(out);
+        return NULL;
+    }
+
+    inCursor = rawData;
+    inBitMask = 0x80;
+    checksum = 0;
+    dictHead = 1;
+
+    for (i32 i = 0; i < LZSS_DICTSIZE; i++)
+        dict[i] = 0;
+
     for (;;)
     {
         DEC_READ_FLAG_BIT();
 
-        // Read literal byte from next 8 bits
         if (opcode != 0)
         {
             DEC_READ_BITS(8);
             DEC_WRITE_BYTE(inBits);
             continue;
         }
-        // Copy from dictionary, 13 bit offset, then 4 bit length
 
         DEC_READ_BITS(13);
-
         matchOffset = inBits;
+
         if (matchOffset == 0)
-        {
             break;
-        }
 
         DEC_READ_BITS(4);
 
@@ -314,18 +312,15 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
         }
     }
 
-    // Skip past any remaining bits in the data
     while (inBitMask != 0x80)
-    {
         DEC_READ_FLAG_BIT();
-    }
 
     free(rawData);
 
     if (this->entries[entryIdx].checksum != checksum)
     {
         free(out);
-        out = NULL;
+        return NULL;
     }
 
     return out;

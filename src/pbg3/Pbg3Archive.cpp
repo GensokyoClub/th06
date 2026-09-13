@@ -261,11 +261,7 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
 
     if (rawData == NULL)
     {
-        if (out != NULL)
-        {
-            free(out);
-            out = NULL;
-        }
+        free(out);
         return NULL;
     }
 
@@ -328,12 +324,8 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
 
     if (this->entries[entryIdx].checksum != checksum)
     {
-        if (out != NULL)
-        {
-            free(out);
-            out = NULL;
-        }
-        return NULL;
+        free(out);
+        out = NULL;
     }
 
     return out;

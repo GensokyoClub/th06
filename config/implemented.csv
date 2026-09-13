@@ -471,12 +471,11 @@ th06::Pbg3Parser::OpenArchive
 th06::Pbg3Parser::Close
 th06::Pbg3Parser::ReadBit
 th06::Pbg3Parser::ReadInt
-th06::Pbg3Parser::ReadByteAssumeAligned
+th06::Pbg3Parser::ReadByte
 th06::Pbg3Parser::SeekToOffset
 th06::Pbg3Parser::SeekToNextByte
 th06::Pbg3Parser::ReadByteAlignedData
 th06::Pbg3Parser::GetLastWriteTime
-th06::Pbg3Parser::ReadByte
 th06::Pbg3Parser::~Pbg3Parser
 th06::Pbg3Archive::Pbg3Archive
 th06::Pbg3Archive::ParseHeader

@@ -480,12 +480,11 @@ th06::Pbg3Parser::OpenArchive,0x43c4a0,0x49,__thiscall,,u32,Pbg3Parser*,char*
 th06::Pbg3Parser::Close,0x43c4f0,0x11,__thiscall,,u8,Pbg3Parser*
 th06::Pbg3Parser::ReadBit,0x43c510,0x59,__thiscall,,i32,Pbg3Parser*
 th06::Pbg3Parser::ReadInt,0x43c570,0x7b,__thiscall,,u32,Pbg3Parser*,char
-th06::Pbg3Parser::ReadByteAssumeAligned,0x43c5f0,0x16,__thiscall,,u8,Pbg3Parser*
+th06::Pbg3Parser::ReadByte,0x43c5f0,0x16,__thiscall,,u8,Pbg3Parser*
 th06::Pbg3Parser::SeekToOffset,0x43c610,0x40,__thiscall,,u32,Pbg3Parser*,u32
 th06::Pbg3Parser::SeekToNextByte,0x43c650,0x27,__thiscall,,u32,Pbg3Parser*
 th06::Pbg3Parser::ReadByteAlignedData,0x43c680,0x25,__thiscall,,i32,Pbg3Parser*,u8*,unsigned long
 th06::Pbg3Parser::GetLastWriteTime,0x43c6b0,0x20,__thiscall,,i32,Pbg3Parser*,_FILETIME*
-th06::Pbg3Parser::ReadByte,0x43c6d0,0x8,__thiscall,,void,Pbg3Parser*
 th06::Pbg3Parser::~Pbg3Parser,0x43c6e0,0x69,__thiscall,,void,Pbg3Parser*
 th06::Pbg3Parser::operator_delete,0x43c750,0x1e,__thiscall,,Pbg3Parser*,Pbg3Parser*,u8
 th06::Pbg3Archive::Pbg3Archive,0x43c770,0x13,__thiscall,,void,Pbg3Archive*

@@ -18,7 +18,7 @@ class IPbg3Parser
     u32 ReadString(char *out, u32 maxSize);
     virtual i32 ReadBit() = 0;
     virtual u32 ReadInt(u32 numBitsAsPowersOf2) = 0;
-    virtual i32 ReadByteAssumeAligned() = 0;
+    virtual i32 ReadByte() = 0;
     virtual i32 SeekToOffset(u32 fileOffset) = 0;
     virtual i32 SeekToNextByte() = 0;
     virtual i32 ReadByteAlignedData(u8 *data, u32 bytesToRead) = 0;

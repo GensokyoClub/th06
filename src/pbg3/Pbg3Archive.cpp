@@ -316,7 +316,9 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
     }
 
     while (inBitMask != 0x80)
+    {
         DEC_READ_FLAG_BIT();
+    }
 
     FREE(rawData);
 

@@ -278,7 +278,11 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
     u32 matchOffset;
     u32 opcode;
 
-    memset(dict, 0, LZSS_DICTSIZE);
+    // Memset doesn't produce matching assembly
+    for (i32 i = 0; i < LZSS_DICTSIZE; i++)
+    {
+        dict[i] = 0;
+    }
 
     for (;;)
     {
@@ -317,12 +321,9 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
         DEC_READ_FLAG_BIT();
     }
 
-    Pbg3Archive *self = this;
-    u32 index = entryIdx;
-
     free(rawData);
 
-    if (self->entries[index].checksum != checksum)
+    if (this->entries[entryIdx].checksum != checksum)
     {
         free(out);
         return NULL;

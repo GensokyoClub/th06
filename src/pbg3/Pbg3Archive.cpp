@@ -262,7 +262,8 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
     if (rawData == NULL)
     {
         free(out);
-        return NULL;
+        out = NULL;
+        goto hi;
     }
 
     u8 *inCursor = rawData;
@@ -326,9 +327,9 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
     if (this->entries[entryIdx].checksum != checksum)
     {
         free(out);
-        return NULL;
+        out = NULL;
     }
-
+hi:
     return out;
 }
 }; // namespace th06

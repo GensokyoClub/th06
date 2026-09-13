@@ -315,9 +315,12 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
         DEC_READ_FLAG_BIT();
     }
 
+    Pbg3Archive *self = this;
+    u32 index = entryIdx;
+
     free(rawData);
 
-    if (this->entries[entryIdx].checksum != checksum)
+    if (self->entries[index].checksum != checksum)
     {
         free(out);
         return NULL;

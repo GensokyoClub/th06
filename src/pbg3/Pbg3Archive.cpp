@@ -2,7 +2,12 @@
 
 #include "pbg3/Pbg3Archive.hpp"
 
-#define FREE(c) do {free(c); c = NULL;} while (0)
+#define FREE(c)                                                                                                        \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        free(c);                                                                                                       \
+        c = NULL;                                                                                                      \
+    } while (0)
 
 namespace th06
 {

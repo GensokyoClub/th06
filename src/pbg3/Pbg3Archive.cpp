@@ -2,6 +2,8 @@
 
 #include "pbg3/Pbg3Archive.hpp"
 
+#define FREE(c) do {free(c); c = NULL;} while (0)
+
 namespace th06
 {
 DIFFABLE_STATIC(Pbg3Archive **, g_Pbg3Archives)
@@ -275,7 +277,7 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
     rawData = this->ReadEntryRaw(&size, &expectedCsum, entryIdx);
     if (rawData == NULL)
     {
-        free(out);
+        FREE(out);
         return NULL;
     }
 
@@ -316,11 +318,11 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
     while (inBitMask != 0x80)
         DEC_READ_FLAG_BIT();
 
-    free(rawData);
+    FREE(rawData);
 
     if (this->entries[entryIdx].checksum != checksum)
     {
-        free(out);
+        FREE(out);
         return NULL;
     }
 

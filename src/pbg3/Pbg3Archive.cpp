@@ -275,6 +275,7 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
     u32 currByte;
     i32 inBits;
     u32 outBitMask;
+    i32 matchOffset;
     u32 opcode;
 
     // Memset doesn't produce matching assembly
@@ -298,6 +299,7 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
 
         DEC_READ_BITS(13);
 
+        matchOffset = inBits;
         if (inBits == 0)
         {
             break;

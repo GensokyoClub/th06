@@ -270,13 +270,15 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
     u32 checksum = 0;
     u32 dictHead = 1;
 
-    u8 dict[LZSS_DICTSIZE] = {0};
+    u8 dict[LZSS_DICTSIZE];
 
     u32 currByte;
     u32 inBits;
     u32 outBitMask;
     u32 matchOffset;
     u32 opcode;
+
+    memset(dict, 0, LZSS_DICTSIZE);
 
     for (;;)
     {

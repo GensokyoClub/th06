@@ -261,11 +261,7 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
 
     if (rawData == NULL)
     {
-        if (out != NULL)
-        {
-            free(out);
-            out = NULL;
-        }
+        free(out);
         return NULL;
     }
 
@@ -274,13 +270,7 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
     u32 checksum = 0;
     u32 dictHead = 1;
 
-    u8 dict[LZSS_DICTSIZE];
-
-    // Memset doesn't produce matching assembly
-    for (i32 i = 0; i < LZSS_DICTSIZE; i++)
-    {
-        dict[i] = 0;
-    }
+    u8 dict[LZSS_DICTSIZE] = {0};
 
     u32 currByte;
     u32 inBits;
@@ -329,11 +319,7 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, char *filename)
 
     if (this->entries[entryIdx].checksum != checksum)
     {
-        if (out != NULL)
-        {
-            free(out);
-            out = NULL;
-        }
+        free(out);
         return NULL;
     }
 

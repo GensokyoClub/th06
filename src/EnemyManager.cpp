@@ -171,7 +171,7 @@ void EnemyManager::RunEclTimeline()
     }
     while (0 <= this->timelineInstr->time)
     {
-        if (this->timelineTime == (i32)this->timelineInstr->time)
+        if (this->timelineTime == this->timelineInstr->time)
         {
             switch (this->timelineInstr->opCode)
             {
@@ -322,7 +322,7 @@ void EnemyManager::RunEclTimeline()
                 }
             }
         }
-        else if (this->timelineTime < (i32)this->timelineInstr->time)
+        else if (this->timelineTime < this->timelineInstr->time)
         {
             break;
         }

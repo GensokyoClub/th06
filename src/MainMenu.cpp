@@ -29,8 +29,6 @@ DIFFABLE_STATIC_ARRAY_ASSIGN(char *, 7, g_StageList) = {"Stage1", "Stage2", "Sta
 DIFFABLE_STATIC(i16, g_LastJoystickInput)
 MainMenu::MainMenu()
 {
-    // what?
-    int waste1, waste2, waste3, waste4;
 }
 
 #pragma function(strcpy)

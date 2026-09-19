@@ -162,13 +162,14 @@ struct AnmVm
         this->flags.isVisible = 0;
     }
 
-    D3DXVECTOR3 rotation;
-    D3DXVECTOR3 angleVel;
+    // D3DX empty constructors change MSVC 7 inlining decisions and leave different stack slots in containing constructors
+    D3DVECTOR rotation;
+    D3DVECTOR angleVel;
     f32 scaleY;
     f32 scaleX;
     f32 scaleInterpFinalY;
     f32 scaleInterpFinalX;
-    D3DXVECTOR2 uvScrollPos;
+    ZunVec2 uvScrollPos;
     ZunTimer currentTimeInScript;
     D3DXMATRIX matrix;
     ZunColor color;
@@ -194,7 +195,7 @@ struct AnmVm
     D3DCOLOR alphaInterpInitial;
     D3DCOLOR alphaInterpFinal;
     D3DXVECTOR3 posInterpInitial;
-    D3DXVECTOR3 posInterpFinal;
+    D3DVECTOR posInterpFinal;
     D3DXVECTOR3 posOffset;
     ZunTimer posInterpTime;
     i32 timeOfLastSpriteSet;
@@ -205,11 +206,4 @@ struct AnmVm
 };
 ZUN_ASSERT_SIZE(AnmVm, 0x110);
 
-struct FakePaddedAnmVm : AnmVm
-{
-    FakePaddedAnmVm()
-    {
-        FAKE_INLINE_DWORD_STACK_PADDING<4>();
-    }
-};
 }; // namespace th06

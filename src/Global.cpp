@@ -8,11 +8,11 @@
 #include <cstdarg>
 #endif
 
-#include "GameWindow.hpp"
 #include "Global.hpp"
 #include "Supervisor.hpp"
 #include "ZunMath.hpp"
 #include "i18n.hpp"
+#include "main.hpp"
 #include "pbg3/Pbg3Archive.hpp"
 #include <dinput.h>
 #include <mmsystem.h>
@@ -1068,6 +1068,20 @@ void Rotate(D3DXVECTOR3 *outVector, D3DXVECTOR3 *point, f32 angle)
     cosOut = cosf(angle);
     outVector->x = cosOut * point->x + sinOut * point->y;
     outVector->y = cosOut * point->y - sinOut * point->x;
+}
+
+void DebugPrint2(const char *fmt, ...)
+{
+#ifdef DEBUG
+    char tmpBuffer[512];
+    std::va_list args;
+
+    va_start(args, fmt);
+    vsprintf(tmpBuffer, fmt, args);
+    va_end(args);
+
+    printf("DEBUG2: %s\n", tmpBuffer);
+#endif
 }
 
 }; // namespace utils

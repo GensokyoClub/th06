@@ -7,12 +7,12 @@
 #include "Chain.hpp"
 #include "ChainPriorities.hpp"
 #include "GameManager.hpp"
-#include "GameWindow.hpp"
 #include "Global.hpp"
 #include "Player.hpp"
 #include "SoundPlayer.hpp"
 #include "Stage.hpp"
 #include "ZunColor.hpp"
+#include "main.hpp"
 
 namespace th06
 {

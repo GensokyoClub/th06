@@ -94,7 +94,6 @@ def configure(build_type):
             "TextHelper",
             "ItemManager",
             "main",
-            "GameWindow",
             "MidiOutput",
             "Supervisor",
             "MusicRoom",

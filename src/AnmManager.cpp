@@ -27,25 +27,6 @@ const D3DFORMAT g_TextureFormatD3D8Mapping[6] = {
 #define TEX_FMT_R8G8B8 4
 #define TEX_FMT_A4R4G4B4 5
 
-void AnmManager::ReleaseSurfaces(void)
-{
-    for (i32 idx = 0; idx < ARRAY_SIZE_SIGNED(this->surfaces); idx++)
-    {
-        SAFE_RELEASE(this->surfaces[idx]);
-    }
-}
-
-void AnmManager::TakeScreenshotIfRequested()
-{
-    if (this->screenshotTextureId >= 0)
-    {
-        this->TakeScreenshot(this->screenshotTextureId, this->screenshotLeft, this->screenshotTop,
-                             this->screenshotWidth, this->screenshotHeight);
-        this->screenshotTextureId = -1;
-    }
-    return;
-}
-
 AnmManager::AnmManager()
 {
     this->maybeLoadedSpriteCount = 0;

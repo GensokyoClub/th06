@@ -5,7 +5,6 @@
 #include "ChainPriorities.hpp"
 #include "Ending.hpp"
 #include "GameManager.hpp"
-#include "GameWindow.hpp"
 #include "Global.hpp"
 #include "MainMenu.hpp"
 #include "MusicRoom.hpp"
@@ -15,6 +14,7 @@
 #include "TextHelper.hpp"
 #include "i18n.hpp"
 #include "inttypes.hpp"
+#include "main.hpp"
 
 #include <stdio.h>
 #include <string.h>

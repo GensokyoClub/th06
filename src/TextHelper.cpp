@@ -1,7 +1,7 @@
 #include "TextHelper.hpp"
-#include "GameWindow.hpp"
 #include "Supervisor.hpp"
 #include "i18n.hpp"
+#include "main.hpp"
 
 namespace th06
 {

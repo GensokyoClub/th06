@@ -83,12 +83,6 @@
             "reverse_fn_order": false
         },
         {
-            "name": "GameWindow",
-            "target_path": "build/objdiff/orig/GameWindow.obj",
-            "base_path": "build/objdiff/reimpl/GameWindow.obj",
-            "reverse_fn_order": false
-        },
-        {
             "name": "Global",
             "target_path": "build/objdiff/orig/Global.obj",
             "base_path": "build/objdiff/reimpl/Global.obj",

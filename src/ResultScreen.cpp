@@ -5,13 +5,13 @@
 #include "Chain.hpp"
 #include "ChainPriorities.hpp"
 #include "GameManager.hpp"
-#include "GameWindow.hpp"
 #include "Global.hpp"
 #include "Player.hpp"
 #include "ReplayManager.hpp"
 #include "SoundPlayer.hpp"
 #include "Stage.hpp"
 #include "i18n.hpp"
+#include "main.hpp"
 #include <direct.h>
 #include <stdio.h>
 #include <time.h>

@@ -1,9 +1,9 @@
 #include "ScreenEffect.hpp"
 #include "AnmManager.hpp"
 #include "ChainPriorities.hpp"
-#include "GameWindow.hpp"
 #include "Global.hpp"
 #include "Supervisor.hpp"
+#include "main.hpp"
 
 namespace th06
 {
@@ -23,7 +23,7 @@ void ScreenEffect::Clear(D3DCOLOR color)
     return;
 }
 
-// Why is this not in GameWindow.cpp? Don't ask me...
+// Why is this not in main.cpp? Don't ask me...
 void ScreenEffect::SetViewport(D3DCOLOR color)
 {
     g_Supervisor.viewport.X = 0;

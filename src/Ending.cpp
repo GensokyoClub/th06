@@ -4,12 +4,12 @@
 #include "Chain.hpp"
 #include "ChainPriorities.hpp"
 #include "GameManager.hpp"
-#include "GameWindow.hpp"
 #include "Global.hpp"
 #include "Player.hpp"
 #include "ScreenEffect.hpp"
 #include "Supervisor.hpp"
 #include "i18n.hpp"
+#include "main.hpp"
 
 namespace th06
 {

@@ -9,7 +9,6 @@
 #include "AsciiManager.hpp"
 #include "ChainPriorities.hpp"
 #include "GameManager.hpp"
-#include "GameWindow.hpp"
 #include "Global.hpp"
 #include "ReplayData.hpp"
 #include "ReplayManager.hpp"
@@ -19,6 +18,7 @@
 #include "Supervisor.hpp"
 #include "ZunColor.hpp"
 #include "i18n.hpp"
+#include "main.hpp"
 
 namespace th06
 {

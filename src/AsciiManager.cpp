@@ -4,10 +4,10 @@
 #include "AnmManager.hpp"
 #include "ChainPriorities.hpp"
 #include "GameManager.hpp"
-#include "GameWindow.hpp"
 #include "Global.hpp"
 #include "Gui.hpp"
 #include "Supervisor.hpp"
+#include "main.hpp"
 #include <stdio.h>
 
 namespace th06

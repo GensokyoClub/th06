@@ -219,12 +219,6 @@ ZunResult SoundPlayer::LoadSound(i32 idx, const char *path)
     return ZUN_SUCCESS;
 }
 
-void FakeLink_WaitForSingleObject_CloseHandle()
-{
-    void *fakeA = (void *)&WaitForSingleObject;
-    void *fakeB = (void *)&CloseHandle;
-}
-
 #pragma var_order(notifySize, waveFile, res, numSamplesPerSec, blockAlign, curTime, startTime, waitTime, curTime2,     \
                   startTime2, waitTime2)
 ZunResult SoundPlayer::LoadWav(char *path)

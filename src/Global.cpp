@@ -735,11 +735,6 @@ u8 *th06::Controller::GetControllerState()
     }
 }
 
-void Fake_GetWindowLongA()
-{
-    void *fake = (void *)&GetWindowLong;
-}
-
 u16 Controller::GetInput(void)
 {
     u8 keyboardState[256];

@@ -158,7 +158,6 @@ i32 Pbg3Parser::GetLastWriteTime(LPFILETIME lastWriteTime)
         return FALSE;
     }
 
-    // EWWWW abstraction violation much? (Maybe this is an inlined function?)
-    return FileAbstraction::GetLastWriteTime(lastWriteTime);
+    return GetFileTime(this->handle, NULL, NULL, lastWriteTime);
 }
 }; // namespace th06

@@ -32,10 +32,6 @@ class FileAbstraction
     {
         return this->handle != INVALID_HANDLE_VALUE;
     }
-    i32 GetLastWriteTime(LPFILETIME lastWriteTime)
-    {
-        return GetFileTime(this->handle, NULL, NULL, lastWriteTime);
-    }
 
   protected:
     HANDLE handle;

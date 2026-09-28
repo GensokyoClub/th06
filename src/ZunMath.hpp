@@ -127,6 +127,12 @@ struct ZunVec2
         return ZunVec2(this->x + b.x, this->y + b.y);
     }
 
+    ZunVec2 operator-(const ZunVec2 &b) const
+    {
+        return ZunVec2(this->x - b.x, this->y - b.y);
+    }
+    
+
     ZunVec2 &operator+=(const ZunVec2 &b)
     {
         this->x += b.x;
@@ -144,6 +150,18 @@ struct ZunVec2
     {
         return ZunVec2(this->x * mult.x, this->y * mult.y);
     }
+
+
+    ZunVec2 operator/(const f32 mult) const
+    {
+        return ZunVec2(this->x / mult, this->y / mult);
+    }
+
+    ZunVec2 operator/(const ZunVec2 &mult) const
+    {
+        return ZunVec2(this->x / mult.x, this->y / mult.y);
+    }
+    
 
     f32 VectorLength() const
     {
@@ -310,6 +328,10 @@ struct ZunVec4
         this->y = vec.y;
         this->z = vec.z;
         this->w = w;
+    }
+    f32 calcDot(const ZunVec3 &vec) const
+    {
+        return this->x * vec.x + this->y * vec.y + this->z * vec.z + this->w;
     }
 };
 static_assert(sizeof(ZunVec4) == 0x10, "ZunVec4 has additional padding between struct members!");

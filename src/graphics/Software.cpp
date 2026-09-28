@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <cmath>
 
-constexpr u8 alphaThreshold = 4;
+constexpr u8 alphaThreshold = 10;
 
 GfxInterface *Software::Init()
 {
@@ -61,6 +61,11 @@ GfxInterface *Software::Init()
     self->depthBuffer = depthBuffer;
     self->noVertexBuffer = g_Supervisor.cfg.opts & (1 << GCOS_DONT_USE_VERTEX_BUF);
     self->noFog = g_Supervisor.cfg.opts & (1 << GCOS_DONT_USE_FOG);
+
+    for (int i = 0; i < PERSP_STEP; i++)
+    {
+        SW_BLOCK_INV[i + 1] = 1.0f / (i + 1);
+    }
 
     utils::DebugPrint2(
         "WARNING: Using software rasterizer, which can be slow. If performance is bad, make sure you're compiling with "
@@ -209,10 +214,6 @@ void Software::GetDepthRange(f32 *depthRange)
     depthRange[1] = this->depthFar;
 }
 
-inline ZunColor RGBAToZunColor(u8 r, u8 g, u8 b, u8 a)
-{
-    return ((ZunColor)a << 24) | ((ZunColor)r << 16) | ((ZunColor)g << 8) | (ZunColor)b;
-}
 
 inline ZunColor ColorDataToZunColor(ColorData colorData)
 {
@@ -408,7 +409,7 @@ inline f32 EdgeFunction(ZunVec3 v0, ZunVec3 v1, ZunVec3 v2)
 
 inline u8 AlphaBlendU8(u8 src, u8 dst, u8 a, u8 ia)
 {
-    return (u8)ZUN_MIN((((u32)src * a + (u32)dst * ia + 128) >> 8), 255);
+    return std::min(((u32)src * a + (u32)dst * ia + 128) >> 8, 255u);
 }
 
 inline u8 LerpU8(u32 a, u32 b, u32 t)
@@ -558,93 +559,127 @@ void Software::Draw(PrimitiveType type, i32 start, i32 count)
                  fogZ_row += fogZ_dy, dif0 += dif_dy)
         {
             ZunVec3 w = w0;
-            ZunVec2 uv1 = uv_row;
             f32 invw = invw_row;
             f32 ndcZ = ndcZ_row;
             f32 fogZ = fogZ_row;
             Diffuse dif = dif0;
-            for (int x = xmin; x <= xmax;
-                 x++, w += w_dx, uv1 += uv_dx, invw += invw_dx, ndcZ += ndcZ_dx, fogZ += fogZ_dx, dif += dif_dx)
-            {
-                if (w.x >= 0 && w.y >= 0 && w.z >= 0)
+            ZunVec2 uv1 = uv_row;
+            const f32 recW = 1.0f / invw;
+            ZunVec2 uv = uv1 * recW;
+            Diffuse diffusenew = dif * recW;
+            f32 ndcZnew = ndcZ * recW;
+            f32 fogDepthnew = fogZ * recW;
+
+            int x = xmin;
+            while(x <= xmax){
+                const int remaining = (xmax - x + 1);
+                const int blockLen = std::min(remaining, PERSP_STEP);
+
+                const ZunVec2 uvEndNumerator = uv1 + uv_dx * blockLen;
+                const f32 invwEnd = invw + invw_dx * blockLen;
+                const f32 recWEnd = 1.0f / invwEnd;
+                const ZunVec2 uvEnd = uvEndNumerator * recWEnd;
+                const ZunVec2 uvStep = (uvEnd - uv) * SW_BLOCK_INV[blockLen];
+
+                const Diffuse diffuseEnd = (dif + dif_dx * blockLen) * recWEnd;
+                const Diffuse diffuseStep(
+                    (diffuseEnd.r - diffusenew.r) * SW_BLOCK_INV[blockLen],
+                    (diffuseEnd.g - diffusenew.g) * SW_BLOCK_INV[blockLen],
+                    (diffuseEnd.b - diffusenew.b) * SW_BLOCK_INV[blockLen],
+                    (diffuseEnd.a - diffusenew.a) * SW_BLOCK_INV[blockLen]);
+
+                const f32 ndcZEnd = (ndcZ + ndcZ_dx * blockLen) * recWEnd;
+                const f32 ndcZStep = (ndcZEnd - ndcZnew) * SW_BLOCK_INV[blockLen];
+                const f32 fogDepthEnd = (fogZ + fogZ_dx * blockLen) * recWEnd;
+                const f32 fogDepthStep = (fogDepthEnd - fogDepthnew) * SW_BLOCK_INV[blockLen];
+
+                for (int i = 0; i < blockLen;
+                     i++, x++, w += w_dx, uv += uvStep, diffusenew += diffuseStep,
+                     ndcZnew += ndcZStep, fogDepthnew += fogDepthStep)
                 {
-                    const i32 pixelCoord = y * GAME_WINDOW_WIDTH + x;
-                    const f32 clipW = 1.0f / invw; // bad
-                    i32 u = uv1.x * clipW;
-                    i32 v = uv1.y * clipW;
-                    f32 depth;
-                    if (useDepthTest)
+                    if (w.x >= 0 && w.y >= 0 && w.z >= 0)
                     {
-                        depth = ZUN_MAX(ZUN_MIN(((ndcZ * clipW) * 0.5f + 0.5f) * depthDif + depthNear, depthFar),
-                                        depthNear);
-                        if (depthFunc == DEPTH_FUNC_LEQUAL && depth > depthBuffer[pixelCoord])
+                        const i32 pixelCoord = y * GAME_WINDOW_WIDTH + x;
+                        f32 depth;
+                        if (useDepthTest)
                         {
-                            continue;
+                            depth = std::clamp(((ndcZnew * 0.5f + 0.5f) * depthDif + depthNear), depthNear, depthFar);
+                            if (depthFunc == DEPTH_FUNC_LEQUAL && depth > depthBuffer[pixelCoord])
+                            {
+                                continue;
+                            }
+                        }
+                        ZunColor diffuse = RGBAToZunColor((u8)diffusenew.r, (u8)diffusenew.g,
+                                                          (u8)diffusenew.b, (u8)diffusenew.a);
+                        ZunColor fragArg1 = COLOR_WHITE;
+                        ZunColor fragArg2 = COLOR_WHITE;
+                        if (boundTexture && useTexCoord)
+                        {
+                            fragArg1 = texels[((i32)(uv.y) & (texH - 1)) * texW + ((i32)(uv.x) & (texW - 1))];
+                        }
+                        else
+                        {
+                            fragArg1 = diffuse;
+                        }
+
+                        if (!noVertexBuffer)
+                        {
+                            fragArg2 = precompTextureFactor;
+                        }
+                        else
+                        {
+                            fragArg2 = diffuse;
+                        }
+
+                        const u8 srcFactor = colorOp == COLOR_OP_REPLACE ? ZunA(fragArg1) : (ZunA(fragArg1) * ZunA(fragArg2)) >> 8;
+                        if (srcFactor > alphaThreshold)
+                        {
+                            ZunColor fragColor = COLOR_WHITE;
+                            switch (colorOp)
+                            {
+                                case COLOR_OP_MODULATE:
+                                    fragColor = ZunColorMul(fragArg1, fragArg2);
+                                    break;
+                                case COLOR_OP_ADD:
+                                    fragColor = RGBAToZunColor(
+                                        ZunR(fragArg1) + ZunR(fragArg2), ZunG(fragArg1) + ZunG(fragArg2),
+                                        ZunB(fragArg1) + ZunB(fragArg2), (ZunA(fragArg1) * ZunA(fragArg2)) >> 8);
+                                    break;
+                                case COLOR_OP_REPLACE:
+                                    fragColor = fragArg1;
+                            }
+
+                            if (!noFog)
+                            {
+                                f32 fogCoefficient = (fogFar - fogDepthnew) * precompInvFogDif;
+                                fragColor = InterpZunColor(fragColor, fogColor,
+                                                        255 - (u32)(std::clamp(fogCoefficient, 0.0f, 1.0f) * 255.0f));
+                            }
+
+                            ZunColor src = fragColor;
+                            u8 dstFactor = blendMode == BLEND_INV_SRC_ALPHA ? 255 - srcFactor : 255;
+                            if (useDepthTest && depthMask)
+                                depthBuffer[pixelCoord] = depth;
+
+                            if(dstFactor == 0) framebuffer[pixelCoord] = src;
+                            else
+                            {
+                                ZunColor dst = framebuffer[pixelCoord];
+                                framebuffer[pixelCoord] = RGBAToZunColor(AlphaBlendU8(ZunR(src), ZunR(dst), srcFactor, dstFactor),
+                                            AlphaBlendU8(ZunG(src), ZunG(dst), srcFactor, dstFactor),
+                                            AlphaBlendU8(ZunB(src), ZunB(dst), srcFactor, dstFactor), srcFactor);
+                            };
                         }
                     }
-                    ZunColor diffuse = RGBAToZunColor((u8)(dif.r * clipW), (u8)(dif.g * clipW), (u8)(dif.b * clipW),
-                                                      (u8)(dif.a * clipW));
-                    ZunColor fragColor = COLOR_WHITE;
-                    ZunColor fragArg1 = fragColor;
-                    ZunColor fragArg2 = fragColor;
-                    if (boundTexture && useTexCoord)
-                    {
-                        fragArg1 = texels[(v & (texH - 1)) * texW + (u & (texW - 1))];
-                    }
-                    else
-                    {
-                        fragArg1 = diffuse;
-                    }
-
-                    if (!noVertexBuffer)
-                    {
-                        fragArg2 = precompTextureFactor;
-                    }
-                    else
-                    {
-                        fragArg2 = diffuse;
-                    }
-
-                    switch (colorOp)
-                    {
-                    case COLOR_OP_MODULATE:
-                        fragColor = ZunColorMul(fragArg1, fragArg2);
-                        break;
-                    case COLOR_OP_ADD:
-                        fragColor =
-                            RGBAToZunColor(ZunR(fragArg1) + ZunR(fragArg2), ZunG(fragArg1) + ZunG(fragArg2),
-                                           ZunB(fragArg1) + ZunB(fragArg2), (ZunA(fragArg1) * ZunA(fragArg2)) >> 8);
-                        break;
-                    case COLOR_OP_REPLACE:
-                        fragColor = fragArg1;
-                    }
-
-                    if (!noFog)
-                    {
-                        f32 fogDepth = fogZ * clipW;
-                        f32 fogCoefficient = (fogFar - fogDepth) * precompInvFogDif;
-                        fragColor = InterpZunColor(fragColor, fogColor,
-                                                   255 - (u32)(ZUN_MIN(ZUN_MAX(fogCoefficient, 0.0f), 1.0f) * 255.0f));
-                    }
-
-                    ZunColor src = fragColor;
-                    ZunColor dst = framebuffer[pixelCoord];
-                    u8 srcFactor = ZunA(src);
-                    u8 dstFactor = 255;
-                    if (blendMode == BLEND_INV_SRC_ALPHA)
-                    {
-                        dstFactor -= srcFactor;
-                    }
-                    if (ZunA(fragColor) >= alphaThreshold)
-                    {
-                        if (useDepthTest && depthMask)
-                            depthBuffer[pixelCoord] = depth;
-                        framebuffer[pixelCoord] =
-                            RGBAToZunColor(AlphaBlendU8(ZunR(src), ZunR(dst), srcFactor, dstFactor),
-                                           AlphaBlendU8(ZunG(src), ZunG(dst), srcFactor, dstFactor),
-                                           AlphaBlendU8(ZunB(src), ZunB(dst), srcFactor, dstFactor), ZunA(src));
-                    }
                 }
+                uv1 = uvEndNumerator;
+                invw = invwEnd;
+                dif += dif_dx * blockLen;
+                ndcZ += ndcZ_dx * blockLen;
+                fogZ += fogZ_dx * blockLen;
+                diffusenew = diffuseEnd;
+                ndcZnew = ndcZEnd;
+                fogDepthnew = fogDepthEnd;
             }
         }
         index += increment;

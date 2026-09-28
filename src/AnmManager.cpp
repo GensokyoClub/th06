@@ -1245,9 +1245,15 @@ ZunResult AnmManager::Draw3(const AnmVm *vm)
     }
     else
     {
-        for (int i = 0; i < 4; i++)
-            g_PrimitivesToDrawVertexBuf[i].position =
-                ZunVec4(worldTransformMatrix * this->vertexBufferContents[i].position, 1.0f);
+        const ZunVec3 v0 = ZunVec3(worldTransformMatrix.m[0][0], worldTransformMatrix.m[0][1], worldTransformMatrix.m[0][2]) * 128.0f;
+        const ZunVec3 v1 = ZunVec3(worldTransformMatrix.m[1][0], worldTransformMatrix.m[1][1], worldTransformMatrix.m[1][2]) * 128.0f;
+        const ZunVec3 base2 = ZunVec3(worldTransformMatrix.m[3][0], worldTransformMatrix.m[3][1], worldTransformMatrix.m[3][2]);
+
+        g_PrimitivesToDrawVertexBuf[0].position = ZunVec4(base2 - v0 - v1, 1.0f);
+        g_PrimitivesToDrawVertexBuf[1].position = ZunVec4(base2 + v0 - v1, 1.0f);
+        g_PrimitivesToDrawVertexBuf[2].position = ZunVec4(base2 - v0 + v1, 1.0f);
+        g_PrimitivesToDrawVertexBuf[3].position = ZunVec4(base2 + v0 + v1, 1.0f);
+        
 
         g_PrimitivesToDrawVertexBuf[0].textureUV.x = g_PrimitivesToDrawVertexBuf[2].textureUV.x =
             vm->sprite->uvStart.x + vm->uvScrollPos.x;

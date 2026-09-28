@@ -241,13 +241,8 @@ ChainCallbackResult Stage::OnDrawHighPrio(Stage *stage)
     if (stage->skyFogNeedsSetup)
     {
         stage->skyFogNeedsSetup = 0;
-        //        g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGCOLOR, stage->skyFog.color);
-
         g_AnmManager->SetFogColor(stage->skyFog.color);
     }
-
-    //    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGSTART, *(u32 *)&stage->skyFog.nearPlane);
-    //    g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGEND, *(u32 *)&stage->skyFog.farPlane);
 
     g_AnmManager->SetFogRange(stage->skyFog.nearPlane, stage->skyFog.farPlane);
 
@@ -520,7 +515,6 @@ ZunResult Stage::RenderObjects(i32 zLevel)
 {
     f32 quadWidth;
     ZunVec3 projectSrc;
-    bool didDraw;
     const RawStageQuadBasic *curQuad;
     ZunVec3 quadPos;
     ZunVec3 quadScaledPos;
@@ -533,12 +527,14 @@ ZunResult Stage::RenderObjects(i32 zLevel)
 
     instance = &this->objectInstances[0];
     instancesDrawn = 0;
-    didDraw = false;
     projectSrc.x = 0.0;
     projectSrc.y = 0.0;
     projectSrc.z = 0.0;
     //    D3DXMatrixIdentity(&worldMatrix);
     worldMatrix.Identity();
+
+    ZunVec4 frustumTop = g_Supervisor.frustumTop;
+    ZunVec4 frustumBottom = g_Supervisor.frustumBottom;
 
     while (instance->id >= 0)
     {
@@ -567,8 +563,36 @@ ZunResult Stage::RenderObjects(i32 zLevel)
             //
             // It will check them in the following order: C, G, E, A, D, H, F, B.
 
+            f32 left = obj->position.x + instance->position.x - this->position.x;
+            f32 right = left + obj->size.x;
+            f32 top = -(obj->position.y + instance->position.y - this->position.y);
+            f32 bottom = top - obj->size.y;
+            f32 back = obj->position.z + instance->position.z - this->position.z;
+            f32 front = back + obj->size.z;
+
+            ZunVec3 helperCube[8] = {ZunVec3(left, top, front),    ZunVec3(left, bottom, front),
+                                     ZunVec3(left, bottom, back),  ZunVec3(left, top, back),
+                                     ZunVec3(right, top, front),   ZunVec3(right, bottom, front),
+                                     ZunVec3(right, bottom, back), ZunVec3(right, top, back)};
+
+            bool topVisible = false;
+            bool bottomVisible = false;
+
+            for (int i = 0; i < 8; i++)
+            {
+                if (frustumTop.calcDot(helperCube[i]) >= 0.0f)
+                    topVisible = true;
+                if (frustumBottom.calcDot(helperCube[i]) >= 0.0f)
+                    bottomVisible = true;
+            }
+
+            if (!topVisible || !bottomVisible)
+            {
+                goto skip;
+            }
+
             // It first starts by checking point C
-            worldMatrix.m[3][0] = obj->position.x + instance->position.x - this->position.x;
+            /*worldMatrix.m[3][0] = obj->position.x + instance->position.x - this->position.x;
             worldMatrix.m[3][1] = -(obj->position.y + instance->position.y - this->position.y);
             worldMatrix.m[3][2] = obj->position.z + instance->position.z - this->position.z + obj->size.z;
             projectVec3(quadPos, projectSrc, g_Supervisor.viewport, g_Supervisor.projectionMatrix,
@@ -653,11 +677,9 @@ ZunResult Stage::RenderObjects(i32 zLevel)
             }
 
             // If none of the points were in the viewport, we can skip this object
-            // entirely.
-            goto skip;
+            // entirely.*/
 
         render:
-            didDraw = true;
             while (0 <= curQuad->type)
             {
                 curQuadVm = this->quadVms + curQuad->vmIdx;

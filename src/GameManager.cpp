@@ -532,6 +532,7 @@ void GameManager::SetupCameraStageBackground(f32 extraRenderDistance)
     ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
     g_AnmManager->SetTransformMatrix(MATRIX_PROJECTION, perspectiveMatrix);
     g_Supervisor.projectionMatrix = perspectiveMatrix;
+    g_Supervisor.SetProjectionFrustum(perspectiveMatrix * viewMatrix);
     return;
 }
 
@@ -579,6 +580,7 @@ void GameManager::SetupCamera(f32 extraRenderDistance)
     ZunMatrix perspectiveMatrix = perspectiveMatrixFromFOV(fov, aspectRatio, 100.0f, 10000.0f + extraRenderDistance);
     g_AnmManager->SetTransformMatrix(MATRIX_PROJECTION, perspectiveMatrix);
     g_Supervisor.projectionMatrix = perspectiveMatrix;
+    g_Supervisor.SetProjectionFrustum(perspectiveMatrix * viewMatrix);
 
     return;
 }

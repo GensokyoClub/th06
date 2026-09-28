@@ -141,6 +141,18 @@ struct Supervisor
         return (this->cfg.opts >> GCOS_FORCE_60FPS & 1) || this->vsyncEnabled;
     }
 
+    void SetProjectionFrustum(ZunMatrix p)
+    {
+        frustumTop.x = p.m[0][3] - p.m[0][1];
+        frustumTop.y = p.m[1][3] - p.m[1][1];
+        frustumTop.z = p.m[2][3] - p.m[2][1];
+        frustumTop.w = p.m[3][3] - p.m[3][1];
+        frustumBottom.x = p.m[0][3] + p.m[0][1];
+        frustumBottom.y = p.m[1][3] + p.m[1][1];
+        frustumBottom.z = p.m[2][3] + p.m[2][1];
+        frustumBottom.w = p.m[3][3] + p.m[3][1];
+    }
+
     //    HINSTANCE hInstance;
     //    PDIRECT3D8 d3dIface;
     //    PDIRECT3DDEVICE8 d3dDevice;
@@ -183,6 +195,10 @@ struct Supervisor
     u8 colorMode16Bits;
 
     u32 startupTimeBeforeMenuMusic;
+
+    ZunVec4 frustumTop;
+    ZunVec4 frustumBottom;
+
     //    D3DCAPS8 d3dCaps;
 };
 

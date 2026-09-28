@@ -3,8 +3,12 @@
 #include "AnmManager.hpp"
 #include "GfxInterface.hpp"
 #include <SDL2/SDL.h>
+#include <algorithm>
 #include <memory>
 #include <vector>
+
+static constexpr int PERSP_STEP = 64;
+static float SW_BLOCK_INV[PERSP_STEP + 1] = {0.0f};
 
 struct Texture
 {
@@ -17,7 +21,7 @@ struct Texture
 
 // It is extremely recommended that you compile as Release if you want to use the software rasterizer
 // because it runs extremely slow on Debug
-//(or just straight up avoid using it unless extremely necessary)
+// (or just straight up avoid using it unless extremely necessary)
 
 constexpr inline u8 ZunA(ZunColor c)
 {
@@ -34,6 +38,11 @@ constexpr inline u8 ZunG(ZunColor c)
 constexpr inline u8 ZunB(ZunColor c)
 {
     return c & 0xFF;
+}
+
+inline ZunColor RGBAToZunColor(u8 r, u8 g, u8 b, u8 a)
+{
+    return ((u32)a << 24) | ((u32)r << 16) | ((u32)g << 8) | (u32)b;
 }
 
 struct Diffuse

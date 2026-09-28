@@ -214,7 +214,6 @@ void Software::GetDepthRange(f32 *depthRange)
     depthRange[1] = this->depthFar;
 }
 
-
 inline ZunColor ColorDataToZunColor(ColorData colorData)
 {
     return RGBAToZunColor(colorData.r, colorData.g, colorData.b, colorData.a);
@@ -571,7 +570,8 @@ void Software::Draw(PrimitiveType type, i32 start, i32 count)
             f32 fogDepthnew = fogZ * recW;
 
             int x = xmin;
-            while(x <= xmax){
+            while (x <= xmax)
+            {
                 const int remaining = (xmax - x + 1);
                 const int blockLen = std::min(remaining, PERSP_STEP);
 
@@ -582,20 +582,18 @@ void Software::Draw(PrimitiveType type, i32 start, i32 count)
                 const ZunVec2 uvStep = (uvEnd - uv) * SW_BLOCK_INV[blockLen];
 
                 const Diffuse diffuseEnd = (dif + dif_dx * blockLen) * recWEnd;
-                const Diffuse diffuseStep(
-                    (diffuseEnd.r - diffusenew.r) * SW_BLOCK_INV[blockLen],
-                    (diffuseEnd.g - diffusenew.g) * SW_BLOCK_INV[blockLen],
-                    (diffuseEnd.b - diffusenew.b) * SW_BLOCK_INV[blockLen],
-                    (diffuseEnd.a - diffusenew.a) * SW_BLOCK_INV[blockLen]);
+                const Diffuse diffuseStep((diffuseEnd.r - diffusenew.r) * SW_BLOCK_INV[blockLen],
+                                          (diffuseEnd.g - diffusenew.g) * SW_BLOCK_INV[blockLen],
+                                          (diffuseEnd.b - diffusenew.b) * SW_BLOCK_INV[blockLen],
+                                          (diffuseEnd.a - diffusenew.a) * SW_BLOCK_INV[blockLen]);
 
                 const f32 ndcZEnd = (ndcZ + ndcZ_dx * blockLen) * recWEnd;
                 const f32 ndcZStep = (ndcZEnd - ndcZnew) * SW_BLOCK_INV[blockLen];
                 const f32 fogDepthEnd = (fogZ + fogZ_dx * blockLen) * recWEnd;
                 const f32 fogDepthStep = (fogDepthEnd - fogDepthnew) * SW_BLOCK_INV[blockLen];
 
-                for (int i = 0; i < blockLen;
-                     i++, x++, w += w_dx, uv += uvStep, diffusenew += diffuseStep,
-                     ndcZnew += ndcZStep, fogDepthnew += fogDepthStep)
+                for (int i = 0; i < blockLen; i++, x++, w += w_dx, uv += uvStep, diffusenew += diffuseStep,
+                         ndcZnew += ndcZStep, fogDepthnew += fogDepthStep)
                 {
                     if (w.x >= 0 && w.y >= 0 && w.z >= 0)
                     {
@@ -609,8 +607,8 @@ void Software::Draw(PrimitiveType type, i32 start, i32 count)
                                 continue;
                             }
                         }
-                        ZunColor diffuse = RGBAToZunColor((u8)diffusenew.r, (u8)diffusenew.g,
-                                                          (u8)diffusenew.b, (u8)diffusenew.a);
+                        ZunColor diffuse =
+                            RGBAToZunColor((u8)diffusenew.r, (u8)diffusenew.g, (u8)diffusenew.b, (u8)diffusenew.a);
                         ZunColor fragArg1 = COLOR_WHITE;
                         ZunColor fragArg2 = COLOR_WHITE;
                         if (boundTexture && useTexCoord)
@@ -631,29 +629,30 @@ void Software::Draw(PrimitiveType type, i32 start, i32 count)
                             fragArg2 = diffuse;
                         }
 
-                        const u8 srcFactor = colorOp == COLOR_OP_REPLACE ? ZunA(fragArg1) : (ZunA(fragArg1) * ZunA(fragArg2)) >> 8;
+                        const u8 srcFactor =
+                            colorOp == COLOR_OP_REPLACE ? ZunA(fragArg1) : (ZunA(fragArg1) * ZunA(fragArg2)) >> 8;
                         if (srcFactor > alphaThreshold)
                         {
                             ZunColor fragColor = COLOR_WHITE;
                             switch (colorOp)
                             {
-                                case COLOR_OP_MODULATE:
-                                    fragColor = ZunColorMul(fragArg1, fragArg2);
-                                    break;
-                                case COLOR_OP_ADD:
-                                    fragColor = RGBAToZunColor(
-                                        ZunR(fragArg1) + ZunR(fragArg2), ZunG(fragArg1) + ZunG(fragArg2),
-                                        ZunB(fragArg1) + ZunB(fragArg2), (ZunA(fragArg1) * ZunA(fragArg2)) >> 8);
-                                    break;
-                                case COLOR_OP_REPLACE:
-                                    fragColor = fragArg1;
+                            case COLOR_OP_MODULATE:
+                                fragColor = ZunColorMul(fragArg1, fragArg2);
+                                break;
+                            case COLOR_OP_ADD:
+                                fragColor = RGBAToZunColor(
+                                    ZunR(fragArg1) + ZunR(fragArg2), ZunG(fragArg1) + ZunG(fragArg2),
+                                    ZunB(fragArg1) + ZunB(fragArg2), (ZunA(fragArg1) * ZunA(fragArg2)) >> 8);
+                                break;
+                            case COLOR_OP_REPLACE:
+                                fragColor = fragArg1;
                             }
 
                             if (!noFog)
                             {
                                 f32 fogCoefficient = (fogFar - fogDepthnew) * precompInvFogDif;
-                                fragColor = InterpZunColor(fragColor, fogColor,
-                                                        255 - (u32)(std::clamp(fogCoefficient, 0.0f, 1.0f) * 255.0f));
+                                fragColor = InterpZunColor(
+                                    fragColor, fogColor, 255 - (u32)(std::clamp(fogCoefficient, 0.0f, 1.0f) * 255.0f));
                             }
 
                             ZunColor src = fragColor;
@@ -661,13 +660,15 @@ void Software::Draw(PrimitiveType type, i32 start, i32 count)
                             if (useDepthTest && depthMask)
                                 depthBuffer[pixelCoord] = depth;
 
-                            if(dstFactor == 0) framebuffer[pixelCoord] = src;
+                            if (dstFactor == 0)
+                                framebuffer[pixelCoord] = src;
                             else
                             {
                                 ZunColor dst = framebuffer[pixelCoord];
-                                framebuffer[pixelCoord] = RGBAToZunColor(AlphaBlendU8(ZunR(src), ZunR(dst), srcFactor, dstFactor),
-                                            AlphaBlendU8(ZunG(src), ZunG(dst), srcFactor, dstFactor),
-                                            AlphaBlendU8(ZunB(src), ZunB(dst), srcFactor, dstFactor), srcFactor);
+                                framebuffer[pixelCoord] =
+                                    RGBAToZunColor(AlphaBlendU8(ZunR(src), ZunR(dst), srcFactor, dstFactor),
+                                                   AlphaBlendU8(ZunG(src), ZunG(dst), srcFactor, dstFactor),
+                                                   AlphaBlendU8(ZunB(src), ZunB(dst), srcFactor, dstFactor), srcFactor);
                             };
                         }
                     }

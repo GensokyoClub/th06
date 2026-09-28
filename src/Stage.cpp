@@ -570,29 +570,26 @@ ZunResult Stage::RenderObjects(i32 zLevel)
             f32 back = obj->position.z + instance->position.z - this->position.z;
             f32 front = back + obj->size.z;
 
-            ZunVec3 helperCube[8] = {
-                ZunVec3(left,top,front),
-                ZunVec3(left,bottom,front),
-                ZunVec3(left,bottom,back),
-                ZunVec3(left,top,back),
-                ZunVec3(right,top,front),
-                ZunVec3(right,bottom,front),
-                ZunVec3(right,bottom,back),
-                ZunVec3(right,top,back)
-            };
+            ZunVec3 helperCube[8] = {ZunVec3(left, top, front),    ZunVec3(left, bottom, front),
+                                     ZunVec3(left, bottom, back),  ZunVec3(left, top, back),
+                                     ZunVec3(right, top, front),   ZunVec3(right, bottom, front),
+                                     ZunVec3(right, bottom, back), ZunVec3(right, top, back)};
 
             bool topVisible = false;
             bool bottomVisible = false;
 
-            for(int i = 0; i < 8; i++) {
-                if(frustumTop.calcDot(helperCube[i]) >= 0.0f) topVisible = true;
-                if(frustumBottom.calcDot(helperCube[i]) >= 0.0f) bottomVisible = true;
+            for (int i = 0; i < 8; i++)
+            {
+                if (frustumTop.calcDot(helperCube[i]) >= 0.0f)
+                    topVisible = true;
+                if (frustumBottom.calcDot(helperCube[i]) >= 0.0f)
+                    bottomVisible = true;
             }
 
-            if(!topVisible || !bottomVisible) {
+            if (!topVisible || !bottomVisible)
+            {
                 goto skip;
             }
-
 
             // It first starts by checking point C
             /*worldMatrix.m[3][0] = obj->position.x + instance->position.x - this->position.x;

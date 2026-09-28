@@ -140,8 +140,8 @@ struct Supervisor
     {
         return (this->cfg.opts >> GCOS_FORCE_60FPS & 1) || this->vsyncEnabled;
     }
-    
-    void SetProjectionFrustum(ZunMatrix p) 
+
+    void SetProjectionFrustum(ZunMatrix p)
     {
         frustumTop.x = p.m[0][3] - p.m[0][1];
         frustumTop.y = p.m[1][3] - p.m[1][1];
@@ -198,7 +198,7 @@ struct Supervisor
 
     ZunVec4 frustumTop;
     ZunVec4 frustumBottom;
-    
+
     //    D3DCAPS8 d3dCaps;
 };
 

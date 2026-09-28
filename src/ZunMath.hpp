@@ -131,7 +131,6 @@ struct ZunVec2
     {
         return ZunVec2(this->x - b.x, this->y - b.y);
     }
-    
 
     ZunVec2 &operator+=(const ZunVec2 &b)
     {
@@ -151,7 +150,6 @@ struct ZunVec2
         return ZunVec2(this->x * mult.x, this->y * mult.y);
     }
 
-
     ZunVec2 operator/(const f32 mult) const
     {
         return ZunVec2(this->x / mult, this->y / mult);
@@ -161,7 +159,6 @@ struct ZunVec2
     {
         return ZunVec2(this->x / mult.x, this->y / mult.y);
     }
-    
 
     f32 VectorLength() const
     {

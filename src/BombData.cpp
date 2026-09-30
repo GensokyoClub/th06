@@ -34,7 +34,7 @@ void BombData::BombReimuACalc(Player *player)
         {
             player->bombInfo.reimuABombProjectilesState[i] = 0;
         }
-        g_ItemManager.RemoveAllItems();
+        g_ItemManager.MagnetAllItems();
         g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &player->positionCenter, 1, COLOR_NEONBLUE);
 
         player->bombProjectiles[8].posX = (player->positionCenter).x;
@@ -257,7 +257,7 @@ void BombData::BombReimuBCalc(Player *player)
 
     if (player->bombInfo.timer.HasTicked() && player->bombInfo.timer == 0)
     {
-        g_ItemManager.RemoveAllItems();
+        g_ItemManager.MagnetAllItems();
         g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT, TH_REIMU_B_BOMB_NAME);
         player->bombInfo.duration = 140;
         player->invulnerabilityTimer = 200;
@@ -357,7 +357,7 @@ void BombData::BombMarisaACalc(Player *player)
 
     if (player->bombInfo.timer.HasTicked() && player->bombInfo.timer == 0)
     {
-        g_ItemManager.RemoveAllItems();
+        g_ItemManager.MagnetAllItems();
         g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT, TH_MARISA_A_BOMB_NAME);
         player->bombInfo.duration = 250;
         player->invulnerabilityTimer = 300;
@@ -466,7 +466,7 @@ void BombData::BombMarisaBCalc(Player *player)
 
     if (player->bombInfo.timer.HasTicked() && player->bombInfo.timer == 0)
     {
-        g_ItemManager.RemoveAllItems();
+        g_ItemManager.MagnetAllItems();
         g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT, TH_MARISA_B_BOMB_NAME);
         player->bombInfo.duration = 300;
         player->invulnerabilityTimer = 360;

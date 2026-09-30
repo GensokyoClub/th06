@@ -810,11 +810,12 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                     local_98[1] += g_Rng.GetRandomF32InRange(144.0f) - 72.0f;
                     if (g_GameManager.currentPower < MAX_POWER)
                     {
-                        g_ItemManager.SpawnItem(&local_98, local_8c == 0 ? ITEM_POWER_BIG : ITEM_POWER_SMALL, 0);
+                        g_ItemManager.SpawnItem(&local_98, local_8c == 0 ? ITEM_POWER_BIG : ITEM_POWER_SMALL,
+                                                ITEM_STATE_FALLING);
                     }
                     else
                     {
-                        g_ItemManager.SpawnItem(&local_98, ITEM_POINT, 0);
+                        g_ItemManager.SpawnItem(&local_98, ITEM_POINT, ITEM_STATE_FALLING);
                     }
                 }
                 break;
@@ -838,7 +839,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
                 enemy->currentContext.time += *EnemyEclInstr::GetVar(enemy, &instruction->args.timeSet.timeToSet, NULL);
                 break;
             case ECL_OPCODE_DROPITEMID:
-                g_ItemManager.SpawnItem(&enemy->position, instruction->args.dropItem.itemId, 0);
+                g_ItemManager.SpawnItem(&enemy->position, instruction->args.dropItem.itemId, ITEM_STATE_FALLING);
                 break;
             case ECL_OPCODE_STDUNPAUSE:
                 g_Stage.unpauseFlag = 1;

@@ -1100,12 +1100,12 @@ ChainCallbackResult Player::OnUpdate(Player *p)
                 g_GameManager.powerItemCountForScore = 0;
                 if (g_GameManager.livesRemaining > 0)
                 {
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_BIG, 2);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, 2);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, 2);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, 2);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, 2);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, 2);
+                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_BIG, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
                     if (g_GameManager.currentPower <= 16)
                     {
                         g_GameManager.currentPower = 0;
@@ -1118,11 +1118,11 @@ ChainCallbackResult Player::OnUpdate(Player *p)
                 }
                 else
                 {
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, 2);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, 2);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, 2);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, 2);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, 2);
+                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
                     g_GameManager.currentPower = 0;
                     g_Gui.flags.flag2 = 2;
                     g_GameManager.extraLives = 255;

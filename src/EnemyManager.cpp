@@ -516,7 +516,7 @@ ZunResult EnemyManager::RegisterChain(const char *stgEnm1, const char *stgEnm2)
     return ZUN_SUCCESS;
 }
 
-#pragma var_order(local_8, damage, enemyIdx, enemyHitbox, enemyVmIdx, enemyLifeBeforeDmg, curEnemy)
+#pragma var_order(damagedByBomb, damage, enemyIdx, enemyHitbox, enemyVmIdx, enemyLifeBeforeDmg, curEnemy)
 ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
 {
     Enemy *curEnemy;
@@ -525,9 +525,9 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
     D3DXVECTOR3 enemyHitbox;
     i32 enemyIdx;
     i32 damage;
-    i32 local_8;
+    i32 damagedByBomb;
 
-    local_8 = 0;
+    damagedByBomb = 0;
     mgr->RunEclTimeline();
     for (curEnemy = &mgr->enemies[0], mgr->enemyCount = 0, enemyIdx = 0; enemyIdx < ARRAY_SIZE_SIGNED(mgr->enemies) - 1;
          enemyIdx++, curEnemy++)
@@ -578,7 +578,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
                 curEnemy->vms[enemyVmIdx].anmFileIndex = -1;
             }
         }
-        local_8 = 0;
+        damagedByBomb = 0;
         if (curEnemy->flags.hasBeenInBounds && !curEnemy->flags.isInvisible)
         {
             enemyLifeBeforeDmg = curEnemy->life;
@@ -593,7 +593,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
             }
             if (curEnemy->flags.isInteractable)
             {
-                damage = g_Player.CalcDamageToEnemy(&curEnemy->position, &curEnemy->hitboxDimensions, &local_8);
+                damage = g_Player.CalcDamageToEnemy(&curEnemy->position, &curEnemy->hitboxDimensions, &damagedByBomb);
                 if (70 <= damage)
                 {
                     damage = 70;
@@ -601,7 +601,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
                 g_GameManager.score = (damage / 5) * 10 + g_GameManager.score;
                 if (mgr->spellcardInfo.isActive)
                 {
-                    if (local_8 == 0)
+                    if (damagedByBomb == 0)
                     {
                         if (damage > 7)
                         {
@@ -669,7 +669,8 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
                     if (curEnemy->itemDrop >= 0)
                     {
                         g_EffectManager.SpawnParticles(curEnemy->deathAnm2 + 4, &curEnemy->position, 3, COLOR_WHITE);
-                        g_ItemManager.SpawnItem(&curEnemy->position, (ItemType)curEnemy->itemDrop, local_8);
+                        g_ItemManager.SpawnItem(&curEnemy->position, (ItemType)curEnemy->itemDrop,
+                                                (ItemState)damagedByBomb);
                     }
                     else if (curEnemy->itemDrop == ITEM_RANDOM_ITEM)
                     {
@@ -678,7 +679,8 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
                             g_EffectManager.SpawnParticles(curEnemy->deathAnm2 + 4, &curEnemy->position, 6,
                                                            COLOR_WHITE);
                             g_ItemManager.SpawnItem(&curEnemy->position,
-                                                    (ItemType)g_RandomItems[mgr->randomItemTableIndex], local_8);
+                                                    (ItemType)g_RandomItems[mgr->randomItemTableIndex],
+                                                    (ItemState)damagedByBomb);
                             mgr->randomItemTableIndex++;
                             if (ARRAY_SIZE_SIGNED(g_RandomItems) <= mgr->randomItemTableIndex)
                             {

@@ -397,7 +397,7 @@ void BulletManager::RemoveAllBullets(ZunBool turnIntoItem)
 
         if (turnIntoItem)
         {
-            g_ItemManager.SpawnItem(&bullet->pos, ITEM_POINT_BULLET, 1);
+            g_ItemManager.SpawnItem(&bullet->pos, ITEM_POINT_BULLET, ITEM_STATE_MAGNETED);
             memset(bullet, 0, sizeof(Bullet));
         }
         else
@@ -428,7 +428,7 @@ void BulletManager::RemoveAllBullets(ZunBool turnIntoItem)
                     itemPos.x = cosine * offset + laser->pos.x;
                     itemPos.y = sine * offset + laser->pos.y;
                     itemPos.z = 0.0f;
-                    g_ItemManager.SpawnItem(&itemPos, ITEM_POINT_BULLET, 1);
+                    g_ItemManager.SpawnItem(&itemPos, ITEM_POINT_BULLET, ITEM_STATE_MAGNETED);
                     offset += 32.0f;
                 }
             }
@@ -470,7 +470,7 @@ i32 BulletManager::DespawnBullets(i32 maxBonusScore, ZunBool awardPoints)
 
         if (awardPoints)
         {
-            g_ItemManager.SpawnItem(&bullets->pos, ITEM_POINT_BULLET, 1);
+            g_ItemManager.SpawnItem(&bullets->pos, ITEM_POINT_BULLET, ITEM_STATE_MAGNETED);
         }
 
         g_AsciiManager.CreatePopup1(&bullets->pos, bulletScore,
@@ -503,7 +503,7 @@ i32 BulletManager::DespawnBullets(i32 maxBonusScore, ZunBool awardPoints)
 
             if (awardPoints)
             {
-                g_ItemManager.SpawnItem(&laser->pos, ITEM_POINT_BULLET, 1);
+                g_ItemManager.SpawnItem(&laser->pos, ITEM_POINT_BULLET, ITEM_STATE_MAGNETED);
                 offset = laser->startOffset;
                 fsincos_wrapper(&sine, &cosine, laser->angle);
 
@@ -512,7 +512,7 @@ i32 BulletManager::DespawnBullets(i32 maxBonusScore, ZunBool awardPoints)
                     itemPos.x = cosine * offset + laser->pos.x;
                     itemPos.y = sine * offset + laser->pos.y;
                     itemPos.z = 0.0f;
-                    g_ItemManager.SpawnItem(&itemPos, ITEM_POINT_BULLET, 1);
+                    g_ItemManager.SpawnItem(&itemPos, ITEM_POINT_BULLET, ITEM_STATE_MAGNETED);
                     offset += 32.0f;
                 }
             }
@@ -922,7 +922,7 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                 else if (grazeState == 2)
                 {
                     curBullet->state = BULLET_STATE_DESPAWNING;
-                    g_ItemManager.SpawnItem(&curBullet->pos, ITEM_POINT_BULLET, 1);
+                    g_ItemManager.SpawnItem(&curBullet->pos, ITEM_POINT_BULLET, ITEM_STATE_MAGNETED);
                 }
             }
             else if (curBullet->isGrazed == 1)
@@ -934,7 +934,7 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *mgr)
                     curBullet->state = BULLET_STATE_DESPAWNING;
                     if (grazeState == 2)
                     {
-                        g_ItemManager.SpawnItem(&curBullet->pos, ITEM_POINT_BULLET, 1);
+                        g_ItemManager.SpawnItem(&curBullet->pos, ITEM_POINT_BULLET, ITEM_STATE_MAGNETED);
                     }
                 }
             }

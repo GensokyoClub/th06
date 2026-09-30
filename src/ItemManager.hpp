@@ -21,11 +21,19 @@ enum ItemType // This enum is 1 byte in size on Enemy
     ITEM_POINT_BULLET,
 };
 
+enum ItemState
+{
+    ITEM_STATE_FALLING,
+    ITEM_STATE_MAGNETED,
+    ITEM_STATE_SPAWNED_BY_PLAYER_DEATH,
+};
+
 struct Item
 {
     AnmVm sprite;
     D3DXVECTOR3 currentPosition;
-    D3DXVECTOR3 startPosition;
+    // For some reason ZUN reused the same field for both startPosition and velocity
+    D3DXVECTOR3 startPositionVelocity;
     D3DXVECTOR3 targetPosition;
     ZunTimer timer;
     i8 itemType;
@@ -37,10 +45,10 @@ ZUN_ASSERT_SIZE(Item, 0x144);
 
 struct ItemManager
 {
-    void SpawnItem(D3DXVECTOR3 *position, ItemType type, i32 state);
+    void SpawnItem(D3DXVECTOR3 *position, ItemType type, ItemState state);
     void OnUpdate();
     void OnDraw();
-    void RemoveAllItems();
+    void MagnetAllItems();
 
     Item items[513];
     i32 nextIndex;

@@ -37,7 +37,7 @@ def find_diff(path1, path2):
             offset += 0x1000
 
 
-def build(build_type, comdat_permute_enable, verbose=False, jobs=1, target=None):
+def build(build_type, verbose=False, jobs=1, target=None):
     ninja_args = []
     if verbose:
         ninja_args += ["-v"]
@@ -54,66 +54,38 @@ def build(build_type, comdat_permute_enable, verbose=False, jobs=1, target=None)
     else:
         ninja_args += ["build/th06.exe"]
 
-    # best yet: 201
-    comdat_permute = 0
-    best_match = comdat_permute
-    best_match_dist = 0
+    configure(build_type)
 
-    while True:
-        if comdat_permute_enable:
-            print("Building comdat attempt " + str(comdat_permute), file=sys.stderr)
-        configure(build_type, comdat_permute)
+    # Use the original MSVC toolchain through the project's Windows environment.
+    run_windows_program(
+        [str(SCRIPTS_DIR / "th06run.bat"), "ninja"] + ninja_args,
+        cwd=str(SCRIPTS_DIR.parent),
+    )
 
-        # Then, run the build. We use run_windows_program to automatically go through
-        # wine if running on linux/macos. scripts/th06run.bat will setup PATH and other
-        # environment variables for the MSVC toolchain to work before calling ninja.
-        run_windows_program(
-            [str(SCRIPTS_DIR / "th06run.bat"), "ninja"] + ninja_args,
-            cwd=str(SCRIPTS_DIR.parent),
-        )
-
-        # Ninja is pretty hard to work with so this is the only (janky)
-        # working solution. If you can think of a better one, PRs welcome.
-        if build_type == BuildType.BINARY_MATCHBUILD:
-            if os.path.isfile("build/th06.exe"):
-                run_windows_program(
-                    [
-                        sys.executable,
-                        str(SCRIPTS_DIR / "patch_timestamp.py"),
-                        "build/th06.exe",
-                        "1038721275",  # 2002-12-01 06:41:15
-                    ]
-                )
-            diff = find_diff("resources/th06.exe", "build/th06.exe")
-            if diff == None:
-                print("Binary matches!", file=sys.stderr)
-            else:
-                print(
-                    "Diff at byte "
-                    + hex(diff[0])
-                    + ": "
-                    + hex(diff[1])
-                    + " "
-                    + hex(diff[2]),
-                    file=sys.stderr,
-                )
-                if comdat_permute_enable:
-                    if diff[0] > best_match_dist:
-                        best_match_dist = diff[0]
-                        best_match = comdat_permute
-                    comdat_permute += 1
-                    if comdat_permute != 1000:
-                        continue
-                    print(
-                        "Giving up, best match was "
-                        + str(best_match)
-                        + " at "
-                        + hex(best_match_dist),
-                        file=sys.stderr,
-                    )
-                else:
-                    print("Exe hash: " + get_sha256("build/th06.exe"), file=sys.stderr)
-        break
+    if build_type == BuildType.BINARY_MATCHBUILD:
+        if os.path.isfile("build/th06.exe"):
+            run_windows_program(
+                [
+                    sys.executable,
+                    str(SCRIPTS_DIR / "patch_timestamp.py"),
+                    "build/th06.exe",
+                    "1038721275",  # 2002-12-01 06:41:15
+                ]
+            )
+        diff = find_diff("resources/th06.exe", "build/th06.exe")
+        if diff is None:
+            print("Binary matches!", file=sys.stderr)
+        else:
+            print(
+                "Diff at byte "
+                + hex(diff[0])
+                + ": "
+                + hex(diff[1])
+                + " "
+                + hex(diff[2]),
+                file=sys.stderr,
+            )
+            print("Exe hash: " + get_sha256("build/th06.exe"), file=sys.stderr)
 
 
 def main():
@@ -128,7 +100,6 @@ def main():
             "tests",
             "objdiffbuild",
             "binary_matchbuild",
-            "binary_matchbuild_comdat",
             "trial",
         ],
         default="normal",
@@ -157,7 +128,6 @@ def main():
     )
     args = parser.parse_args()
     target = None
-    comdat_permute = False
 
     # First, create the build.ninja file that will be used to build.
     if args.build_type == "normal":
@@ -170,9 +140,6 @@ def main():
         build_type = BuildType.OBJDIFFBUILD
     elif args.build_type == "binary_matchbuild":
         build_type = BuildType.BINARY_MATCHBUILD
-    elif args.build_type == "binary_matchbuild_comdat":
-        build_type = BuildType.BINARY_MATCHBUILD
-        comdat_permute = True
     elif args.build_type == "trial":
         build_type = BuildType.TRIAL
 
@@ -182,7 +149,7 @@ def main():
     elif args.target is not None:
         target = args.target
 
-    build(build_type, comdat_permute, args.verbose, args.jobs, target=target)
+    build(build_type, args.verbose, args.jobs, target=target)
 
 
 if __name__ == "__main__":

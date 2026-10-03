@@ -3,7 +3,6 @@
 #include <mmreg.h>
 #include <mmsystem.h>
 
-#include "AnmManager.hpp"
 #include "Global.hpp"
 #include "MidiOutput.hpp"
 #include "Supervisor.hpp"
@@ -695,7 +694,7 @@ void MidiOutput::FadeOutSetVolume(i32 volume)
     arg1 = 7;
     for (idx = 0; idx < ARRAY_SIZE_SIGNED(this->channels); idx += 1)
     {
-        midiStatus = (idx + 0xb0) & 0xff;
+        midiStatus = (u8)(idx + 0xb0);
         volumeClamped = (i32)(this->channels[idx].channelVolume * this->fadeOutVolumeMultiplier) + volume;
         if (volumeClamped < 0)
         {
@@ -710,7 +709,7 @@ void MidiOutput::FadeOutSetVolume(i32 volume)
     }
 }
 
-AnmManager::~AnmManager()
+void MidiTimer::OnTimerElapsed()
 {
 }
 

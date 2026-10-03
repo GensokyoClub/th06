@@ -12,6 +12,25 @@
 
 namespace th06
 {
+namespace EnemyEclInstr
+{
+static i32 *GetVar(Enemy *enemy, EclVarId *varId, EclValueType *valueType);
+static f32 *GetVarFloat(Enemy *enemy, f32 *varId, EclValueType *valueType);
+static void SetVar(Enemy *enemy, EclVarId out, void *value);
+
+static void MathAdd(Enemy *enemy, EclVarId out, EclVarId *lhs, EclVarId *rhs);
+static void MathSub(Enemy *enemy, EclVarId out, EclVarId *lhs, EclVarId *rhs);
+static void MathMul(Enemy *enemy, EclVarId out, EclVarId *lhs, EclVarId *rhs);
+static void MathDiv(Enemy *enemy, EclVarId out, EclVarId *lhs, EclVarId *rhs);
+static void MathMod(Enemy *enemy, EclVarId out, EclVarId *lhs, EclVarId *rhs);
+static void MathAtan2(Enemy *enemy, EclVarId out, f32 *a1, f32 *a2, f32 *b1, f32 *b2);
+
+static void MoveDirTime(Enemy *enemy, EclRawInstr *instr);
+static void MovePosTime(Enemy *enemy, EclRawInstr *instr);
+static void MoveTime(Enemy *enemy, EclRawInstr *instr);
+
+} // namespace EnemyEclInstr
+
 DIFFABLE_STATIC_ARRAY_ASSIGN(i32, 64, g_SpellcardScore) = {
     200000, 200000, 200000, 200000, 200000, 200000, 200000, 250000, 250000, 250000, 250000, 250000, 250000,
     250000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000,
@@ -1044,7 +1063,7 @@ namespace EnemyEclInstr
 {
 
 #pragma var_order(alu, angle)
-void MoveDirTime(Enemy *enemy, EclRawInstr *instr)
+static void MoveDirTime(Enemy *enemy, EclRawInstr *instr)
 {
     EclRawInstrAluArgs *alu;
     f32 angle;
@@ -1064,7 +1083,7 @@ void MoveDirTime(Enemy *enemy, EclRawInstr *instr)
     enemy->flags.movementMode = EnemyMove_Interp;
 }
 
-void MovePosTime(Enemy *enemy, EclRawInstr *instr)
+static void MovePosTime(Enemy *enemy, EclRawInstr *instr)
 {
     D3DXVECTOR3 newPos;
     EclRawInstrAluArgs *alu = &instr->args.alu;
@@ -1083,7 +1102,7 @@ void MovePosTime(Enemy *enemy, EclRawInstr *instr)
     enemy->axisSpeed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }
 
-void MoveTime(Enemy *enemy, EclRawInstr *instr)
+static void MoveTime(Enemy *enemy, EclRawInstr *instr)
 {
     EclRawInstrAluArgs *alu;
     f32 angle;
@@ -1103,7 +1122,7 @@ void MoveTime(Enemy *enemy, EclRawInstr *instr)
     enemy->flags.movementMode = EnemyMove_Interp;
 }
 
-i32 *GetVar(Enemy *enemy, EclVarId *eclVarId, EclValueType *valueType)
+static i32 *GetVar(Enemy *enemy, EclVarId *eclVarId, EclValueType *valueType)
 {
     if (valueType != NULL)
         *valueType = ECL_VALUE_TYPE_UNDEFINED;
@@ -1221,11 +1240,13 @@ i32 *GetVar(Enemy *enemy, EclVarId *eclVarId, EclValueType *valueType)
             *valueType = ECL_VALUE_TYPE_INT;
         return &enemy->phaseTimer.current;
 
-    case ECL_VAR_PLAYER_DISTANCE:
-        g_PlayerDistance = D3DXVec3Length(&(g_Player.positionCenter - enemy->position));
+    case ECL_VAR_PLAYER_DISTANCE: {
+        D3DXVECTOR3 distance = g_Player.positionCenter - enemy->position;
+        g_PlayerDistance = D3DXVec3Length(&distance);
         if (valueType != NULL)
             *valueType = ECL_VALUE_TYPE_READONLY;
         return (i32 *)&g_PlayerDistance;
+    }
 
     case ECL_VAR_ENEMY_LIFE:
         if (valueType != NULL)
@@ -1241,7 +1262,7 @@ i32 *GetVar(Enemy *enemy, EclVarId *eclVarId, EclValueType *valueType)
     return (i32 *)eclVarId;
 }
 
-f32 *GetVarFloat(Enemy *enemy, f32 *eclVarId, EclValueType *valueType)
+static f32 *GetVarFloat(Enemy *enemy, f32 *eclVarId, EclValueType *valueType)
 {
     i32 varId = *eclVarId;
     i32 *res = GetVar(enemy, (EclVarId *)&varId, valueType);
@@ -1256,7 +1277,7 @@ f32 *GetVarFloat(Enemy *enemy, f32 *eclVarId, EclValueType *valueType)
 }
 
 #pragma var_order(lhsPtr, rhsPtr, lhsType)
-void SetVar(Enemy *enemy, EclVarId out, void *value)
+static void SetVar(Enemy *enemy, EclVarId out, void *value)
 {
     i32 *lhsPtr;
     EclValueType lhsType;
@@ -1275,7 +1296,7 @@ void SetVar(Enemy *enemy, EclVarId out, void *value)
 }
 
 #pragma var_order(outPtr, rhsPtr, lhsPtr, outType)
-void MathAdd(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId)
+static void MathAdd(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId)
 {
     EclValueType outType;
     i32 *outPtr;
@@ -1299,7 +1320,7 @@ void MathAdd(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsV
 }
 
 #pragma var_order(outPtr, rhsPtr, lhsPtr, outType)
-void MathSub(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId)
+static void MathSub(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId)
 {
     EclValueType outType;
     i32 *outPtr;
@@ -1322,7 +1343,7 @@ void MathSub(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsV
 }
 
 #pragma var_order(outPtr, rhsPtr, lhsPtr, outType)
-void MathMul(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId)
+static void MathMul(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId)
 {
     EclValueType outType;
     i32 *outPtr;
@@ -1347,7 +1368,7 @@ void MathMul(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsV
 }
 
 #pragma var_order(outPtr, rhsPtr, lhsPtr, outType)
-void MathDiv(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId)
+static void MathDiv(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId)
 {
     EclValueType outType;
     i32 *outPtr;
@@ -1370,7 +1391,7 @@ void MathDiv(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsV
 }
 
 #pragma var_order(outPtr, rhsPtr, lhsPtr, outType)
-void MathMod(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId)
+static void MathMod(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId)
 {
     EclValueType outType;
     i32 *outPtr;
@@ -1393,7 +1414,7 @@ void MathMod(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsV
 }
 
 #pragma var_order(y2Ptr, outPtr, x1Ptr, y1Ptr, outType, x2Ptr)
-void MathAtan2(Enemy *enemy, EclVarId outVarId, f32 *x1, f32 *y1, f32 *y2, f32 *x2)
+static void MathAtan2(Enemy *enemy, EclVarId outVarId, f32 *x1, f32 *y1, f32 *y2, f32 *x2)
 {
     EclValueType outType;
     f32 *outPtr;

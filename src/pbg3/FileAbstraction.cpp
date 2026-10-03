@@ -244,6 +244,4 @@ FileAbstraction::~FileAbstraction()
     this->Close();
 }
 
-#include "ComdatPermute.cpp"
-
 } // namespace th06

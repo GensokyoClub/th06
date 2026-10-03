@@ -114,7 +114,7 @@ th06::Enemy::Despawn,0x4121b0,0x84,__thiscall,,void,Enemy*
 th06::Enemy::ClampPos,0x412240,0xd9,__thiscall,,void,Enemy*
 th06::EnemyManager::RegisterChain,0x412320,0xc0,default,,ZunResult,char*,char*
 th06::EnemyManager::OnUpdate,0x4123e0,0xa5f,default,,ChainCallbackResult,EnemyManager*
-th06::Enemy::UpdateEffects,0x412e50,0xbd,default,,void,Enemy*
+th06::UpdateEffects,0x412e50,0xbd,default,,void,Enemy*
 th06::EnemyManager::OnDraw,0x412f10,0x304,default,,ChainCallbackResult,EnemyManager*
 th06::EnemyManager::AddedCallback,0x413220,0xff,__stdcall,,ZunResult,EnemyManager*
 th06::EnemyManager::DeletedCallback,0x413320,0x21,default,,ZunResult,EnemyManager*
@@ -132,8 +132,8 @@ th06::BulletManager::SpawnLaserPattern,0x414670,0x27b,__thiscall,,Laser*,BulletM
 th06::BulletManager::RegisterChain,0x4148f0,0xd3,default,,ZunResult,char*
 th06::BulletManager::OnUpdate,0x4149d0,0x1b10,default,,ChainCallbackResult,BulletManager*
 th06::BulletManager::OnDraw,0x416500,0x647,default,,ChainCallbackResult,BulletManager*
-th06::BulletManager::DrawBullet,0x416b50,0xea,default,,void,Bullet*
-th06::BulletManager::DrawBulletNoHwVertex,0x416c50,0xf4,default,,void,Bullet*
+th06::DrawBullet,0x416b50,0xea,default,,void,Bullet*
+th06::DrawBulletNoHwVertex,0x416c50,0xf4,default,,void,Bullet*
 th06::BulletManager::AddedCallback,0x416d60,0x509,__stdcall,,ZunResult,BulletManager*
 th06::BulletManager::DeletedCallback,0x417270,0x31,default,,ZunResult,BulletManager*
 th06::BulletManager::CutChain,0x4172b0,0x23,default,,void
@@ -354,8 +354,8 @@ th06::ResultScreen::LinkScoreEx,0x42bc2d,0x2e,__thiscall,,i32,ResultScreen*,Hscr
 th06::ResultScreen::FreeScore,0x42bc5b,0x2a,__thiscall,,void,ResultScreen*,i32,i32
 th06::ResultScreen::HandleResultKeyboard,0x42bc85,0x64f,__thiscall,,i32,ResultScreen*
 th06::ResultScreen::HandleReplaySaveKeyboard,0x42c2d4,0xdd0,__thiscall,,i32,ResultScreen*
-th06::ResultScreen::MoveCursor,0x42d0a4,0xeb,default,,void,ResultScreen*,i32
-th06::ResultScreen::MoveCursorHorizontally,0x42d18f,0x103,default,,i32,ResultScreen*,i32
+th06::MoveResultCursor,0x42d0a4,0xeb,default,,void,ResultScreen*,i32
+th06::MoveResultCursorHorizontally,0x42d18f,0x103,default,,i32,ResultScreen*,i32
 th06::ResultScreen::CheckConfirmButton,0x42d292,0xc8,__thiscall,,ZunResult,ResultScreen*
 th06::ResultScreen::DrawFinalStats,0x42d35a,0x419,__thiscall,,u32,ResultScreen*
 th06::ResultScreen::RegisterChain,0x42d773,0x12e,default,,ZunResult,i32
@@ -420,9 +420,9 @@ th06::AnmManager::DrawEndingRect,0x4354c0,0x1a8,__thiscall,,void,AnmManager*,i32
 th06::AnmManager::TakeScreenshot,0x435670,0xed,__thiscall,,void,AnmManager*,i32,i32,i32,i32,i32
 th06::MainMenu::MainMenu,0x43575d,0x42,__thiscall,,void,MainMenu*
 th06::MainMenu::OnUpdate,0x43579f,0x1d31,__stdcall,,ChainCallbackResult,MainMenu*
-th06::MainMenu::MoveCursor,0x43753c,0x136,default,,i32,MainMenu*,i32
-th06::MainMenu::SwapMapping,0x437672,0x131,default,,void,MainMenu*,u16,u16,i32
-th06::MainMenu::DrawMenuItem,0x4377a3,0xff,__stdcall,,void,AnmVm*,i32,i32,unsigned long,unsigned long,i32
+th06::MoveCursor,0x43753c,0x136,default,,i32,MainMenu*,i32
+th06::SwapMapping,0x437672,0x131,default,,void,MainMenu*,u16,u16,i32
+th06::DrawMenuItem,0x4377a3,0xff,__stdcall,,void,AnmVm*,i32,i32,unsigned long,unsigned long,i32
 th06::MainMenu::BeginStartup,0x4378a2,0x142,__thiscall,,ZunResult,MainMenu*
 th06::MainMenu::WeirdSecondInputCheck,0x4379e4,0x15d,__thiscall,,i32,MainMenu*
 th06::MainMenu::DrawStartMenu,0x437b41,0x68b,__thiscall,,ZunResult,MainMenu*

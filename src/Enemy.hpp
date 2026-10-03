@@ -186,7 +186,6 @@ struct Enemy
     void Despawn();
 
     static void ResetEffectArray(Enemy *enemy);
-    static void UpdateEffects(Enemy *enemy);
 
     f32 LifePercent()
     {

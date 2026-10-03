@@ -123,6 +123,30 @@ Enemy *EnemyManager::SpawnEnemy(i32 eclSubId, D3DXVECTOR3 *pos, i16 life, i16 it
     return newEnemy;
 }
 
+#pragma var_order(effect, i)
+static void UpdateEffects(Enemy *enemy)
+{
+    Effect *effect;
+    i32 i;
+
+    for (i = 0; i < enemy->effectIdx; i++)
+    {
+        effect = enemy->effectArray[i];
+        if (!effect)
+        {
+            continue;
+        }
+
+        effect->position = enemy->position;
+        if (effect->distance < enemy->effectDistance)
+        {
+            effect->distance += 0.3f;
+        }
+
+        effect->angleRelated = utils::AddNormalizeAngle(effect->angleRelated, ZUN_PI / 100.0f);
+    }
+}
+
 void Enemy::ResetEffectArray(Enemy *enemy)
 {
     i32 idx;
@@ -709,7 +733,7 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
                 curEnemy->primaryVm.flags.colorOp = AnmColorOp_Modulate;
             }
         }
-        Enemy::UpdateEffects(curEnemy);
+        UpdateEffects(curEnemy);
         if (!g_GameManager.isTimeStopped)
         {
             curEnemy->phaseTimer++;
@@ -717,30 +741,6 @@ ChainCallbackResult EnemyManager::OnUpdate(EnemyManager *mgr)
     }
     mgr->timelineTime++;
     return CHAIN_CALLBACK_RESULT_CONTINUE;
-}
-
-#pragma var_order(effect, i)
-void Enemy::UpdateEffects(Enemy *enemy)
-{
-    Effect *effect;
-    i32 i;
-
-    for (i = 0; i < enemy->effectIdx; i++)
-    {
-        effect = enemy->effectArray[i];
-        if (!effect)
-        {
-            continue;
-        }
-
-        effect->position = enemy->position;
-        if (effect->distance < enemy->effectDistance)
-        {
-            effect->distance += 0.3f;
-        }
-
-        effect->angleRelated = utils::AddNormalizeAngle(effect->angleRelated, ZUN_PI / 100.0f);
-    }
 }
 
 #pragma var_order(curEnemyIdx, curEnemyVm, curEnemyVmIdx, curEnemy)

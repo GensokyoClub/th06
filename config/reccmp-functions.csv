@@ -115,7 +115,7 @@ th06::Enemy::Despawn,0x4121b0,function
 th06::Enemy::ClampPos,0x412240,function
 th06::EnemyManager::RegisterChain,0x412320,function
 th06::EnemyManager::OnUpdate,0x4123e0,function
-th06::Enemy::UpdateEffects,0x412e50,function
+th06::UpdateEffects,0x412e50,function
 th06::EnemyManager::OnDraw,0x412f10,function
 th06::EnemyManager::AddedCallback,0x413220,function
 th06::EnemyManager::DeletedCallback,0x413320,function
@@ -133,8 +133,8 @@ th06::BulletManager::SpawnLaserPattern,0x414670,function
 th06::BulletManager::RegisterChain,0x4148f0,function
 th06::BulletManager::OnUpdate,0x4149d0,function
 th06::BulletManager::OnDraw,0x416500,function
-th06::BulletManager::DrawBullet,0x416b50,function
-th06::BulletManager::DrawBulletNoHwVertex,0x416c50,function
+th06::DrawBullet,0x416b50,function
+th06::DrawBulletNoHwVertex,0x416c50,function
 th06::BulletManager::AddedCallback,0x416d60,function
 th06::BulletManager::DeletedCallback,0x417270,function
 th06::BulletManager::CutChain,0x4172b0,function
@@ -355,8 +355,8 @@ th06::ResultScreen::LinkScoreEx,0x42bc2d,function
 th06::ResultScreen::FreeScore,0x42bc5b,function
 th06::ResultScreen::HandleResultKeyboard,0x42bc85,function
 th06::ResultScreen::HandleReplaySaveKeyboard,0x42c2d4,function
-th06::ResultScreen::MoveCursor,0x42d0a4,function
-th06::ResultScreen::MoveCursorHorizontally,0x42d18f,function
+th06::MoveResultCursor,0x42d0a4,function
+th06::MoveResultCursorHorizontally,0x42d18f,function
 th06::ResultScreen::CheckConfirmButton,0x42d292,function
 th06::ResultScreen::DrawFinalStats,0x42d35a,function
 th06::ResultScreen::RegisterChain,0x42d773,function
@@ -421,9 +421,9 @@ th06::AnmManager::DrawEndingRect,0x4354c0,function
 th06::AnmManager::TakeScreenshot,0x435670,function
 th06::MainMenu::MainMenu,0x43575d,function
 th06::MainMenu::OnUpdate,0x43579f,function
-th06::MainMenu::MoveCursor,0x43753c,function
-th06::MainMenu::SwapMapping,0x437672,function
-th06::MainMenu::DrawMenuItem,0x4377a3,function
+th06::MoveCursor,0x43753c,function
+th06::SwapMapping,0x437672,function
+th06::DrawMenuItem,0x4377a3,function
 th06::MainMenu::BeginStartup,0x4378a2,function
 th06::MainMenu::WeirdSecondInputCheck,0x4379e4,function
 th06::MainMenu::DrawStartMenu,0x437b41,function

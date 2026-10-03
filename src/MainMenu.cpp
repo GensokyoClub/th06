@@ -81,10 +81,6 @@ struct MainMenu
     void ColorMenuItem(AnmVm *, i32, i32, i32);
 
     static ZunResult LoadTitleAnm(MainMenu *menu);
-    static CursorMovement MoveCursor(MainMenu *menu, i32 menuLength);
-    static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor, D3DCOLOR activeItemColor,
-                             D3DCOLOR inactiveItemColor, i32 spriteIdx /* I think*/);
-    static void SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, ZunBool unk);
 
     i32 ReplayHandling();
     static ZunResult LoadReplayMenu(MainMenu *menu);
@@ -134,6 +130,11 @@ struct MainMenu
     u32 lastFrameTime;
 };
 ZUN_ASSERT_TYPE(MainMenu, 0x10f34, 4);
+
+static CursorMovement MoveCursor(MainMenu *menu, i32 menuLength);
+static void SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, ZunBool unk);
+static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor, D3DCOLOR activeItemColor, D3DCOLOR inactiveItemColor,
+                         i32 spriteIdx /* I think*/);
 
 DIFFABLE_STATIC(MainMenu, g_MainMenu);
 
@@ -961,7 +962,7 @@ ChainCallbackResult MainMenu::OnUpdate(MainMenu *menu)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-CursorMovement MainMenu::MoveCursor(MainMenu *menu, i32 menuLength)
+static CursorMovement MoveCursor(MainMenu *menu, i32 menuLength)
 {
     if (WAS_PRESSED_REPEATING(TH_BUTTON_UP))
     {
@@ -996,7 +997,7 @@ CursorMovement MainMenu::MoveCursor(MainMenu *menu, i32 menuLength)
     return CURSOR_DONT_MOVE;
 }
 
-void MainMenu::SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, ZunBool unk)
+static void SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, ZunBool unk)
 {
     if (!unk && menu->controlMapping.shootButton == btnPressed)
     {
@@ -1036,8 +1037,8 @@ void MainMenu::SwapMapping(MainMenu *menu, i16 btnPressed, i16 oldMapping, ZunBo
     }
 }
 
-void MainMenu::DrawMenuItem(AnmVm *vm, int itemNumber, int cursor, D3DCOLOR currentItemColor, D3DCOLOR otherItemColor,
-                            int vm_amount)
+static void DrawMenuItem(AnmVm *vm, int itemNumber, int cursor, D3DCOLOR currentItemColor, D3DCOLOR otherItemColor,
+                         int vm_amount)
 {
     if (itemNumber == cursor)
     {

@@ -124,7 +124,11 @@ ZunResult ReplayManager::RegisterChain(ZunBool isDemo, const char *replayFile)
             AddedCallback(g_ReplayManager);
             break;
         case true:
+#if TRIALBUILD
+            AddedCallbackDemo(g_ReplayManager);
+#else
             return AddedCallbackDemo(g_ReplayManager);
+#endif
             break;
         }
     }

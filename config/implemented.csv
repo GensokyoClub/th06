@@ -63,8 +63,8 @@ th06::BulletManager::SpawnBulletPattern
 th06::BulletManager::SpawnSingleBullet
 th06::BulletManager::OnUpdate
 th06::BulletManager::OnDraw
-th06::BulletManager::DrawBullet
-th06::BulletManager::DrawBulletNoHwVertex
+th06::DrawBullet
+th06::DrawBulletNoHwVertex
 th06::BulletManager::RemoveAllBullets
 th06::BulletManager::DespawnBullets
 th06::BulletManager::TurnAllBulletsIntoPoints
@@ -169,7 +169,7 @@ th06::Enemy::HandleLifeCallback
 th06::Enemy::HandleTimerCallback
 th06::Enemy::Despawn
 th06::Enemy::ResetEffectArray
-th06::Enemy::UpdateEffects
+th06::UpdateEffects
 th06::GameErrorContext::Fatal
 th06::GameErrorContext::Log
 th06::GameErrorContext::Flush
@@ -238,8 +238,8 @@ th06::MainMenu::LoadTitleAnm
 th06::MainMenu::LoadDiffCharSelect
 th06::MainMenu::DrawStartMenu
 th06::MainMenu::ReplayHandling
-th06::MainMenu::MoveCursor
-th06::MainMenu::DrawMenuItem
+th06::MoveCursor
+th06::DrawMenuItem
 th06::MainMenu::DrawReplayMenu
 th06::MainMenu::OnUpdate
 th06::MainMenu::OnDraw
@@ -248,7 +248,7 @@ th06::MainMenu::WeirdSecondInputCheck
 th06::MainMenu::OnUpdateOptionsMenu
 th06::MainMenu::ColorMenuItem
 th06::MainMenu::LoadReplayMenu
-th06::MainMenu::SwapMapping
+th06::SwapMapping
 th06::MidiDevice::MidiDevice
 th06::MidiDevice::Close
 th06::MidiDevice::OpenDevice
@@ -287,11 +287,11 @@ th06::ResultScreen::LinkScoreEx
 th06::ResultScreen::RegisterChain
 th06::ResultScreen::ResultScreen
 th06::ResultScreen::DrawFinalStats
-th06::ResultScreen::MoveCursor
+th06::MoveResultCursor
 th06::OpenScore
 th06::ResultScreen::HandleResultKeyboard
 th06::ResultScreen::HandleReplaySaveKeyboard
-th06::ResultScreen::MoveCursorHorizontally
+th06::MoveResultCursorHorizontally
 th06::ResultScreen::CheckConfirmButton
 th06::WriteScore
 th06::ParseCatk

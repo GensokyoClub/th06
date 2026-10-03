@@ -179,21 +179,9 @@
             "reverse_fn_order": false
         },
         {
-            "name": "Supervisor2",
-            "target_path": "build/objdiff/orig/Supervisor2.obj",
-            "base_path": "build/objdiff/reimpl/Supervisor2.obj",
-            "reverse_fn_order": false
-        },
-        {
             "name": "TextHelper",
             "target_path": "build/objdiff/orig/TextHelper.obj",
             "base_path": "build/objdiff/reimpl/TextHelper.obj",
-            "reverse_fn_order": false
-        },
-        {
-            "name": "ZunTimer",
-            "target_path": "build/objdiff/orig/ZunTimer.obj",
-            "base_path": "build/objdiff/reimpl/ZunTimer.obj",
             "reverse_fn_order": false
         },
         {

@@ -14,6 +14,9 @@
 
 namespace th06
 {
+static void DrawBullet(Bullet *bullet);
+static void DrawBulletNoHwVertex(Bullet *bullet);
+
 DIFFABLE_STATIC_ARRAY_ASSIGN(u32, 28, g_EffectsColorWithTextureBlending) = {
     0xff000000, 0xff303030, 0xff606060, 0xff500000, 0xff900000, 0xffff2020, 0xff400040,
     0xff800080, 0xffff30ff, 0xff000050, 0xff000090, 0xff2020ff, 0xff203060, 0xff304090,
@@ -1155,7 +1158,7 @@ ChainCallbackResult BulletManager::OnDraw(BulletManager *mgr)
 
             if (curBullet->sprites.bulletHeight > 16)
             {
-                BulletManager::DrawBullet(curBullet);
+                DrawBullet(curBullet);
             }
         }
 
@@ -1170,7 +1173,7 @@ ChainCallbackResult BulletManager::OnDraw(BulletManager *mgr)
                 (curBullet->sprites.spriteBullet.anmFileIndex == ANM_SCRIPT_BULLET3_RING_BALL ||
                  curBullet->sprites.spriteBullet.anmFileIndex == ANM_SCRIPT_BULLET3_BALL))
             {
-                BulletManager::DrawBullet(curBullet);
+                DrawBullet(curBullet);
             }
         }
 
@@ -1185,7 +1188,7 @@ ChainCallbackResult BulletManager::OnDraw(BulletManager *mgr)
                 curBullet->sprites.spriteBullet.anmFileIndex != ANM_SCRIPT_BULLET3_RING_BALL &&
                 curBullet->sprites.spriteBullet.anmFileIndex != ANM_SCRIPT_BULLET3_BALL)
             {
-                BulletManager::DrawBullet(curBullet);
+                DrawBullet(curBullet);
             }
         }
 
@@ -1198,7 +1201,7 @@ ChainCallbackResult BulletManager::OnDraw(BulletManager *mgr)
 
             if (curBullet->sprites.bulletHeight == 8)
             {
-                BulletManager::DrawBullet(curBullet);
+                DrawBullet(curBullet);
             }
         }
     }
@@ -1214,7 +1217,7 @@ ChainCallbackResult BulletManager::OnDraw(BulletManager *mgr)
 
             if (curBullet->sprites.bulletHeight > 16)
             {
-                BulletManager::DrawBulletNoHwVertex(curBullet);
+                DrawBulletNoHwVertex(curBullet);
             }
         }
 
@@ -1229,7 +1232,7 @@ ChainCallbackResult BulletManager::OnDraw(BulletManager *mgr)
                 (curBullet->sprites.spriteBullet.anmFileIndex == ANM_SCRIPT_BULLET3_RING_BALL ||
                  curBullet->sprites.spriteBullet.anmFileIndex == ANM_SCRIPT_BULLET3_BALL))
             {
-                BulletManager::DrawBulletNoHwVertex(curBullet);
+                DrawBulletNoHwVertex(curBullet);
             }
         }
 
@@ -1244,7 +1247,7 @@ ChainCallbackResult BulletManager::OnDraw(BulletManager *mgr)
                 curBullet->sprites.spriteBullet.anmFileIndex != ANM_SCRIPT_BULLET3_RING_BALL &&
                 curBullet->sprites.spriteBullet.anmFileIndex != ANM_SCRIPT_BULLET3_BALL)
             {
-                BulletManager::DrawBulletNoHwVertex(curBullet);
+                DrawBulletNoHwVertex(curBullet);
             }
         }
 
@@ -1257,7 +1260,7 @@ ChainCallbackResult BulletManager::OnDraw(BulletManager *mgr)
 
             if (curBullet->sprites.bulletHeight == 8)
             {
-                BulletManager::DrawBulletNoHwVertex(curBullet);
+                DrawBulletNoHwVertex(curBullet);
             }
         }
     }
@@ -1267,7 +1270,7 @@ ChainCallbackResult BulletManager::OnDraw(BulletManager *mgr)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-void BulletManager::DrawBullet(Bullet *bullet)
+static void DrawBullet(Bullet *bullet)
 {
     AnmVm *anmVm;
 
@@ -1303,7 +1306,7 @@ void BulletManager::DrawBullet(Bullet *bullet)
     g_AnmManager->Draw2(anmVm);
 }
 
-void BulletManager::DrawBulletNoHwVertex(Bullet *bullet)
+static void DrawBulletNoHwVertex(Bullet *bullet)
 {
     AnmVm *anmVm;
 

@@ -11,8 +11,6 @@
 #include "i18n.hpp"
 #include <stdio.h>
 
-#include <ddraw.h>
-
 namespace th06
 {
 DIFFABLE_STATIC_SORTED(L1, GameWindow, g_GameWindow);
@@ -21,120 +19,7 @@ DIFFABLE_STATIC_SORTED(L3, f64, g_LastFrameTime);
 DIFFABLE_STATIC_SORTED(L4, HANDLE, g_ExclusiveMutex);
 } // namespace th06
 
-typedef HRESULT(WINAPI *DIRECTDRAWCREATE)(GUID *, LPDIRECTDRAW *, IUnknown *);
-typedef HRESULT(WINAPI *DIRECTDRAWCREATEEX)(GUID *, VOID **, REFIID, IUnknown *);
-typedef HRESULT(WINAPI *DIRECTINPUTCREATE)(HINSTANCE, DWORD, LPDIRECTINPUT *, IUnknown *);
-
-// intentionally unreferenced
-DWORD GetDXVersion()
-{
-    DIRECTDRAWCREATE DirectDrawCreate = NULL;
-    DIRECTDRAWCREATEEX DirectDrawCreateEx = NULL;
-    DIRECTINPUTCREATE DirectInputCreate = NULL;
-    HINSTANCE hDDrawDLL = NULL;
-    HINSTANCE hDInputDLL = NULL;
-    HINSTANCE hD3D8DLL = NULL;
-    LPDIRECTDRAW pDDraw = NULL;
-    LPDIRECTDRAW2 pDDraw2 = NULL;
-    LPDIRECTDRAWSURFACE pSurf = NULL;
-    LPDIRECTDRAWSURFACE3 pSurf3 = NULL;
-    LPDIRECTDRAWSURFACE4 pSurf4 = NULL;
-    DWORD dwDXVersion = 0;
-    HRESULT hr;
-
-    // First see if DDRAW.DLL even exists.
-    hDDrawDLL = LoadLibrary("DDRAW.DLL");
-    if (hDDrawDLL == NULL)
-    {
-        dwDXVersion = 0;
-        return dwDXVersion;
-    }
-
-    // See if we can create the DirectDraw object.
-    DirectDrawCreate = (DIRECTDRAWCREATE)GetProcAddress(hDDrawDLL, "DirectDrawCreate");
-    if (DirectDrawCreate == NULL)
-    {
-        dwDXVersion = 0;
-        FreeLibrary(hDDrawDLL);
-        OutputDebugString("Couldn't LoadLibrary DDraw\r\n");
-        return dwDXVersion;
-    }
-
-    hr = DirectDrawCreate(NULL, &pDDraw, NULL);
-    if (FAILED(hr))
-    {
-        dwDXVersion = 0;
-        FreeLibrary(hDDrawDLL);
-        OutputDebugString("Couldn't create DDraw\r\n");
-        return dwDXVersion;
-    }
-
-    // So DirectDraw exists.  We are at least DX1.
-    dwDXVersion = 0x100;
-
-    // Let's see if IID_IDirectDraw2 exists.
-    hr = pDDraw->QueryInterface(IID_IDirectDraw2, (VOID **)&pDDraw2);
-    if (FAILED(hr))
-    {
-        // No IDirectDraw2 exists... must be DX1
-        pDDraw->Release();
-        FreeLibrary(hDDrawDLL);
-        OutputDebugString("Couldn't QI DDraw2\r\n");
-        return dwDXVersion;
-    }
-
-    // IDirectDraw2 exists. We must be at least DX2
-    pDDraw2->Release();
-    dwDXVersion = 0x200;
-
-    //-------------------------------------------------------------------------
-    // DirectX 7.0 Checks
-    //-------------------------------------------------------------------------
-
-    // Check for DirectX 7 by creating a DDraw7 object
-    LPDIRECTDRAW7 pDD7;
-    DirectDrawCreateEx = (DIRECTDRAWCREATEEX)GetProcAddress(hDDrawDLL, "DirectDrawCreateEx");
-    if (NULL == DirectDrawCreateEx)
-    {
-        FreeLibrary(hDDrawDLL);
-        return dwDXVersion;
-    }
-
-    if (FAILED(DirectDrawCreateEx(NULL, (VOID **)&pDD7, IID_IDirectDraw7, NULL)))
-    {
-        FreeLibrary(hDDrawDLL);
-        return dwDXVersion;
-    }
-
-    // DDraw7 was created successfully. We must be at least DX7.0
-    dwDXVersion = 0x700;
-    pDD7->Release();
-
-    //-------------------------------------------------------------------------
-    // DirectX 8.0 Checks
-    //-------------------------------------------------------------------------
-
-    // Simply see if D3D8.dll exists.
-    hD3D8DLL = LoadLibrary("D3D8.DLL");
-    if (hD3D8DLL == NULL)
-    {
-        FreeLibrary(hDDrawDLL);
-        return dwDXVersion;
-    }
-
-    // D3D8.dll exists. We must be at least DX8.0
-    dwDXVersion = 0x800;
-
-    //-------------------------------------------------------------------------
-    // End of checking for versions of DirectX
-    //-------------------------------------------------------------------------
-
-    // Close open libraries and return
-    FreeLibrary(hDDrawDLL);
-    FreeLibrary(hD3D8DLL);
-
-    return dwDXVersion;
-}
+DWORD GetDXVersion();
 
 extern "C" int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {

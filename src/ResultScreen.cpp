@@ -41,9 +41,6 @@ struct ResultScreen
 
     void FreeScore(i32 difficulty, i32 shottype);
 
-    static void MoveCursor(ResultScreen *r, i32 len);
-    static ZunBool MoveCursorHorizontally(ResultScreen *r, i32 len);
-
     i32 HandleResultKeyboard();
     i32 HandleReplaySaveKeyboard();
     ZunResult CheckConfirmButton();
@@ -79,6 +76,9 @@ struct ResultScreen
     ReplayData defaultReplay;
 };
 ZUN_ASSERT_TYPE(ResultScreen, 0x56b0, 4);
+
+static void MoveResultCursor(ResultScreen *r, i32 len);
+static ZunBool MoveResultCursorHorizontally(ResultScreen *r, i32 len);
 
 DIFFABLE_STATIC_ASSIGN(const char *, g_AlphabetList) = TH_KEYBOARD;
 
@@ -797,7 +797,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
         {
             return 0;
         }
-        ResultScreen::MoveCursorHorizontally(this, 2);
+        MoveResultCursorHorizontally(this, 2);
         if (WAS_PRESSED(TH_BUTTON_RETURNMENU) || WAS_PRESSED(TH_BUTTON_MENU))
         {
             goto EXIT_WITH_SOUND;
@@ -884,7 +884,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
             return 0;
         }
 
-        MoveCursor(this, NORMAL_REPLAY_COUNT);
+        MoveResultCursor(this, NORMAL_REPLAY_COUNT);
         this->replayNumber = this->cursor;
         if (WAS_PRESSED(TH_BUTTON_SELECTMENU))
         {
@@ -1073,7 +1073,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
         {
             return 0;
         }
-        MoveCursorHorizontally(this, 2);
+        MoveResultCursorHorizontally(this, 2);
 
         if (WAS_PRESSED(TH_BUTTON_RETURNMENU) || WAS_PRESSED(TH_BUTTON_MENU))
         {
@@ -1101,7 +1101,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
     return 0;
 }
 
-void ResultScreen::MoveCursor(ResultScreen *resultScreen, i32 length)
+static void MoveResultCursor(ResultScreen *resultScreen, i32 length)
 {
     if (WAS_PRESSED_REPEATING(TH_BUTTON_UP))
     {
@@ -1123,7 +1123,7 @@ void ResultScreen::MoveCursor(ResultScreen *resultScreen, i32 length)
     }
 }
 
-ZunBool ResultScreen::MoveCursorHorizontally(ResultScreen *resultScreen, i32 length)
+static ZunBool MoveResultCursorHorizontally(ResultScreen *resultScreen, i32 length)
 {
     if (WAS_PRESSED_REPEATING(TH_BUTTON_LEFT))
     {
@@ -1145,10 +1145,7 @@ ZunBool ResultScreen::MoveCursorHorizontally(ResultScreen *resultScreen, i32 len
         g_SoundPlayer.PlaySoundByIdx(SOUND_MOVE_MENU);
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 ZunResult ResultScreen::CheckConfirmButton()
@@ -1418,7 +1415,7 @@ ChainCallbackResult ResultScreen::OnUpdate(ResultScreen *resultScreen)
 
     case RESULT_SCREEN_STATE_CHOOSING_DIFFICULTY:
 
-        ResultScreen::MoveCursor(resultScreen, 7);
+        MoveResultCursor(resultScreen, 7);
 
         vm = &resultScreen->unk_40[1];
         for (i = 0; i <= 6; i++, vm++)
@@ -1589,7 +1586,7 @@ ChainCallbackResult ResultScreen::OnUpdate(ResultScreen *resultScreen)
         {
             break;
         }
-        if (ResultScreen::MoveCursorHorizontally(resultScreen, 2))
+        if (MoveResultCursorHorizontally(resultScreen, 2))
         {
             resultScreen->frameTimer = 0;
             vm = &resultScreen->unk_40[0];
@@ -1641,7 +1638,7 @@ ChainCallbackResult ResultScreen::OnUpdate(ResultScreen *resultScreen)
         {
             break;
         }
-        if (ResultScreen::MoveCursorHorizontally(resultScreen, 7))
+        if (MoveResultCursorHorizontally(resultScreen, 7))
         {
             resultScreen->frameTimer = 0;
             vm = &resultScreen->unk_40[0];

@@ -118,7 +118,7 @@ i32 Ending::ReadEndFileParameter()
 void Ending::FadingEffect()
 {
     ZunRect endingRect;
-    ZunColor color;
+    i32 color;
 
     endingRect.left = 0.0f;
     endingRect.top = 0.0f;

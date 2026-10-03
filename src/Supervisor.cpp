@@ -496,7 +496,6 @@ void Supervisor::DrawFpsCounter()
     }
 }
 
-
 void ZunTimer::Initialize()
 {
     this->current = 0;

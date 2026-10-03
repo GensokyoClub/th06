@@ -124,7 +124,7 @@ def configure(build_type):
                 "MainMenu",
                 "MusicRoom",
                 "Supervisor",
-                    "TextHelper",
+                "TextHelper",
                 "ResultScreen",
             ]
         )

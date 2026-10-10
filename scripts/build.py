@@ -128,9 +128,7 @@ def main():
         type=int,
         default=1,
         help=textwrap.dedent("""
-            Number of jobs to run in parallel. Set to 0 to run one job per CPU core. Defaults to 1.
-            Note that parallel builds may not work when running through wine.
-            See https://github.com/happyhavoc/th06/issues/79 for more information."""),
+            Number of jobs to run in parallel. Set to 0 to run one job per CPU core. Defaults to 1."""),
     )
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--object-name", required=False)

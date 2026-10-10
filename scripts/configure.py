@@ -84,9 +84,7 @@ def configure(build_type, build_version, ver_suffix):
 
         writer.variable("cl_common_flags", cl_common_flags)
 
-        cl_flags = (
-            "$cl_common_flags /Op /Gy /GF /YX /Fp$builddir/pch" + ver_suffix + ".pch"
-        )
+        cl_flags = "$cl_common_flags /Op /Gy /GF /YX"
         if (
             build_version != BuildVersion.VER_008p
             and build_version != BuildVersion.VER_013
@@ -104,13 +102,10 @@ def configure(build_type, build_version, ver_suffix):
 
         writer.variable("msvc_deps_prefix", "Note: including file:")
 
-        writer.pool("single_thread_pool", 1)
-
         writer.rule(
             "cc",
-            "$cl /nologo /showIncludes $cl_flags /c $in /Fd$out.pdb /Fo$out",
+            "$cl /nologo /showIncludes $cl_flags /Fp$out.pch /c $in /Fd$out.pdb /Fo$out",
             deps="msvc",
-            pool="single_thread_pool",  # Needed for /YX
         )
         writer.rule("genglobals", "python scripts/generate_globals.py $in $out")
         writer.rule("rc", "$rc /fo $out $in")

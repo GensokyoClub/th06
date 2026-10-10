@@ -1,14 +1,10 @@
 #include "ResultScreen.hpp"
-#include "AnmManager.hpp"
-#include "AsciiManager.hpp"
 #include "BulletManager.hpp"
 #include "Chain.hpp"
 #include "ChainPriorities.hpp"
-#include "GameManager.hpp"
 #include "GameWindow.hpp"
 #include "Global.hpp"
 #include "MainMenu.hpp"
-#include "Player.hpp"
 #include "ReplayManager.hpp"
 #include "SoundPlayer.hpp"
 #include "Stage.hpp"
@@ -132,6 +128,43 @@ const char *g_CharacterList[] = {
 
 #define DEFAULT_HIGH_SCORE_NAME "Nanashi "
 
+#pragma var_order(scoresAmount, nextNode)
+static i32 LinkScore(ScoreListNode *prevNode, Hscr *newScore)
+{
+    i32 scoresAmount;
+    ScoreListNode *nextNode;
+
+    scoresAmount = 0;
+    while (prevNode->next != NULL)
+    {
+        if (prevNode->next->data != NULL && prevNode->next->data->score <= newScore->score)
+        {
+            break;
+        }
+        prevNode = prevNode->next;
+        scoresAmount++;
+    }
+    nextNode = prevNode->next;
+
+    prevNode->next = ZUN_ALLOC_TYPE(ScoreListNode);
+    prevNode->next->prev = prevNode;
+    prevNode = prevNode->next;
+    prevNode->data = newScore;
+    prevNode->next = nextNode;
+    return scoresAmount;
+}
+
+static void FreeAllScores(ScoreListNode *scores)
+{
+    scores = scores->next;
+    while (scores != NULL)
+    {
+        ScoreListNode *next = scores->next;
+        ZUN_FREE(scores);
+        scores = next;
+    }
+}
+
 #pragma var_order(scoreData, bytesShifted, xorValue, checksum, bytes, remainingData, decryptedFilePointer, fileLen)
 ScoreDat *OpenScore(const char *path)
 {
@@ -208,43 +241,6 @@ ScoreDat *OpenScore(const char *path)
     scoreData->scores->data = NULL;
     scoreData->scores->prev = NULL;
     return scoreData;
-}
-
-#pragma var_order(scoresAmount, nextNode)
-static i32 LinkScore(ScoreListNode *prevNode, Hscr *newScore)
-{
-    i32 scoresAmount;
-    ScoreListNode *nextNode;
-
-    scoresAmount = 0;
-    while (prevNode->next != NULL)
-    {
-        if (prevNode->next->data != NULL && prevNode->next->data->score <= newScore->score)
-        {
-            break;
-        }
-        prevNode = prevNode->next;
-        scoresAmount++;
-    }
-    nextNode = prevNode->next;
-
-    prevNode->next = ZUN_ALLOC_TYPE(ScoreListNode);
-    prevNode->next->prev = prevNode;
-    prevNode = prevNode->next;
-    prevNode->data = newScore;
-    prevNode->next = nextNode;
-    return scoresAmount;
-}
-
-static void FreeAllScores(ScoreListNode *scores)
-{
-    scores = scores->next;
-    while (scores != NULL)
-    {
-        ScoreListNode *next = scores->next;
-        ZUN_FREE(scores);
-        scores = next;
-    }
 }
 
 #pragma var_order(highScore, remainingSize, scoreData, dataScore, score)
@@ -448,6 +444,15 @@ void ReleaseScoreDat(ScoreDat *scoreDat)
     ZUN_FREE(scoreDat);
 }
 
+} // namespace th06
+
+#include "AnmManager.hpp"
+#include "AsciiManager.hpp"
+#include "GameManager.hpp"
+#include "Player.hpp"
+
+namespace th06
+{
 #pragma var_order(difficulty, highScoreSlot, fileBuffer, sizeOfFile, scoreNode, shottype, clrd, catk, pscr, stage,     \
                   shotType, originalByte, remainingSize, xorValue, bytes, sd)
 void WriteScore(ResultScreen *resultScreen)

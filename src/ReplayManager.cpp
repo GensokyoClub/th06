@@ -43,58 +43,6 @@ ZUN_ASSERT_TYPE(ReplayManager, 0x74, 4);
 AUTO_BSS_SORT(P1);
 ReplayManager *g_ReplayManager;
 
-#pragma var_order(idx, decryptedData, obfOffset, obfuscateCursor, checksum, checksumCursor)
-ZunResult ValidateReplayData(ReplayData *data, i32 fileSize)
-{
-    u8 *checksumCursor;
-    u32 checksum;
-    u8 *obfuscateCursor;
-    u8 obfOffset;
-    i32 idx;
-
-    ReplayData *decryptedData = data;
-
-    if (decryptedData == NULL)
-    {
-        return ZUN_ERROR;
-    }
-
-    if (*(u32 *)decryptedData->magic != *(u32 *)REPLAY_MAGIC)
-    {
-        return ZUN_ERROR;
-    }
-
-    /* Deobfuscate the replay decryptedData */
-    obfuscateCursor = (u8 *)&decryptedData->rngValue3;
-    obfOffset = decryptedData->key;
-    for (idx = 0; idx < fileSize - (i32)offsetof(ReplayData, rngValue3); idx++, obfuscateCursor++)
-    {
-        *obfuscateCursor -= obfOffset;
-        obfOffset += 7;
-    }
-
-    /* Calculate the checksum */
-    /* (0x3f000318 + key + sum(c for c in decryptedData)) % (2 ** 32) */
-    checksumCursor = (u8 *)&decryptedData->key;
-    checksum = 0x3f000318;
-    for (idx = 0; idx < fileSize - (i32)offsetof(ReplayData, key); idx++, checksumCursor++)
-    {
-        checksum += *checksumCursor;
-    }
-
-    if (checksum != decryptedData->checksum)
-    {
-        return ZUN_ERROR;
-    }
-
-    if (decryptedData->version != REPLAY_VERSION)
-    {
-        return ZUN_ERROR;
-    }
-
-    return ZUN_SUCCESS;
-}
-
 #define TH_BUTTON_REPLAY_CAPTURE                                                                                       \
     (TH_BUTTON_SHOOT | TH_BUTTON_BOMB | TH_BUTTON_FOCUS | TH_BUTTON_SKIP | TH_BUTTON_DIRECTION)
 
@@ -168,6 +116,58 @@ static ChainCallbackResult ReplayManager_OnUpdateDemoHighPrio(ReplayManager *mgr
 static ChainCallbackResult ReplayManager_OnDraw(ReplayManager *mgr)
 {
     return CHAIN_CALLBACK_RESULT_CONTINUE;
+}
+
+#pragma var_order(idx, decryptedData, obfOffset, obfuscateCursor, checksum, checksumCursor)
+ZunResult ValidateReplayData(ReplayData *data, i32 fileSize)
+{
+    u8 *checksumCursor;
+    u32 checksum;
+    u8 *obfuscateCursor;
+    u8 obfOffset;
+    i32 idx;
+
+    ReplayData *decryptedData = data;
+
+    if (decryptedData == NULL)
+    {
+        return ZUN_ERROR;
+    }
+
+    if (*(u32 *)decryptedData->magic != *(u32 *)REPLAY_MAGIC)
+    {
+        return ZUN_ERROR;
+    }
+
+    /* Deobfuscate the replay decryptedData */
+    obfuscateCursor = (u8 *)&decryptedData->rngValue3;
+    obfOffset = decryptedData->key;
+    for (idx = 0; idx < fileSize - (i32)offsetof(ReplayData, rngValue3); idx++, obfuscateCursor++)
+    {
+        *obfuscateCursor -= obfOffset;
+        obfOffset += 7;
+    }
+
+    /* Calculate the checksum */
+    /* (0x3f000318 + key + sum(c for c in decryptedData)) % (2 ** 32) */
+    checksumCursor = (u8 *)&decryptedData->key;
+    checksum = 0x3f000318;
+    for (idx = 0; idx < fileSize - (i32)offsetof(ReplayData, key); idx++, checksumCursor++)
+    {
+        checksum += *checksumCursor;
+    }
+
+    if (checksum != decryptedData->checksum)
+    {
+        return ZUN_ERROR;
+    }
+
+    if (decryptedData->version != REPLAY_VERSION)
+    {
+        return ZUN_ERROR;
+    }
+
+    return ZUN_SUCCESS;
 }
 
 static ZunResult ReplayManager_AddedCallback(ReplayManager *mgr)

@@ -31,11 +31,6 @@ enum StageNumber
     EXTRA_STAGE,
 };
 
-#define PSCR_NUM_STAGES 6
-#define PSCR_NUM_DIFFICULTIES 4
-
-#define CATK_NUM_CAPTURES 64
-
 #define GAME_REGION_POS_X 32.0f
 #define GAME_REGION_POS_Y 16.0f
 

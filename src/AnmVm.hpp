@@ -218,6 +218,101 @@ struct AnmVm : AnmVmBase
         this->flags.isVisible = false;
     }
 
+    ZunBool IsStopped()
+    {
+        return this->flags.isStopped;
+    }
+
+    void SetVisible()
+    {
+        this->flags.isVisible = true;
+    }
+
+    ZunBool IsVisibleOverride()
+    {
+        return this->flags.isVisibleOverride;
+    }
+
+    void SetVisibleOverride(ZunBool visible)
+    {
+        this->flags.isVisibleOverride = visible;
+    }
+
+    u32 GetBlendMode()
+    {
+        return this->flags.blendMode;
+    }
+
+    void SetBlendMode(u32 blendMode)
+    {
+        this->flags.blendMode = blendMode;
+    }
+
+    u32 GetColorOp()
+    {
+        return this->flags.colorOp;
+    }
+
+    void SetColorOp(u32 colorOp)
+    {
+        this->flags.colorOp = colorOp;
+    }
+
+    ZunBool UsesPosOffset()
+    {
+        return this->flags.usePosOffset;
+    }
+
+    void SetUsePosOffset(ZunBool usePosOffset)
+    {
+        this->flags.usePosOffset = usePosOffset;
+    }
+
+    u32 GetFlip()
+    {
+        return this->flags.flip;
+    }
+
+    void SetFlip(u32 flip)
+    {
+        this->flags.flip = flip;
+    }
+
+    u32 GetAnchor()
+    {
+        return this->flags.anchor;
+    }
+
+    void SetAnchor(u32 anchor)
+    {
+        this->flags.anchor = anchor;
+    }
+
+    u32 GetMoveInterpMode()
+    {
+        return this->flags.moveInterpMode;
+    }
+
+    void SetMoveInterpMode(u32 moveInterpMode)
+    {
+        this->flags.moveInterpMode = moveInterpMode;
+    }
+
+    ZunBool IsZWriteDisabled()
+    {
+        return this->flags.zWriteDisable;
+    }
+
+    void SetZWriteDisable(ZunBool zWriteDisable)
+    {
+        this->flags.zWriteDisable = zWriteDisable;
+    }
+
+    void SetStopped(ZunBool stopped)
+    {
+        this->flags.isStopped = stopped;
+    }
+
     D3DXVECTOR3 pos;
     f32 scaleInterpInitialY;
     f32 scaleInterpInitialX;

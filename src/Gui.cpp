@@ -114,7 +114,7 @@ BSS_SORT(G2) ChainElem g_GuiDrawChain;
 
 ZunBool Gui::IsStageFinished()
 {
-    return this->impl->loadingScreenSprite.activeSpriteIndex >= 0 && this->impl->loadingScreenSprite.flags.isStopped;
+    return this->impl->loadingScreenSprite.activeSpriteIndex >= 0 && this->impl->loadingScreenSprite.IsStopped();
 }
 
 void Gui::EndPlayerSpellcard()

@@ -107,10 +107,10 @@ class CSound
     LPDIRECTSOUNDBUFFER GetBuffer(DWORD dwIndex);
     HRESULT Get3DBufferInterface(DWORD index, LPDIRECTSOUND3DBUFFER *buffer);
 
-    BOOL IsSoundPlaying();
     HRESULT Play(DWORD dwPriority, DWORD dwFlags);
     HRESULT Stop();
     HRESULT Reset();
+    BOOL IsSoundPlaying();
 
     void StartFadeOut(float seconds)
     {

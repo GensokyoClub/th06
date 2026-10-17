@@ -417,16 +417,20 @@ LPDIRECTSOUNDBUFFER CSound::GetBuffer(DWORD dwIndex)
     return m_apDSBuffer[dwIndex];
 }
 
+//-----------------------------------------------------------------------------
+// Name: CSound::Get3DBufferInterface()
+// Desc:
+//-----------------------------------------------------------------------------
 HRESULT CSound::Get3DBufferInterface(DWORD dwIndex, LPDIRECTSOUND3DBUFFER *ppDS3DBuffer)
 {
-    return m_apDSBuffer[dwIndex]->QueryInterface(IID_IDirectSound3DBuffer, (VOID **)ppDS3DBuffer);
-}
+    if (m_apDSBuffer == NULL)
+        return CO_E_NOTINITIALIZED;
+    if (dwIndex >= m_dwNumBuffers)
+        return E_INVALIDARG;
 
-BOOL CSound::IsSoundPlaying()
-{
-    DWORD dwStatus = 0;
-    m_apDSBuffer[0]->GetStatus(&dwStatus);
-    return (dwStatus & DSBSTATUS_PLAYING) != 0;
+    *ppDS3DBuffer = NULL;
+
+    return m_apDSBuffer[dwIndex]->QueryInterface(IID_IDirectSound3DBuffer, (VOID **)ppDS3DBuffer);
 }
 
 //-----------------------------------------------------------------------------
@@ -509,6 +513,30 @@ HRESULT CSound::Reset()
         hr |= m_apDSBuffer[i]->SetCurrentPosition(0);
 
     return hr;
+}
+
+//-----------------------------------------------------------------------------
+// Name: CSound::IsSoundPlaying()
+// Desc: Checks to see if a buffer is playing and returns TRUE if it is.
+//-----------------------------------------------------------------------------
+BOOL CSound::IsSoundPlaying()
+{
+    BOOL bIsPlaying = FALSE;
+
+    if (m_apDSBuffer == NULL)
+        return FALSE;
+
+    for (DWORD i = 0; i < m_dwNumBuffers; i++)
+    {
+        if (m_apDSBuffer[i])
+        {
+            DWORD dwStatus = 0;
+            m_apDSBuffer[i]->GetStatus(&dwStatus);
+            bIsPlaying |= ((dwStatus & DSBSTATUS_PLAYING) != 0);
+        }
+    }
+
+    return bIsPlaying;
 }
 
 //-----------------------------------------------------------------------------

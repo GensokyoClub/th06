@@ -262,7 +262,7 @@ static ZunResult SetupDInput(Supervisor *supervisor)
     HINSTANCE hInst = (HINSTANCE)GetWindowLong(supervisor->hwndGameWindow, GWL_HINSTANCE);
 
 #if BUILT_SINCE(102g)
-    if (supervisor->cfg.opts.dontUseDirectInput)
+    if (supervisor->IsDInputDisabled())
     {
         return ZUN_ERROR;
     }
@@ -711,7 +711,7 @@ ZunResult Supervisor::LoadConfig(const char *path)
     {
         g_GameErrorContext.Log(TH_ERR_DONT_RENDER_ITEMS);
     }
-    if (this->cfg.opts.suppressUseOfGoroudShading)
+    if (this->IsShadingDisabled())
     {
         g_GameErrorContext.Log(TH_ERR_NO_GOURAUD_SHADING);
     }
@@ -719,7 +719,7 @@ ZunResult Supervisor::LoadConfig(const char *path)
     {
         g_GameErrorContext.Log(TH_ERR_NO_DEPTH_TESTING);
     }
-    if (this->cfg.opts.force60Fps)
+    if (this->IsForced60Fps())
     {
         g_GameErrorContext.Log(TH_ERR_FORCE_60FPS_MODE);
 #if BUILT_SINCE(102f)
@@ -739,7 +739,7 @@ ZunResult Supervisor::LoadConfig(const char *path)
         g_GameErrorContext.Log(TH_ERR_FORCE_REFERENCE_RASTERIZER);
     }
 #if BUILT_SINCE(102g)
-    if (this->cfg.opts.dontUseDirectInput)
+    if (this->IsDInputDisabled())
     {
         g_GameErrorContext.Log(TH_ERR_DO_NOT_USE_DIRECTINPUT);
     }

@@ -164,9 +164,19 @@ struct Supervisor
         return this->cfg.opts.displayMinimumGraphics;
     }
 
+    ZunBool IsShadingDisabled()
+    {
+        return this->cfg.opts.suppressUseOfGoroudShading;
+    }
+
     ZunBool IsDepthTestDisabled()
     {
         return this->cfg.opts.disableDepthTest;
+    }
+
+    ZunBool IsForced60Fps()
+    {
+        return this->cfg.opts.force60Fps;
     }
 
     ZunBool IsColorCompositingDisabled()
@@ -184,6 +194,11 @@ struct Supervisor
         return this->cfg.opts.disableFog;
     }
 
+    ZunBool IsDInputDisabled()
+    {
+        return this->cfg.opts.dontUseDirectInput;
+    }
+
     ZunBool ShouldForceBackbufferClear()
     {
         return this->cfg.opts.clearBackBufferOnRefresh | this->cfg.opts.displayMinimumGraphics;
@@ -199,7 +214,7 @@ struct Supervisor
     // inline copy of this in 0.13's main.obj would give the wrong OnTimerElapsed/~AnmManager ICF survivor.
     ZunBool ShouldRunAt60Fps()
     {
-        return this->cfg.opts.force60Fps && this->vsyncEnabled;
+        return this->IsForced60Fps() && this->vsyncEnabled;
     }
 #endif
 

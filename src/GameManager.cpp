@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
 #include "GameManager.hpp"
+
 #include "AsciiManager.hpp"
-#include "ChainPriorities.hpp"
 #include "EffectManager.hpp"
 #include "EnemyManager.hpp"
 #include "ReplayManager.hpp"

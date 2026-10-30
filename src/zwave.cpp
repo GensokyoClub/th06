@@ -9,7 +9,9 @@
 //
 // Copyright (c) 1999-2000 Microsoft Corp. All rights reserved.
 //-----------------------------------------------------------------------------
-#define STRICT
+#ifndef STRICT
+#define STRICT 1
+#endif
 #include "zwave.hpp"
 #include <dxerr8.h>
 

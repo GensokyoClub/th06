@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "MusicRoom.hpp"
+
 #include "AsciiManager.hpp"
 #include "ChainPriorities.hpp"
 

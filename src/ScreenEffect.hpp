@@ -4,7 +4,6 @@
 #include <string.h>
 
 #include "Chain.hpp"
-#include "Supervisor.hpp"
 #include "ZunResult.hpp"
 #include "ZunTimer.hpp"
 #include "decomp.hpp"

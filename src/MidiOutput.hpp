@@ -81,7 +81,7 @@ struct MidiOutput : MidiTimer
         this->LoadFile(midiPath);
         return this->Play();
     }
-    ZunResult ParseAndPlay(i32 idx)
+    ZunResult PlayFile(i32 idx)
     {
         this->StopPlayback();
         this->ParseFile(idx);

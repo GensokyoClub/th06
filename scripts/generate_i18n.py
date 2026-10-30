@@ -1,6 +1,7 @@
 # This script converts an i18n file containing Japanese strings into Shift-JIS
 # strings.
 
+import os
 import sys
 
 file_contents = b""
@@ -52,6 +53,9 @@ for line in lines:
     new_lines.append(new_line)
 
 file_contents = b"".join(new_lines)
+
+if os.path.dirname(sys.argv[2]):
+    os.makedirs(os.path.dirname(sys.argv[2]), exist_ok=True)
 
 with open(sys.argv[2], "wb") as f:
     f.write(file_contents)

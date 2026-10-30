@@ -3,6 +3,185 @@
 
 namespace th06
 {
+LzEncode::LzEncode()
+{
+    this->entryCount = 0;
+    this->entries = NULL;
+    this->writer = NULL;
+    this->Reset();
+}
+
+LzEncode::~LzEncode()
+{
+    this->Close();
+}
+
+BOOL LzEncode::Open(const char *path)
+{
+    if (this->Close() == FALSE)
+    {
+        return FALSE;
+    }
+    this->writer = new Pbg3Writer;
+    if (this->writer == NULL)
+    {
+        return FALSE;
+    }
+    if (this->writer->OpenArchive(path) == FALSE)
+    {
+        SAFE_DELETE(this->writer);
+        return FALSE;
+    }
+    this->entryCount = 0;
+    this->entries = new LzEncodeQueue;
+    if (this->entries == NULL)
+    {
+        SAFE_DELETE(this->writer);
+        return FALSE;
+    }
+    this->writer->WriteInt(PBG3_MAGIC);
+    this->writer->WriteInt(0);
+    this->writer->WriteInt(0);
+    this->writer->WriteChar(0);
+    return TRUE;
+}
+
+BOOL LzEncode::Close()
+{
+    if (this->writer == NULL)
+    {
+        return TRUE;
+    }
+    if (this->entries == NULL)
+    {
+        return FALSE;
+    }
+    this->writer->SeekToNextByte();
+    u32 tableOffset = this->writer->Tell();
+    LzEncodeEntry entry;
+    for (u32 i = 0; i < this->entryCount; ++i)
+    {
+        this->entries->Pop(entry);
+        this->writer->WriteVarInt(entry.lastWriteTime.dwHighDateTime);
+        this->writer->WriteVarInt(entry.lastWriteTime.dwLowDateTime);
+        this->writer->WriteVarInt(entry.checksum);
+        this->writer->WriteVarInt(entry.offset);
+        this->writer->WriteVarInt(entry.size);
+        this->writer->IPbg3Writer::WriteString(entry.filename);
+    }
+    this->writer->SeekToOffset(4);
+    this->writer->WriteVarInt(this->entryCount);
+    this->writer->WriteVarInt(tableOffset);
+    this->writer->SeekToNextByte();
+    this->writer->Close();
+    SAFE_DELETE(this->writer);
+    SAFE_DELETE(this->entries);
+    this->entryCount = 0;
+    return TRUE;
+}
+
+BOOL LzEncode::Encode(IPbg3Reader *input, const char *name)
+{
+    if (this->writer == NULL)
+    {
+        return FALSE;
+    }
+    if (input == NULL)
+    {
+        return FALSE;
+    }
+    if (name == NULL)
+    {
+        return FALSE;
+    }
+    LzEncodeEntry entry;
+    entry.offset = this->writer->Tell();
+    if (input->SeekToOffset(0) == FALSE)
+    {
+        return FALSE;
+    }
+    if (this->writer->SeekToNextByte() == FALSE)
+    {
+        return FALSE;
+    }
+    this->writer->ResetChecksum();
+    this->Reset();
+    i32 i;
+    i32 c;
+    i32 available;
+    i32 head;
+    i32 consumed;
+    i32 matchLength;
+    i32 matchPosition;
+
+    head = 1;
+    for (i = 0; i < LZSS_LOOKAHEAD_MAX; i++)
+    {
+        if ((c = input->ReadByte()) == PBG_EOF)
+        {
+            break;
+        }
+        this->window[head + i] = (u8)c;
+    }
+    available = i;
+    this->SetRoot(head);
+    matchLength = 0;
+    matchPosition = 0;
+    while (available > 0)
+    {
+        if (matchLength > available)
+        {
+            matchLength = available;
+        }
+        if (matchLength <= LZSS_BREAKEVEN - 1)
+        {
+            consumed = 1;
+            this->writer->WriteBit(1);
+            this->writer->WriteBits(this->window[head], 8);
+        }
+        else
+        {
+            this->writer->WriteBit(0);
+            this->writer->WriteBits(matchPosition, LZSS_OFFSET_BITS);
+            this->writer->WriteBits(matchLength - LZSS_BREAKEVEN, LZSS_LENGTH_BITS);
+            consumed = matchLength;
+        }
+        for (i = 0; i < consumed; i++)
+        {
+            this->Delete(LZSS_DICTPOS_MOD(head, LZSS_LOOKAHEAD_MAX));
+            if ((c = input->ReadByte()) == PBG_EOF)
+            {
+                available--;
+            }
+            else
+            {
+                this->window[LZSS_DICTPOS_MOD(head, LZSS_LOOKAHEAD_MAX)] = (u8)c;
+            }
+            head = LZSS_DICTPOS_MOD(head, 1);
+            if (available)
+            {
+                matchLength = this->Insert(head, &matchPosition);
+            }
+        }
+    }
+    this->writer->WriteBit(0);
+    this->writer->WriteBits(0, LZSS_OFFSET_BITS);
+    if (this->writer->SeekToNextByte() == FALSE)
+    {
+        return FALSE;
+    }
+    entry.checksum = this->writer->GetChecksum();
+    entry.size = input->GetSize();
+    input->GetLastWriteTime(&entry.lastWriteTime);
+
+    // NOTE: Very different strcpy codegen
+    strcpy(entry.filename, name);
+    this->entries->Push(entry);
+    input->SeekToOffset(0);
+    ++this->entryCount;
+    return TRUE;
+}
+
 LzssTree::LzssTree()
 {
     this->Reset();
@@ -149,182 +328,4 @@ i32 LzssTree::FindPredecessor(i32 position)
     return next;
 }
 
-LzEncode::LzEncode()
-{
-    this->entryCount = 0;
-    this->entries = NULL;
-    this->writer = NULL;
-    this->Reset();
-}
-
-LzEncode::~LzEncode()
-{
-    this->Close();
-}
-
-BOOL LzEncode::Open(const char *path)
-{
-    if (this->Close() == FALSE)
-    {
-        return FALSE;
-    }
-    this->writer = new Pbg3Writer;
-    if (this->writer == NULL)
-    {
-        return FALSE;
-    }
-    if (this->writer->OpenArchive(path) == FALSE)
-    {
-        SAFE_DELETE(this->writer);
-        return FALSE;
-    }
-    this->entryCount = 0;
-    this->entries = new LzEncodeQueue;
-    if (this->entries == NULL)
-    {
-        SAFE_DELETE(this->writer);
-        return FALSE;
-    }
-    this->writer->WriteInt(0x33474250);
-    this->writer->WriteInt(0);
-    this->writer->WriteInt(0);
-    this->writer->WriteChar(0);
-    return TRUE;
-}
-
-BOOL LzEncode::Close()
-{
-    if (this->writer == NULL)
-    {
-        return TRUE;
-    }
-    if (this->entries == NULL)
-    {
-        return FALSE;
-    }
-    this->writer->SeekToNextByte();
-    u32 tableOffset = this->writer->Tell();
-    LzEncodeEntry entry;
-    for (u32 i = 0; i < this->entryCount; ++i)
-    {
-        this->entries->Pop(entry);
-        this->writer->WriteVarInt(entry.lastWriteTime.dwHighDateTime);
-        this->writer->WriteVarInt(entry.lastWriteTime.dwLowDateTime);
-        this->writer->WriteVarInt(entry.checksum);
-        this->writer->WriteVarInt(entry.offset);
-        this->writer->WriteVarInt(entry.size);
-        this->writer->IPbg3Writer::WriteString(entry.filename);
-    }
-    this->writer->SeekToOffset(4);
-    this->writer->WriteVarInt(this->entryCount);
-    this->writer->WriteVarInt(tableOffset);
-    this->writer->SeekToNextByte();
-    this->writer->Close();
-    SAFE_DELETE(this->writer);
-    SAFE_DELETE(this->entries);
-    this->entryCount = 0;
-    return TRUE;
-}
-
-BOOL LzEncode::Encode(IPbg3Reader *input, const char *name)
-{
-    if (this->writer == NULL)
-    {
-        return FALSE;
-    }
-    if (input == NULL)
-    {
-        return FALSE;
-    }
-    if (name == NULL)
-    {
-        return FALSE;
-    }
-    LzEncodeEntry entry;
-    entry.offset = this->writer->Tell();
-    if (input->SeekToOffset(0) == FALSE)
-    {
-        return FALSE;
-    }
-    if (this->writer->SeekToNextByte() == FALSE)
-    {
-        return FALSE;
-    }
-    this->writer->ResetChecksum();
-    this->Reset();
-    i32 i;
-    i32 c;
-    i32 available;
-    i32 head;
-    i32 consumed;
-    i32 matchLength;
-    i32 matchPosition;
-
-    head = 1;
-    for (i = 0; i < LZSS_LOOKAHEAD_MAX; i++)
-    {
-        if ((c = input->ReadByte()) == PBG_EOF)
-        {
-            break;
-        }
-        this->window[head + i] = (u8)c;
-    }
-    available = i;
-    this->SetRoot(head);
-    matchLength = 0;
-    matchPosition = 0;
-    while (available > 0)
-    {
-        if (matchLength > available)
-        {
-            matchLength = available;
-        }
-        if (matchLength <= LZSS_BREAKEVEN - 1)
-        {
-            consumed = 1;
-            this->writer->WriteBit(1);
-            this->writer->WriteBits(this->window[head], 8);
-        }
-        else
-        {
-            this->writer->WriteBit(0);
-            this->writer->WriteBits(matchPosition, LZSS_OFFSET_BITS);
-            this->writer->WriteBits(matchLength - LZSS_BREAKEVEN, LZSS_LENGTH_BITS);
-            consumed = matchLength;
-        }
-        for (i = 0; i < consumed; i++)
-        {
-            this->Delete(LZSS_DICTPOS_MOD(head, LZSS_LOOKAHEAD_MAX));
-            if ((c = input->ReadByte()) == PBG_EOF)
-            {
-                available--;
-            }
-            else
-            {
-                this->window[LZSS_DICTPOS_MOD(head, LZSS_LOOKAHEAD_MAX)] = (u8)c;
-            }
-            head = LZSS_DICTPOS_MOD(head, 1);
-            if (available)
-            {
-                matchLength = this->Insert(head, &matchPosition);
-            }
-        }
-    }
-    this->writer->WriteBit(0);
-    this->writer->WriteBits(0, LZSS_OFFSET_BITS);
-    if (this->writer->SeekToNextByte() == FALSE)
-    {
-        return FALSE;
-    }
-    entry.checksum = this->writer->GetChecksum();
-    entry.size = input->GetSize();
-    input->GetLastWriteTime(&entry.lastWriteTime);
-
-    // NOTE: Very different strcpy codegen
-    strcpy(entry.filename, name);
-    this->entries->Push(entry);
-    input->SeekToOffset(0);
-    ++this->entryCount;
-    return TRUE;
-}
 } // namespace th06

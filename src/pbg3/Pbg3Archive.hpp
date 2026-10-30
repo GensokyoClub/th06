@@ -18,9 +18,6 @@ ZUN_ASSERT_SIZE(Pbg3Entry, 0x114);
 class Pbg3Archive
 {
   public:
-    Pbg3Archive();
-    ~Pbg3Archive();
-
     BOOL Release();
 
     BOOL Load(const char *path);
@@ -29,8 +26,23 @@ class Pbg3Archive
     i32 FindEntry(const char *path);
     u32 GetEntrySize(u32 entryIdx);
     u32 GetEntrySize(const char *path);
+    u32 GetNumFiles() const
+    {
+        return this->numOfEntries;
+    }
+    const char *GetFileID(u32 entryIdx) const
+    {
+        if (entryIdx >= this->numOfEntries)
+        {
+            return NULL;
+        }
+        return this->entries[entryIdx].filename;
+    }
     u8 *ReadEntryRaw(u32 *outSize, u32 *outChecksum, i32 entryIdx);
     u8 *ReadDecompressEntry(u32 entryIdx, const char *filename);
+
+    Pbg3Archive();
+    ~Pbg3Archive();
 
   private:
     IPbg3Reader *reader;

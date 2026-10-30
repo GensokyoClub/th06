@@ -3,6 +3,7 @@
 #include "BombData.hpp"
 
 #include "EffectManager.hpp"
+#include "ItemManager.hpp"
 #include "ScreenEffect.hpp"
 
 namespace th06

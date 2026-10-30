@@ -1,14 +1,8 @@
 #include "stdafx.h"
 
-#include "ChainPriorities.hpp"
-#include "StageMenu.hpp"
-
-// Keep AsciiManager.hpp outside the common PCH so its inline methods are
-// emitted after their first callers.
 #include "AsciiManager.hpp"
 
-// Unnecessary include, but forces vector constructor iterator
-// to the top of the trial build.
+#include "ChainPriorities.hpp"
 #include "EffectManager.hpp"
 
 namespace th06
@@ -271,6 +265,7 @@ void AsciiManager::CreatePopup1(D3DXVECTOR3 *position, i32 value, D3DCOLOR color
     popup->inUse = true;
     i32 characterCount = 0;
 
+#if BUILT_SINCE(100)
     if (value >= 0)
     {
         while (value)
@@ -284,6 +279,13 @@ void AsciiManager::CreatePopup1(D3DXVECTOR3 *position, i32 value, D3DCOLOR color
     {
         popup->digits[characterCount++] = '\n';
     }
+#else
+    while (value)
+    {
+        popup->digits[characterCount++] = (char)(value % 10);
+        value /= 10;
+    }
+#endif
 
     if (characterCount == 0)
     {
@@ -317,6 +319,7 @@ void AsciiManager::CreatePopup2(D3DXVECTOR3 *position, i32 value, D3DCOLOR color
     popup->inUse = true;
     i32 characterCount = 0;
 
+#if BUILT_SINCE(100)
     if (value >= 0)
     {
         while (value)
@@ -330,6 +333,13 @@ void AsciiManager::CreatePopup2(D3DXVECTOR3 *position, i32 value, D3DCOLOR color
     {
         popup->digits[characterCount++] = '\n';
     }
+#else
+    while (value)
+    {
+        popup->digits[characterCount++] = (char)(value % 10);
+        value /= 10;
+    }
+#endif
 
     if (characterCount == 0)
     {
@@ -626,6 +636,7 @@ i32 StageMenu::OnUpdateRetryMenu()
 {
     i32 i;
 
+#if BUILT_SINCE(100)
     if (g_GameManager.isInPracticeMode)
     {
         g_GameManager.isInRetryMenu = false;
@@ -633,6 +644,7 @@ i32 StageMenu::OnUpdateRetryMenu()
         g_Supervisor.curState = SUPERVISOR_STATE_RESULTSCREEN_FROMGAME;
         return 1;
     }
+#endif
     if (g_GameManager.isInReplay)
     {
         g_GameManager.isInRetryMenu = false;
@@ -640,7 +652,11 @@ i32 StageMenu::OnUpdateRetryMenu()
         g_GameManager.guiScore = g_GameManager.score;
         return 1;
     }
-    if (g_GameManager.continuesUsed >= MAX_CONTINUE_CREDITS || g_GameManager.difficulty >= EXTRA)
+    if (g_GameManager.continuesUsed >= MAX_CONTINUE_CREDITS
+#if BUILT_SINCE(100)
+        || g_GameManager.difficulty >= EXTRA
+#endif
+    )
     {
         g_GameManager.isInRetryMenu = false;
         g_Supervisor.curState = SUPERVISOR_STATE_RESULTSCREEN_FROMGAME;
@@ -809,8 +825,8 @@ void StageMenu::OnDrawRetryMenu()
             this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER] = this->menuSprites[RETRY_MENU_SPRITE_RETRIES_LABEL];
             this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER].pos.x +=
                 8.0f * this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER].scaleX;
-            this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER].sprite =
-                g_AnmManager->GetSprite(30 - g_GameManager.continuesUsed);
+            this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER].sprite = g_AnmManager->GetSprite(
+                ANM_SPRITE_ASCII_FONT_SPRITE(' ') + '0' + MAX_CONTINUE_CREDITS - g_GameManager.continuesUsed);
             g_AnmManager->DrawNoRotation(&this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER]);
         }
         for (i32 i = RETRY_MENU_SPRITES_START; i < RETRY_MENU_SPRITES_END; i++)
@@ -853,6 +869,7 @@ void AsciiManager::DrawPopupsWithHwVertexProcessing()
         for (j = currentPopup->characterCount; j > 0; j--)
         {
             this->scorePopupVm.sprite = g_AnmManager->GetSprite(*currentDigit);
+#if BUILT_SINCE(100)
             if (*currentDigit >= '\n')
             {
                 // TODO: explain these values
@@ -866,6 +883,9 @@ void AsciiManager::DrawPopupsWithHwVertexProcessing()
             {
                 g_AnmManager->Draw2(&this->scorePopupVm);
             }
+#else
+            g_AnmManager->Draw2(&this->scorePopupVm);
+#endif
 
             this->scorePopupVm.pos.x += 8.0f;
             currentDigit--;
@@ -903,6 +923,7 @@ void AsciiManager::DrawPopupsWithoutHwVertexProcessing()
         for (j = currentPopup->characterCount; j > 0; j--)
         {
             this->scorePopupVm.sprite = g_AnmManager->GetSprite(*currentDigit + ANM_SPRITE_SCORE_TEXT);
+#if BUILT_SINCE(100)
             if (*currentDigit >= '\n')
             {
                 // TODO: explain these values
@@ -916,6 +937,9 @@ void AsciiManager::DrawPopupsWithoutHwVertexProcessing()
             {
                 g_AnmManager->Draw2(&this->scorePopupVm);
             }
+#else
+            g_AnmManager->DrawNoRotation(&this->scorePopupVm);
+#endif
 
             this->scorePopupVm.pos.x += 8.0f;
             currentDigit--;

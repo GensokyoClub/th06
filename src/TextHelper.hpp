@@ -24,6 +24,15 @@ struct TextFont
 
     void Release();
 
+    void SetFontSize(i32 h, i32 w)
+    {
+        height = h;
+        width = w;
+    }
+    HFONT GetFont()
+    {
+        return font;
+    }
     HFONT Create();
 };
 

@@ -3,7 +3,6 @@
 #include "BulletManager.hpp"
 #include "EclManager.hpp"
 #include "Effect.hpp"
-#include "ItemManager.hpp"
 #include "SoundPlayer.hpp"
 #include "ZunBool.hpp"
 #include "ZunResult.hpp"
@@ -183,11 +182,6 @@ struct Enemy
         return (f32)this->life / (f32)this->maxLife;
     }
 
-    ZunBool HasPhaseTimerFinished()
-    {
-        return this->phaseTimer >= this->timerCallbackThreshold;
-    }
-
     void ResetRank()
     {
         this->bulletRankSpeedLow = -0.5f;
@@ -238,12 +232,14 @@ struct Enemy
     i32 laserStore;
     u8 deathParticle1;
     u8 deathParticle2;
-    u8 deathAnm3;
+    u8 deathParticle3;
     i8 itemDrop;
     u8 bossId;
-    u8 unk_e41;
+    u8 hitEffectDelay;
+#if BUILT_SINCE(100)
     alignment_padding(0x2);
-    ZunTimer exInsFunc10Timer;
+    ZunTimer transformTimer;
+#endif
     EnemyFlags flags;
     u8 anmPoseCurrent;
     i16 anmPoseDefault;
@@ -251,6 +247,9 @@ struct Enemy
     i16 anmPoseNeutralFromRight;
     i16 anmPoseLeft;
     i16 anmPoseRight;
+#if BUILT_BEFORE(100)
+    alignment_padding(0x2);
+#endif
     ZunVec2 lowerMoveLimit;
     ZunVec2 upperMoveLimit;
     Effect *effectArray[12];
@@ -261,9 +260,17 @@ struct Enemy
     i32 timerCallbackThreshold;
     i32 timerCallbackSub;
     f32 exInsFunc6Angle;
+#if BUILT_SINCE(100)
     ZunTimer exInsFunc6Timer;
+#else
+    i32 exInsFunc6Timer;
+#endif
 };
+#if BUILT_SINCE(100)
 ZUN_ASSERT_TYPE(Enemy, 0xec8, 4);
+#else
+ZUN_ASSERT_TYPE(Enemy, 0xeb0, 4);
+#endif
 
 void Enemy_ResetEffectArray(Enemy *enemy);
 

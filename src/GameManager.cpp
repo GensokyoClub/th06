@@ -5,11 +5,14 @@
 #include "ChainPriorities.hpp"
 #include "EffectManager.hpp"
 #include "EnemyManager.hpp"
+#include "Gui.hpp"
 #include "ReplayManager.hpp"
 #include "ScreenEffect.hpp"
 #include "Stage.hpp"
 
 #include <d3d8types.h>
+#include "BulletManager.hpp"
+#include "SoundPlayer.hpp"
 
 namespace th06
 {

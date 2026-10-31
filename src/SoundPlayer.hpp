@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-#include "Global.hpp"
+#include <string.h>
 #include "ZunResult.hpp"
 #include "decomp.hpp"
 #include "zwave.hpp"
@@ -58,8 +58,11 @@ ZUN_ASSERT_TYPE(SoundEffectData, 0x8, 4);
 
 #define SFX_QUEUE_LENGTH 3
 
-// BGM streaming buffer length and notification count. 1.02h halved both.
-#if BUILT_SINCE(102h)
+// 0.08 uses 64 notifications; 1.00 uses eight. 1.02h halved the later buffer and notification count.
+#if BUILT_BEFORE(100)
+#define BACKGROUND_MUSIC_STREAM_SECONDS 4
+#define BACKGROUND_MUSIC_STREAM_NOTIFICATIONS 64
+#elif BUILT_SINCE(102h)
 #define BACKGROUND_MUSIC_STREAM_SECONDS 2
 #define BACKGROUND_MUSIC_STREAM_NOTIFICATIONS 4
 #else
@@ -83,7 +86,9 @@ struct SoundPlayer
     ZunResult Release(void);
 
     ZunResult LoadSound(i32 idx, const char *path);
+#if BUILT_SINCE(100)
     void PlaySounds();
+#endif
     void PlaySoundByIdx(SoundIdx idx, i32 unused = 0);
     ZunResult PlayBGM(BOOL isLooping);
     void StopBGM();
@@ -111,21 +116,34 @@ struct SoundPlayer
     LPDIRECTSOUNDBUFFER soundBuffers[SOUND_EFFECT_COUNT];
     LPDIRECTSOUNDBUFFER duplicateSoundBuffers[SOUND_EFFECT_COUNT];
     i32 unk408[SOUND_EFFECT_COUNT];
+#if BUILT_SINCE(100)
     LPDIRECTSOUNDBUFFER initSoundBuffer;
+#endif
     HWND gameWindow;
     CSoundManager *manager;
     DWORD backgroundMusicThreadId;
     HANDLE backgroundMusicThreadHandle;
     unreferenced_fields(0x4);
+#if BUILT_SINCE(100)
     i32 soundBuffersToPlay[SFX_QUEUE_LENGTH];
+#endif
     CStreamingSound *backgroundMusic;
     HANDLE backgroundMusicUpdateEvent;
     BOOL isLooping;
 };
 
+#if BUILT_SINCE(100)
 ZUN_ASSERT_TYPE(SoundPlayer, 0x638, 4);
+#else
+ZUN_ASSERT_TYPE(SoundPlayer, 0x628, 4);
+#endif
 
+#if BUILT_SINCE(100)
 extern SoundEffectData g_SoundBufferIdxVol[32];
 extern const char *g_SFXList[26];
+#else
+extern SoundEffectData g_SoundBufferIdxVol[30];
+extern const char *g_SFXList[24];
+#endif
 extern SoundPlayer g_SoundPlayer;
 } // namespace th06

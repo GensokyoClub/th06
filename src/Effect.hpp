@@ -1,5 +1,6 @@
 #pragma once
 #include "AnmVm.hpp"
+#include "ZunTimer.hpp"
 #include "decomp.hpp"
 
 namespace th06

@@ -146,11 +146,6 @@ struct Supervisor
 
     void TickTimer(i32 *frames, f32 *subframes);
 
-    f32 FramerateMultiplier()
-    {
-        return this->effectiveFramerateMultiplier;
-    }
-
     i32 GetMusicMode()
     {
         return this->cfg.musicMode;
@@ -222,8 +217,7 @@ struct Supervisor
     }
 
 #if BUILT_SINCE(102f)
-    // Added together with vsyncEnabled. Before 1.02f, main.cpp tests cfg.opts.force60Fps directly: a dead
-    // inline copy of this in 0.13's main.obj would give the wrong OnTimerElapsed/~AnmManager ICF survivor.
+    // The later frame-pacing condition also checks vsyncEnabled, which earlier builds lack.
     ZunBool ShouldRunAt60Fps()
     {
         return this->IsForced60Fps() && this->vsyncEnabled;

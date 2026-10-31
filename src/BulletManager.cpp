@@ -3,6 +3,9 @@
 #include "BulletManager.hpp"
 #include "AsciiManager.hpp"
 #include "ChainPriorities.hpp"
+#include "Gui.hpp"
+#include "ItemManager.hpp"
+#include "SoundPlayer.hpp"
 
 namespace th06
 {

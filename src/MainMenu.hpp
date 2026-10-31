@@ -1,6 +1,9 @@
 #pragma once
+#include "AnmVm.hpp"
+#include "ReplayData.hpp"
 #include "ZunBool.hpp"
 #include "ZunResult.hpp"
+#include "decomp.hpp"
 
 #define REPLAYS_PER_PAGE 15
 #define NORMAL_REPLAY_COUNT REPLAYS_PER_PAGE

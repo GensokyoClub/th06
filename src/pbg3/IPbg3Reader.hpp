@@ -22,10 +22,7 @@ class IPbg3Reader
     }
     u32 ReadVarInt();
     u32 ReadInt();
-    char ReadChar()
-    {
-        return this->ReadBits(8);
-    }
+    char ReadChar();
     BOOL ReadString(char *out, u32 maxSize);
     virtual BOOL ReadBit() = 0;
     virtual u32 ReadBits(u32 numBits) = 0;

@@ -8,6 +8,7 @@
 #include "MidiOutput.hpp"
 #include "MusicRoom.hpp"
 #include "ReplayManager.hpp"
+#include "SoundPlayer.hpp"
 #include "TextHelper.hpp"
 
 namespace th06
@@ -217,6 +218,7 @@ ChainCallbackResult Supervisor_OnDraw(Supervisor *s)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
+#if BUILT_SINCE(013)
 static BOOL CALLBACK EnumGameControllerDevicesCallback(LPCDIDEVICEINSTANCE pdidInstance, LPVOID pContext)
 {
     if (!g_Supervisor.controller)
@@ -230,7 +232,9 @@ static BOOL CALLBACK EnumGameControllerDevicesCallback(LPCDIDEVICEINSTANCE pdidI
     }
     return FALSE;
 }
+#endif
 
+#if BUILT_SINCE(101)
 #pragma var_order(diprange, pvRefBackup)
 BOOL CALLBACK EnumGameControllerObjectsCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi, LPVOID pvRef)
 {
@@ -256,13 +260,14 @@ BOOL CALLBACK EnumGameControllerObjectsCallback(LPCDIDEVICEOBJECTINSTANCE lpddoi
     }
     return TRUE;
 }
+#endif
 
 static ZunResult SetupDInput(Supervisor *supervisor)
 {
     HINSTANCE hInst = (HINSTANCE)GetWindowLong(supervisor->hwndGameWindow, GWL_HINSTANCE);
 
 #if BUILT_SINCE(102g)
-    if (supervisor->cfg.opts.dontUseDirectInput)
+    if (supervisor->IsDInputDisabled())
     {
         return ZUN_ERROR;
     }
@@ -319,6 +324,7 @@ static ZunResult SetupDInput(Supervisor *supervisor)
 #endif
     g_GameErrorContext.Log(TH_ERR_DIRECTINPUT_INITIALIZED);
 
+#if BUILT_SINCE(013)
     supervisor->dinputIface->EnumDevices(DI8DEVCLASS_GAMECTRL, EnumGameControllerDevicesCallback, NULL,
                                          DIEDFL_ATTACHEDONLY);
     if (supervisor->controller)
@@ -349,6 +355,7 @@ static ZunResult SetupDInput(Supervisor *supervisor)
 
         g_GameErrorContext.Log(TH_ERR_PAD_FOUND);
     }
+#endif
     return ZUN_SUCCESS;
 }
 
@@ -651,7 +658,11 @@ ZunResult Supervisor::LoadConfig(const char *path)
 {
     memset(&g_Supervisor.cfg, 0, sizeof(GameConfiguration));
     g_Supervisor.cfg.opts.useSwTextureBlending = true;
+#if BUILT_SINCE(100)
     GameConfiguration *data = (GameConfiguration *)FileSystem::OpenPath(path, EXTERNAL_FILE);
+#else
+    GameConfiguration *data = (GameConfiguration *)FileSystem::OpenPath(path);
+#endif
     if (data == NULL)
     {
         g_Supervisor.cfg.lifeCount = 2;
@@ -789,7 +800,7 @@ ZunResult Supervisor::LoadConfig(const char *path)
 ZunBool Supervisor::ReadMidiFile(u32 midiFileIdx, const char *path)
 {
     // Return conventions seem opposite of normal? But they're never used anyway
-    if (g_Supervisor.cfg.musicMode == MIDI)
+    if (g_Supervisor.GetMusicMode() == MIDI)
     {
         if (g_Supervisor.midiOutput != NULL)
         {
@@ -804,11 +815,11 @@ ZunBool Supervisor::ReadMidiFile(u32 midiFileIdx, const char *path)
 
 ZunBool Supervisor::PlayMidiFile(i32 midiFileIdx)
 {
-    if (g_Supervisor.cfg.musicMode == MIDI)
+    if (g_Supervisor.GetMusicMode() == MIDI)
     {
         if (g_Supervisor.midiOutput != NULL)
         {
-            g_Supervisor.midiOutput->ParseAndPlay(midiFileIdx);
+            g_Supervisor.midiOutput->PlayFile(midiFileIdx);
         }
 
         return FALSE;
@@ -819,10 +830,10 @@ ZunBool Supervisor::PlayMidiFile(i32 midiFileIdx)
 
 ZunResult Supervisor::SetupMidiPlayback(const char *path)
 {
-    if (g_Supervisor.cfg.musicMode == MIDI)
+    if (g_Supervisor.GetMusicMode() == MIDI)
     {
     }
-    else if (g_Supervisor.cfg.musicMode == WAV)
+    else if (g_Supervisor.GetMusicMode() == WAV)
     {
     }
     else
@@ -838,14 +849,14 @@ ZunResult Supervisor::PlayAudio(const char *path)
     char audioPaths[2][256];
     char *pathExtension;
 
-    if (g_Supervisor.cfg.musicMode == MIDI)
+    if (g_Supervisor.GetMusicMode() == MIDI)
     {
         if (g_Supervisor.midiOutput != NULL)
         {
             g_Supervisor.midiOutput->LoadAndPlay(path);
         }
     }
-    else if (g_Supervisor.cfg.musicMode == WAV)
+    else if (g_Supervisor.GetMusicMode() == WAV)
     {
         strcpy(audioPaths[0], path);
         strcpy(audioPaths[1], path);
@@ -876,7 +887,7 @@ ZunResult Supervisor::PlayAudio(const char *path)
 
 ZunResult Supervisor::StopAudio()
 {
-    if (g_Supervisor.cfg.musicMode == MIDI)
+    if (g_Supervisor.GetMusicMode() == MIDI)
     {
         if (g_Supervisor.midiOutput != NULL)
         {
@@ -885,7 +896,7 @@ ZunResult Supervisor::StopAudio()
     }
     else
     {
-        if (g_Supervisor.cfg.musicMode == WAV)
+        if (g_Supervisor.GetMusicMode() == WAV)
         {
             g_SoundPlayer.StopBGM();
         }
@@ -900,7 +911,7 @@ ZunResult Supervisor::StopAudio()
 
 ZunResult Supervisor::FadeOutMusic(f32 fadeOutSeconds)
 {
-    if (g_Supervisor.cfg.musicMode == MIDI)
+    if (g_Supervisor.GetMusicMode() == MIDI)
     {
         if (g_Supervisor.midiOutput != NULL)
         {
@@ -909,7 +920,7 @@ ZunResult Supervisor::FadeOutMusic(f32 fadeOutSeconds)
     }
     else
     {
-        if (g_Supervisor.cfg.musicMode == WAV)
+        if (g_Supervisor.GetMusicMode() == WAV)
         {
             if (this->effectiveFramerateMultiplier == 0.0f)
             {

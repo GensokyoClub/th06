@@ -426,7 +426,7 @@ u16 Controller::GetJoystickCaps(void)
     // NOTE: This isn't stubbed in trial 0.08.
     // Current trial build is based on version 0.13.
     // Why was winmm joystick API removed for that????
-// 1.00 and 1.02g+ probe the joystick; 1.01 to 1.02f return early.
+    // 1.00 and 1.02g+ probe the joystick; 1.01 to 1.02f return early.
 #if BUILT_SINCE(102g) || BUILT_BEFORE(101)
     JOYINFOEX pji;
 
@@ -623,10 +623,10 @@ u16 Controller::GetControllerInput(u16 buttons)
             memset(&a0, 0, sizeof(a0));
 #endif
 
-#if BUILT_SINCE(102)
+#if BUILT_SINCE(102c)
             aaa = g_Supervisor.controller->GetDeviceState(sizeof(a0), &a0);
 #else
-            // Before 1.02 the result is dropped and the check below still tests Poll's.
+            // Before 1.02c the result is dropped and the check below still tests Poll's.
             g_Supervisor.controller->GetDeviceState(sizeof(a0), &a0);
 #endif
 
@@ -829,8 +829,10 @@ u8 *th06::Controller::GetControllerState()
             return g_ControllerData;
 #endif
         }
-#if BUILT_SINCE(102g)
-        // Release checks the earlier Poll result instead of the GetDeviceState result.
+
+#if BUILT_SINCE(102g) || (BUILT_SINCE(102) && BUILT_BEFORE(102c))
+        // These builds check the earlier Poll result instead of the GetDeviceState result.
+        // Yes this really did get broken in 1.02, fixed in 1.02d, and unfixed in 1.02g.
         g_Supervisor.controller->GetDeviceState(sizeof(DIJOYSTATE2), &dijoystate2);
 #else
         dires = g_Supervisor.controller->GetDeviceState(sizeof(DIJOYSTATE2), &dijoystate2);
@@ -993,7 +995,11 @@ void CMyFont::Clean()
 Pbg3Archive **g_Pbg3ArcList;
 
 #pragma var_order(pbg3Idx, entryname, entryIdx, fsize, data, file)
+#if BUILT_SINCE(100)
 u8 *FileSystem::OpenPath(const char *filepath, ZunBool isExternalResource)
+#else
+u8 *FileSystem::OpenPath(const char *filepath)
+#endif
 {
     u8 *data;
     FILE *file;
@@ -1002,7 +1008,9 @@ u8 *FileSystem::OpenPath(const char *filepath, ZunBool isExternalResource)
     i32 pbg3Idx;
 
     i32 entryIdx = -1;
+#if BUILT_SINCE(100)
     if (!isExternalResource)
+#endif
     {
         entryname = strrchr(filepath, '\\');
         if (entryname == NULL)
@@ -1036,6 +1044,7 @@ u8 *FileSystem::OpenPath(const char *filepath, ZunBool isExternalResource)
                 }
             }
         }
+#if BUILT_SINCE(100)
         if (entryIdx < 0)
         {
 #if BUILT_BEFORE(102g)
@@ -1043,6 +1052,7 @@ u8 *FileSystem::OpenPath(const char *filepath, ZunBool isExternalResource)
 #endif
             return NULL;
         }
+#endif
     }
     if (entryIdx >= 0)
     {
@@ -1191,7 +1201,7 @@ u32 Rng::GetRandomU32(void)
     return GetRandomU16() << 16 | GetRandomU16();
 }
 
-f32 Rng::GetRandomF32ZeroToOne(void)
+f32 Rng::GetRandomF32(void)
 {
     return (f32)GetRandomU32() / (f32)0xFFFFFFFF;
 }

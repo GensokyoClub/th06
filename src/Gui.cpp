@@ -1,6 +1,9 @@
 #include "stdafx.h"
 
 #include "Gui.hpp"
+#include "AnmVm.hpp"
+#include "Chain.hpp"
+#include "Enemy.hpp"
 
 #include "AsciiManager.hpp"
 #include "ChainPriorities.hpp"
@@ -254,7 +257,7 @@ ChainCallbackResult Gui_OnDraw(Gui *gui)
     gui->impl->DrawDialogue();
     gui->DrawStageElements();
     gui->DrawGameScene();
-    g_AsciiManager.SetIsGui(true);
+    g_AsciiManager.SetIsGuiMode(true);
     if (gui->impl->bonusScore.isShown)
     {
         g_AsciiManager.SetColor(COLOR_LIGHT_YELLOW);
@@ -289,7 +292,7 @@ ChainCallbackResult Gui_OnDraw(Gui *gui)
         g_AsciiManager.SetScale(1.0f, 1.0f);
         g_AsciiManager.SetColor(COLOR_WHITE);
     }
-    g_AsciiManager.SetIsGui(false);
+    g_AsciiManager.SetIsGuiMode(false);
     g_Supervisor.d3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }

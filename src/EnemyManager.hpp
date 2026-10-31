@@ -42,7 +42,11 @@ struct EnemyManager
     TimelineInstr *timelineInstr;
     ZunTimer timelineTime;
 };
+#if BUILT_SINCE(100)
 ZUN_ASSERT_TYPE(EnemyManager, 0xee5ec, 4);
+#else
+ZUN_ASSERT_TYPE(EnemyManager, 0xecdbc, 4);
+#endif
 
 ZunResult EnemyManager_RegisterChain(const char *stgEnm1, const char *stgEnm2);
 void EnemyManager_CutChain();

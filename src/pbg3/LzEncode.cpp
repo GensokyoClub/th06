@@ -3,11 +3,6 @@
 
 namespace th06
 {
-LzssTree::LzssTree()
-{
-    this->Reset();
-}
-
 void LzssTree::SetRoot(i32 position)
 {
     this->nodes[LZSS_DICTSIZE].right = position;
@@ -25,6 +20,54 @@ void LzssTree::Reset()
         this->nodes[i].left = 0;
         this->nodes[i].right = 0;
     }
+}
+
+void LzssTree::Contract(i32 oldPosition, i32 newPosition)
+{
+    this->nodes[newPosition].parent = this->nodes[oldPosition].parent;
+    if (this->nodes[this->nodes[oldPosition].parent].right == oldPosition)
+    {
+        this->nodes[this->nodes[oldPosition].parent].right = newPosition;
+    }
+    else
+    {
+        this->nodes[this->nodes[oldPosition].parent].left = newPosition;
+    }
+    this->nodes[oldPosition].parent = 0;
+}
+
+void LzssTree::Replace(i32 oldPosition, i32 newPosition)
+{
+    i32 parent = this->nodes[oldPosition].parent;
+    if (this->nodes[parent].left == oldPosition)
+    {
+        this->nodes[parent].left = newPosition;
+    }
+    else
+    {
+        this->nodes[parent].right = newPosition;
+    }
+    this->nodes[newPosition] = this->nodes[oldPosition];
+    this->nodes[this->nodes[newPosition].left].parent = newPosition;
+    this->nodes[this->nodes[newPosition].right].parent = newPosition;
+    this->nodes[oldPosition].parent = 0;
+}
+
+i32 LzssTree::FindPredecessor(i32 position)
+{
+    i32 next;
+
+    next = this->nodes[position].left;
+    while (this->nodes[next].right != 0)
+    {
+        next = this->nodes[next].right;
+    }
+    return next;
+}
+
+LzssTree::LzssTree()
+{
+    this->Reset();
 }
 
 i32 LzssTree::Insert(i32 position, i32 *matchPosition)
@@ -106,90 +149,12 @@ void LzssTree::Delete(i32 position)
     }
 }
 
-void LzssTree::Contract(i32 oldPosition, i32 newPosition)
-{
-    this->nodes[newPosition].parent = this->nodes[oldPosition].parent;
-    if (this->nodes[this->nodes[oldPosition].parent].right == oldPosition)
-    {
-        this->nodes[this->nodes[oldPosition].parent].right = newPosition;
-    }
-    else
-    {
-        this->nodes[this->nodes[oldPosition].parent].left = newPosition;
-    }
-    this->nodes[oldPosition].parent = 0;
-}
-
-void LzssTree::Replace(i32 oldPosition, i32 newPosition)
-{
-    i32 parent = this->nodes[oldPosition].parent;
-    if (this->nodes[parent].left == oldPosition)
-    {
-        this->nodes[parent].left = newPosition;
-    }
-    else
-    {
-        this->nodes[parent].right = newPosition;
-    }
-    this->nodes[newPosition] = this->nodes[oldPosition];
-    this->nodes[this->nodes[newPosition].left].parent = newPosition;
-    this->nodes[this->nodes[newPosition].right].parent = newPosition;
-    this->nodes[oldPosition].parent = 0;
-}
-
-i32 LzssTree::FindPredecessor(i32 position)
-{
-    i32 next;
-
-    next = this->nodes[position].left;
-    while (this->nodes[next].right != 0)
-    {
-        next = this->nodes[next].right;
-    }
-    return next;
-}
-
 LzEncode::LzEncode()
 {
     this->entryCount = 0;
     this->entries = NULL;
     this->writer = NULL;
     this->Reset();
-}
-
-LzEncode::~LzEncode()
-{
-    this->Close();
-}
-
-BOOL LzEncode::Open(const char *path)
-{
-    if (this->Close() == FALSE)
-    {
-        return FALSE;
-    }
-    this->writer = new Pbg3Writer;
-    if (this->writer == NULL)
-    {
-        return FALSE;
-    }
-    if (this->writer->OpenArchive(path) == FALSE)
-    {
-        SAFE_DELETE(this->writer);
-        return FALSE;
-    }
-    this->entryCount = 0;
-    this->entries = new LzEncodeQueue;
-    if (this->entries == NULL)
-    {
-        SAFE_DELETE(this->writer);
-        return FALSE;
-    }
-    this->writer->WriteInt(0x33474250);
-    this->writer->WriteInt(0);
-    this->writer->WriteInt(0);
-    this->writer->WriteChar(0);
-    return TRUE;
 }
 
 BOOL LzEncode::Close()
@@ -325,6 +290,41 @@ BOOL LzEncode::Encode(IPbg3Reader *input, const char *name)
     this->entries->Push(entry);
     input->SeekToOffset(0);
     ++this->entryCount;
+    return TRUE;
+}
+
+LzEncode::~LzEncode()
+{
+    this->Close();
+}
+
+BOOL LzEncode::Open(const char *path)
+{
+    if (this->Close() == FALSE)
+    {
+        return FALSE;
+    }
+    this->writer = new Pbg3Writer;
+    if (this->writer == NULL)
+    {
+        return FALSE;
+    }
+    if (this->writer->OpenArchive(path) == FALSE)
+    {
+        SAFE_DELETE(this->writer);
+        return FALSE;
+    }
+    this->entryCount = 0;
+    this->entries = new LzEncodeQueue;
+    if (this->entries == NULL)
+    {
+        SAFE_DELETE(this->writer);
+        return FALSE;
+    }
+    this->writer->WriteInt(PBG3_MAGIC);
+    this->writer->WriteInt(0);
+    this->writer->WriteInt(0);
+    this->writer->WriteChar(0);
     return TRUE;
 }
 } // namespace th06

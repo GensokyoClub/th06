@@ -7,7 +7,7 @@ namespace th06
 class MemoryPbg3Reader : public IPbg3Reader
 {
   public:
-    BOOL Attach(u8 *data, u32 length, const FILETIME *time);
+    BOOL Attach(void *data, DWORD length, const FILETIME *time = NULL);
     void Detach();
     virtual BOOL ReadBit();
     virtual u32 ReadBits(u32 numBits);

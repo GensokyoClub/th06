@@ -18,7 +18,7 @@ class Pbg3Writer : public IPbg3Writer, public FileAbstraction
     virtual BOOL SeekToNextByte();
     virtual BOOL Write(void *data, DWORD length);
     Pbg3Writer();
-    ~Pbg3Writer();
+    virtual ~Pbg3Writer();
 };
 ZUN_ASSERT_SIZE(Pbg3Writer, 0x24);
 } // namespace th06

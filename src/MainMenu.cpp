@@ -8,6 +8,7 @@
 #include "ChainPriorities.hpp"
 #include "ReplayManager.hpp"
 #include "ScreenEffect.hpp"
+#include "SoundPlayer.hpp"
 
 namespace th06
 {
@@ -15,6 +16,9 @@ namespace th06
 ZunResult LoadTitleAnm(MainMenu *menu);
 ZunResult LoadReplayMenu(MainMenu *menu);
 ZunResult LoadDiffCharSelect(MainMenu *s);
+static ZunResult MainMenu_AddedCallback(MainMenu *s);
+static ZunResult MainMenu_DeletedCallback(MainMenu *s);
+static void ReleaseTitleAnm();
 
 static CursorMovement MoveCursor(MainMenu *menu, i32 menuLength);
 static void SwapMapping(MainMenu *menu, ControllerButton btnPressed, ControllerButton oldMapping, ZunBool unk);
@@ -1320,7 +1324,11 @@ i32 MainMenu::ReplayHandling()
                 for (cur = 0; cur < REPLAYS_PER_PAGE; cur++)
                 {
                     sprintf(replayFilePath, "./replay/th6_%.2d.rpy", cur + 1);
+#if BUILT_SINCE(100)
                     replayData = (ReplayData *)FileSystem::OpenPath(replayFilePath, EXTERNAL_FILE);
+#else
+                    replayData = (ReplayData *)FileSystem::OpenPath(replayFilePath);
+#endif
                     if (replayData == NULL)
                     {
                         continue;
@@ -1341,7 +1349,11 @@ i32 MainMenu::ReplayHandling()
                 {
                     for (cur = 0; cur < USER_REPLAY_COUNT; cur++)
                     {
+#if BUILT_SINCE(100)
                         replayData = (ReplayData *)FileSystem::OpenPath(replayFileInfo.cFileName, EXTERNAL_FILE);
+#else
+                        replayData = (ReplayData *)FileSystem::OpenPath(replayFileInfo.cFileName);
+#endif
                         if (replayData == NULL)
                         {
                             continue;
@@ -1405,7 +1417,11 @@ i32 MainMenu::ReplayHandling()
                 this->cursor = 0;
                 g_SoundPlayer.PlaySoundByIdx(SOUND_SELECT);
                 this->currentReplay =
+#if BUILT_SINCE(100)
                     (ReplayData *)FileSystem::OpenPath(this->replayFilePaths[this->chosenReplay], EXTERNAL_FILE);
+#else
+                    (ReplayData *)FileSystem::OpenPath(this->replayFilePaths[this->chosenReplay]);
+#endif
                 ValidateReplayData(this->currentReplay, g_ReadFileSize);
                 for (cur = 0; cur < ARRAY_SIZE_SIGNED(this->currentReplay->stageReplayData); cur++)
                 {
@@ -2203,6 +2219,33 @@ ZunResult LoadReplayMenu(MainMenu *menu)
     return ZUN_SUCCESS;
 }
 
+ZunResult MainMenu_RegisterChain(ZunBool isDemo)
+{
+    MainMenu *menu = &g_MainMenu;
+
+    memset(menu, 0, sizeof(MainMenu));
+    g_GameManager.isInGameMenu = 0;
+    DebugPrint(TH_DBG_MAINMENU_VRAM, g_Supervisor.d3dDevice->GetAvailableTextureMem());
+    menu->gameState = isDemo ? STATE_REPLAY_LOAD : STATE_STARTUP;
+    g_Supervisor.framerateMultiplier = 0.0f;
+    menu->chainCalc = g_FuncChain.CreateElem((ChainCallback)MainMenu_OnUpdate);
+    menu->chainCalc->arg = menu;
+    menu->chainCalc->addedCallback = (ChainAddedCallback)MainMenu_AddedCallback;
+    menu->chainCalc->deletedCallback = (ChainDeletedCallback)MainMenu_DeletedCallback;
+    menu->stateTimer = 0;
+    if (g_FuncChain.AddToCalcChain(menu->chainCalc, TH_CHAIN_PRIO_CALC_MAINMENU) != ZUN_SUCCESS)
+    {
+        return ZUN_ERROR;
+    }
+    menu->chainDraw = g_FuncChain.CreateElem((ChainCallback)MainMenu_OnDraw);
+    menu->chainDraw->arg = menu;
+    g_FuncChain.AddToDrawChain(menu->chainDraw, TH_CHAIN_PRIO_DRAW_MAINMENU);
+    menu->lastFrameTime = 0;
+    menu->stateTimer = 60;
+    menu->frameCountForRefreshRateCalc = 0;
+    return ZUN_SUCCESS;
+}
+
 static ZunResult MainMenu_AddedCallback(MainMenu *menu)
 {
 #if BUILT_SINCE(102g)
@@ -2277,17 +2320,6 @@ static ZunResult MainMenu_AddedCallback(MainMenu *menu)
     return ZUN_SUCCESS;
 }
 
-static void ReleaseTitleAnm()
-{
-    // There's a bit of an off-by-one error here, where it frees
-    // ANM_FILE_SELECT01 in addition to the titles. I'm pretty sure this is
-    // unintentional.
-    for (i32 i = ANM_FILE_TITLE01; i <= ANM_FILE_SELECT01; i++)
-    {
-        g_AnmManager->ReleaseAnm(i);
-    }
-}
-
 static ZunResult MainMenu_DeletedCallback(MainMenu *menu)
 {
     g_Supervisor.d3dDevice->ResourceManagerDiscardBytes(0);
@@ -2305,30 +2337,15 @@ static ZunResult MainMenu_DeletedCallback(MainMenu *menu)
     return ZUN_SUCCESS;
 }
 
-ZunResult MainMenu_RegisterChain(ZunBool isDemo)
+static void ReleaseTitleAnm()
 {
-    MainMenu *menu = &g_MainMenu;
-
-    memset(menu, 0, sizeof(MainMenu));
-    g_GameManager.isInGameMenu = 0;
-    DebugPrint(TH_DBG_MAINMENU_VRAM, g_Supervisor.d3dDevice->GetAvailableTextureMem());
-    menu->gameState = isDemo ? STATE_REPLAY_LOAD : STATE_STARTUP;
-    g_Supervisor.framerateMultiplier = 0.0f;
-    menu->chainCalc = g_FuncChain.CreateElem((ChainCallback)MainMenu_OnUpdate);
-    menu->chainCalc->arg = menu;
-    menu->chainCalc->addedCallback = (ChainAddedCallback)MainMenu_AddedCallback;
-    menu->chainCalc->deletedCallback = (ChainDeletedCallback)MainMenu_DeletedCallback;
-    menu->stateTimer = 0;
-    if (g_FuncChain.AddToCalcChain(menu->chainCalc, TH_CHAIN_PRIO_CALC_MAINMENU) != ZUN_SUCCESS)
+    // There's a bit of an off-by-one error here, where it frees
+    // ANM_FILE_SELECT01 in addition to the titles. I'm pretty sure this is
+    // unintentional.
+    for (i32 i = ANM_FILE_TITLE01; i <= ANM_FILE_SELECT01; i++)
     {
-        return ZUN_ERROR;
+        g_AnmManager->ReleaseAnm(i);
     }
-    menu->chainDraw = g_FuncChain.CreateElem((ChainCallback)MainMenu_OnDraw);
-    menu->chainDraw->arg = menu;
-    g_FuncChain.AddToDrawChain(menu->chainDraw, TH_CHAIN_PRIO_DRAW_MAINMENU);
-    menu->lastFrameTime = 0;
-    menu->stateTimer = 60;
-    menu->frameCountForRefreshRateCalc = 0;
-    return ZUN_SUCCESS;
 }
+
 } // namespace th06

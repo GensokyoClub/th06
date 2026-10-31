@@ -94,7 +94,7 @@ struct AsciiManager
         this->scale.y = y;
     }
 
-    void SetIsGui(ZunBool isGui)
+    void SetIsGuiMode(ZunBool isGui)
     {
         this->isGui = isGui;
     }
@@ -102,11 +102,6 @@ struct AsciiManager
     void SetIsSelected(ZunBool isSelected)
     {
         this->isSelected = isSelected;
-    }
-
-    void ResetStrings()
-    {
-        this->numStrings = 0;
     }
 
     AnmVm fontVm;

@@ -3,6 +3,9 @@
 #include "EnemyManager.hpp"
 #include "ChainPriorities.hpp"
 #include "EffectManager.hpp"
+#include "Gui.hpp"
+#include "ItemManager.hpp"
+#include "BulletManager.hpp"
 
 namespace th06
 {
@@ -183,64 +186,62 @@ void EnemyManager::RunEclTimeline()
             switch (this->timelineInstr->opCode)
             {
             case TIMELINE_OPCODE_ENEMY_CREATE:
-                if (!g_Gui.BossPresent())
+                if (!g_Gui.IsBossPresent())
                 {
-                    TimelineInstrArgs *args = &this->timelineInstr->args;
-                    this->SpawnEnemy(this->timelineInstr->arg0, args->Var1AsVec(), args->ushortVar1, args->ushortVar2,
-                                     args->uintVar4);
+                    TimelineEnemyCreateArgs *args = (TimelineEnemyCreateArgs *)this->timelineInstr->args;
+                    this->SpawnEnemy(this->timelineInstr->arg0, &args->pos, args->subLife, args->dropItem, args->score);
                 }
                 break;
             case TIMELINE_OPCODE_DUMMY_CREATE:
-                if (!g_Gui.BossPresent())
+                if (!g_Gui.IsBossPresent())
                 {
-                    this->SpawnEnemy(this->timelineInstr->arg0, this->timelineInstr->args.Var1AsVec(), -1,
+                    this->SpawnEnemy(this->timelineInstr->arg0, (D3DXVECTOR3 *)this->timelineInstr->args, -1,
                                      ITEM_RANDOM_ITEM, -1);
                 }
                 break;
             case TIMELINE_OPCODE_ENEMY_CREATE_MIRROR:
-                if (!g_Gui.BossPresent())
+                if (!g_Gui.IsBossPresent())
                 {
-                    TimelineInstrArgs *args = &this->timelineInstr->args;
-                    spawnedEnemy = this->SpawnEnemy(this->timelineInstr->arg0, args->Var1AsVec(), args->ushortVar1,
-                                                    args->ushortVar2, args->uintVar4);
+                    TimelineEnemyCreateArgs *args = (TimelineEnemyCreateArgs *)this->timelineInstr->args;
+                    spawnedEnemy = this->SpawnEnemy(this->timelineInstr->arg0, &args->pos, args->subLife,
+                                                    args->dropItem, args->score);
                     spawnedEnemy->flags.mirrored = true;
                 }
                 break;
             case TIMELINE_OPCODE_DUMMY_CREATE_MIRROR:
-                if (!g_Gui.BossPresent())
+                if (!g_Gui.IsBossPresent())
                 {
-                    spawnedEnemy = this->SpawnEnemy(this->timelineInstr->arg0, this->timelineInstr->args.Var1AsVec(),
+                    spawnedEnemy = this->SpawnEnemy(this->timelineInstr->arg0, (D3DXVECTOR3 *)this->timelineInstr->args,
                                                     -1, ITEM_RANDOM_ITEM, -1);
                     spawnedEnemy->flags.mirrored = true;
                 }
                 break;
             case TIMELINE_OPCODE_ENEMY_CREATE_RANDOM: {
-                TimelineInstrArgs *args;
-                if (!g_Gui.BossPresent())
+                TimelineEnemyCreateArgs *args;
+                if (!g_Gui.IsBossPresent())
                 {
-                    args = &this->timelineInstr->args;
-                    D3DXVECTOR3 pos = *args->Var1AsVec();
-                    if (args->Var1AsVec()->x <= -990.0f)
+                    args = (TimelineEnemyCreateArgs *)this->timelineInstr->args;
+                    D3DXVECTOR3 pos = args->pos;
+                    if (args->pos.x <= -990.0f)
                     {
                         pos.x = g_Rng.GetRandomF32InRange(g_GameManager.playerMovementAreaSize.x);
                     }
-                    if (args->Var1AsVec()->y <= -990.0f)
+                    if (args->pos.y <= -990.0f)
                     {
                         pos.y = g_Rng.GetRandomF32InRange(g_GameManager.playerMovementAreaSize.y);
                     }
-                    if (args->Var1AsVec()->z <= -990.0f)
+                    if (args->pos.z <= -990.0f)
                     {
                         pos.z = g_Rng.GetRandomF32InRange(800.0f);
                     }
-                    this->SpawnEnemy(this->timelineInstr->arg0, &pos, args->ushortVar1, args->ushortVar2,
-                                     args->uintVar4);
+                    this->SpawnEnemy(this->timelineInstr->arg0, &pos, args->subLife, args->dropItem, args->score);
                 }
                 break;
             }
             case TIMELINE_OPCODE_DUMMY_CREATE_RANDOM:
-                if (!g_Gui.BossPresent())
+                if (!g_Gui.IsBossPresent())
                 {
-                    D3DXVECTOR3 pos = *this->timelineInstr->args.Var1AsVec();
+                    D3DXVECTOR3 pos = *(D3DXVECTOR3 *)this->timelineInstr->args;
                     if (pos.x <= -990.0f)
                     {
                         pos.x = g_Rng.GetRandomF32InRange(g_GameManager.playerMovementAreaSize.x);
@@ -257,33 +258,33 @@ void EnemyManager::RunEclTimeline()
                 }
                 break;
             case TIMELINE_OPCODE_ENEMY_CREATE_MIRROR_RANDOM: {
-                TimelineInstrArgs *args;
-                if (!g_Gui.BossPresent())
+                TimelineEnemyCreateArgs *args;
+                if (!g_Gui.IsBossPresent())
                 {
-                    args = &this->timelineInstr->args;
-                    D3DXVECTOR3 pos = *args->Var1AsVec();
-                    if (args->Var1AsVec()->x <= -990.0f)
+                    args = (TimelineEnemyCreateArgs *)this->timelineInstr->args;
+                    D3DXVECTOR3 pos = args->pos;
+                    if (args->pos.x <= -990.0f)
                     {
                         pos.x = g_Rng.GetRandomF32InRange(g_GameManager.playerMovementAreaSize.x);
                     }
-                    if (args->Var1AsVec()->y <= -990.0f)
+                    if (args->pos.y <= -990.0f)
                     {
                         pos.y = g_Rng.GetRandomF32InRange(g_GameManager.playerMovementAreaSize.y);
                     }
-                    if (args->Var1AsVec()->z <= -990.0f)
+                    if (args->pos.z <= -990.0f)
                     {
                         pos.z = g_Rng.GetRandomF32InRange(800.0f);
                     }
-                    spawnedEnemy = this->SpawnEnemy(this->timelineInstr->arg0, &pos, args->ushortVar1, args->ushortVar2,
-                                                    args->uintVar4);
+                    spawnedEnemy =
+                        this->SpawnEnemy(this->timelineInstr->arg0, &pos, args->subLife, args->dropItem, args->score);
                     spawnedEnemy->flags.mirrored = true;
                 }
                 break;
             }
             case TIMELINE_OPCODE_DUMMY_CREATE_MIRROR_RANDOM:
-                if (!g_Gui.BossPresent())
+                if (!g_Gui.IsBossPresent())
                 {
-                    D3DXVECTOR3 pos = *this->timelineInstr->args.Var1AsVec();
+                    D3DXVECTOR3 pos = *(D3DXVECTOR3 *)this->timelineInstr->args;
                     if (pos.x <= -990.0f)
                     {
                         pos.x = g_Rng.GetRandomF32InRange(g_GameManager.playerMovementAreaSize.x);
@@ -319,7 +320,7 @@ void EnemyManager::RunEclTimeline()
                 }
                 break;
             case TIMELINE_OPCODE_BOSS_INTERRUPT:
-                this->bosses[this->timelineInstr->args.uintVar1]->runInterrupt = this->timelineInstr->args.uintVar2;
+                this->bosses[this->timelineInstr->args[0]]->runInterrupt = this->timelineInstr->args[1];
                 break;
             case TIMELINE_OPCODE_PLAYER_POWER:
                 g_GameManager.currentPower = this->timelineInstr->arg0;
@@ -389,7 +390,7 @@ ZunBool Enemy::HandleTimerCallback()
         g_Gui.SetSpellcardSeconds((this->timerCallbackThreshold - (i32)this->phaseTimer) / 60);
     }
 
-    if (this->HasPhaseTimerFinished())
+    if (this->phaseTimer >= this->timerCallbackThreshold)
     {
         if (this->lifeCallbackThreshold > 0)
         {
@@ -448,7 +449,7 @@ void Enemy::Despawn()
     }
     if (this->flags.isBoss)
     {
-        g_Gui.bossPresent = false;
+        g_Gui.SetBossPresent(false);
     }
     if (this->effectIdx != 0)
     {
@@ -611,7 +612,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                     curEnemy->life = 1;
                     curEnemy->flags.isDamageable = false;
                     curEnemy->flags.deathMode = EnemyDeath_DespawnNoCallback;
-                    g_Gui.bossPresent = false;
+                    g_Gui.SetBossPresent(false);
                     g_EffectManager.SpawnParticles(curEnemy->deathParticle1, &curEnemy->position, 1, COLOR_WHITE);
                     g_EffectManager.SpawnParticles(curEnemy->deathParticle1, &curEnemy->position, 1, COLOR_WHITE);
                     g_EffectManager.SpawnParticles(curEnemy->deathParticle1, &curEnemy->position, 1, COLOR_WHITE);
@@ -626,7 +627,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                 LAB_00412a4d:
                     if (curEnemy->flags.isBoss)
                     {
-                        g_Gui.bossPresent = false;
+                        g_Gui.SetBossPresent(false);
                         Enemy_ResetEffectArray(curEnemy);
                     }
                 case EnemyDeath_DropItemsOnly:

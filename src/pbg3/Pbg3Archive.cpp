@@ -16,7 +16,7 @@ Pbg3Archive::Pbg3Archive()
 
 BOOL Pbg3Archive::ParseHeader()
 {
-    if (this->reader->ReadInt() != 0x33474250)
+    if (this->reader->ReadInt() != PBG3_MAGIC)
     {
         SAFE_DELETE(this->reader);
         return FALSE;
@@ -218,7 +218,7 @@ BOOL Pbg3Archive::LoadR(HMODULE module, const char *name)
         return FALSE;
     }
 
-    if (memReader->Attach((u8 *)this->resData, size, NULL) == FALSE)
+    if (memReader->Attach(this->resData, size, NULL) == FALSE)
     {
         SAFE_DELETE(this->reader);
         return FALSE;

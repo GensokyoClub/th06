@@ -14,11 +14,11 @@ namespace th06
 class LzssTree
 {
   public:
-    LzssTree();
     void SetRoot(i32 position);
     void Reset();
     i32 Insert(i32 position, i32 *matchPosition);
     void Delete(i32 position);
+    LzssTree();
 
   protected:
     struct Node

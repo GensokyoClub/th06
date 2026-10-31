@@ -3,6 +3,7 @@
 #include "MidiOutput.hpp"
 #include "ScreenEffect.hpp"
 #include "Stage.hpp"
+#include "SoundPlayer.hpp"
 
 namespace th06
 {
@@ -39,8 +40,6 @@ static void GameWindow_Present();
 
 GameWindow g_GameWindow;
 } // namespace th06
-
-extern DWORD GetDXVersion();
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
@@ -248,7 +247,9 @@ RenderResult GameWindow::Render()
         g_Supervisor.viewport.Height = GAME_WINDOW_HEIGHT;
         g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
         res = g_FuncChain.RunCalcChain();
+#if BUILT_SINCE(100)
         g_SoundPlayer.PlaySounds();
+#endif
         if (res == 0)
         {
             return RENDER_RESULT_EXIT_SUCCESS;
@@ -260,7 +261,7 @@ RenderResult GameWindow::Render()
         this->curFrame++;
     }
 
-// ZUN wrote this helper in 1.02f because starting there it also checks VSync
+// Starting with 1.02f, this condition also checks VSync.
 #if BUILT_SINCE(102f)
     if (g_Supervisor.IsWindowed() || g_Supervisor.ShouldRunAt60Fps())
 #else
@@ -666,7 +667,7 @@ static void GameWindow_InitD3dDevice(void)
     g_Supervisor.d3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
     g_Supervisor.d3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
     g_Supervisor.d3dDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-    if (!g_Supervisor.cfg.opts.suppressUseOfGoroudShading)
+    if (!g_Supervisor.IsShadingDisabled())
     {
         g_Supervisor.d3dDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
     }

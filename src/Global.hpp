@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <windows.h>
 
+extern DWORD GetDXVersion();
+
 #include "ZunBool.hpp"
 #include "ZunColor.hpp"
 #include "ZunMath.hpp"
@@ -59,20 +61,6 @@ ZunBool CheckDirectXVersion(void);
 f32 AddNormalizeAngle(f32 a, f32 b);
 void Rotate(D3DXVECTOR3 *outVector, D3DXVECTOR3 *point, f32 angle);
 } // namespace utils
-
-static void DebugPrint(const char *fmt, ...)
-{
-#ifdef DEBUG
-    char tmpBuffer[512];
-    va_list args;
-
-    va_start(args, fmt);
-    vsprintf(tmpBuffer, fmt, args);
-    va_end(args);
-
-    printf("DEBUG: %s\n", tmpBuffer);
-#endif
-}
 
 enum TouhouButton
 {
@@ -187,7 +175,12 @@ namespace FileSystem
 {
 // This documents intent better than just true
 #define EXTERNAL_FILE true
+#if BUILT_SINCE(100)
 u8 *OpenPath(const char *filepath, ZunBool isExternalResource = false);
+#else
+// 0.08 tries the archives first, then falls back to a loose file.
+u8 *OpenPath(const char *filepath);
+#endif
 int WriteDataToFile(const char *path, const void *data, size_t size);
 } // namespace FileSystem
 extern long g_ReadFileSize;
@@ -201,7 +194,7 @@ struct Rng
 
     u16 GetRandomU16();
     u32 GetRandomU32();
-    f32 GetRandomF32ZeroToOne();
+    f32 GetRandomF32();
 
     void Initialize(u16 seed)
     {
@@ -231,7 +224,7 @@ struct Rng
 
     f32 GetRandomF32InRange(f32 range)
     {
-        return this->GetRandomF32ZeroToOne() * range;
+        return this->GetRandomF32() * range;
     }
 };
 

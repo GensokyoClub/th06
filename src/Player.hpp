@@ -2,11 +2,8 @@
 #include <d3dx8math.h>
 #include <math.h>
 
-#include "AnmManager.hpp"
 #include "AnmVm.hpp"
-#include "BulletManager.hpp"
 #include "Chain.hpp"
-#include "GameManager.hpp"
 #include "ZunBool.hpp"
 #include "ZunResult.hpp"
 #include "decomp.hpp"

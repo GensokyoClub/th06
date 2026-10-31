@@ -2,6 +2,7 @@
 
 #include "EffectManager.hpp"
 
+#include "Chain.hpp"
 #include "ChainPriorities.hpp"
 
 namespace th06

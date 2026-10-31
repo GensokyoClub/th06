@@ -161,6 +161,8 @@ def configure(build_type, build_version, ver_suffix):
 
         force_ob1_sources = set(["GameManager", "Supervisor", "MainMenu"])
 
+        pre_102g_debugprint_pch_sources = set(["EclManager"])
+
         small_codegen_sources = set(
             [
                 "GameManager",
@@ -220,6 +222,13 @@ def configure(build_type, build_version, ver_suffix):
                 variables["cl_flags"] += " /Oi"
             if rule in force_ob1_sources:
                 variables["cl_flags"] += " /Ob1"
+            # Before 1.02g these sources emit DebugPrint as if it came from outside the precompiled header; the fold
+            # survivors of 1.00-1.02f need it. The real cause in ZUN's build is unknown.
+            if (
+                rule in pre_102g_debugprint_pch_sources
+                and build_version.value < BuildVersion.VER_102g.value
+            ):
+                variables["cl_flags"] += " /DPCH_WITHOUT_DEBUGPRINT"
 
             writer.build(
                 "$builddir/" + rule + ".obj",

@@ -17,8 +17,10 @@ void ExInsStage6Func9(Enemy *enemy, EclRawInstr *curInstr);
 void ExInsStage6Func11(Enemy *enemy, EclRawInstr *curInstr);
 void ExInsHandleBatTransformation(Enemy *enemy, EclRawInstr *curInstr);
 void ExInsStage4Func12(Enemy *enemy, EclRawInstr *curInstr);
+#if BUILT_SINCE(100)
 void ExInsStageXFunc13(Enemy *enemy, EclRawInstr *curInstr);
 void ExInsStageXFunc14(Enemy *enemy, EclRawInstr *curInstr);
 void ExInsStageXFunc15(Enemy *enemy, EclRawInstr *curInstr);
 void ExInsFlandreFinalContextUpdate(Enemy *enemy, EclRawInstr *curInstr);
+#endif
 } // namespace th06

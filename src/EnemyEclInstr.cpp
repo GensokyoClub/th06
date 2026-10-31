@@ -3,6 +3,7 @@
 #include "EnemyEclInstr.hpp"
 #include "EffectManager.hpp"
 #include "EnemyManager.hpp"
+#include "BulletManager.hpp"
 
 #define GET_ARG(type, num) ((type *)&curInstr->args)[num]
 #define GET_STRING_ARG(num) &GET_ARG(char, num)
@@ -415,11 +416,14 @@ void ExInsBatWingEffect(Enemy *enemy, EclRawInstr *curInstr)
     f32 finalAngle;
     D3DXVECTOR3 particlePos;
 
+#if BUILT_SINCE(100)
     if (enemy->flags.isInvisible)
     {
         Enemy_ResetEffectArray(enemy);
         return;
     }
+#endif
+
     enemy->exInsFunc6Angle += RADIANS(1.0f);
     if (enemy->exInsFunc6Angle >= RADIANS(45.0f))
     {
@@ -427,7 +431,10 @@ void ExInsBatWingEffect(Enemy *enemy, EclRawInstr *curInstr)
     }
 
     // Run every 8 frames for first 30 frames, then every 4 for next 30, then every 2 for next 60, then every frame
-    if (enemy->exInsFunc6Timer.HasTicked() &&
+    if (
+#if BUILT_SINCE(100)
+        enemy->exInsFunc6Timer.HasTicked() &&
+#endif
         (enemy->exInsFunc6Timer > 120 || (enemy->exInsFunc6Timer > 60 && enemy->exInsFunc6Timer % 2 == 0) ||
          (enemy->exInsFunc6Timer > 30 && enemy->exInsFunc6Timer % 4 == 0) || enemy->exInsFunc6Timer % 8 == 0))
     {
@@ -524,7 +531,9 @@ void ExInsStage6Func7(Enemy *enemy, EclRawInstr *curInstr)
             {
                 laserProps.position = positionVectors[i];
                 laserProps.sprite = LASER_BEAM;
+#if BUILT_SINCE(100)
                 if (attackType == 0)
+#endif
                 {
                     if (g_GameManager.difficulty <= NORMAL)
                     {
@@ -556,7 +565,11 @@ void ExInsStage6Func7(Enemy *enemy, EclRawInstr *curInstr)
                         laserProps.width = 20.0f;
                     }
                     laserProps.startTime = innerLoopCount * 16 + 60;
+#if BUILT_SINCE(100)
                     laserProps.duration = 90 - innerLoopCount * 16;
+#else
+                    laserProps.duration = 140 - innerLoopCount * 16;
+#endif
                     laserProps.despawnDuration = 16;
                     laserProps.hitboxStartTime = 50;
                     laserProps.hitboxEndDelay = 16;
@@ -564,11 +577,13 @@ void ExInsStage6Func7(Enemy *enemy, EclRawInstr *curInstr)
                     laserProps.aimMode = LASER_UNAIMED;
                     g_BulletManager.SpawnLaserPattern(&laserProps);
                 }
+#if BUILT_SINCE(100)
                 else
                 {
                     enemy->bulletProps.position = laserProps.position;
                     g_BulletManager.SpawnBulletPattern(&enemy->bulletProps);
                 }
+#endif
                 positionVectors[i].x += cosf(laserAngle) * lengthMultiplier;
                 positionVectors[i].y += sinf(laserAngle) * lengthMultiplier;
                 laserAngle += ZUN_PI / 4.0f;
@@ -643,10 +658,13 @@ void ExInsStage6Func9(Enemy *enemy, EclRawInstr *curInstr)
         if (currentBullet->sprites.spriteBullet.sprite != NULL &&
             currentBullet->sprites.spriteBullet.sprite->heightPx < BULLET_SIZE_MEDIUM && currentBullet->speed == 0.0f)
         {
+            // TODO: 0.08 codegen diffs
             currentBullet->exFlags |= EX_ACCELERATION;
             currentBullet->color = BULLET_RED;
+#if BUILT_SINCE(100)
             g_AnmManager->SetActiveSprite(&currentBullet->sprites.spriteBullet,
                                           currentBullet->sprites.spriteBullet.baseSpriteIndex + currentBullet->color);
+#endif
             currentBullet->speed = 0.01f;
             currentBullet->timer = 0;
             currentBullet->exDuration = 120;
@@ -697,10 +715,13 @@ void ExInsStage6Func11(Enemy *enemy, EclRawInstr *curInstr)
         if (currentBullet->sprites.spriteBullet.sprite != NULL &&
             currentBullet->sprites.spriteBullet.sprite->heightPx < BULLET_SIZE_MEDIUM && currentBullet->speed == 0.0f)
         {
+            // TODO: 0.08 codegen diffs
             currentBullet->exFlags |= EX_ACCELERATION;
             currentBullet->color = BULLET_RED;
+#if BUILT_SINCE(100)
             g_AnmManager->SetActiveSprite(&currentBullet->sprites.spriteBullet,
                                           currentBullet->sprites.spriteBullet.baseSpriteIndex + currentBullet->color);
+#endif
             currentBullet->speed = 0.01f;
             currentBullet->timer = 0;
             currentBullet->exDuration = 120;
@@ -730,11 +751,15 @@ void ExInsHandleBatTransformation(Enemy *enemy, EclRawInstr *curInstr)
         }
 
         enemy->flags.isInteractable = false;
-        enemy->exInsFunc10Timer = 60;
+#if BUILT_SINCE(100)
+        enemy->transformTimer = 60;
+#endif
     }
     else
     {
-        if (enemy->exInsFunc10Timer > 0 && (enemy->exInsFunc10Timer--, enemy->exInsFunc10Timer == 0))
+#if BUILT_SINCE(100)
+        if (enemy->transformTimer > 0 && (enemy->transformTimer--, enemy->transformTimer == 0))
+#endif
         {
             if (enemy->anmPoseLeft < 0) // Check if poses are disabled
             {
@@ -761,6 +786,7 @@ void ExInsStage4Func12(Enemy *enemy, EclRawInstr *curInstr)
     }
 }
 
+#if BUILT_SINCE(100)
 #pragma var_order(i, bulletProps, basePatternAngle, numPatterns)
 void ExInsStageXFunc13(Enemy *enemy, EclRawInstr *curInstr)
 {
@@ -903,4 +929,5 @@ void ExInsFlandreFinalContextUpdate(Enemy *enemy, EclRawInstr *curInstr)
         enemy->currentContext.float3 = g_Rng.GetRandomF32InRange(rangeModifier) + (96.0f - rangeModifier / 2.0f);
     }
 }
+#endif
 } // namespace th06

@@ -12,12 +12,20 @@ static DWORD WINAPI SoundPlayer_BackgroundMusicPlayerThread(LPVOID lpThreadParam
 #define BACKGROUND_MUSIC_WAV_BLOCK_ALIGN BACKGROUND_MUSIC_WAV_BITS_PER_SAMPLE / 8 * BACKGROUND_MUSIC_WAV_NUM_CHANNELS
 
 SoundEffectData g_SoundBufferIdxVol[] = {
+#if BUILT_SINCE(100)
     {0, -1500, 0},   {0, -2000, 0},   {1, -1200, 5},   {1, -1400, 5},  {2, -1000, 100}, {3, -500, 100},
     {4, -500, 100},  {5, -1700, 50},  {6, -1700, 50},  {7, -1700, 50}, {8, -1000, 100}, {9, -1000, 100},
     {10, -1900, 10}, {11, -1200, 10}, {12, -900, 100}, {5, -1500, 50}, {13, -900, 50},  {14, -900, 50},
     {15, -600, 100}, {16, -400, 100}, {17, -1100, 0},  {18, -900, 0},  {5, -1800, 20},  {6, -1800, 20},
     {7, -1800, 20},  {19, -300, 50},  {20, -600, 50},  {21, -800, 50}, {22, -100, 140}, {23, -500, 100},
     {24, -1000, 20}, {25, -1000, 90},
+#else
+    {0, -2500, 0},   {0, -3000, 0},   {1, -1200, 5},   {1, -1700, 5},   {2, -1500, 100}, {3, -300, 100},
+    {4, -300, 100},  {5, -1500, 50},  {6, -1500, 50},  {7, -1500, 50},  {8, -800, 100},  {9, -1400, 100},
+    {10, -1700, 10}, {11, -1500, 10}, {12, -800, 100}, {5, -1000, 50},  {13, -700, 50},  {14, -700, 50},
+    {15, -500, 100}, {16, -200, 100}, {17, -1600, 0},  {18, -900, 0},   {5, -2200, 20},  {6, -2200, 20},
+    {7, -2200, 20},  {19, -500, 50},  {20, -800, 50},  {21, -1200, 50}, {22, -300, 140}, {23, -500, 100},
+#endif
 };
 const char *g_SFXList[] = {
     "data/wav/plst00.wav", "data/wav/enep00.wav",   "data/wav/pldead00.wav", "data/wav/power0.wav",
@@ -26,7 +34,9 @@ const char *g_SFXList[] = {
     "data/wav/cat00.wav",  "data/wav/lazer00.wav",  "data/wav/lazer01.wav",  "data/wav/enep01.wav",
     "data/wav/nep00.wav",  "data/wav/damage00.wav", "data/wav/item00.wav",   "data/wav/kira00.wav",
     "data/wav/kira01.wav", "data/wav/kira02.wav",   "data/wav/extend.wav",   "data/wav/timeout.wav",
+#if BUILT_SINCE(100)
     "data/wav/graze.wav",  "data/wav/powerup.wav",
+#endif
 };
 
 SoundPlayer g_SoundPlayer;
@@ -34,6 +44,7 @@ SoundPlayer g_SoundPlayer;
 #pragma var_order(bufDesc, audioBuffer2Start, audioBuffer2Len, audioBuffer1Len, audioBuffer1Start, wavFormat)
 ZunResult SoundPlayer::InitializeDSound(HWND gameWindow)
 {
+#if BUILT_SINCE(100)
     DSBUFFERDESC bufDesc;
     WAVEFORMATEX wavFormat;
     LPVOID audioBuffer1Start;
@@ -82,10 +93,29 @@ ZunResult SoundPlayer::InitializeDSound(HWND gameWindow)
     this->gameWindow = gameWindow;
     g_GameErrorContext.Log(TH_DBG_SOUNDPLAYER_INIT_SUCCESS);
     return ZUN_SUCCESS;
+#else
+    // 0.08 creates one streaming thread here and keeps it until Release().
+    this->manager = new CSoundManager();
+    if (FAILED(this->manager->Initialize(gameWindow, 2, 2, 44100, 16)))
+    {
+        g_GameErrorContext.Log(TH_ERR_SOUNDPLAYER_FAILED_TO_INITIALIZE_OBJECT);
+        SAFE_DELETE(this->manager);
+        return ZUN_ERROR;
+    }
+    this->dsoundHdl = this->manager->GetDirectSound();
+    this->backgroundMusicThreadHandle =
+        CreateThread(NULL, 0, SoundPlayer_BackgroundMusicPlayerThread, gameWindow, 0, &this->backgroundMusicThreadId);
+    this->backgroundMusicUpdateEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+    SetTimer(gameWindow, 0, 250, NULL);
+    this->gameWindow = gameWindow;
+    g_GameErrorContext.Log(TH_DBG_SOUNDPLAYER_INIT_SUCCESS);
+    return ZUN_SUCCESS;
+#endif
 }
 
 ZunResult SoundPlayer::Release(void)
 {
+#if BUILT_SINCE(100)
     i32 i;
 
     if (this->manager == NULL)
@@ -122,6 +152,25 @@ ZunResult SoundPlayer::Release(void)
     SAFE_DELETE(this->backgroundMusic);
     SAFE_DELETE(this->manager);
     return ZUN_SUCCESS;
+#else
+    if (this->manager == NULL)
+    {
+        return ZUN_SUCCESS;
+    }
+    for (i32 i = 0; i < SOUND_EFFECT_COUNT; i++)
+    {
+        SAFE_RELEASE(this->soundBuffers[i]);
+    }
+    KillTimer(this->gameWindow, 1);
+    SAFE_DELETE(this->backgroundMusic);
+    SAFE_DELETE(this->manager);
+    PostThreadMessage(this->backgroundMusicThreadId, WM_QUIT, 0, 0);
+    WaitForSingleObject(this->backgroundMusicThreadHandle, INFINITE);
+    CloseHandle(this->backgroundMusicThreadHandle);
+    CloseHandle(this->backgroundMusicUpdateEvent);
+    this->dsoundHdl = NULL;
+    return ZUN_SUCCESS;
+#endif
 }
 
 static WAVEFORMATEX *GetWavFormatData(u8 *soundData, const char *formatString, i32 *formatSize,
@@ -203,7 +252,11 @@ ZunResult SoundPlayer::LoadSound(i32 idx, const char *path)
     }
     memset(&dsBuffer, 0, sizeof(dsBuffer));
     dsBuffer.dwSize = sizeof(dsBuffer);
+#if BUILT_SINCE(100)
     dsBuffer.dwFlags = DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME | DSBCAPS_LOCSOFTWARE;
+#else
+    dsBuffer.dwFlags = DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_LOCDEFER;
+#endif
     dsBuffer.dwBufferBytes = formatSize;
     dsBuffer.lpwfxFormat = &wavData;
     if (FAILED(this->dsoundHdl->CreateSoundBuffer(&dsBuffer, &this->soundBuffers[idx], NULL)))
@@ -260,6 +313,9 @@ ZunResult SoundPlayer::LoadWav(char *path)
         return ZUN_ERROR;
     }
     this->StopBGM();
+#if BUILT_BEFORE(100)
+    SAFE_DELETE(this->backgroundMusic);
+#endif
     DebugPrint("load BGM\n");
     res = waveFile.Open(path, NULL, WAVEFILE_READ);
     if (FAILED(res))
@@ -289,6 +345,7 @@ ZunResult SoundPlayer::LoadWav(char *path)
     notifySize =
         numSamplesPerSec * BACKGROUND_MUSIC_STREAM_SECONDS * blockAlign / BACKGROUND_MUSIC_STREAM_NOTIFICATIONS;
     notifySize -= (notifySize % blockAlign);
+#if BUILT_SINCE(100)
 #if BUILT_SINCE(101)
     this->backgroundMusicUpdateEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 #endif
@@ -298,12 +355,17 @@ ZunResult SoundPlayer::LoadWav(char *path)
     // 1.00 starts the streaming thread before creating the event it waits on.
     this->backgroundMusicUpdateEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 #endif
+#endif
     res = this->manager->CreateStreaming(
         &this->backgroundMusic, path, DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLPOSITIONNOTIFY, GUID_NULL,
         BACKGROUND_MUSIC_STREAM_NOTIFICATIONS, notifySize, this->backgroundMusicUpdateEvent);
     if (FAILED(res))
     {
+#if BUILT_SINCE(100)
         DebugPrint(TH_ERR_SOUNDPLAYER_FAILED_TO_CREATE_BGM_SOUND_BUFFER);
+#else
+        g_GameErrorContext.Log(TH_ERR_SOUNDPLAYER_FAILED_TO_CREATE_BGM_SOUND_BUFFER);
+#endif
         return ZUN_ERROR;
     }
     DebugPrint("comp\n");
@@ -346,8 +408,13 @@ ZunResult SoundPlayer::LoadPos(const char *path)
         return ZUN_ERROR;
     }
     bgmFile = this->backgroundMusic->GetWaveFile();
+#if BUILT_SINCE(100)
     loopEnd = *(i32 *)(fileData + 4) * 4;
     loopStart = *(i32 *)(fileData) * 4;
+#else
+    loopStart = *(i32 *)(fileData) * 4;
+    loopEnd = *(i32 *)(fileData + 4) * 4;
+#endif
     bgmFile->m_loopStartPoint = loopStart;
     bgmFile->m_loopEndPoint = loopEnd;
     ZUN_FREE(fileData);
@@ -389,6 +456,7 @@ ZunResult SoundPlayer::PlayBGM(BOOL isLooping)
 
 void SoundPlayer::StopBGM()
 {
+#if BUILT_SINCE(100)
     if (this->backgroundMusic != NULL)
     {
         this->backgroundMusic->Stop();
@@ -405,6 +473,13 @@ void SoundPlayer::StopBGM()
         SAFE_DELETE(this->backgroundMusic);
         DebugPrint("stop BGM\n");
     }
+#else
+    if (this->backgroundMusic != NULL)
+    {
+        this->backgroundMusic->Stop();
+        this->backgroundMusic->Reset();
+    }
+#endif
 }
 
 ZunResult SoundPlayer::InitSoundBuffers()
@@ -420,10 +495,12 @@ ZunResult SoundPlayer::InitSoundBuffers()
     }
     else
     {
+#if BUILT_SINCE(100)
         for (idx = 0; idx < SFX_QUEUE_LENGTH; idx++)
         {
             this->soundBuffersToPlay[idx] = -1;
         }
+#endif
         for (idx = 0; idx < ARRAY_SIZE_SIGNED(g_SFXList); idx++)
         {
             if (this->LoadSound(idx, g_SFXList[idx]) != ZUN_SUCCESS)
@@ -446,6 +523,7 @@ ZunResult SoundPlayer::InitSoundBuffers()
 #pragma var_order(i, SFXToPlay)
 void SoundPlayer::PlaySoundByIdx(SoundIdx idx, i32 unused)
 {
+#if BUILT_SINCE(100)
     i32 SFXToPlay;
     i32 i;
 
@@ -467,8 +545,27 @@ void SoundPlayer::PlaySoundByIdx(SoundIdx idx, i32 unused)
     }
     this->soundBuffersToPlay[i] = idx;
     this->unk408[idx] = SFXToPlay;
+#else
+    if (this->manager == NULL)
+    {
+        return;
+    }
+    if (this->duplicateSoundBuffers[idx] == NULL)
+    {
+        return;
+    }
+    if (!g_Supervisor.cfg.playSounds)
+    {
+        return;
+    }
+    this->unk408[idx] = g_SoundBufferIdxVol[idx].unk;
+    this->duplicateSoundBuffers[idx]->Stop();
+    this->duplicateSoundBuffers[idx]->SetCurrentPosition(0);
+    this->duplicateSoundBuffers[idx]->Play(0, 0, 0);
+#endif
 }
 
+#if BUILT_SINCE(100)
 void SoundPlayer::PlaySounds()
 {
     i32 idx;
@@ -499,6 +596,8 @@ void SoundPlayer::PlaySounds()
     }
 }
 
+#endif
+
 #pragma var_order(msg, looped, lpThreadParameterCopy, waitObj, res, stopped)
 static DWORD WINAPI SoundPlayer_BackgroundMusicPlayerThread(LPVOID lpThreadParameter)
 {
@@ -518,7 +617,11 @@ static DWORD WINAPI SoundPlayer_BackgroundMusicPlayerThread(LPVOID lpThreadParam
             MsgWaitForMultipleObjects(1, &g_SoundPlayer.backgroundMusicUpdateEvent, FALSE, INFINITE, QS_ALLEVENTS);
         if (g_SoundPlayer.backgroundMusic == NULL)
         {
+#if BUILT_SINCE(100)
             stopped = true;
+#else
+            break;
+#endif
         }
         switch (waitObj)
         {
@@ -526,6 +629,12 @@ static DWORD WINAPI SoundPlayer_BackgroundMusicPlayerThread(LPVOID lpThreadParam
             if (g_SoundPlayer.backgroundMusic != NULL)
             {
                 res = g_SoundPlayer.backgroundMusic->HandleWaveStreamNotification(looped);
+#if BUILT_BEFORE(100)
+                if (FAILED(res))
+                {
+                    stopped = true;
+                }
+#endif
             }
             break;
         case 1:

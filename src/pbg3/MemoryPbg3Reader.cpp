@@ -13,7 +13,7 @@ MemoryPbg3Reader::~MemoryPbg3Reader()
     this->Detach();
 }
 
-BOOL MemoryPbg3Reader::Attach(u8 *buffer, u32 length, const FILETIME *time)
+BOOL MemoryPbg3Reader::Attach(void *buffer, DWORD length, const FILETIME *time)
 {
     this->Detach();
     if (buffer == NULL)
@@ -25,7 +25,7 @@ BOOL MemoryPbg3Reader::Attach(u8 *buffer, u32 length, const FILETIME *time)
         return FALSE;
     }
     this->fileSize = length;
-    this->data = buffer;
+    this->data = (u8 *)buffer;
     if (time != NULL)
     {
         this->lastWriteTime = *time;
@@ -166,7 +166,7 @@ BOOL MemoryPbg3Reader::Read(void *out, DWORD length)
     }
     memcpy(out, this->data + this->offset, copied);
     this->offset += copied;
-    return copied == length;
+    return length == copied;
 }
 
 BOOL MemoryPbg3Reader::GetLastWriteTime(LPFILETIME time)

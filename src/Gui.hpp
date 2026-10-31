@@ -1,7 +1,6 @@
 #pragma once
-#include "AnmVm.hpp"
-#include "Chain.hpp"
-#include "Enemy.hpp"
+#include "ZunBool.hpp"
+#include "ZunResult.hpp"
 #include "decomp.hpp"
 #include <Windows.h>
 
@@ -55,12 +54,18 @@ struct Gui
         this->bossHealthBar1 = val;
     }
 
-    void SetBossLives(i32 lives)
+    void SetLives(i32 lives)
     {
         this->eclSetLives = lives;
     }
 
-    bool BossPresent()
+    bool SetBossPresent(bool bossPresent)
+    {
+        this->bossPresent = bossPresent;
+        return bossPresent;
+    }
+
+    bool IsBossPresent()
     {
         return this->bossPresent;
     }

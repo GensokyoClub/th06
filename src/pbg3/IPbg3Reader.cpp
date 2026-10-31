@@ -2,6 +2,12 @@
 
 namespace th06
 {
+
+char IPbg3Reader::ReadChar()
+{
+    return this->ReadBits(8);
+}
+
 void IPbg3Reader::Reset()
 {
     this->bitMask = 0x80;
@@ -48,6 +54,7 @@ u32 IPbg3Reader::ReadVarInt()
         {
             res |= intLen;
         }
+
         intLen >>= 1;
     }
 
@@ -80,4 +87,5 @@ BOOL IPbg3Reader::ReadString(char *out, u32 maxSize)
 
     return FALSE;
 }
+
 } // namespace th06

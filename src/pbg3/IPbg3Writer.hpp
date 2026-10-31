@@ -9,7 +9,10 @@ namespace th06
 class IPbg3Writer
 {
   public:
-    IPbg3Writer();
+    IPbg3Writer()
+    {
+        this->Reset();
+    }
     void Reset();
     BOOL WriteVarInt(u32 value);
     BOOL WriteString(const char *value);
@@ -36,6 +39,7 @@ class IPbg3Writer
     u32 fileSize;
     u32 curByte;
     u8 bitMask;
+    alignment_padding(0x3);
     u32 checksum;
 };
 ZUN_ASSERT_SIZE(IPbg3Writer, 0x18);

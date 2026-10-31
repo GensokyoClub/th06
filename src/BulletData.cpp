@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+#include "SoundPlayer.hpp"
+
 namespace th06
 {
 /* ----------ReimuA---------- */

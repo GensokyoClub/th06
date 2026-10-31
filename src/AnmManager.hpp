@@ -22,17 +22,21 @@ ZUN_ASSERT_TYPE(VertexDiffuseXyzrwh, 0x14, 4);
 // Structure of a vertex with SetVertexShade FVF set to D3DFVF_TEX1 | D3DFVF_XYZRHW
 struct VertexTex1Xyzrwh
 {
-    D3DXVECTOR4 position;
-    ZunVec2 textureUV;
+    D3DXVECTOR3 position;
+    float position_w;
+    float texture_u;
+    float texture_v;
 };
 ZUN_ASSERT_TYPE(VertexTex1Xyzrwh, 0x18, 4);
 
 // Structure of a vertex with SetVertexShade FVF set to D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZRHW
 struct VertexTex1DiffuseXyzrwh
 {
-    D3DXVECTOR4 position;
+    D3DXVECTOR3 position;
+    float position_w;
     D3DCOLOR diffuse;
-    ZunVec2 textureUV;
+    float texture_u;
+    float texture_v;
 };
 ZUN_ASSERT_TYPE(VertexTex1DiffuseXyzrwh, 0x1c, 4);
 
@@ -41,9 +45,18 @@ struct VertexTex1DiffuseXyz
 {
     D3DXVECTOR3 position;
     D3DCOLOR diffuse;
-    ZunVec2 textureUV;
+    float texture_u;
+    float texture_v;
 };
 ZUN_ASSERT_TYPE(VertexTex1DiffuseXyz, 0x18, 4);
+
+struct RenderVertexInfo
+{
+    D3DXVECTOR3 position;
+    float texture_u;
+    float texture_v;
+};
+ZUN_ASSERT_TYPE(RenderVertexInfo, 0x14, 4);
 
 struct AnmRawSprite
 {
@@ -82,17 +95,15 @@ struct AnmRawEntry
 };
 ZUN_ASSERT_TYPE(AnmRawEntry, 0x40, 4);
 
-struct RenderVertexInfo
-{
-    D3DXVECTOR3 position;
-    ZunVec2 textureUV;
-};
-ZUN_ASSERT_TYPE(RenderVertexInfo, 0x14, 4);
-
 #define MAX_ANM_SCRIPTS 2048
 #define MAX_ANM_SPRITES 2048
+#if BUILT_SINCE(100)
+#define MAX_ANM_FILES 128
+#else
+#define MAX_ANM_FILES 64
+#endif
 
-class AnmManager
+struct AnmManager
 {
   public:
     AnmManager();
@@ -249,8 +260,8 @@ class AnmManager
     i32 maybeLoadedSpriteCount;
     AnmRawInstr *scripts[MAX_ANM_SCRIPTS];
     i32 spriteIndices[MAX_ANM_SPRITES];
-    AnmRawEntry *anmFiles[128];
-    u32 anmFilesSpriteIndexOffsets[128];
+    AnmRawEntry *anmFiles[MAX_ANM_FILES];
+    u32 anmFilesSpriteIndexOffsets[MAX_ANM_FILES];
     LPDIRECT3DSURFACE8 surfaces[32];
     LPDIRECT3DSURFACE8 surfacesBis[32];
     D3DXIMAGE_INFO surfaceSourceInfo[32];
@@ -269,7 +280,11 @@ class AnmManager
     i32 screenshotWidth;
     i32 screenshotHeight;
 };
+#if BUILT_SINCE(100)
 ZUN_ASSERT_TYPE(AnmManager, 0x2112c, 4);
+#else
+ZUN_ASSERT_TYPE(AnmManager, 0x20f2c, 4);
+#endif
 
 extern AnmManager *g_AnmManager;
 } // namespace th06

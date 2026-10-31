@@ -7,6 +7,9 @@ namespace th06
 #ifndef PBG_EOF
 #define PBG_EOF (-1)
 #endif
+#ifndef PBG3_MAGIC
+#define PBG3_MAGIC mmioFOURCC('P', 'B', 'G', '3')
+#endif
 
 class FileAbstraction
 {

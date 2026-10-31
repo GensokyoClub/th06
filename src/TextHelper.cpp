@@ -60,6 +60,7 @@ class TextHelper
   public:
     TextHelper();
     ~TextHelper();
+    void ClearBuffer();
     bool AllocateBufferWithFallback(i32 width, i32 height, D3DFORMAT format);
     bool TryAllocateBuffer(i32 width, i32 height, D3DFORMAT format);
     FormatInfo *GetFormatInfo(D3DFORMAT format);
@@ -488,4 +489,9 @@ void TextHelper_RenderTextToTexture(i32 xPos, i32 yPos, i32 spriteWidth, i32 spr
         SAFE_RELEASE(destSurface);
     }
 }
+void TextHelper::ClearBuffer()
+{
+    memset(this->buffer, 0, this->imageSizeInBytes);
+}
+
 } // namespace th06

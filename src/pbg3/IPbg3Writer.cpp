@@ -5,10 +5,6 @@
 
 namespace th06
 {
-IPbg3Writer::IPbg3Writer()
-{
-    this->Reset();
-}
 
 IPbg3Writer::~IPbg3Writer()
 {
@@ -54,20 +50,6 @@ BOOL IPbg3Writer::WriteVarInt(u32 value)
     return TRUE;
 }
 
-BOOL IPbg3Writer::WriteString(const char *value)
-{
-    if (value == NULL)
-    {
-        return FALSE;
-    }
-    while (*value != '\0')
-    {
-        this->WriteChar(*value++);
-    }
-    this->WriteChar(0);
-    return TRUE;
-}
-
 BOOL IPbg3Writer::WriteChar(u8 value)
 {
     return this->WriteBits(value, 8);
@@ -77,6 +59,21 @@ BOOL IPbg3Writer::WriteInt(u32 value)
 {
     u8 *bytes = (u8 *)&value;
     return this->WriteBits(MAKE_INV_DWORD(bytes[0], bytes[1], bytes[2], bytes[3]), 32);
+}
+
+BOOL IPbg3Writer::WriteString(const char *value)
+{
+    if (value == NULL)
+    {
+        return FALSE;
+    }
+    while (*value != '\0')
+    {
+        this->WriteChar(*value);
+        value++;
+    }
+    this->WriteChar(0);
+    return TRUE;
 }
 
 } // namespace th06

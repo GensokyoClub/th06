@@ -19,7 +19,7 @@ class Pbg3Reader : public IPbg3Reader, public FileAbstraction
     virtual BOOL GetLastWriteTime(LPFILETIME lastWriteTime);
 
     Pbg3Reader();
-    ~Pbg3Reader();
+    virtual ~Pbg3Reader();
 };
 ZUN_ASSERT_SIZE(Pbg3Reader, 0x24);
 } // namespace th06

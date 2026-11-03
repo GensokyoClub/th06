@@ -12,7 +12,7 @@
 
 namespace th06
 {
-struct MidiOutput;
+class MidiOutput;
 
 // The 0.13a trial's archive marker differs from its config and replay format version.
 // TODO: Check 0.08p

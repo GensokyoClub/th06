@@ -20,6 +20,10 @@ class IPbg3Reader
     {
         return this->fileSize;
     }
+    void ResetChecksum()
+    {
+        this->checksum = 0;
+    }
     u32 ReadVarInt();
     u32 ReadInt();
     char ReadChar();

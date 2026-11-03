@@ -1,8 +1,7 @@
 #include <stddef.h>
 
-#include "pbg3/Pbg3Archive.hpp"
 #include "pbg3/MemoryPbg3Reader.hpp"
-#include "DebugPrint.hpp"
+#include "pbg3/Pbg3Archive.hpp"
 
 namespace th06
 {
@@ -29,8 +28,6 @@ BOOL Pbg3Archive::Load(const char *path)
         return FALSE;
     }
 
-    // /O2 removes these calls and their strings. TH08's PbgArchive logs at the same points; its messages are used here.
-    DebugPrint("info : %s open arcfile\r\n", path);
     fileReader = new Pbg3Reader();
     this->reader = fileReader;
     if (this->reader == NULL)
@@ -40,7 +37,6 @@ BOOL Pbg3Archive::Load(const char *path)
 
     if (fileReader->OpenArchive(path) == FALSE)
     {
-        DebugPrint("info : %s not found\r\n", path);
         SAFE_DELETE(this->reader);
         return FALSE;
     }
@@ -178,7 +174,6 @@ u8 *Pbg3Archive::ReadDecompressEntry(u32 entryIdx, const char *filename)
 
     if (rawData == NULL)
     {
-        DebugPrint("info : %s error\r\n", filename);
         free(out);
         return NULL;
     }
@@ -328,11 +323,6 @@ u32 Pbg3Archive::GetEntrySize(u32 entryIdx)
 }
 
 // Dead KOG code
-
-u32 Pbg3Archive::GetEntrySize(const char *path)
-{
-    return this->GetEntrySize(this->FindEntry(path));
-}
 
 u8 *Pbg3Archive::ReadEntryRaw(u32 *outSize, u32 *outChecksum, i32 entryIdx)
 {

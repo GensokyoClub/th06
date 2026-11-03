@@ -1,4 +1,5 @@
 #pragma once
+#include "DebugPrint.hpp"
 #include "ZunBool.hpp"
 #include "ZunColor.hpp"
 #include "ZunResult.hpp"
@@ -336,6 +337,7 @@ struct EclManager
     void Unload();
     ZunResult RunEcl(Enemy *enemy);
     ZunResult CallEclSub(EnemyEclContext *enemyEcl, i16 subId);
+    void DebugWatch(i32 value);
 
     EclRawHeader *eclFile;
     EclRawInstr **subTable;

@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
-
 #include <string.h>
+
 #include "ZunResult.hpp"
 #include "decomp.hpp"
 #include "zwave.hpp"

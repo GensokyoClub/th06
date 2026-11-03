@@ -1,5 +1,4 @@
 #include "pbg3/Pbg3Reader.hpp"
-#include "DebugPrint.hpp"
 
 namespace th06
 {
@@ -19,7 +18,6 @@ BOOL Pbg3Reader::OpenArchive(const char *path)
     this->Reset();
     if (FileAbstraction::Open(path, "r") == FALSE)
     {
-        DebugPrint("info : %s not found\r\n", path);
         return FALSE;
     }
     this->fileSize = GetFileSize(this->handle, NULL);

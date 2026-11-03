@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 #include "TextHelper.hpp"
-#include <string>
 
 namespace th06
 {

@@ -18,6 +18,11 @@ class IPbg3Writer
     BOOL WriteString(const char *value);
     BOOL WriteChar(u8 value);
     BOOL WriteInt(u32 value);
+    u32 GetPosition() const
+    {
+        return this->offset;
+    }
+    u32 GetSize() const;
     u32 GetChecksum() const
     {
         return this->checksum;

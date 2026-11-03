@@ -1,9 +1,8 @@
 #include "stdafx.h"
 
-#include "EnemyManager.hpp"
-
 #include "ChainPriorities.hpp"
 #include "EffectManager.hpp"
+#include "EnemyManager.hpp"
 #include "ItemManager.hpp"
 
 namespace th06

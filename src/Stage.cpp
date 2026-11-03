@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-#include "Stage.hpp"
 #include "ChainPriorities.hpp"
 #include "ScreenEffect.hpp"
+#include "Stage.hpp"
 
 namespace th06
 {

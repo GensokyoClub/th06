@@ -5,19 +5,19 @@
 
 #include "BuildVersion.hpp"
 
-#include <windows.h>
-#include <stdio.h>
-#include <mmsystem.h>
 #include <d3d8.h>
 #include <d3dx8.h>
 #include <dinput.h>
 #include <dsound.h>
+#include <mmsystem.h>
+#include <stdio.h>
+#include <windows.h>
 
-#include "Global.hpp"
-#include "Supervisor.hpp"
 #include "AnmManager.hpp"
-#include "Gui.hpp"
-#include "GameManager.hpp"
-#include "SoundPlayer.hpp"
 #include "Enemy.hpp"
+#include "GameManager.hpp"
+#include "Global.hpp"
+#include "Gui.hpp"
 #include "Player.hpp"
+#include "SoundPlayer.hpp"
+#include "Supervisor.hpp"

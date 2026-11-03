@@ -7,6 +7,7 @@
 
 extern DWORD GetDXVersion();
 
+#include "DebugPrint.hpp"
 #include "ZunBool.hpp"
 #include "ZunColor.hpp"
 #include "ZunMath.hpp"
@@ -186,12 +187,9 @@ int WriteDataToFile(const char *path, const void *data, size_t size);
 extern long g_ReadFileSize;
 
 // From Rng.hpp
-struct Rng
+class Rng
 {
-    u16 seed;
-    alignment_padding(0x2);
-    u32 generationCount;
-
+  public:
     u16 GetRandomU16();
     u32 GetRandomU32();
     f32 GetRandomF32();
@@ -226,6 +224,11 @@ struct Rng
     {
         return this->GetRandomF32() * range;
     }
+
+  private:
+    u16 seed;
+    alignment_padding(0x2);
+    u32 generationCount;
 };
 
 extern Rng g_Rng;
@@ -249,19 +252,9 @@ class CMyFont
 };
 
 // From GameErrorContext.hpp
-struct GameErrorContext
+class GameErrorContext
 {
-    char m_Buffer[0x800];
-#if BUILT_BEFORE(102g)
-    char m_DetailedBuffer[0x800];
-#endif
-    char *m_BufferEnd;
-#if BUILT_BEFORE(102g)
-    char *m_DetailedBufferEnd;
-#endif
-    i8 m_ShowMessageBox;
-    alignment_padding(0x3);
-
+  public:
     // Defined before the constructor that calls it, so the /O2 trial can compile
     // the constructor in its first pass (ahead of FileSystem::OpenPath).
     void ResetContext()
@@ -313,6 +306,18 @@ struct GameErrorContext
             fclose(logFile);
         }
     }
+
+  private:
+    char m_Buffer[0x800];
+#if BUILT_BEFORE(102g)
+    char m_DetailedBuffer[0x800];
+#endif
+    char *m_BufferEnd;
+#if BUILT_BEFORE(102g)
+    char *m_DetailedBufferEnd;
+#endif
+    i8 m_ShowMessageBox;
+    alignment_padding(0x3);
 };
 #if BUILT_SINCE(102g)
 ZUN_ASSERT_TYPE(GameErrorContext, 0x808, 4);

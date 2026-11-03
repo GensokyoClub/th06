@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 #include "Global.hpp"
-
 #include <ddraw.h>
 
 namespace th06

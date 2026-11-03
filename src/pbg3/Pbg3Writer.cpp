@@ -46,7 +46,7 @@ BOOL Pbg3Writer::WriteBit(BOOL bit)
             return FALSE;
         }
         ++this->offset;
-        this->fileSize = max(this->fileSize, this->offset);
+        this->fileSize = max(this->fileSize, this->GetPosition());
         this->checksum += this->curByte;
         this->curByte = 0;
         this->bitMask = 0x80;
@@ -75,7 +75,7 @@ BOOL Pbg3Writer::WriteBits(u32 value, u32 numBits)
                 return FALSE;
             }
             ++this->offset;
-            this->fileSize = max(this->fileSize, this->offset);
+            this->fileSize = max(this->fileSize, this->GetPosition());
             this->checksum += this->curByte;
             this->curByte = 0;
             this->bitMask = 0x80;
@@ -92,7 +92,7 @@ i32 Pbg3Writer::WriteByte(i32 value)
         return PBG_EOF;
     }
     ++this->offset;
-    this->fileSize = max(this->fileSize, this->offset);
+    this->fileSize = max(this->fileSize, this->GetPosition());
     return value;
 }
 
@@ -112,7 +112,7 @@ BOOL Pbg3Writer::SeekToOffset(DWORD fileOffset)
     }
     this->checksum = 0;
     this->offset = fileOffset;
-    this->fileSize = max(this->fileSize, this->offset);
+    this->fileSize = max(this->fileSize, this->GetPosition());
     return TRUE;
 }
 

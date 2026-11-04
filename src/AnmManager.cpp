@@ -65,6 +65,10 @@ AnmManager::AnmManager()
     this->screenshotTextureId = -1;
 }
 
+AnmManager::~AnmManager()
+{
+}
+
 void AnmManager::SetupVertexBuffer()
 {
     this->vertexBufferContents[0].position.x = this->vertexBufferContents[2].position.x = -128.0f;

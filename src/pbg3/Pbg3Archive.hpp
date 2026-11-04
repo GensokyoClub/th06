@@ -25,7 +25,10 @@ class Pbg3Archive
     BOOL ParseHeader();
     i32 FindEntry(const char *path);
     u32 GetEntrySize(u32 entryIdx);
-    u32 GetEntrySize(const char *path);
+    u32 GetEntrySize(const char *path)
+    {
+        return this->GetEntrySize(this->FindEntry(path));
+    }
     u32 GetNumFiles() const
     {
         return this->numOfEntries;

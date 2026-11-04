@@ -1,6 +1,6 @@
+#include "EclManager.hpp"
 #include "stdafx.h"
 
-#include "EclManager.hpp"
 #include "EffectManager.hpp"
 #include "EnemyEclInstr.hpp"
 #include "EnemyManager.hpp"
@@ -669,7 +669,7 @@ restart_sub_changed:
             {
                 g_EnemyManager.bosses[GET_INSTR_INT_ARG(0)] = enemy;
                 g_Gui.SetBossPresent(true);
-                g_Gui.bossHealthBar1 = 1.0f;
+                g_Gui.SetBossHealthBar(1.0f);
                 enemy->flags.isBoss = true;
                 enemy->bossId = GET_INSTR_INT_ARG(0);
             }
@@ -1171,7 +1171,8 @@ restart_sub_changed:
     return ZUN_SUCCESS;
 }
 
-AnmManager::~AnmManager()
+// Dead: nothing calls this. Scripts use ECL_OPCODE_DEBUG_WATCH, which RunEcl has no case for.
+void EclManager::DebugWatch(i32 value)
 {
 }
 

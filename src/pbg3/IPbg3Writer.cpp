@@ -1,4 +1,3 @@
-#include "DebugPrint.hpp"
 #include "pbg3/IPbg3Writer.hpp"
 
 #define MAKE_DWORD(a, b, c, d) ((DWORD)(MAKEWORD(c, d) << 16) | (DWORD)MAKEWORD(a, b))
@@ -9,6 +8,11 @@ namespace th06
 
 IPbg3Writer::~IPbg3Writer()
 {
+}
+
+u32 IPbg3Writer::GetSize() const
+{
+    return this->fileSize;
 }
 
 void IPbg3Writer::Reset()
@@ -55,7 +59,6 @@ BOOL IPbg3Writer::WriteString(const char *value)
 {
     if (value == NULL)
     {
-        DebugPrint("info : %s error\r\n", value);
         return FALSE;
     }
     while (*value != '\0')

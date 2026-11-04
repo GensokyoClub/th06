@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
-#include "BulletManager.hpp"
 #include "AsciiManager.hpp"
+#include "BulletManager.hpp"
 #include "ChainPriorities.hpp"
 #include "ItemManager.hpp"
 

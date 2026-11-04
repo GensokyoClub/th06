@@ -1,12 +1,12 @@
 #include "stdafx.h"
 
-#include "Supervisor.hpp"
 #include "AsciiManager.hpp"
 #include "Ending.hpp"
 #include "MainMenu.hpp"
 #include "MidiOutput.hpp"
 #include "MusicRoom.hpp"
 #include "ReplayManager.hpp"
+#include "Supervisor.hpp"
 #include "TextHelper.hpp"
 
 namespace th06

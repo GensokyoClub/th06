@@ -1,15 +1,12 @@
 #include "stdafx.h"
 
-#include "GameManager.hpp"
-
 #include "AsciiManager.hpp"
 #include "EffectManager.hpp"
 #include "EnemyManager.hpp"
+#include "GameManager.hpp"
 #include "ReplayManager.hpp"
 #include "ScreenEffect.hpp"
 #include "Stage.hpp"
-
-#include <d3d8types.h>
 
 namespace th06
 {

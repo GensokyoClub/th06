@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
-#include "EffectManager.hpp"
 #include "ChainPriorities.hpp"
+#include "EffectManager.hpp"
 
 namespace th06
 {

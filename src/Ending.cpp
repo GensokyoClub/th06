@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
-#include "Ending.hpp"
 #include "ChainPriorities.hpp"
+#include "Ending.hpp"
 #include "ScreenEffect.hpp"
 
 namespace th06

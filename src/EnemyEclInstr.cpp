@@ -1,8 +1,7 @@
 #include "stdafx.h"
 
-#include "EnemyEclInstr.hpp"
-
 #include "EffectManager.hpp"
+#include "EnemyEclInstr.hpp"
 
 #define GET_ARG(type, num) ((type *)&curInstr->args)[num]
 #define GET_STRING_ARG(num) &GET_ARG(char, num)

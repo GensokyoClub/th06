@@ -8,6 +8,7 @@ namespace th06
 {
 struct MidiTimer
 {
+  public:
     MidiTimer();
     ~MidiTimer();
 
@@ -16,6 +17,7 @@ struct MidiTimer
     i32 StopTimer();
     u32 StartTimer(u32 delay, LPTIMECALLBACK cb, DWORD_PTR data);
 
+  private:
     u32 timerId;
     TIMECAPS timeCaps;
 };
@@ -25,8 +27,9 @@ void CALLBACK MidiTimer_DefaultTimerCallback(UINT uTimerID, UINT uMsg, DWORD_PTR
 
 struct MidiTrack;
 
-struct MidiDevice
+class MidiDevice
 {
+  public:
     MidiDevice();
     ~MidiDevice();
 
@@ -38,6 +41,8 @@ struct MidiDevice
     ZunBool SendLongMsg(LPMIDIHDR pmh);
 
     HMIDIOUT handle;
+
+  private:
     u32 deviceId;
 };
 ZUN_ASSERT_TYPE(MidiDevice, 0x8, 4);
@@ -55,8 +60,9 @@ struct MidiChannel
 };
 ZUN_ASSERT_TYPE(MidiChannel, 0x17, 1);
 
-struct MidiOutput : MidiTimer
+class MidiOutput : MidiTimer
 {
+  public:
     MidiOutput();
     ~MidiOutput();
 
@@ -91,6 +97,7 @@ struct MidiOutput : MidiTimer
     u32 SetFadeOut(u32 ms);
     void FadeOutSetVolume(i32 volume);
 
+  private:
     MIDIHDR *midiHeaders[32];
     i32 midiHeadersCursor;
     u8 *midiFileData[32];

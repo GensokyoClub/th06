@@ -43,30 +43,17 @@ enum CursorMovement
     CURSOR_MOVE_DOWN = 1,
 };
 
-enum OptionsCursorPosition
-{
-    CURSOR_OPTIONS_POS_LIFECOUNT,
-    CURSOR_OPTIONS_POS_BOMBCOUNT,
-    CURSOR_OPTIONS_POS_COLORMODE,
-    CURSOR_OPTIONS_POS_MUSICMODE,
-    CURSOR_OPTIONS_POS_PLAYSOUNDS,
-    CURSOR_OPTIONS_POS_SCREENMODE,
-    CURSOR_OPTIONS_POS_SETDEFAULT,
-    CURSOR_OPTIONS_POS_KEYCONFIG,
-    CURSOR_OPTIONS_POS_EXIT,
-};
-
 struct MainMenu
 {
     ZunResult BeginStartup();
     ZunResult DrawStartMenu();
-    u32 OnUpdateOptionsMenu();
+    ZunBool OnUpdateOptionsMenu();
     ZunResult DrawReplayMenu();
     ZunResult ChoosePracticeLevel();
     ZunBool WeirdSecondInputCheck();
     void ColorMenuItem(AnmVm *, i32, i32, i32);
 
-    i32 ReplayHandling();
+    ZunBool ReplayHandling();
 
 #if BUILT_SINCE(102)
     AnmVm vm[122];

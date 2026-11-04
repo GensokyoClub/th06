@@ -13,18 +13,23 @@ static u32 SetButtonFromDirectInputJoystate(u16 *outButtons, ControllerButton co
                                             TouhouButton touhouButton, u8 *inputButtons);
 } // namespace Controller
 
+// clang-format off
 ControllerMapping g_ControllerMapping = {
 #if BUILT_SINCE(102g)
-    0,  1,  2,  4, -1,
-    -1, -1, -1, 3
+    0, 1, 2, 4,
+    INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON,
+    3,
 #elif BUILT_SINCE(102)
-    0,  1,  0,  -1, -1,
-    -1, -1, -1, -1
+    0, 1, 0, INVALID_BUTTON,
+    INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON,
+    INVALID_BUTTON,
 #else
-    1, 2, 1, 0, 0,
-    0, 0, 0
+    1, 2, 1, INVALID_BUTTON,
+    INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON,
+    INVALID_BUTTON,
 #endif
 };
+// clang-format on
 
 Chain g_FuncChain;
 
@@ -722,20 +727,16 @@ u16 Controller::GetControllerInput(u16 buttons)
 u32 Controller::SetButtonFromDirectInputJoystate(u16 *outButtons, ControllerButton controllerButtonToTest,
                                                  TouhouButton touhouButton, u8 *inputButtons)
 {
+    if (IS_INVALID_BUTTON(controllerButtonToTest))
+    {
+        return 0;
+    }
+
 #if BUILT_SINCE(102)
-    if (controllerButtonToTest < 0)
-    {
-        return 0;
-    }
+    *outButtons |= (inputButtons[controllerButtonToTest] & 0x80 ? touhouButton & TH_BUTTON_ANY : 0);
 
-    *outButtons |= (inputButtons[controllerButtonToTest] & 0x80 ? touhouButton & 0xFFFF : 0);
-
-    return inputButtons[controllerButtonToTest] & 0x80 ? touhouButton & 0xFFFF : 0;
+    return inputButtons[controllerButtonToTest] & 0x80 ? touhouButton & TH_BUTTON_ANY : 0;
 #else
-    if (controllerButtonToTest == 0)
-    {
-        return 0;
-    }
     i32 buttonIndex;
     for (buttonIndex = 0; buttonIndex < 32; buttonIndex++, controllerButtonToTest >>= 1)
     {
@@ -751,8 +752,9 @@ u32 Controller::SetButtonFromDirectInputJoystate(u16 *outButtons, ControllerButt
         return 0;
     }
 #endif
-    *outButtons |= (inputButtons[buttonIndex] & 0x80 ? touhouButton & 0xFFFF : 0);
-    return inputButtons[buttonIndex] & 0x80 ? touhouButton & 0xFFFF : 0;
+    *outButtons |= (inputButtons[buttonIndex] & 0x80 ? touhouButton & TH_BUTTON_ANY : 0);
+
+    return inputButtons[buttonIndex] & 0x80 ? touhouButton & TH_BUTTON_ANY : 0;
 #endif
 }
 
@@ -766,9 +768,9 @@ u32 Controller::SetButtonFromControllerInputs(u16 *outButtons, ControllerButton 
 
     u32 mask = 1 << controllerButtonToTest;
 
-    *outButtons |= (inputButtons & mask ? touhouButton & 0xFFFF : 0);
+    *outButtons |= (inputButtons & mask ? touhouButton & TH_BUTTON_ANY : 0);
 
-    return inputButtons & mask ? touhouButton & 0xFFFF : 0;
+    return inputButtons & mask ? touhouButton & TH_BUTTON_ANY : 0;
 }
 
 // This is for rebinding keys

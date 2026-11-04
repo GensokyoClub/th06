@@ -13,15 +13,23 @@ static u32 SetButtonFromDirectInputJoystate(u16 *outButtons, ControllerButton co
                                             TouhouButton touhouButton, u8 *inputButtons);
 } // namespace Controller
 
+// clang-format off
 ControllerMapping g_ControllerMapping = {
 #if BUILT_SINCE(102g)
-    0, 1, 2, 4, INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON, 3,
+    0, 1, 2, 4,
+    INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON,
+    3,
 #elif BUILT_SINCE(102)
-    0, 1, 0, INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON,
+    0, 1, 0, INVALID_BUTTON,
+    INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON,
+    INVALID_BUTTON,
 #else
-    1, 2, 1, INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON,
+    1, 2, 1, INVALID_BUTTON,
+    INVALID_BUTTON, INVALID_BUTTON, INVALID_BUTTON,
+    INVALID_BUTTON,
 #endif
 };
+// clang-format on
 
 Chain g_FuncChain;
 

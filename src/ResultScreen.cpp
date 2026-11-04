@@ -1,11 +1,11 @@
 #include "stdafx.h"
 
 #include "ResultScreen.hpp"
+
 #include "AsciiManager.hpp"
-#include "ChainPriorities.hpp"
 #include "MainMenu.hpp"
 #include "ReplayManager.hpp"
-#include "Stage.hpp"
+
 #include <direct.h>
 #include <time.h>
 
@@ -163,7 +163,11 @@ ScoreDat *OpenScore(const char *path)
     u8 xorValue;
     ScoreDat *scoreData;
 
+#if BUILT_SINCE(100)
     scoreData = (ScoreDat *)FileSystem::OpenPath(path, EXTERNAL_FILE);
+#else
+    scoreData = (ScoreDat *)FileSystem::OpenPath(path);
+#endif
     if (scoreData == NULL)
     {
     FAILED_TO_READ:

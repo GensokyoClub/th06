@@ -108,13 +108,6 @@ class CSound
     HRESULT Reset();
     BOOL IsSoundPlaying();
 
-    void StartFadeOut(float seconds)
-    {
-        this->m_dwIsFadingOut = TRUE;
-        this->m_dwCurFadeoutProgress = seconds * 60;
-        this->m_dwTotalFadeout = this->m_dwCurFadeoutProgress;
-    }
-
     CWaveFile *GetWaveFile()
     {
         return m_pWaveFile;
@@ -144,6 +137,13 @@ class CStreamingSound : public CSound
     HRESULT UpdateFadeOut();
     HRESULT HandleWaveStreamNotification(BOOL bLoopedPlay);
     HRESULT Reset();
+
+    void StartFadeOut(float seconds)
+    {
+        this->m_dwIsFadingOut = TRUE;
+        this->m_dwCurFadeoutProgress = seconds * 60;
+        this->m_dwTotalFadeout = this->m_dwCurFadeoutProgress;
+    }
 };
 
 //-----------------------------------------------------------------------------

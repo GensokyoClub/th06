@@ -4,27 +4,15 @@
 #include "EffectManager.hpp"
 #include "EnemyEclInstr.hpp"
 #include "EnemyManager.hpp"
+#include "ItemManager.hpp"
 #include "Stage.hpp"
 
 namespace th06
 {
-static i32 *EclGetVar(Enemy *enemy, EclVarId *varId, EclValueType *valueType);
-static f32 *EclGetVarFloat(Enemy *enemy, f32 *varId, EclValueType *valueType);
-static void EclSetVar(Enemy *enemy, EclVarId out, void *value);
-
-static void EclMathAdd(Enemy *enemy, EclVarId out, EclVarId *lhs, EclVarId *rhs);
-static void EclMathSub(Enemy *enemy, EclVarId out, EclVarId *lhs, EclVarId *rhs);
-static void EclMathMul(Enemy *enemy, EclVarId out, EclVarId *lhs, EclVarId *rhs);
-static void EclMathDiv(Enemy *enemy, EclVarId out, EclVarId *lhs, EclVarId *rhs);
-static void EclMathMod(Enemy *enemy, EclVarId out, EclVarId *lhs, EclVarId *rhs);
-static void EclMathLineAngle(Enemy *enemy, EclVarId out, f32 *a1, f32 *a2, f32 *b1, f32 *b2);
-
-static void EclMoveDirTime(Enemy *enemy, EclRawInstr *instr);
-static void EclMovePosTime(Enemy *enemy, EclRawInstr *instr);
-static void EclMoveTime(Enemy *enemy, EclRawInstr *instr);
 
 // clang-format off
 i32 g_SpellcardScore[] = {
+#if BUILT_SINCE(100)
     // Stage 1
     200000, 200000, 200000,
     // Stage 2
@@ -40,6 +28,21 @@ i32 g_SpellcardScore[] = {
     500000, 500000, 500000, 500000, 500000, 500000, 600000, 600000, 600000, 600000, 600000,
     // Extra
     700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000, 700000,
+#else
+    // Stage 1
+    150000, 150000, 150000,
+    // Stage 2
+    150000, 150000, 150000, 150000,
+    // Stage 3
+    200000, 200000, 200000, 200000, 200000, 200000, 200000,
+    // Stage 4
+    250000, 250000, 250000, 250000, 250000, 250000, 250000, 250000, 250000,
+    250000, 250000, 250000, 250000, 250000, 250000, 250000, 250000, 250000,
+    // Stage 5
+    300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000,
+    // Stage 6
+    500000, 300000, 300000, 300000, 300000, 300000, 400000, 400000, 400000, 400000, 400000,
+#endif
 };
 // clang-format on
 
@@ -58,10 +61,12 @@ ExInsn g_EclExInsn[] = {
     ExInsHandleBatTransformation,
     ExInsStage6Func11,
     ExInsStage4Func12,
+#if BUILT_SINCE(100)
     ExInsStageXFunc13,
     ExInsStageXFunc14,
     ExInsStageXFunc15,
     ExInsFlandreFinalContextUpdate,
+#endif
 };
 
 ChainElem g_EclManagerCalcChain; // unused
@@ -115,6 +120,89 @@ ZunResult EclManager::CallEclSub(EnemyEclContext *ctx, i16 subId)
 #define GET_INSTR_SHORT_ARG(num) GET_INSTR_ARG(i16, num)
 #define GET_INSTR_FLOAT_ARG(num) GET_INSTR_ARG(float, num)
 #define GET_INSTR_VAR_ARG(num) GET_INSTR_ARG(EclVarId, num)
+
+static i32 *EclGetVar(Enemy *enemy, EclVarId *eclVarId, EclValueType *valueType);
+static f32 *EclGetVarFloat(Enemy *enemy, f32 *eclVarId, EclValueType *valueType);
+static void EclSetVar(Enemy *enemy, EclVarId out, void *value);
+static void EclMathAdd(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId);
+static void EclMathSub(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId);
+static void EclMathMul(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId);
+static void EclMathDiv(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId);
+static void EclMathMod(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclVarId *rhsVarId);
+#if BUILT_SINCE(100)
+static void EclMathLineAngle(Enemy *enemy, EclVarId outVarId, f32 *x1, f32 *y1, f32 *y2, f32 *x2);
+#endif
+
+#pragma var_order(args, angle)
+static void EclMoveDirTime(Enemy *enemy, EclRawInstr *instr)
+{
+    void *args = instr->args;
+
+#if BUILT_SINCE(100)
+    f32 angle = *EclGetVarFloat(enemy, &GET_FLOAT_ARG(1), NULL);
+    enemy->moveInterp.x = cosf(angle) * GET_FLOAT_ARG(2) * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterp.y = sinf(angle) * GET_FLOAT_ARG(2) * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterp.z = 0.0f;
+#else
+    enemy->moveInterp.x = cosf(GET_FLOAT_ARG(1)) * GET_FLOAT_ARG(2) * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterp.y = sinf(GET_FLOAT_ARG(1)) * GET_FLOAT_ARG(2) * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterp.z = 0.0f;
+#endif
+
+    enemy->moveInterpStartPos = enemy->position;
+    enemy->moveInterpStartTime = GET_INT_ARG(0);
+
+    enemy->moveInterpTimer = enemy->moveInterpStartTime;
+
+    enemy->flags.movementMode = EnemyMove_Interp;
+}
+
+static void EclMovePosTime(Enemy *enemy, EclRawInstr *instr)
+{
+    void *args = instr->args;
+
+#if BUILT_SINCE(100)
+    D3DXVECTOR3 newPos;
+    newPos.x = *EclGetVarFloat(enemy, &GET_FLOAT_ARG(1), NULL);
+    newPos.y = *EclGetVarFloat(enemy, &GET_FLOAT_ARG(2), NULL);
+    newPos.z = *EclGetVarFloat(enemy, &GET_FLOAT_ARG(3), NULL);
+    enemy->moveInterp = newPos - enemy->position;
+#else
+    enemy->moveInterp = D3DXVECTOR3(GET_FLOAT_ARG(1) - enemy->position.x, GET_FLOAT_ARG(2) - enemy->position.y,
+                                    GET_FLOAT_ARG(3) - enemy->position.z);
+#endif
+
+    enemy->moveInterpStartPos = enemy->position;
+    enemy->moveInterpStartTime = GET_INT_ARG(0);
+
+    enemy->moveInterpTimer = enemy->moveInterpStartTime;
+
+    enemy->flags.movementMode = EnemyMove_Interp;
+    enemy->axisSpeed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+}
+
+static void EclMoveTime(Enemy *enemy, EclRawInstr *instr)
+{
+    void *args = instr->args;
+
+#if BUILT_SINCE(100)
+    f32 angle = *EclGetVarFloat(enemy, &enemy->angle, NULL);
+    enemy->moveInterp.x = cosf(angle) * enemy->speed * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterp.y = sinf(angle) * enemy->speed * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterp.z = 0.0f;
+#else
+    enemy->moveInterp.x = cosf(enemy->angle) * enemy->speed * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterp.y = sinf(enemy->angle) * enemy->speed * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterp.z = 0.0f;
+#endif
+
+    enemy->moveInterpStartPos = enemy->position;
+    enemy->moveInterpStartTime = GET_INT_ARG(0);
+
+    enemy->moveInterpTimer = enemy->moveInterpStartTime;
+
+    enemy->flags.movementMode = EnemyMove_Interp;
+}
 
 #pragma var_order(genericFloat3, genericInt, genericFloat, args, curInstr)
 ZunResult EclManager::RunEcl(Enemy *enemy)
@@ -234,10 +322,12 @@ restart_sub_changed:
         case ECL_OPCODE_MATH_FLOAT_MOD:
             EclMathMod(enemy, GET_INSTR_VAR_ARG(0), &GET_VAR_ARG(1), &GET_VAR_ARG(2));
             break;
+#if BUILT_SINCE(100)
         case ECL_OPCODE_MATH_LINE_ANGLE:
             EclMathLineAngle(enemy, GET_INSTR_VAR_ARG(0), &GET_FLOAT_ARG(1), &GET_FLOAT_ARG(2), &GET_FLOAT_ARG(3),
                              &GET_FLOAT_ARG(4));
             break;
+#endif
 #pragma var_order(rhs, lhs)
         case ECL_OPCODE_CMP_INT: {
             i32 lhs = *EclGetVar(enemy, &GET_INSTR_VAR_ARG(0), NULL);
@@ -293,12 +383,10 @@ restart_sub_changed:
             enemy->currentContext.float0 = GET_INSTR_FLOAT_ARG(2);
             goto restart_sub_changed;
         case ECL_OPCODE_RET:
-#if !TRIALBUILD
             if (enemy->flags.disableCallStack)
             {
                 DebugPrint("error : no Stack Ret\n");
             }
-#endif
             enemy->stackDepth--;
             enemy->currentContext = enemy->savedContextStack[enemy->stackDepth];
             goto restart_sub_changed;
@@ -336,12 +424,10 @@ restart_sub_changed:
             g_AnmManager->SetAndExecuteScriptIdx(&enemy->primaryVm, GET_INSTR_INT_ARG(0) + ANM_SCRIPT_ENEMY_START);
             break;
         case ECL_OPCODE_ANM_SET_SLOT:
-#if !TRIALBUILD
             if (GET_INSTR_INT_ARG(0) >= ENEMY_ANM_SLOTS)
             {
                 DebugPrint("error : sub anim overflow\n");
             }
-#endif
             g_AnmManager->SetAndExecuteScriptIdx(&enemy->vms[GET_INSTR_INT_ARG(0)],
                                                  GET_INT_ARG(1) + ANM_SCRIPT_ENEMY_START);
             break;
@@ -422,7 +508,9 @@ restart_sub_changed:
             shooter->angle1 = *EclGetVarFloat(enemy, &args->angle1, NULL);
             shooter->angle1 = utils::AddNormalizeAngle(shooter->angle1, 0.0f);
             shooter->speed1 = *EclGetVarFloat(enemy, &args->speed1, NULL);
+#if BUILT_SINCE(100)
             if (shooter->speed1 != 0.0f)
+#endif
             {
                 shooter->speed1 += g_GameManager.RankLerpFloat(enemy->bulletRankSpeedLow, enemy->bulletRankSpeedHigh);
                 if (shooter->speed1 < 0.3f)
@@ -462,7 +550,7 @@ restart_sub_changed:
             EclRawInstrAnmSetDeathArgs *args = &GET_INSTR_ARG(EclRawInstrAnmSetDeathArgs, 0);
             enemy->deathParticle1 = args->deathParticle1;
             enemy->deathParticle2 = args->deathParticle2;
-            enemy->deathAnm3 = args->deathAnm3;
+            enemy->deathParticle3 = args->deathParticle3;
             break;
         }
         case ECL_OPCODE_SHOOT_INTERVAL:
@@ -549,6 +637,7 @@ restart_sub_changed:
                     enemy->position + GET_INSTR_ARG(EclRawInstrLaserOffsetArgs, 0).offset;
             }
             break;
+#if BUILT_SINCE(100)
         case ECL_OPCODE_LASER_TEST:
             if (enemy->lasers[GET_INSTR_INT_ARG(0)] != NULL && enemy->lasers[GET_INSTR_INT_ARG(0)]->inUse)
             {
@@ -567,6 +656,7 @@ restart_sub_changed:
                 enemy->lasers[GET_INSTR_INT_ARG(0)]->timer = 0;
             }
             break;
+#endif
         case ECL_OPCODE_LASER_CLEAR_ALL: {
             for (i32 idx = 0; idx < MAX_LASERS_PER_ENEMY; idx++)
             {
@@ -578,14 +668,14 @@ restart_sub_changed:
             if (GET_INSTR_INT_ARG(0) >= 0)
             {
                 g_EnemyManager.bosses[GET_INSTR_INT_ARG(0)] = enemy;
-                g_Gui.bossPresent = true;
+                g_Gui.SetBossPresent(true);
                 g_Gui.bossHealthBar1 = 1.0f;
                 enemy->flags.isBoss = true;
                 enemy->bossId = GET_INSTR_INT_ARG(0);
             }
             else
             {
-                g_Gui.bossPresent = false;
+                g_Gui.SetBossPresent(false);
                 g_EnemyManager.bosses[enemy->bossId] = NULL;
                 enemy->flags.isBoss = false;
             }
@@ -756,12 +846,15 @@ restart_sub_changed:
             g_EnemyManager.spellcardInfo.idx = GET_INSTR_SHORT_ARG(1);
             g_EnemyManager.spellcardInfo.captureScore = g_SpellcardScore[g_EnemyManager.spellcardInfo.idx];
             g_BulletManager.TurnAllBulletsIntoPoints();
-            g_Stage.StartSpellcard();
+            g_Stage.spellcardState = RUNNING;
+            g_Stage.ticksSinceSpellcardStarted = 0;
             enemy->ResetRank();
             Catk *catk = &g_GameManager.catk[g_EnemyManager.spellcardInfo.idx];
             i32 csum = 0;
             i32 length;
+#if BUILT_SINCE(100)
             if (!g_GameManager.isInReplay)
+#endif
             {
                 strcpy(catk->name, GET_INSTR_STRING_ARG(4));
                 length = strlen(catk->name);
@@ -803,7 +896,9 @@ restart_sub_changed:
                             g_EnemyManager.spellcardInfo.captureScore * g_Gui.SpellcardSecondsRemaining() / 10;
                         g_Gui.ShowSpellcardBonus(scoreIncrease);
                         g_GameManager.AddScore(scoreIncrease);
+#if BUILT_SINCE(100)
                         if (!g_GameManager.isInReplay)
+#endif
                         {
                             catk->numSuccess++;
                             for (idx = 4; idx > 0; idx--)
@@ -817,7 +912,7 @@ restart_sub_changed:
                 }
                 g_EnemyManager.spellcardInfo.isActive = 0;
             }
-            g_Stage.EndSpellcard();
+            g_Stage.spellcardState = NOT_RUNNING;
             break;
         case ECL_OPCODE_PHASE_TIMER_SET:
             enemy->phaseTimer = GET_INSTR_INT_ARG(0);
@@ -886,7 +981,7 @@ restart_sub_changed:
             g_Stage.unpauseFlag = 1;
             break;
         case ECL_OPCODE_BOSS_SET_LIFE_COUNT:
-            g_Gui.SetBossLives(GET_INSTR_INT_ARG(0));
+            g_Gui.SetLives(GET_INSTR_INT_ARG(0));
             g_GameManager.counat += 1800;
             break;
         case ECL_OPCODE_ENEMY_CREATE: {
@@ -957,9 +1052,11 @@ restart_sub_changed:
             enemy->timerCallbackSub = enemy->deathCallbackSub;
             enemy->phaseTimer = 0;
             break;
+#if BUILT_SINCE(100)
         case ECL_OPCODE_SPELLCARD_FLAG_TIMEOUT:
             enemy->flags.isTimeoutSpell = GET_INSTR_INT_ARG(0);
             break;
+#endif
         }
     next_instruction:
         curInstr = (EclRawInstr *)((u8 *)curInstr + curInstr->offsetToNext);
@@ -1074,60 +1171,8 @@ restart_sub_changed:
     return ZUN_SUCCESS;
 }
 
-#pragma var_order(args, angle)
-static void EclMoveDirTime(Enemy *enemy, EclRawInstr *instr)
+AnmManager::~AnmManager()
 {
-    void *args = instr->args;
-
-    f32 angle = *EclGetVarFloat(enemy, &GET_FLOAT_ARG(1), NULL);
-
-    enemy->moveInterp.x = cosf(angle) * GET_FLOAT_ARG(2) * GET_INT_ARG(0) / 2.0f;
-    enemy->moveInterp.y = sinf(angle) * GET_FLOAT_ARG(2) * GET_INT_ARG(0) / 2.0f;
-    enemy->moveInterp.z = 0.0f;
-
-    enemy->moveInterpStartPos = enemy->position;
-    enemy->moveInterpStartTime = GET_INT_ARG(0);
-
-    enemy->moveInterpTimer = enemy->moveInterpStartTime;
-
-    enemy->flags.movementMode = EnemyMove_Interp;
-}
-
-static void EclMovePosTime(Enemy *enemy, EclRawInstr *instr)
-{
-    void *args = instr->args;
-
-    D3DXVECTOR3 newPos;
-    newPos.x = *EclGetVarFloat(enemy, &GET_FLOAT_ARG(1), NULL);
-    newPos.y = *EclGetVarFloat(enemy, &GET_FLOAT_ARG(2), NULL);
-    newPos.z = *EclGetVarFloat(enemy, &GET_FLOAT_ARG(3), NULL);
-
-    enemy->moveInterp = newPos - enemy->position;
-    enemy->moveInterpStartPos = enemy->position;
-    enemy->moveInterpStartTime = GET_INT_ARG(0);
-
-    enemy->moveInterpTimer = enemy->moveInterpStartTime;
-
-    enemy->flags.movementMode = EnemyMove_Interp;
-    enemy->axisSpeed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-}
-
-static void EclMoveTime(Enemy *enemy, EclRawInstr *instr)
-{
-    void *args = instr->args;
-
-    f32 angle = *EclGetVarFloat(enemy, &enemy->angle, NULL);
-
-    enemy->moveInterp.x = cosf(angle) * enemy->speed * GET_INT_ARG(0) / 2.0f;
-    enemy->moveInterp.y = sinf(angle) * enemy->speed * GET_INT_ARG(0) / 2.0f;
-    enemy->moveInterp.z = 0.0f;
-
-    enemy->moveInterpStartPos = enemy->position;
-    enemy->moveInterpStartTime = GET_INT_ARG(0);
-
-    enemy->moveInterpTimer = enemy->moveInterpStartTime;
-
-    enemy->flags.movementMode = EnemyMove_Interp;
 }
 
 static i32 *EclGetVar(Enemy *enemy, EclVarId *eclVarId, EclValueType *valueType)
@@ -1427,6 +1472,7 @@ static void EclMathMod(Enemy *enemy, EclVarId outVarId, EclVarId *lhsVarId, EclV
     }
 }
 
+#if BUILT_SINCE(100)
 #pragma var_order(y2Ptr, outPtr, x1Ptr, y1Ptr, outType, x2Ptr)
 static void EclMathLineAngle(Enemy *enemy, EclVarId outVarId, f32 *x1, f32 *y1, f32 *y2, f32 *x2)
 {
@@ -1444,4 +1490,5 @@ static void EclMathLineAngle(Enemy *enemy, EclVarId outVarId, f32 *x1, f32 *y1, 
         *outPtr = atan2f(*x2Ptr - *x1Ptr, *y2Ptr - *y1Ptr);
     }
 }
+#endif
 } // namespace th06

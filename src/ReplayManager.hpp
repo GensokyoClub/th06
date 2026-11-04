@@ -2,6 +2,7 @@
 #include "Chain.hpp"
 #include "ChainPriorities.hpp"
 #include "ReplayData.hpp"
+#include "ZunBool.hpp"
 #include "decomp.hpp"
 
 namespace th06

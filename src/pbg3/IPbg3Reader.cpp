@@ -54,16 +54,6 @@ u32 IPbg3Reader::ReadVarInt()
     return res;
 }
 
-u32 IPbg3Reader::ReadInt()
-{
-    u32 b0 = this->ReadBits(8);
-    u32 b1 = b0 + (this->ReadBits(8) << 8);
-    u32 b2 = b1 + (this->ReadBits(8) << 16);
-    u32 b3 = b2 + (this->ReadBits(8) << 24);
-
-    return b3;
-}
-
 BOOL IPbg3Reader::ReadString(char *out, u32 maxSize)
 {
     if (out == NULL)
@@ -80,4 +70,20 @@ BOOL IPbg3Reader::ReadString(char *out, u32 maxSize)
 
     return FALSE;
 }
+
+char IPbg3Reader::ReadChar()
+{
+    return this->ReadBits(8);
+}
+
+u32 IPbg3Reader::ReadInt()
+{
+    u32 b0 = this->ReadBits(8);
+    u32 b1 = b0 + (this->ReadBits(8) << 8);
+    u32 b2 = b1 + (this->ReadBits(8) << 16);
+    u32 b3 = b2 + (this->ReadBits(8) << 24);
+
+    return b3;
+}
+
 } // namespace th06

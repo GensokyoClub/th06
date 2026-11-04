@@ -1,5 +1,9 @@
 #pragma once
+#include "AnmVm.hpp"
+#include "Chain.hpp"
+#include "ZunMath.hpp"
 #include "ZunResult.hpp"
+#include "decomp.hpp"
 
 namespace th06
 {

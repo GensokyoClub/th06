@@ -231,7 +231,7 @@ MidiOutput::~MidiOutput()
 
 ZunResult MidiOutput::ReadFileData(u32 idx, const char *path)
 {
-    if (g_Supervisor.cfg.musicMode != MIDI)
+    if (g_Supervisor.GetMusicMode() != MIDI)
     {
         return ZUN_SUCCESS;
     }

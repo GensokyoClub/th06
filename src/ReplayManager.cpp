@@ -1,3 +1,4 @@
+#include "DebugPrint.hpp"
 #include "stdafx.h"
 
 #include <stddef.h>
@@ -191,7 +192,11 @@ static ZunResult ReplayManager_AddedCallbackDemo(ReplayManager *mgr)
     mgr->frameId = 0;
     if (mgr->replayData == NULL)
     {
+#if BUILT_SINCE(100)
         mgr->replayData = (ReplayData *)FileSystem::OpenPath(mgr->replayFile, !g_GameManager.demoMode);
+#else
+        mgr->replayData = (ReplayData *)FileSystem::OpenPath(mgr->replayFile);
+#endif
         if (ValidateReplayData(mgr->replayData, g_ReadFileSize) != ZUN_SUCCESS)
         {
             return ZUN_ERROR;

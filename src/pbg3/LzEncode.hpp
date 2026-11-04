@@ -90,11 +90,11 @@ ZUN_ASSERT_SIZE(LzEncodeQueue, 0xc);
 class LzEncode : protected LzssTree
 {
   public:
-    LzEncode();
-    ~LzEncode();
     BOOL Open(const char *path);
     BOOL Close();
     BOOL Encode(IPbg3Reader *input, const char *name);
+    LzEncode();
+    ~LzEncode();
 
   private:
     Pbg3Writer *writer;

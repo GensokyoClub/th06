@@ -66,5 +66,7 @@
 #error Unknown BUILD_VERSION
 #endif
 
+// Version gates describe release behavior and data differences, not matching-only
+// choices of include order, helper placement, or COMDAT survivors.
 #define BUILT_BEFORE(version) (BUILD_ORDER < BUILD_ORDER_##version)
 #define BUILT_SINCE(version) (BUILD_ORDER >= BUILD_ORDER_##version)

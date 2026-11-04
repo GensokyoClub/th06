@@ -2,8 +2,8 @@
 #include <d3dx8math.h>
 
 #include "AnmManager.hpp"
+#include "AnmVm.hpp"
 #include "Chain.hpp"
-#include "StageMenu.hpp"
 #include "Supervisor.hpp"
 #include "ZunResult.hpp"
 #include "ZunTimer.hpp"
@@ -11,6 +11,26 @@
 
 namespace th06
 {
+class StageMenu
+{
+  public:
+    i32 OnUpdateGameMenu();
+    i32 OnUpdateRetryMenu();
+
+    void OnDrawGameMenu();
+    void OnDrawRetryMenu();
+
+  private:
+    // Current state of this menu.
+    u32 curState;
+    // Number of frames since last state change. Used to delay certain actions
+    // until an animation is finished.
+    i32 numFrames;
+    AnmVm menuSprites[6];
+    AnmVm menuBackground;
+};
+ZUN_ASSERT_TYPE(StageMenu, 0x778, 4);
+
 #define TEXT_RIGHT_ARROW 0x7f
 
 #define ASCII_SCORE_POPUPS_COUNT 512
@@ -83,6 +103,11 @@ struct AsciiManager
     void CreatePopup1(D3DXVECTOR3 *position, i32 value, D3DCOLOR color);
     void CreatePopup2(D3DXVECTOR3 *position, i32 value, D3DCOLOR color);
 
+    void ResetStrings()
+    {
+        this->numStrings = 0;
+    }
+
     void SetColor(ZunColor color)
     {
         this->color = color;
@@ -94,7 +119,7 @@ struct AsciiManager
         this->scale.y = y;
     }
 
-    void SetIsGui(ZunBool isGui)
+    void SetIsGuiMode(ZunBool isGui)
     {
         this->isGui = isGui;
     }
@@ -102,11 +127,6 @@ struct AsciiManager
     void SetIsSelected(ZunBool isSelected)
     {
         this->isSelected = isSelected;
-    }
-
-    void ResetStrings()
-    {
-        this->numStrings = 0;
     }
 
     AnmVm fontVm;

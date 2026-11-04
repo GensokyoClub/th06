@@ -2,7 +2,6 @@
 #include "AnmVm.hpp"
 #include "Chain.hpp"
 #include "decomp.hpp"
-#include "zwave.hpp"
 #include <d3d8.h>
 #include <d3dx8math.h>
 
@@ -98,16 +97,6 @@ struct Stage
     ZunResult LoadStageData(const char *anmpath, const char *stdpath);
     ZunResult UpdateObjects();
     ZunResult RenderObjects(i32 zLevel);
-
-    void StartSpellcard()
-    {
-        this->spellcardState = RUNNING;
-        this->ticksSinceSpellcardStarted = 0;
-    }
-    void EndSpellcard()
-    {
-        this->spellcardState = NOT_RUNNING;
-    }
 
     AnmVm *quadVms;
     RawStageHeader *stdData;

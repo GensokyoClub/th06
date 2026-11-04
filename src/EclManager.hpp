@@ -1,9 +1,6 @@
 #pragma once
-#include "ItemManager.hpp"
-#include "SoundPlayer.hpp"
 #include "ZunBool.hpp"
 #include "ZunColor.hpp"
-#include "ZunMath.hpp"
 #include "ZunResult.hpp"
 #include "decomp.hpp"
 #include <Windows.h>
@@ -45,19 +42,12 @@ enum EclVarId
     ECL_VAR_PLAYER_SHOT = -10025,
 };
 
-struct TimelineInstrArgs
+struct TimelineEnemyCreateArgs
 {
-    u32 uintVar1;
-    u32 uintVar2;
-    u32 uintVar3;
-    u16 ushortVar1;
-    u16 ushortVar2;
-    u32 uintVar4;
-
-    D3DXVECTOR3 *Var1AsVec()
-    {
-        return (D3DXVECTOR3 *)&this->uintVar1;
-    }
+    D3DXVECTOR3 pos;
+    u16 subLife;
+    u16 dropItem;
+    u32 score;
 };
 
 struct TimelineInstr
@@ -66,14 +56,15 @@ struct TimelineInstr
     i16 arg0;
     i16 opCode;
     i16 size;
-    TimelineInstrArgs args;
+    u32 args[];
 };
+ZUN_ASSERT_TYPE(TimelineInstr, 0x8, 4);
 
 struct EclRawInstrAnmSetDeathArgs
 {
     i8 deathParticle1;
     i8 deathParticle2;
-    i8 deathAnm3;
+    i8 deathParticle3;
 };
 ZUN_ASSERT_TYPE(EclRawInstrAnmSetDeathArgs, 0x3, 1);
 
@@ -194,7 +185,9 @@ enum EclOpcode
     ECL_OPCODE_MATH_FLOAT_MUL,
     ECL_OPCODE_MATH_FLOAT_DIV,
     ECL_OPCODE_MATH_FLOAT_MOD,
+#if BUILT_SINCE(100)
     ECL_OPCODE_MATH_LINE_ANGLE,
+#endif
     ECL_OPCODE_MATH_REDUCE_ANGLE,
     ECL_OPCODE_CMP_INT,
     ECL_OPCODE_CMP_FLOAT,
@@ -260,8 +253,10 @@ enum EclOpcode
     ECL_OPCODE_LASER_ROTATE,
     ECL_OPCODE_LASER_ROTATE_FROM_PLAYER,
     ECL_OPCODE_LASER_OFFSET,
+#if BUILT_SINCE(100)
     ECL_OPCODE_LASER_TEST,
     ECL_OPCODE_LASER_CANCEL,
+#endif
     ECL_OPCODE_SPELLCARD_START,
     ECL_OPCODE_SPELLCARD_END,
     ECL_OPCODE_ENEMY_CREATE,
@@ -304,7 +299,9 @@ enum EclOpcode
     ECL_OPCODE_ENEMY_FLAG_INVISIBLE,
     ECL_OPCODE_PHASE_ADVANCE,
     ECL_OPCODE_LASER_CLEAR_ALL,
+#if BUILT_SINCE(100)
     ECL_OPCODE_SPELLCARD_FLAG_TIMEOUT,
+#endif
 };
 
 enum TimelineOpcode

@@ -68,7 +68,7 @@ On linux and mac, run the following script:
 Run the following script:
 
 ```
-python3 ./scripts/build.py
+python3 ./scripts/build.py --build-type=binary_matchbuild
 ```
 
 This will automatically generate a ninja build script `build.ninja`, and run

@@ -21,8 +21,22 @@ def create_status_profile():
     impl = get_file(script_path / "config" / "implemented.csv")
     maps = get_file(script_path / "config" / "mapping.csv")
 
-    total_func_bytes = 246112  # number of function bytes
-    impl_bytes = 0
+    # KSS: Is this jank? Is this bad? Also yes. But at this point we will also
+    #      never have accuracy regressions so whatever.
+
+    with open(script_path / "resources" / "th06.exe", "rb") as original_exe:
+        original_bytes = original_exe.read()
+
+    with open(script_path / "build" / "th06.exe", "rb") as impl_exe:
+        impl_bytes = impl_exe.read()
+
+    num_matching_bytes = 0
+    total_bytes = len(original_bytes)
+
+    for i in range(total_bytes):
+        if original_bytes[i] == impl_bytes[i]:
+            num_matching_bytes += 1
+
     num_funcs = 0
 
     for f_name, location, size, *rest in (line.split(",") for line in maps):
@@ -33,13 +47,10 @@ def create_status_profile():
 
         num_funcs += 1
 
-        if f_name + "\n" in impl:
-            impl_bytes += int(size.removeprefix("0x"), 16)
-
     raw_func_percentage = len(impl) / num_funcs * 100
-    byte_impl_percentage = impl_bytes / total_func_bytes * 100
+    byte_accuracy_percentage = num_matching_bytes / total_bytes * 100
 
-    return raw_func_percentage, byte_impl_percentage
+    return raw_func_percentage, byte_accuracy_percentage
 
 
 def update_svg():
@@ -98,7 +109,7 @@ def main():
     raw_func_percentage, byte_impl_percentage = create_status_profile()
 
     print(round(raw_func_percentage, 2), "% func implemented")
-    print(round(byte_impl_percentage, 2), "% size implemented")
+    print(round(byte_impl_percentage, 2), "% byte accuracy")
 
 
 if __name__ == "__main__":

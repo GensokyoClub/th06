@@ -21,7 +21,7 @@ def create_status_profile():
     impl = get_file(script_path / "config" / "implemented.csv")
     maps = get_file(script_path / "config" / "mapping.csv")
 
-    # KSS: Is this jank? Is this bad? Also yes. But at this point we will also
+    # KSS: Is this jank? Yes. Is this bad? Also yes. But at this point we will also
     #      never have accuracy regressions so whatever.
 
     with open(script_path / "resources" / "th06.exe", "rb") as original_exe:

@@ -108,7 +108,7 @@ th06::g_SpellcardScore,0x461110,global,256
 th06::g_EclExInsn,0x461210,global,4
 th06::g_PatchouliShottypeVars,0x461254,global,48
 th06::g_Effects,0x461288,global,160
-th06::g_RandomItems,0x461328,global,32
+g_RandomItems,0x461328,global,32
 th06::g_EffectsColorWithTextureBlending,0x461348,global,112
 th06::g_EffectsColorWithoutTextureBlending,0x4613B8,global,112
 th06::g_EffectsColor,0x461428,global,4
@@ -118,7 +118,7 @@ COLOR1,0x461490,global,4
 COLOR2,0x461494,global,4
 COLOR3,0x461498,global,4
 COLOR4,0x46149C,global,4
-th06::g_ExtraLivesScores,0x4614A0,global,20
+g_ExtraLivesScores,0x4614A0,global,20
 g_EclFiles,0x4614B4,global,36
 g_AnmStageFiles,0x4614D8,global,64
 g_DifficultyInfoForReplay,0x461518,global,60
@@ -274,7 +274,7 @@ th06::g_CountFramesInputsWereHeld,0x68977C,global,2
 th06::g_ReadFileSize,0x689780,global,4
 th06::g_FuncChain,0x689788,global,72
 g_ControllerData,0x689808,global,128
-th06::g_TextBufferSurface,0x689888,global,4
+g_TextBufferSurface,0x689888,global,4
 g_ItemHitSize,0x68988C,global,12
 $S9,0x689898,global,12
 th06::g_ItemMgrOnDrawElem,0x6898A0,global,32

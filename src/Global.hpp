@@ -63,17 +63,43 @@ f32 AddNormalizeAngle(f32 a, f32 b);
 void Rotate(D3DXVECTOR3 *outVector, D3DXVECTOR3 *point, f32 angle);
 } // namespace utils
 
+// 1.00/1.01 store a button bitmask; 1.02 switches to signed button indices.
+#if BUILT_SINCE(102)
+typedef i16 ControllerButton;
+#define CONTROLLER_BUTTON(n) (n)
+#define INVALID_BUTTON -1
+#define IS_INVALID_BUTTON(button) ((button) < 0)
+#else
+typedef u32 ControllerButton;
+#define CONTROLLER_BUTTON(n) (1 << (n))
+#define INVALID_BUTTON 0
+#define IS_INVALID_BUTTON(button) ((button) == 0)
+#endif
+
+enum TouhouButtonIndex
+{
+    TH_BUTTON_SHOOT_IDX,
+    TH_BUTTON_BOMB_IDX,
+    TH_BUTTON_FOCUS_IDX,
+    TH_BUTTON_MENU_IDX,
+    TH_BUTTON_UP_IDX,
+    TH_BUTTON_DOWN_IDX,
+    TH_BUTTON_LEFT_IDX,
+    TH_BUTTON_RIGHT_IDX,
+    TH_BUTTON_SKIP_IDX
+};
+
 enum TouhouButton
 {
-    TH_BUTTON_SHOOT = 1 << 0,
-    TH_BUTTON_BOMB = 1 << 1,
-    TH_BUTTON_FOCUS = 1 << 2,
-    TH_BUTTON_MENU = 1 << 3,
-    TH_BUTTON_UP = 1 << 4,
-    TH_BUTTON_DOWN = 1 << 5,
-    TH_BUTTON_LEFT = 1 << 6,
-    TH_BUTTON_RIGHT = 1 << 7,
-    TH_BUTTON_SKIP = 1 << 8,
+    TH_BUTTON_SHOOT = 1 << TH_BUTTON_SHOOT_IDX,
+    TH_BUTTON_BOMB = 1 << TH_BUTTON_BOMB_IDX,
+    TH_BUTTON_FOCUS = 1 << TH_BUTTON_FOCUS_IDX,
+    TH_BUTTON_MENU = 1 << TH_BUTTON_MENU_IDX,
+    TH_BUTTON_UP = 1 << TH_BUTTON_UP_IDX,
+    TH_BUTTON_DOWN = 1 << TH_BUTTON_DOWN_IDX,
+    TH_BUTTON_LEFT = 1 << TH_BUTTON_LEFT_IDX,
+    TH_BUTTON_RIGHT = 1 << TH_BUTTON_RIGHT_IDX,
+    TH_BUTTON_SKIP = 1 << TH_BUTTON_SKIP_IDX,
     TH_BUTTON_Q = 1 << 9,
     TH_BUTTON_S = 1 << 10,
     TH_BUTTON_HOME = 1 << 11,
@@ -100,19 +126,6 @@ u8 *GetControllerState();
 u16 GetInput(void);
 void ResetKeyboard(void);
 } // namespace Controller
-
-// 1.00/1.01 store a button bitmask; 1.02 switches to signed button indices.
-#if BUILT_SINCE(102)
-typedef i16 ControllerButton;
-#define CONTROLLER_BUTTON(n) (n)
-#define INVALID_BUTTON -1
-#define IS_INVALID_BUTTON(button) ((button) < 0)
-#else
-typedef u32 ControllerButton;
-#define CONTROLLER_BUTTON(n) (1 << (n))
-#define INVALID_BUTTON 0
-#define IS_INVALID_BUTTON(button) ((button) == 0)
-#endif
 
 struct ControllerMapping
 {

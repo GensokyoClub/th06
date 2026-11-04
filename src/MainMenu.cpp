@@ -1139,8 +1139,7 @@ ZunResult MainMenu::DrawStartMenu(void)
     for (;;)
     {
 #endif
-        if (this->cursor == TITLE_CURSOR_EXTRA_START &&
-            !g_GameManager.HasExtraUnlocked(REIMU, SHOT_TYPE_A) &&
+        if (this->cursor == TITLE_CURSOR_EXTRA_START && !g_GameManager.HasExtraUnlocked(REIMU, SHOT_TYPE_A) &&
             !g_GameManager.HasExtraUnlocked(REIMU, SHOT_TYPE_B) &&
             !g_GameManager.HasExtraUnlocked(MARISA, SHOT_TYPE_A) &&
             !g_GameManager.HasExtraUnlocked(MARISA, SHOT_TYPE_B))

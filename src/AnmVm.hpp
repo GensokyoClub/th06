@@ -161,6 +161,24 @@ ZUN_ASSERT_TYPE(AnmVmFlags, 0x4, 4);
 
 struct AnmVmBase
 {
+    void Initialize()
+    {
+        this->uvScrollPos.x = this->uvScrollPos.y = 0.0f;
+        this->scaleInterpFinalY = this->scaleInterpFinalX = 0.0f;
+        this->angleVel.x = this->angleVel.y = this->angleVel.z = 0.0f;
+        this->rotation.x = this->rotation.y = this->rotation.z = 0.0f;
+        this->scaleY = this->scaleX = 1.0f;
+        this->scaleInterpEndTime = 0;
+        this->alphaInterpEndTime = 0;
+        this->color = COLOR_WHITE;
+        D3DXMatrixIdentity(&this->matrix);
+        this->flags.flags = AnmVmFlags_Visible | AnmVmFlags_VisibleOverride;
+        this->autoRotate = 0;
+        this->pendingInterrupt = 0;
+        this->posInterpEndTime = 0;
+        this->currentTimeInScript.Initialize();
+    }
+
     ZunVec3 rotation;
     ZunVec3 angleVel;
     f32 scaleY;
@@ -185,24 +203,6 @@ ZUN_ASSERT_TYPE(AnmVmBase, 0x90, 4);
 
 struct AnmVm : AnmVmBase
 {
-    void Initialize()
-    {
-        this->uvScrollPos.x = this->uvScrollPos.y = 0.0f;
-        this->scaleInterpFinalY = this->scaleInterpFinalX = 0.0f;
-        this->angleVel.x = this->angleVel.y = this->angleVel.z = 0.0f;
-        this->rotation.x = this->rotation.y = this->rotation.z = 0.0f;
-        this->scaleY = this->scaleX = 1.0f;
-        this->scaleInterpEndTime = 0;
-        this->alphaInterpEndTime = 0;
-        this->color = COLOR_WHITE;
-        D3DXMatrixIdentity(&this->matrix);
-        this->flags.flags = AnmVmFlags_Visible | AnmVmFlags_VisibleOverride;
-        this->autoRotate = 0;
-        this->pendingInterrupt = 0;
-        this->posInterpEndTime = 0;
-        this->currentTimeInScript.Initialize();
-    }
-
     AnmVm()
     {
         this->activeSpriteIndex = -1;

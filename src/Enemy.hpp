@@ -120,14 +120,14 @@ struct EnemyFlags
 
     // Second byte
     u8 isInteractable : 1;
-    u8 isCollidable : 1;
+    u8 hasContactHitbox : 1;
     u8 hasBeenInBounds : 1;
     u8 isBoss : 1;
     u8 isDamageable : 1;
     u8 deathMode : 3; // EnemyDeathMode
 
     // Third byte
-    u8 shouldClampPos : 1;
+    u8 hasMovementBounds : 1;
     u8 rotateAnm : 1;
     u8 disableCallStack : 1;
     u8 isInvisible : 1;
@@ -153,6 +153,8 @@ enum EnemyPose
 };
 
 #define ENEMY_ANM_SLOTS 8
+#define ENEMY_INTERRUPT_SLOTS 8
+#define MAX_ENEMY_EFFECTS 12
 #define MAX_ECL_STACK_DEPTH 7
 #define MAX_LASERS_PER_ENEMY 32
 
@@ -199,7 +201,7 @@ struct Enemy
     i32 stackDepth;
     unreferenced_fields(0x4);
     i32 deathCallbackSub;
-    i32 interrupts[8];
+    i32 interrupts[ENEMY_INTERRUPT_SLOTS];
     i32 runInterrupt;
     D3DXVECTOR3 position;
     D3DXVECTOR3 hitboxDimensions;
@@ -212,7 +214,7 @@ struct Enemy
     D3DXVECTOR3 moveInterp;
     D3DXVECTOR3 moveInterpStartPos;
     ZunTimer moveInterpTimer;
-    i32 moveInterpStartTime;
+    i32 moveInterpDuration;
     f32 bulletRankSpeedLow;
     f32 bulletRankSpeedHigh;
     i16 bulletRankAmount1Low;
@@ -252,18 +254,18 @@ struct Enemy
 #endif
     ZunVec2 lowerMoveLimit;
     ZunVec2 upperMoveLimit;
-    Effect *effectArray[12];
+    Effect *effectArray[MAX_ENEMY_EFFECTS];
     i32 effectIdx;
     f32 effectDistance;
     i32 lifeCallbackThreshold;
     i32 lifeCallbackSub;
     i32 timerCallbackThreshold;
     i32 timerCallbackSub;
-    f32 exInsFunc6Angle;
+    f32 batWingEffectAngle;
 #if BUILT_SINCE(100)
-    ZunTimer exInsFunc6Timer;
+    ZunTimer batWingEffectTimer;
 #else
-    i32 exInsFunc6Timer;
+    i32 batWingEffectTimer;
 #endif
 };
 #if BUILT_SINCE(100)

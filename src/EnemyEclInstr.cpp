@@ -422,24 +422,24 @@ void ExInsBatWingEffect(Enemy *enemy, EclRawInstr *curInstr)
     }
 #endif
 
-    enemy->exInsFunc6Angle += RADIANS(1.0f);
-    if (enemy->exInsFunc6Angle >= RADIANS(45.0f))
+    enemy->batWingEffectAngle += RADIANS(1.0f);
+    if (enemy->batWingEffectAngle >= RADIANS(45.0f))
     {
-        enemy->exInsFunc6Angle -= RADIANS(90.0f);
+        enemy->batWingEffectAngle -= RADIANS(90.0f);
     }
 
     // Run every 8 frames for first 30 frames, then every 4 for next 30, then every 2 for next 60, then every frame
     if (
 #if BUILT_SINCE(100)
-        enemy->exInsFunc6Timer.HasTicked() &&
+        enemy->batWingEffectTimer.HasTicked() &&
 #endif
-        (enemy->exInsFunc6Timer > 120 || (enemy->exInsFunc6Timer > 60 && enemy->exInsFunc6Timer % 2 == 0) ||
-         (enemy->exInsFunc6Timer > 30 && enemy->exInsFunc6Timer % 4 == 0) || enemy->exInsFunc6Timer % 8 == 0))
+        (enemy->batWingEffectTimer > 120 || (enemy->batWingEffectTimer > 60 && enemy->batWingEffectTimer % 2 == 0) ||
+         (enemy->batWingEffectTimer > 30 && enemy->batWingEffectTimer % 4 == 0) || enemy->batWingEffectTimer % 8 == 0))
     {
-        baseAngleModifier = enemy->exInsFunc6Timer % 16;
+        baseAngleModifier = enemy->batWingEffectTimer % 16;
         baseAngleModifier = g_Rng.GetRandomU16InRange(baseAngleModifier / 2) + baseAngleModifier / 2;
         distanceModifier = (baseAngleModifier * 160.0f) / 16.0f + 32.0f;
-        finalAngle = enemy->exInsFunc6Angle - (baseAngleModifier * RADIANS(180.0f)) / 40.0f;
+        finalAngle = enemy->batWingEffectAngle - (baseAngleModifier * RADIANS(180.0f)) / 40.0f;
         if (distanceModifier < RADIANS(-45.0f))
         {
             distanceModifier += RADIANS(90.0f);
@@ -464,7 +464,7 @@ void ExInsBatWingEffect(Enemy *enemy, EclRawInstr *curInstr)
         effect->unk_128 = -effect->unk_11c / 120.0f;
     }
 
-    enemy->exInsFunc6Timer++;
+    enemy->batWingEffectTimer++;
 }
 
 #pragma var_order(laserProps, i, lengthMultiplier, attackType, innerLoopCount, angleDiff, outerLoopCount, laserAngle,  \

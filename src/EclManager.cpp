@@ -150,9 +150,9 @@ static void EclMoveDirTime(Enemy *enemy, EclRawInstr *instr)
 #endif
 
     enemy->moveInterpStartPos = enemy->position;
-    enemy->moveInterpStartTime = GET_INT_ARG(0);
+    enemy->moveInterpDuration = GET_INT_ARG(0);
 
-    enemy->moveInterpTimer = enemy->moveInterpStartTime;
+    enemy->moveInterpTimer = enemy->moveInterpDuration;
 
     enemy->flags.movementMode = EnemyMove_Interp;
 }
@@ -173,9 +173,9 @@ static void EclMovePosTime(Enemy *enemy, EclRawInstr *instr)
 #endif
 
     enemy->moveInterpStartPos = enemy->position;
-    enemy->moveInterpStartTime = GET_INT_ARG(0);
+    enemy->moveInterpDuration = GET_INT_ARG(0);
 
-    enemy->moveInterpTimer = enemy->moveInterpStartTime;
+    enemy->moveInterpTimer = enemy->moveInterpDuration;
 
     enemy->flags.movementMode = EnemyMove_Interp;
     enemy->axisSpeed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -197,9 +197,9 @@ static void EclMoveTime(Enemy *enemy, EclRawInstr *instr)
 #endif
 
     enemy->moveInterpStartPos = enemy->position;
-    enemy->moveInterpStartTime = GET_INT_ARG(0);
+    enemy->moveInterpDuration = GET_INT_ARG(0);
 
-    enemy->moveInterpTimer = enemy->moveInterpStartTime;
+    enemy->moveInterpTimer = enemy->moveInterpDuration;
 
     enemy->flags.movementMode = EnemyMove_Interp;
 }
@@ -746,10 +746,10 @@ restart_sub_changed:
             enemy->lowerMoveLimit.y = GET_INSTR_FLOAT_ARG(1);
             enemy->upperMoveLimit.x = GET_INSTR_FLOAT_ARG(2);
             enemy->upperMoveLimit.y = GET_INSTR_FLOAT_ARG(3);
-            enemy->flags.shouldClampPos = true;
+            enemy->flags.hasMovementBounds = true;
             break;
         case ECL_OPCODE_MOVE_BOUNDS_DISABLE:
-            enemy->flags.shouldClampPos = false;
+            enemy->flags.hasMovementBounds = false;
             break;
         case ECL_OPCODE_MOVE_RAND:
             genericFloat3 = GET_INSTR_ARG(ZunVec3, 0);
@@ -803,7 +803,7 @@ restart_sub_changed:
             enemy->hitboxDimensions.z = GET_INSTR_FLOAT_ARG(2);
             break;
         case ECL_OPCODE_ENEMY_FLAG_COLLISION:
-            enemy->flags.isCollidable = GET_INSTR_INT_ARG(0);
+            enemy->flags.hasContactHitbox = GET_INSTR_INT_ARG(0);
             break;
         case ECL_OPCODE_ENEMY_FLAG_CAN_TAKE_DAMAGE:
             enemy->flags.isDamageable = GET_INSTR_INT_ARG(0);
@@ -1072,7 +1072,7 @@ restart_sub_changed:
         break;
     case EnemyMove_Interp: {
         enemy->moveInterpTimer--;
-        f32 interpVal = (f32)enemy->moveInterpTimer / enemy->moveInterpStartTime;
+        f32 interpVal = (f32)enemy->moveInterpTimer / enemy->moveInterpDuration;
         if (interpVal >= 1.0f)
         {
             interpVal = 1.0f;

@@ -44,7 +44,7 @@ void EnemyManager::Initialize()
     enemy->flags.isSlotOccupied = true;
     enemy->phaseTimer = 0;
     enemy->flags.isInteractable = true;
-    enemy->flags.isCollidable = true;
+    enemy->flags.hasContactHitbox = true;
     enemy->flags.hasBeenInBounds = false;
     enemy->hitboxDimensions = D3DXVECTOR3(12.0f, 12.0f, 12.0f);
     enemy->axisSpeed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -52,7 +52,7 @@ void EnemyManager::Initialize()
     enemy->angle = 0.0f;
     enemy->acceleration = 0.0f;
     enemy->speed = 0.0f;
-    enemy->flags.movementMode = 0;
+    enemy->flags.movementMode = EnemyMove_AxisSpeed;
     enemy->flags.shootingDisabled = false;
     enemy->flags.mirrored = false;
     enemy->flags.isBoss = false;
@@ -71,7 +71,7 @@ void EnemyManager::Initialize()
     enemy->flags.isDamageable = true;
     enemy->flags.deathMode = EnemyDeath_DespawnNoCallback;
     enemy->deathCallbackSub = -1;
-    enemy->flags.shouldClampPos = false;
+    enemy->flags.hasMovementBounds = false;
     enemy->effectIdx = 0;
     enemy->runInterrupt = -1;
     enemy->lifeCallbackThreshold = -1;
@@ -457,7 +457,7 @@ void Enemy::Despawn()
 
 void Enemy::ClampPos()
 {
-    if (this->flags.shouldClampPos)
+    if (this->flags.hasMovementBounds)
     {
         if (this->position[0] < this->lowerMoveLimit.x)
         {
@@ -545,7 +545,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
         if (curEnemy->flags.hasBeenInBounds && !curEnemy->flags.isInvisible)
         {
             enemyLifeBeforeDmg = curEnemy->life;
-            if (curEnemy->flags.isCollidable && curEnemy->flags.isInteractable)
+            if (curEnemy->flags.hasContactHitbox && curEnemy->flags.isInteractable)
             {
                 enemyHitbox = curEnemy->hitboxDimensions / 1.5f;
                 if (g_Player.CheckCollision(&curEnemy->position, &enemyHitbox) == COLLISION_HIT &&

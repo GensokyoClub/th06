@@ -205,7 +205,7 @@ static void DarkenViewport(Player *player)
     {
         darknessLevel = 176;
     }
-    
+
     ScreenEffect_DrawSquare(&viewport, COLOR_SET_ALPHA(COLOR_BLACK, darknessLevel));
 }
 

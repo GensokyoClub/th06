@@ -730,7 +730,8 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                     }
                     else
                     {
-                        curBullet->angle = ReduceAngleAdd(curBullet->angle, curBullet->exVelAngle * g_Supervisor.effectiveFramerateMultiplier);
+                        curBullet->angle = ReduceAngleAdd(
+                            curBullet->angle, curBullet->exVelAngle * g_Supervisor.effectiveFramerateMultiplier);
                         curBullet->speed += curBullet->exVelSpeed * g_Supervisor.effectiveFramerateMultiplier;
                         sincosmul(&curBullet->velocity, curBullet->angle, curBullet->speed);
                     }
@@ -1191,7 +1192,8 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
             curLaser->baseGlowVm.color = curLaser->vm.color;
             curLaser->baseGlowVm.flags.colorOp = AnmColorOp_Add;
             curLaser->baseGlowVm.color = COLOR_SET_ALPHA(curLaser->baseGlowVm.color, 0xff);
-            curLaser->baseGlowVm.scaleY = curLaser->baseGlowVm.scaleX = (curLaser->width / 10.0f) * ((16.0f - curLaser->startOffset) / 16.0f);
+            curLaser->baseGlowVm.scaleY = curLaser->baseGlowVm.scaleX =
+                (curLaser->width / 10.0f) * ((16.0f - curLaser->startOffset) / 16.0f);
 
             if (curLaser->baseGlowVm.scaleY < 0.0f)
             {

@@ -57,7 +57,7 @@ void ExInsShootAtRandomArea(Enemy *enemy, EclRawInstr *curInstr)
     g_BulletManager.SpawnBulletPattern(&enemy->bulletProps);
 }
 
-#pragma var_order(i, propsSpeedBackup, starPatternOffsetMax, lerpRatio, starPatternOffset, patternPosition,         \
+#pragma var_order(i, propsSpeedBackup, starPatternOffsetMax, lerpRatio, starPatternOffset, patternPosition,            \
                   basePosition)
 void ExInsShootStarPattern(Enemy *enemy, EclRawInstr *curInstr)
 {
@@ -75,16 +75,22 @@ void ExInsShootStarPattern(Enemy *enemy, EclRawInstr *curInstr)
         g_EclManager.extra.coords[ENEMY_POS] = enemy->position;
         g_EclManager.extra.coords[PLAYER_POS] = g_Player.positionCenter;
         g_EclManager.extra.starAngleTable[0] = g_Rng.GetRandomF32InRange(ZUN_2PI) - ZUN_PI;
-        g_EclManager.extra.starAngleTable[1] = ReduceAngleAdd(g_EclManager.extra.starAngleTable[0], 4.0f * ZUN_PI / 5.0f);
+        g_EclManager.extra.starAngleTable[1] =
+            ReduceAngleAdd(g_EclManager.extra.starAngleTable[0], 4.0f * ZUN_PI / 5.0f);
     }
     if (enemy->currentContext.int2 % 30 == 0)
     {
         g_EclManager.extra.starAngleTable[0] = g_EclManager.extra.starAngleTable[1];
-        g_EclManager.extra.starAngleTable[1] = ReduceAngleAdd(g_EclManager.extra.starAngleTable[0], 4.0f * ZUN_PI / 5.0f);
-        g_EclManager.extra.starAngleTable[2] = ReduceAngleAdd(g_EclManager.extra.starAngleTable[1], 4.0f * ZUN_PI / 5.0f);
-        g_EclManager.extra.starAngleTable[3] = ReduceAngleAdd(g_EclManager.extra.starAngleTable[2], 4.0f * ZUN_PI / 5.0f);
-        g_EclManager.extra.starAngleTable[4] = ReduceAngleAdd(g_EclManager.extra.starAngleTable[3], 4.0f * ZUN_PI / 5.0f);
-        g_EclManager.extra.starAngleTable[5] = ReduceAngleAdd(g_EclManager.extra.starAngleTable[4], 4.0f * ZUN_PI / 5.0f);
+        g_EclManager.extra.starAngleTable[1] =
+            ReduceAngleAdd(g_EclManager.extra.starAngleTable[0], 4.0f * ZUN_PI / 5.0f);
+        g_EclManager.extra.starAngleTable[2] =
+            ReduceAngleAdd(g_EclManager.extra.starAngleTable[1], 4.0f * ZUN_PI / 5.0f);
+        g_EclManager.extra.starAngleTable[3] =
+            ReduceAngleAdd(g_EclManager.extra.starAngleTable[2], 4.0f * ZUN_PI / 5.0f);
+        g_EclManager.extra.starAngleTable[4] =
+            ReduceAngleAdd(g_EclManager.extra.starAngleTable[3], 4.0f * ZUN_PI / 5.0f);
+        g_EclManager.extra.starAngleTable[5] =
+            ReduceAngleAdd(g_EclManager.extra.starAngleTable[4], 4.0f * ZUN_PI / 5.0f);
     }
     if (enemy->currentContext.int2 % 6 == 0)
     {
@@ -112,7 +118,8 @@ void ExInsShootStarPattern(Enemy *enemy, EclRawInstr *curInstr)
             starPatternOffset.z = 0.0f;
             enemy->bulletProps.position = basePosition + starPatternOffset;
             propsSpeedBackup = enemy->bulletProps.speed1;
-            enemy->bulletProps.speed1 = g_Rng.GetRandomF32InRange(enemy->bulletProps.speed2) + enemy->bulletProps.speed1;
+            enemy->bulletProps.speed1 =
+                g_Rng.GetRandomF32InRange(enemy->bulletProps.speed2) + enemy->bulletProps.speed1;
             g_BulletManager.SpawnBulletPattern(&enemy->bulletProps);
             enemy->bulletProps.speed1 = propsSpeedBackup;
             enemy->bulletProps.angle1 -= (ZUN_PI / 6.0f) * patternPosition;

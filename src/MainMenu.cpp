@@ -197,7 +197,8 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
         vmList = &menu->vm[34];
         for (i = 0; i < KEY_CONFIG_BUTTON_COUNT + 2; i++, vmList++)
         {
-            DrawMenuItem(vmList, i, menu->cursor, menu->selectedColor, menu->unselectedColor, MENU_KEY_CONFIG_HIGHLIGHT_OFFSET);
+            DrawMenuItem(vmList, i, menu->cursor, menu->selectedColor, menu->unselectedColor,
+                         MENU_KEY_CONFIG_HIGHLIGHT_OFFSET);
         }
         for (i = 0; i < KEY_CONFIG_BUTTON_COUNT; i++, vmList++)
         {
@@ -207,7 +208,8 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                 continue;
             }
             vmList->flags.isVisibleOverride = true;
-            DrawMenuItem(vmList, i, menu->cursor, menu->selectedColor, menu->unselectedColor, MENU_KEY_CONFIG_HIGHLIGHT_OFFSET);
+            DrawMenuItem(vmList, i, menu->cursor, menu->selectedColor, menu->unselectedColor,
+                         MENU_KEY_CONFIG_HIGHLIGHT_OFFSET);
         }
         for (i = 0; i < KEY_CONFIG_BUTTON_COUNT * 2; i++, vmList++)
         {
@@ -239,7 +241,8 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                 g_AnmManager->SetActiveSprite(vmList, mapping % 10 + ANM_SPRITE_TITLE01_START);
             }
             vmList->baseSpriteIndex = vmList->activeSpriteIndex;
-            DrawMenuItem(vmList, i / 2, menu->cursor, menu->selectedColor, menu->unselectedColor, ARRAY_SIZE_SIGNED(menu->vm));
+            DrawMenuItem(vmList, i / 2, menu->cursor, menu->selectedColor, menu->unselectedColor,
+                         ARRAY_SIZE_SIGNED(menu->vm));
         }
 
 #pragma var_order(idx, controllerData)

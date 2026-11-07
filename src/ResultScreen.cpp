@@ -416,7 +416,8 @@ ZunResult ParsePscr(ScoreDat *scoreDat, Pscr *outClrd)
                 pscr->stage >= PSCR_NUM_STAGES + 1)
                 break;
 
-            outClrd[pscr->character * PSCR_NUM_STAGES * SHOTTYPE_COUNT + pscr->stage * PSCR_NUM_DIFFICULTIES + pscr->difficulty] = *pscr;
+            outClrd[pscr->character * PSCR_NUM_STAGES * SHOTTYPE_COUNT + pscr->stage * PSCR_NUM_DIFFICULTIES +
+                    pscr->difficulty] = *pscr;
         }
         cursor -= parsedPscr->base.th6kLen;
         parsedPscr = (Pscr *)((u8 *)parsedPscr + parsedPscr->base.th6kLen);

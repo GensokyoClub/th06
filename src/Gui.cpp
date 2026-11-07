@@ -633,9 +633,9 @@ ZunResult GuiImpl::RunMsg()
             break;
         case MSG_OPCODE_PORTRAIT_ANM_SPRITE:
             args = this->msg.currentInstr->args;
-            g_AnmManager->SetActiveSprite(
-                &this->msg.portraits[SHORT_ARG(0)],
-                SHORT_ARG(1) + (SHORT_ARG(0) == 0 ? ANM_SCRIPT_FACE_START : ANM_SCRIPT_FACE_START + 8));
+            g_AnmManager->SetActiveSprite(&this->msg.portraits[SHORT_ARG(0)],
+                                          SHORT_ARG(1) +
+                                              (SHORT_ARG(0) == 0 ? ANM_SCRIPT_FACE_START : ANM_SCRIPT_FACE_START + 8));
             break;
         case MSG_OPCODE_TEXT_DIALOGUE:
             args = this->msg.currentInstr->args;
@@ -648,9 +648,8 @@ ZunResult GuiImpl::RunMsg()
                                                  ANM_SCRIPT_TEXT_DIALOGUE_LINES + SHORT_ARG(1));
             this->msg.dialogueLines[SHORT_ARG(1)].fontWidth = this->msg.dialogueLines[SHORT_ARG(1)].fontHeight =
                 this->msg.fontSize;
-            g_AnmManager->DrawVmTextFmt(&this->msg.dialogueLines[SHORT_ARG(1)],
-                                        this->msg.textColors[SHORT_ARG(0)], this->msg.textShadowColors[SHORT_ARG(0)],
-                                        STRING_ARG(4));
+            g_AnmManager->DrawVmTextFmt(&this->msg.dialogueLines[SHORT_ARG(1)], this->msg.textColors[SHORT_ARG(0)],
+                                        this->msg.textShadowColors[SHORT_ARG(0)], STRING_ARG(4));
             this->msg.framesElapsedDuringPause = 0;
             break;
         case MSG_OPCODE_WAIT:
@@ -697,8 +696,7 @@ ZunResult GuiImpl::RunMsg()
             args = this->msg.currentInstr->args;
             g_AnmManager->SetAndExecuteScriptIdx(&this->msg.introLines[SHORT_ARG(1)],
                                                  ANM_SCRIPT_TEXT_INTRO_LINES + SHORT_ARG(1));
-            g_AnmManager->DrawStringFormat(&this->msg.introLines[SHORT_ARG(1)],
-                                           this->msg.textColors[SHORT_ARG(0)],
+            g_AnmManager->DrawStringFormat(&this->msg.introLines[SHORT_ARG(1)], this->msg.textColors[SHORT_ARG(0)],
                                            this->msg.textShadowColors[SHORT_ARG(0)], STRING_ARG(4));
             this->msg.framesElapsedDuringPause = 0;
             break;

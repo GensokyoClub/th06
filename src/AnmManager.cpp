@@ -1210,8 +1210,10 @@ break_parser:
         }
         else
         {
-            vm->scaleX = ZUN_LERP(vm->scaleInterpInitialX, vm->scaleInterpFinalX, (f32)vm->scaleInterpTime / vm->scaleInterpDuration);
-            vm->scaleY = ZUN_LERP(vm->scaleInterpInitialY, vm->scaleInterpFinalY, (f32)vm->scaleInterpTime / vm->scaleInterpDuration);
+            vm->scaleX = ZUN_LERP(vm->scaleInterpInitialX, vm->scaleInterpFinalX,
+                                  (f32)vm->scaleInterpTime / vm->scaleInterpDuration);
+            vm->scaleY = ZUN_LERP(vm->scaleInterpInitialY, vm->scaleInterpFinalY,
+                                  (f32)vm->scaleInterpTime / vm->scaleInterpDuration);
         }
         if (vm->flags.flip & AnmVmMirror_X)
         {

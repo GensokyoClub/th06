@@ -164,10 +164,14 @@ ChainCallbackResult Stage_OnUpdate(Stage *stage)
             }
             for (i32 i = 0; i < 4; i++)
             {
-                COLOR_CHANNEL(stage->sky.fogColor, i) = ZUN_LERP((f32)COLOR_CHANNEL(stage->skyInterpInitial.fogColor, i), (f32)COLOR_CHANNEL(stage->skyInterpFinal.fogColor, i), skyInterpRatio);
+                COLOR_CHANNEL(stage->sky.fogColor, i) =
+                    ZUN_LERP((f32)COLOR_CHANNEL(stage->skyInterpInitial.fogColor, i),
+                             (f32)COLOR_CHANNEL(stage->skyInterpFinal.fogColor, i), skyInterpRatio);
             }
-            stage->sky.nearPlane = ZUN_LERP(stage->skyInterpInitial.nearPlane, stage->skyInterpFinal.nearPlane, skyInterpRatio);
-            stage->sky.farPlane = ZUN_LERP(stage->skyInterpInitial.farPlane, stage->skyInterpFinal.farPlane, skyInterpRatio);
+            stage->sky.nearPlane =
+                ZUN_LERP(stage->skyInterpInitial.nearPlane, stage->skyInterpFinal.nearPlane, skyInterpRatio);
+            stage->sky.farPlane =
+                ZUN_LERP(stage->skyInterpInitial.farPlane, stage->skyInterpFinal.farPlane, skyInterpRatio);
             g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGCOLOR, stage->sky.fogColor);
             g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGSTART, *(DWORD *)&stage->sky.nearPlane);
             g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGEND, *(DWORD *)&stage->sky.farPlane);

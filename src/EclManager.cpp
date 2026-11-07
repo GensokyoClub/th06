@@ -168,7 +168,7 @@ static void EclMovePosTime(Enemy *enemy, EclRawInstr *instr)
     enemy->moveInterpOffset = newPos - enemy->position;
 #else
     enemy->moveInterpOffset = D3DXVECTOR3(GET_FLOAT_ARG(1) - enemy->position.x, GET_FLOAT_ARG(2) - enemy->position.y,
-                                    GET_FLOAT_ARG(3) - enemy->position.z);
+                                          GET_FLOAT_ARG(3) - enemy->position.z);
 #endif
 
     enemy->moveInterpInitialPos = enemy->position;

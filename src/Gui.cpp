@@ -1373,8 +1373,7 @@ void Gui::DrawStageElements()
     if (this->impl->bombSpellcardName.IsVisible())
     {
         this->impl->bombSpellcardBackground.pos = this->impl->bombSpellcardName.pos;
-        this->impl->bombSpellcardBackground.pos.x +=
-            this->bombNameBarLength * 16.0f / 15.0f / 2.0f + -128.0f - 16.0f;
+        this->impl->bombSpellcardBackground.pos.x += this->bombNameBarLength * 16.0f / 15.0f / 2.0f + -128.0f - 16.0f;
         this->impl->bombSpellcardBackground.scaleX = this->bombNameBarLength / 14.0f;
         g_AnmManager->DrawNoRotation(&this->impl->bombSpellcardBackground);
         g_AnmManager->DrawNoRotation(&this->impl->bombSpellcardName);

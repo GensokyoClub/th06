@@ -11,10 +11,10 @@ namespace th06
 struct RunningSpellcardInfo
 {
     ZunBool isCapturing;
-    ZunBool isActive;
+    u32 ticksActive;
     i32 captureScore;
     u32 id;
-    ZunBool usedBomb;
+    u32 usedBombTick;
 };
 ZUN_ASSERT_TYPE(RunningSpellcardInfo, 0x14, 4);
 

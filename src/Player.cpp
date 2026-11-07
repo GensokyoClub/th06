@@ -1047,7 +1047,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
         p->bombInfo.calc(p);
         g_EnemyManager.spellcardInfo.isCapturing = false;
         g_GameManager.DecreaseSubrank(200);
-        g_EnemyManager.spellcardInfo.usedBomb = g_EnemyManager.spellcardInfo.isActive;
+        g_EnemyManager.spellcardInfo.usedBombTick = g_EnemyManager.spellcardInfo.ticksActive;
     }
     if (p->playerState == PLAYER_STATE_DEAD)
     {
@@ -1159,7 +1159,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
     if (p->bulletGracePeriod != 0)
     {
         p->bulletGracePeriod--;
-        g_BulletManager.RemoveAllBullets(0);
+        g_BulletManager.RemoveAllBullets(false);
     }
     if (p->playerState == PLAYER_STATE_INVULNERABLE)
     {

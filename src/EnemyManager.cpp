@@ -402,11 +402,11 @@ ZunBool Enemy::HandleTimerCallback()
         if (!this->flags.isTimeoutSpell)
         {
             g_EnemyManager.spellcardInfo.isCapturing = false;
-            if (g_EnemyManager.spellcardInfo.isActive)
+            if (g_EnemyManager.spellcardInfo.ticksActive != 0)
             {
-                g_EnemyManager.spellcardInfo.isActive++;
+                g_EnemyManager.spellcardInfo.ticksActive++;
             }
-            g_BulletManager.RemoveAllBullets(0);
+            g_BulletManager.RemoveAllBullets(false);
         }
 
         Enemy *curEnemy = g_EnemyManager.enemies;
@@ -562,24 +562,25 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                     damage = 70;
                 }
                 g_GameManager.score = (damage / 5) * 10 + g_GameManager.score;
-                if (mgr->spellcardInfo.isActive)
+                if (mgr->spellcardInfo.ticksActive != 0)
                 {
                     if (!hitByBomb)
                     {
                         if (damage > 7)
                         {
-                            damage = damage / 7;
+                            damage /= 7;
                         }
                         else if (damage != 0)
                         {
                             damage = 1;
                         }
                     }
-                    else if (mgr->spellcardInfo.usedBomb)
+                    // Was the bomb used after the current spell started?
+                    else if (mgr->spellcardInfo.usedBombTick != 0)
                     {
                         if (damage > 3)
                         {
-                            damage = damage / 3;
+                            damage /= 3;
                         }
                         else if (damage != 0)
                         {
@@ -588,6 +589,8 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                     }
                     else
                     {
+                        // Bombs used before a spell starts do no damage during spells
+                        // BUG?: This negates all non-bomb damage simultaneously
                         damage = 0;
                     }
                 }
@@ -618,16 +621,17 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                 case EnemyDeath_DisableInteraction:
                     g_GameManager.AddScore(curEnemy->score);
                     curEnemy->flags.isInteractable = false;
-                    goto LAB_00412a4d;
+                    goto common_boss_logic;
                 case EnemyDeath_DespawnNoCallback:
                     g_GameManager.AddScore(curEnemy->score);
                     curEnemy->flags.isSlotOccupied = false;
-                LAB_00412a4d:
+                common_boss_logic:
                     if (curEnemy->flags.isBoss)
                     {
                         g_Gui.SetBossPresent(false);
                         Enemy_ResetEffectArray(curEnemy);
                     }
+                    // fallthrough
                 case EnemyDeath_DropItemsOnly:
                     if (curEnemy->itemDrop >= 0)
                     {
@@ -652,7 +656,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                         }
                         mgr->randomItemSpawnIndex++;
                     }
-                    if (curEnemy->flags.isBoss && !g_EnemyManager.spellcardInfo.isActive)
+                    if (curEnemy->flags.isBoss && g_EnemyManager.spellcardInfo.ticksActive == 0)
                     {
                         g_BulletManager.DespawnBullets(12800, false);
                     }
@@ -776,7 +780,7 @@ static ZunResult EnemyManager_AddedCallback(EnemyManager *enemyManager)
     enemyManager->randomItemSpawnIndex = g_Rng.GetRandomU16InRange(ITEM_SPAWNS);
     enemyManager->randomItemTableIndex = g_Rng.GetRandomU16InRange(ITEM_TABLES);
 
-    enemyManager->spellcardInfo.isActive = 0;
+    enemyManager->spellcardInfo.ticksActive = 0;
     enemyManager->timelineInstr = NULL;
 
     return ZUN_SUCCESS;

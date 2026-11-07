@@ -841,7 +841,7 @@ restart_sub_changed:
         case ECL_OPCODE_SPELLCARD_START: {
             g_Gui.ShowSpellcard(GET_INSTR_SHORT_ARG(0), GET_INSTR_STRING_ARG(4));
             g_EnemyManager.spellcardInfo.isCapturing = true;
-            g_EnemyManager.spellcardInfo.isActive = 1;
+            g_EnemyManager.spellcardInfo.ticksActive = 1;
             g_EnemyManager.spellcardInfo.id = GET_INSTR_SHORT_ARG(1);
             g_EnemyManager.spellcardInfo.captureScore = g_SpellcardScore[g_EnemyManager.spellcardInfo.id];
             g_BulletManager.TurnAllBulletsIntoPoints();
@@ -876,10 +876,10 @@ restart_sub_changed:
             break;
         }
         case ECL_OPCODE_SPELLCARD_END:
-            if (g_EnemyManager.spellcardInfo.isActive)
+            if (g_EnemyManager.spellcardInfo.ticksActive != 0)
             {
                 g_Gui.EndEnemySpellcard();
-                if (g_EnemyManager.spellcardInfo.isActive == 1)
+                if (g_EnemyManager.spellcardInfo.ticksActive == 1)
                 {
                     i32 scoreIncrease = g_BulletManager.DespawnBullets(12800, true);
 #pragma var_order(catk, idx, score)
@@ -909,7 +909,7 @@ restart_sub_changed:
                         g_GameManager.spellcardsCaptured++;
                     }
                 }
-                g_EnemyManager.spellcardInfo.isActive = 0;
+                g_EnemyManager.spellcardInfo.ticksActive = 0;
             }
             g_Stage.spellcardState = NOT_RUNNING;
             break;

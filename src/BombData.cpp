@@ -30,7 +30,7 @@ void BombReimuACalc(Player *player)
     {
         g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT, TH_REIMU_A_BOMB_NAME);
         player->bombInfo.duration = 300;
-        player->invulnerabilityTimer = 360;
+        player->stateTimer = 360;
 
         for (i = 0; i < 8; i++)
         {
@@ -65,8 +65,8 @@ void BombReimuACalc(Player *player)
                     sinf(angleX) * player->bombInfo.reimuABombProjectilesRelated[i];
                 player->bombRegionTotalDamages[i] = 0;
 
-                for (bombSprite = &player->bombInfo.sprites[0][i * 4], bombIdx = 0; bombIdx < 4;
-                     bombIdx++, bombSprite++)
+                bombSprite = &player->bombInfo.sprites[0][i * 4];
+                for (bombIdx = 0; bombIdx < 4; bombIdx++, bombSprite++)
                 {
                     g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_REIMU_A_BOMB_ARRAY + bombIdx);
                 }
@@ -154,15 +154,14 @@ void BombReimuACalc(Player *player)
 
                     player->bombInfo.bombRegionVelocities[i] / 8.0f; // ZUN moment
 
-                    g_SoundPlayer.PlaySoundByIdx(SOUND_F);
+                    g_SoundPlayer.PlaySoundByIdx(SOUND_15);
                     ScreenEffect_RegisterChain(SCREEN_EFFECT_SHAKE, 16, 8, 0, 0);
                 }
             }
         }
         else if (player->bombInfo.reimuABombProjectilesState[i] != 0 && player->bombInfo.timer.HasTicked())
         {
-            player->bombInfo.reimuABombProjectilesState[i]++;
-            if (player->bombInfo.reimuABombProjectilesState[i] >= 30)
+            if (++player->bombInfo.reimuABombProjectilesState[i] >= 30)
             {
                 player->bombInfo.reimuABombProjectilesState[i] = 0;
             }
@@ -207,7 +206,7 @@ static void DarkenViewport(Player *player)
         darknessLevel = 176;
     }
 
-    ScreenEffect_DrawSquare(&viewport, darknessLevel << 24);
+    ScreenEffect_DrawSquare(&viewport, COLOR_SET_ALPHA(COLOR_BLACK, darknessLevel));
 }
 
 void BombReimuADraw(Player *player)
@@ -271,7 +270,7 @@ void BombReimuBCalc(Player *player)
         g_ItemManager.MagnetAllItems();
         g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT, TH_REIMU_B_BOMB_NAME);
         player->bombInfo.duration = 140;
-        player->invulnerabilityTimer = 200;
+        player->stateTimer = 200;
         bombSprite = player->bombInfo.sprites[0];
 
         for (i = 0; i < 4; i++, bombSprite++)
@@ -365,7 +364,7 @@ void BombMarisaACalc(Player *player)
         g_ItemManager.MagnetAllItems();
         g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT, TH_MARISA_A_BOMB_NAME);
         player->bombInfo.duration = 250;
-        player->invulnerabilityTimer = 300;
+        player->stateTimer = 300;
 
         starSprite = player->bombInfo.sprites[0];
         for (i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.sprites); i++, starSprite++)
@@ -466,7 +465,7 @@ void BombMarisaBCalc(Player *player)
         g_ItemManager.MagnetAllItems();
         g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT, TH_MARISA_B_BOMB_NAME);
         player->bombInfo.duration = 300;
-        player->invulnerabilityTimer = 360;
+        player->stateTimer = 360;
         bombSprite = player->bombInfo.sprites[0];
         for (i = 0; i < 4; i++, bombSprite++)
         {
@@ -521,7 +520,7 @@ void BombMarisaBDraw(Player *player)
         bombSprite->pos.x += (cosf(spriteAngle) * bombSprite->sprite->heightPx * bombSprite->scaleY) / 2.0f;
         bombSprite->pos.y += (sinf(spriteAngle) * bombSprite->sprite->heightPx * bombSprite->scaleY) / 2.0f;
         spriteAngle = ZUN_HALF_PI - spriteAngle;
-        bombSprite->rotation.z = utils::AddNormalizeAngle(spriteAngle, ZUN_PI);
+        bombSprite->rotation.z = ReduceAngleAdd(spriteAngle, ZUN_PI);
         bombSprite->pos.x += g_GameManager.gameRegionScreenPos.x;
         bombSprite->pos.y += g_GameManager.gameRegionScreenPos.y;
         bombSprite->pos.z = 0.0f;

@@ -46,7 +46,6 @@ i32 g_SpellcardScore[] = {
 };
 // clang-format on
 
-typedef void (*ExInsn)(Enemy *, EclRawInstr *);
 ExInsn g_EclExInsn[] = {
     ExInsCirnoRainbowBallJank,
     ExInsShootAtRandomArea,
@@ -140,19 +139,19 @@ static void EclMoveDirTime(Enemy *enemy, EclRawInstr *instr)
 
 #if BUILT_SINCE(100)
     f32 angle = *EclGetVarFloat(enemy, &GET_FLOAT_ARG(1), NULL);
-    enemy->moveInterp.x = cosf(angle) * GET_FLOAT_ARG(2) * GET_INT_ARG(0) / 2.0f;
-    enemy->moveInterp.y = sinf(angle) * GET_FLOAT_ARG(2) * GET_INT_ARG(0) / 2.0f;
-    enemy->moveInterp.z = 0.0f;
+    enemy->moveInterpOffset.x = cosf(angle) * GET_FLOAT_ARG(2) * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterpOffset.y = sinf(angle) * GET_FLOAT_ARG(2) * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterpOffset.z = 0.0f;
 #else
-    enemy->moveInterp.x = cosf(GET_FLOAT_ARG(1)) * GET_FLOAT_ARG(2) * GET_INT_ARG(0) / 2.0f;
-    enemy->moveInterp.y = sinf(GET_FLOAT_ARG(1)) * GET_FLOAT_ARG(2) * GET_INT_ARG(0) / 2.0f;
-    enemy->moveInterp.z = 0.0f;
+    enemy->moveInterpOffset.x = cosf(GET_FLOAT_ARG(1)) * GET_FLOAT_ARG(2) * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterpOffset.y = sinf(GET_FLOAT_ARG(1)) * GET_FLOAT_ARG(2) * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterpOffset.z = 0.0f;
 #endif
 
-    enemy->moveInterpStartPos = enemy->position;
+    enemy->moveInterpInitialPos = enemy->position;
     enemy->moveInterpDuration = GET_INT_ARG(0);
 
-    enemy->moveInterpTimer = enemy->moveInterpDuration;
+    enemy->moveInterpTime = enemy->moveInterpDuration;
 
     enemy->flags.movementMode = EnemyMove_Interp;
 }
@@ -166,16 +165,16 @@ static void EclMovePosTime(Enemy *enemy, EclRawInstr *instr)
     newPos.x = *EclGetVarFloat(enemy, &GET_FLOAT_ARG(1), NULL);
     newPos.y = *EclGetVarFloat(enemy, &GET_FLOAT_ARG(2), NULL);
     newPos.z = *EclGetVarFloat(enemy, &GET_FLOAT_ARG(3), NULL);
-    enemy->moveInterp = newPos - enemy->position;
+    enemy->moveInterpOffset = newPos - enemy->position;
 #else
-    enemy->moveInterp = D3DXVECTOR3(GET_FLOAT_ARG(1) - enemy->position.x, GET_FLOAT_ARG(2) - enemy->position.y,
-                                    GET_FLOAT_ARG(3) - enemy->position.z);
+    enemy->moveInterpOffset = D3DXVECTOR3(GET_FLOAT_ARG(1) - enemy->position.x, GET_FLOAT_ARG(2) - enemy->position.y,
+                                          GET_FLOAT_ARG(3) - enemy->position.z);
 #endif
 
-    enemy->moveInterpStartPos = enemy->position;
+    enemy->moveInterpInitialPos = enemy->position;
     enemy->moveInterpDuration = GET_INT_ARG(0);
 
-    enemy->moveInterpTimer = enemy->moveInterpDuration;
+    enemy->moveInterpTime = enemy->moveInterpDuration;
 
     enemy->flags.movementMode = EnemyMove_Interp;
     enemy->axisSpeed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -187,19 +186,19 @@ static void EclMoveTime(Enemy *enemy, EclRawInstr *instr)
 
 #if BUILT_SINCE(100)
     f32 angle = *EclGetVarFloat(enemy, &enemy->angle, NULL);
-    enemy->moveInterp.x = cosf(angle) * enemy->speed * GET_INT_ARG(0) / 2.0f;
-    enemy->moveInterp.y = sinf(angle) * enemy->speed * GET_INT_ARG(0) / 2.0f;
-    enemy->moveInterp.z = 0.0f;
+    enemy->moveInterpOffset.x = cosf(angle) * enemy->speed * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterpOffset.y = sinf(angle) * enemy->speed * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterpOffset.z = 0.0f;
 #else
-    enemy->moveInterp.x = cosf(enemy->angle) * enemy->speed * GET_INT_ARG(0) / 2.0f;
-    enemy->moveInterp.y = sinf(enemy->angle) * enemy->speed * GET_INT_ARG(0) / 2.0f;
-    enemy->moveInterp.z = 0.0f;
+    enemy->moveInterpOffset.x = cosf(enemy->angle) * enemy->speed * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterpOffset.y = sinf(enemy->angle) * enemy->speed * GET_INT_ARG(0) / 2.0f;
+    enemy->moveInterpOffset.z = 0.0f;
 #endif
 
-    enemy->moveInterpStartPos = enemy->position;
+    enemy->moveInterpInitialPos = enemy->position;
     enemy->moveInterpDuration = GET_INT_ARG(0);
 
-    enemy->moveInterpTimer = enemy->moveInterpDuration;
+    enemy->moveInterpTime = enemy->moveInterpDuration;
 
     enemy->flags.movementMode = EnemyMove_Interp;
 }
@@ -250,7 +249,7 @@ restart_sub_changed:
             break;
         case ECL_OPCODE_MATH_REDUCE_ANGLE:
             genericFloat = *(f32 *)EclGetVar(enemy, &GET_INSTR_VAR_ARG(0), NULL);
-            genericFloat = utils::AddNormalizeAngle(genericFloat, 0.0f);
+            genericFloat = ReduceAngle(genericFloat);
             EclSetVar(enemy, GET_INSTR_VAR_ARG(0), &genericFloat);
             break;
         case ECL_OPCODE_SET_INT_RAND: {
@@ -506,7 +505,7 @@ restart_sub_changed:
             }
             shooter->position = enemy->position + enemy->shootOffset;
             shooter->angle1 = *EclGetVarFloat(enemy, &args->angle1, NULL);
-            shooter->angle1 = utils::AddNormalizeAngle(shooter->angle1, 0.0f);
+            shooter->angle1 = ReduceAngle(shooter->angle1);
             shooter->speed1 = *EclGetVarFloat(enemy, &args->speed1, NULL);
 #if BUILT_SINCE(100)
             if (shooter->speed1 != 0.0f)
@@ -515,7 +514,7 @@ restart_sub_changed:
                 shooter->speed1 += g_GameManager.RankLerpFloat(enemy->bulletRankSpeedLow, enemy->bulletRankSpeedHigh);
                 if (shooter->speed1 < 0.3f)
                 {
-                    shooter->speed1 = 0.3;
+                    shooter->speed1 = 0.3f;
                 }
             }
             shooter->angle2 = *EclGetVarFloat(enemy, &args->angle2, NULL);
@@ -682,11 +681,11 @@ restart_sub_changed:
             break;
         case ECL_OPCODE_SPELLCARD_EFFECT: {
             EclRawInstrSpellcardEffectArgs *args = &GET_INSTR_ARG(EclRawInstrSpellcardEffectArgs, 0);
-            enemy->effectArray[enemy->effectIdx] = g_EffectManager.SpawnParticles(
+            enemy->effectArray[enemy->effectCount] = g_EffectManager.SpawnParticles(
                 PARTICLE_EFFECT_UNK_13, &enemy->position, 1, g_EffectsColor[args->effectColorId]);
-            enemy->effectArray[enemy->effectIdx]->pos2 = args->pos;
+            enemy->effectArray[enemy->effectCount]->pos2 = args->pos;
             enemy->effectDistance = args->effectDistance;
-            enemy->effectIdx++;
+            enemy->effectCount++;
             break;
         }
         case ECL_OPCODE_MOVE_VELOCITY_INTERP_DECELERATE:
@@ -798,9 +797,9 @@ restart_sub_changed:
             enemy->anmPoseCurrent = EnemyPose_Default;
             break;
         case ECL_OPCODE_ENEMY_SET_HITBOX:
-            enemy->hitboxDimensions.x = GET_INSTR_FLOAT_ARG(0);
-            enemy->hitboxDimensions.y = GET_INSTR_FLOAT_ARG(1);
-            enemy->hitboxDimensions.z = GET_INSTR_FLOAT_ARG(2);
+            enemy->hitboxSize.x = GET_INSTR_FLOAT_ARG(0);
+            enemy->hitboxSize.y = GET_INSTR_FLOAT_ARG(1);
+            enemy->hitboxSize.z = GET_INSTR_FLOAT_ARG(2);
             break;
         case ECL_OPCODE_ENEMY_FLAG_COLLISION:
             enemy->flags.hasContactHitbox = GET_INSTR_INT_ARG(0);
@@ -842,14 +841,14 @@ restart_sub_changed:
         case ECL_OPCODE_SPELLCARD_START: {
             g_Gui.ShowSpellcard(GET_INSTR_SHORT_ARG(0), GET_INSTR_STRING_ARG(4));
             g_EnemyManager.spellcardInfo.isCapturing = true;
-            g_EnemyManager.spellcardInfo.isActive = 1;
-            g_EnemyManager.spellcardInfo.idx = GET_INSTR_SHORT_ARG(1);
-            g_EnemyManager.spellcardInfo.captureScore = g_SpellcardScore[g_EnemyManager.spellcardInfo.idx];
-            g_BulletManager.TurnAllBulletsIntoPoints();
-            g_Stage.spellcardState = RUNNING;
-            g_Stage.ticksSinceSpellcardStarted = 0;
+            g_EnemyManager.spellcardInfo.ticksActive = 1;
+            g_EnemyManager.spellcardInfo.id = GET_INSTR_SHORT_ARG(1);
+            g_EnemyManager.spellcardInfo.captureScore = g_SpellcardScore[g_EnemyManager.spellcardInfo.id];
+            g_BulletManager.CancelAllBullets();
+            g_Stage.spellcardState = SPELL_STATE_FADING_IN;
+            g_Stage.spellcardTicks = 0;
             enemy->ResetRank();
-            Catk *catk = &g_GameManager.catk[g_EnemyManager.spellcardInfo.idx];
+            Catk *catk = &g_GameManager.catk[g_EnemyManager.spellcardInfo.id];
             i32 csum = 0;
             i32 length;
 #if BUILT_SINCE(100)
@@ -864,30 +863,30 @@ restart_sub_changed:
                 }
                 if (catk->nameCsum != (u8)csum)
                 {
-                    catk->numSuccess = 0;
-                    catk->numAttempts = 0;
+                    catk->captures = 0;
+                    catk->attempts = 0;
                     catk->nameCsum = csum;
                 }
                 catk->captureScore = g_EnemyManager.spellcardInfo.captureScore;
-                if (catk->numAttempts < 9999)
+                if (catk->attempts < MAX_SPELL_ATTEMPTS)
                 {
-                    catk->numAttempts++;
+                    catk->attempts++;
                 }
             }
             break;
         }
         case ECL_OPCODE_SPELLCARD_END:
-            if (g_EnemyManager.spellcardInfo.isActive)
+            if (g_EnemyManager.spellcardInfo.ticksActive != 0)
             {
                 g_Gui.EndEnemySpellcard();
-                if (g_EnemyManager.spellcardInfo.isActive == 1)
+                if (g_EnemyManager.spellcardInfo.ticksActive == 1)
                 {
-                    i32 scoreIncrease = g_BulletManager.DespawnBullets(12800, true);
+                    i32 scoreIncrease = g_BulletManager.DespawnBulletsForScore(12800, BULLET_CANCEL);
 #pragma var_order(catk, idx, score)
                     if (g_EnemyManager.spellcardInfo.isCapturing)
                     {
                         i32 idx;
-                        Catk *catk = &g_GameManager.catk[g_EnemyManager.spellcardInfo.idx];
+                        Catk *catk = &g_GameManager.catk[g_EnemyManager.spellcardInfo.id];
                         i32 score = g_EnemyManager.spellcardInfo.captureScore >= 500000
                                         ? 500000 / 10
                                         : g_EnemyManager.spellcardInfo.captureScore / 10;
@@ -900,19 +899,20 @@ restart_sub_changed:
                         if (!g_GameManager.isInReplay)
 #endif
                         {
-                            catk->numSuccess++;
-                            for (idx = 4; idx > 0; idx--)
+                            // BUG: Capture count isn't capped like attempt count
+                            catk->captures++;
+                            for (idx = ARRAY_SIZE(catk->recentShotTypes) - 1; idx > 0; idx--)
                             {
-                                catk->characterShotType[idx] = catk->characterShotType[idx - 1];
+                                catk->recentShotTypes[idx] = catk->recentShotTypes[idx - 1];
                             }
-                            catk->characterShotType[0] = CURRENT_SHOTTYPE();
+                            catk->recentShotTypes[0] = CURRENT_SHOTTYPE();
                         }
                         g_GameManager.spellcardsCaptured++;
                     }
                 }
-                g_EnemyManager.spellcardInfo.isActive = 0;
+                g_EnemyManager.spellcardInfo.ticksActive = 0;
             }
-            g_Stage.spellcardState = NOT_RUNNING;
+            g_Stage.spellcardState = SPELL_STATE_NOT_ACTIVE;
             break;
         case ECL_OPCODE_PHASE_TIMER_SET:
             enemy->phaseTimer = GET_INSTR_INT_ARG(0);
@@ -982,7 +982,8 @@ restart_sub_changed:
             break;
         case ECL_OPCODE_BOSS_SET_LIFE_COUNT:
             g_Gui.SetLives(GET_INSTR_INT_ARG(0));
-            g_GameManager.counat += 1800;
+            // Add 30 seconds worth of game completion for some reason???
+            g_GameManager.gameplayTicks += 1800;
             break;
         case ECL_OPCODE_ENEMY_CREATE: {
             EclRawInstrEnemyCreateArgs args = GET_INSTR_ARG(EclRawInstrEnemyCreateArgs, 0);
@@ -1021,7 +1022,7 @@ restart_sub_changed:
             enemy->vms[GET_INT_ARG(0)].pendingInterrupt = GET_INT_ARG(1);
             break;
         case ECL_OPCODE_BULLET_CANCEL:
-            g_BulletManager.TurnAllBulletsIntoPoints();
+            g_BulletManager.CancelAllBullets();
             break;
         case ECL_OPCODE_BULLET_SOUND:
             if (GET_INSTR_ARG(SoundIdx, 0) >= 0)
@@ -1064,15 +1065,14 @@ restart_sub_changed:
     switch (enemy->flags.movementMode)
     {
     case EnemyMove_Velocity:
-        enemy->angle =
-            utils::AddNormalizeAngle(enemy->angle, g_Supervisor.effectiveFramerateMultiplier * enemy->angularVelocity);
+        enemy->angle = ReduceAngleAdd(enemy->angle, g_Supervisor.effectiveFramerateMultiplier * enemy->angularVelocity);
         enemy->speed = g_Supervisor.effectiveFramerateMultiplier * enemy->acceleration + enemy->speed;
         sincosmul(&enemy->axisSpeed, enemy->angle, enemy->speed);
         enemy->axisSpeed[2] = 0.0f;
         break;
     case EnemyMove_Interp: {
-        enemy->moveInterpTimer--;
-        f32 interpVal = (f32)enemy->moveInterpTimer / enemy->moveInterpDuration;
+        enemy->moveInterpTime--;
+        f32 interpVal = (f32)enemy->moveInterpTime / enemy->moveInterpDuration;
         if (interpVal >= 1.0f)
         {
             interpVal = 1.0f;
@@ -1096,12 +1096,12 @@ restart_sub_changed:
             interpVal = 1.0f - interpVal;
             interpVal = interpVal * interpVal * interpVal * interpVal;
         }
-        enemy->axisSpeed = interpVal * enemy->moveInterp + enemy->moveInterpStartPos - enemy->position;
+        enemy->axisSpeed = interpVal * enemy->moveInterpOffset + enemy->moveInterpInitialPos - enemy->position;
         enemy->angle = atan2f(enemy->axisSpeed.y, enemy->axisSpeed.x);
-        if (enemy->moveInterpTimer <= 0)
+        if (enemy->moveInterpTime <= 0)
         {
             enemy->flags.movementMode = EnemyMove_AxisSpeed;
-            enemy->position = enemy->moveInterpStartPos + enemy->moveInterp;
+            enemy->position = enemy->moveInterpInitialPos + enemy->moveInterpOffset;
             enemy->axisSpeed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         }
         break;

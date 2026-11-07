@@ -80,7 +80,7 @@ struct GameManager
     u32 score;
     u32 nextScoreIncrement;
     u32 highScore;
-    Difficulty difficulty;
+    i32 difficulty;
     i32 grazeInStage;
     i32 grazeInTotal;
     ZunBool isInReplay;
@@ -123,7 +123,7 @@ struct GameManager
     ZunVec2 playerMovementAreaSize;
     f32 cameraDistance;
     D3DXVECTOR3 stageCameraFacingDir;
-    i32 counat;
+    i32 gameplayTicks;
     i32 rank;
     i32 maxRank;
     i32 minRank;

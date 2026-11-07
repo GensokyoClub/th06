@@ -63,11 +63,13 @@ struct EnemyShooter
 };
 ZUN_ASSERT_TYPE(EnemyShooter, 0x54, 4);
 
+typedef void (*ExInsn)(Enemy *, EclRawInstr *);
+
 struct EnemyEclContext
 {
     EclRawInstr *currentInstr;
     ZunTimer time;
-    void (*funcSetFunc)(Enemy *, EclRawInstr *);
+    ExInsn funcSetFunc;
     i32 int0;
     i32 int1;
     i32 int2;
@@ -204,16 +206,16 @@ struct Enemy
     i32 interrupts[ENEMY_INTERRUPT_SLOTS];
     i32 runInterrupt;
     D3DXVECTOR3 position;
-    D3DXVECTOR3 hitboxDimensions;
+    D3DXVECTOR3 hitboxSize;
     D3DXVECTOR3 axisSpeed;
     f32 angle;
     f32 angularVelocity;
     f32 speed;
     f32 acceleration;
     D3DXVECTOR3 shootOffset;
-    D3DXVECTOR3 moveInterp;
-    D3DXVECTOR3 moveInterpStartPos;
-    ZunTimer moveInterpTimer;
+    D3DXVECTOR3 moveInterpOffset;
+    D3DXVECTOR3 moveInterpInitialPos;
+    ZunTimer moveInterpTime;
     i32 moveInterpDuration;
     f32 bulletRankSpeedLow;
     f32 bulletRankSpeedHigh;
@@ -255,7 +257,7 @@ struct Enemy
     ZunVec2 lowerMoveLimit;
     ZunVec2 upperMoveLimit;
     Effect *effectArray[MAX_ENEMY_EFFECTS];
-    i32 effectIdx;
+    i32 effectCount;
     f32 effectDistance;
     i32 lifeCallbackThreshold;
     i32 lifeCallbackSub;

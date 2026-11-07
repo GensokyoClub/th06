@@ -99,7 +99,7 @@ ChainCallbackResult GameManager_OnUpdate(GameManager *gameManager)
     SetupCamera(0.0f);
 
     g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
-    g_Supervisor.d3dDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, g_Stage.skyFog.color, 1.0f, 0);
+    g_Supervisor.d3dDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, g_Stage.sky.fogColor, 1.0f, 0);
 
     // Seems like gameManager->isInGameMenu was supposed to have 3 states, but all the times it ends up checking both
     if (gameManager->isInGameMenu == 1 || gameManager->isInGameMenu == 2 || gameManager->isInRetryMenu)
@@ -151,7 +151,7 @@ ChainCallbackResult GameManager_OnUpdate(GameManager *gameManager)
                 gameManager->livesRemaining++;
                 g_SoundPlayer.PlaySoundByIdx(SOUND_1UP);
             }
-            g_Gui.flags.flag0 = 2;
+            g_Gui.redrawFrames.lifeIcons = 2;
             gameManager->livesEarned++;
             g_GameManager.IncreaseSubrank(200);
         }
@@ -175,14 +175,16 @@ ChainCallbackResult GameManager_OnDraw(GameManager *gameManager)
 
 static ZunResult GameManager_AddedCallback(GameManager *mgr)
 {
-    static const char *g_EclFiles[] = {"dummy",
-                                       "data/ecldata1.ecl",
-                                       "data/ecldata2.ecl",
-                                       "data/ecldata3.ecl",
-                                       "data/ecldata4.ecl",
-                                       "data/ecldata5.ecl",
-                                       "data/ecldata6.ecl",
-                                       "data/ecldata7.ecl"};
+    static const char *g_EclFiles[] = {
+        "dummy",
+        "data/ecldata1.ecl",
+        "data/ecldata2.ecl",
+        "data/ecldata3.ecl",
+        "data/ecldata4.ecl",
+        "data/ecldata5.ecl",
+        "data/ecldata6.ecl",
+        "data/ecldata7.ecl",
+    };
     static const char *g_AnmStageFiles[][2] = {
         {"dummy", "dummy"},
         {"data/stg1enm.anm", "data/stg1enm2.anm"},
@@ -229,7 +231,7 @@ static ZunResult GameManager_AddedCallback(GameManager *mgr)
         mgr->playerMovementAreaTopLeftPos.y = GAME_REGION_TOP + 16.0f;
         mgr->playerMovementAreaSize.x = GAME_REGION_WIDTH - 8.0f * 2.0f;
         mgr->playerMovementAreaSize.y = GAME_REGION_HEIGHT - 16.0f * 2.0f;
-        mgr->counat = 0;
+        mgr->gameplayTicks = 0;
         mgr->guiScore = 0;
         mgr->score = 0;
         mgr->nextScoreIncrement = 0;
@@ -267,8 +269,8 @@ static ZunResult GameManager_AddedCallback(GameManager *mgr)
             catk->base.th6kLen = sizeof(Catk);
             catk->base.version = TH6K_VERSION;
             catk->idx = i;
-            catk->numAttempts = 0;
-            catk->numSuccess = 0;
+            catk->attempts = 0;
+            catk->captures = 0;
         }
         {
             ScoreDat *scoredat = OpenScore("score.dat");

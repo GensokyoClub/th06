@@ -31,7 +31,7 @@ struct MsgRawInstr
     u16 time;
     u8 opcode;
     u8 argSize;
-    u8 args[];
+    i32 args[];
 };
 ZUN_ASSERT_SIZE(MsgRawInstr, 0x4);
 
@@ -45,24 +45,24 @@ ZUN_ASSERT_SIZE(MsgRawHeader, 0x4);
 #define MSG_PORTRAIT_COUNT 2
 #define MSG_DIALOGUE_LINE_COUNT 2
 
-struct GuiMsgVm
+struct MsgVm
 {
     MsgRawHeader *msgFile;
     MsgRawInstr *currentInstr;
-    i32 currentMsgIdx;
+    i32 currentMsgId;
     ZunTimer scriptTimer;
     i32 framesElapsedDuringPause;
     AnmVm portraits[MSG_PORTRAIT_COUNT];
     AnmVm dialogueLines[MSG_DIALOGUE_LINE_COUNT];
     AnmVm introLines[2];
-    D3DCOLOR textColorsA[4];
-    D3DCOLOR textColorsB[4];
+    D3DCOLOR textColors[4];
+    D3DCOLOR textShadowColors[4];
     u32 fontSize;
     u32 ignoreWaitCounter;
     u8 dialogueSkippable;
     alignment_padding(0x3);
 };
-ZUN_ASSERT_TYPE(GuiMsgVm, 0x6a8, 4);
+ZUN_ASSERT_TYPE(MsgVm, 0x6a8, 4);
 
 struct GuiFormattedText
 {
@@ -72,6 +72,14 @@ struct GuiFormattedText
     ZunTimer timer;
 };
 ZUN_ASSERT_TYPE(GuiFormattedText, 0x20, 4);
+
+enum BossHealthBarState
+{
+    BOSS_BAR_HIDDEN,
+    BOSS_BAR_FADING_IN,
+    BOSS_BAR_SHOWN,
+    BOSS_BAR_FADING_OUT
+};
 
 struct GuiImpl
 {
@@ -91,7 +99,7 @@ struct GuiImpl
     AnmVm bombSpellcardBackground;
     AnmVm enemySpellcardBackground;
     AnmVm loadingScreenSprite;
-    GuiMsgVm msg;
+    MsgVm msg;
     ZunBool finishedStage;
     u32 stageScore;
     GuiFormattedText bonusScore;
@@ -301,11 +309,11 @@ void Gui::ShowBombNamePortrait(u32 sprite, const char *bombName)
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->bombSpellcardName, ANM_SCRIPT_TEXT_BOMB_NAME);
     g_AnmManager->DrawVmTextFmt(&this->impl->bombSpellcardName, COLOR_RGB(COLOR_BARELY_BLUE), COLOR_RGB(COLOR_BLACK),
                                 bombName);
-    this->bombSpellcardBarLength = strlen(bombName) * 15 / 2.0f + 16.0f; // TODO: Is this 15 the font size?
+    this->bombNameBarLength = strlen(bombName) * DEFAULT_ANM_FONT_SIZE / 2.0f + 16.0f;
 #if BUILT_SINCE(102g)
     g_Supervisor.forceRedrawFrames = 3;
 #endif
-    g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB);
+    g_SoundPlayer.PlaySoundByIdx(SOUND_SPELL_START);
 }
 
 void Gui::ShowSpellcard(i32 spellcardSprite, const char *spellcardName)
@@ -315,8 +323,8 @@ void Gui::ShowSpellcard(i32 spellcardSprite, const char *spellcardName)
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->enemySpellcardName, ANM_SCRIPT_TEXT_ENEMY_SPELLCARD_NAME);
     g_AnmManager->DrawStringFormat(&this->impl->enemySpellcardName, COLOR_RGB(COLOR_BARELY_RED), COLOR_RGB(COLOR_BLACK),
                                    spellcardName);
-    this->blueSpellcardBarLength = strlen(spellcardName) * 15 / 2.0f + 16.0f;
-    g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB);
+    this->spellcardNameBarLength = strlen(spellcardName) * DEFAULT_ANM_FONT_SIZE / 2.0f + 16.0f;
+    g_SoundPlayer.PlaySoundByIdx(SOUND_SPELL_START);
 }
 
 ZunResult Gui::ActualAddedCallback()
@@ -489,9 +497,9 @@ ZunResult Gui::ActualAddedCallback()
         }
     }
     this->bossPresent = false;
-    this->impl->bossHealthBarState = 0;
-    this->bossHealthBar1 = 0.0f;
-    this->bossHealthBar2 = 0.0f;
+    this->impl->bossHealthBarState = BOSS_BAR_HIDDEN;
+    this->bossHealthBarValue = 0.0f;
+    this->bossHealthBarDisplay = 0.0f;
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->playerSpellcardPortrait, ANM_SCRIPT_FACE_BOMB_PORTRAIT);
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->enemySpellcardPortrait, ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT);
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->bombSpellcardName, ANM_SCRIPT_TEXT_BOMB_NAME);
@@ -519,16 +527,16 @@ ZunResult Gui::ActualAddedCallback()
     this->impl->songNameSprite.fontHeight = DEFAULT_ANM_FONT_SIZE + 1;
     g_AnmManager->DrawStringFormat(&this->impl->songNameSprite, COLOR_RGB(COLOR_LIGHTCYAN), COLOR_RGB(COLOR_BLACK),
                                    TH_SONG_NAME, g_Stage.stdData->songNames[0]);
-    this->impl->msg.currentMsgIdx = -1;
+    this->impl->msg.currentMsgId = -1;
     this->impl->finishedStage = FALSE;
     this->impl->bonusScore.isShown = false;
     this->impl->fullPowerMode.isShown = false;
     this->impl->spellCardBonus.isShown = false;
-    this->flags.flag0 = 2;
-    this->flags.flag1 = 2;
-    this->flags.flag3 = 2;
-    this->flags.flag4 = 2;
-    this->flags.flag2 = 2;
+    this->redrawFrames.lifeIcons = 2;
+    this->redrawFrames.bombIcons = 2;
+    this->redrawFrames.grazeCounter = 2;
+    this->redrawFrames.pointItemCounter = 2;
+    this->redrawFrames.powerGauge = 2;
     return ZUN_SUCCESS;
 }
 
@@ -541,7 +549,7 @@ ZunResult Gui::LoadMsg(const char *path)
         g_GameErrorContext.Log(TH_ERR_GUI_MSG_FILE_CORRUPTED, path);
         return ZUN_ERROR;
     }
-    this->impl->msg.currentMsgIdx = -1;
+    this->impl->msg.currentMsgId = -1;
     this->impl->msg.currentInstr = NULL;
     for (i32 idx = 0; idx < this->impl->msg.msgFile->numInstrs; idx++)
     {
@@ -571,17 +579,17 @@ void GuiImpl::MsgRead(i32 msgIdx)
         return;
     }
     MsgRawHeader *msgFile = this->msg.msgFile;
-    memset(&this->msg, 0, sizeof(GuiMsgVm));
-    this->msg.currentMsgIdx = msgIdx;
+    memset(&this->msg, 0, sizeof(MsgVm));
+    this->msg.currentMsgId = msgIdx;
     this->msg.msgFile = msgFile;
     this->msg.currentInstr = this->msg.msgFile->instrs[msgIdx];
     this->msg.dialogueLines[0].anmFileIndex = -1;
     this->msg.dialogueLines[1].anmFileIndex = -1;
     this->msg.fontSize = DEFAULT_ANM_FONT_SIZE;
-    this->msg.textColorsA[0] = COLOR_RGB(COLOR_GUI_1);
-    this->msg.textColorsA[1] = COLOR_RGB(COLOR_GUI_2);
-    this->msg.textColorsB[0] = COLOR_RGB(COLOR_BLACK);
-    this->msg.textColorsB[1] = COLOR_RGB(COLOR_BLACK);
+    this->msg.textColors[0] = COLOR_RGB(COLOR_GUI_1);
+    this->msg.textColors[1] = COLOR_RGB(COLOR_GUI_2);
+    this->msg.textShadowColors[0] = COLOR_RGB(COLOR_BLACK);
+    this->msg.textShadowColors[1] = COLOR_RGB(COLOR_BLACK);
     this->msg.dialogueSkippable = true;
     if (g_GameManager.currentStage == Stage6 &&
         (msgIdx == MSG_SCRIPT_ID(REIMU, 0) || msgIdx == MSG_SCRIPT_ID(MARISA, 0)))
@@ -597,12 +605,16 @@ void GuiImpl::MsgRead(i32 msgIdx)
 }
 
 #define GET_ARG(type, num) ((type *)args)[num]
+#define STRING_ARG(offset) &GET_ARG(char, offset)
+#define INT_ARG(num) GET_ARG(i32, num)
+#define SHORT_ARG(num) GET_ARG(i16, num)
+#define BYTE_ARG(num) GET_ARG(u8, num)
 
 ZunResult GuiImpl::RunMsg()
 {
-    u8 *args;
+    void *args;
 
-    if (this->msg.currentMsgIdx < 0)
+    if (this->msg.currentMsgId < 0)
     {
         return ZUN_ERROR;
     }
@@ -619,34 +631,33 @@ ZunResult GuiImpl::RunMsg()
         switch (this->msg.currentInstr->opcode)
         {
         case MSG_OPCODE_MSG_DELETE:
-            this->msg.currentMsgIdx = -1;
+            this->msg.currentMsgId = -1;
             return ZUN_ERROR;
         case MSG_OPCODE_PORTRAIT_ANM_SCRIPT:
             args = this->msg.currentInstr->args;
             g_AnmManager->SetAndExecuteScriptIdx(
-                &this->msg.portraits[GET_ARG(i16, 0)],
-                GET_ARG(i16, 1) + (GET_ARG(i16, 0) == 0 ? ANM_SCRIPT_FACE_START : ANM_SCRIPT_FACE_START + 2));
+                &this->msg.portraits[SHORT_ARG(0)],
+                SHORT_ARG(1) + (SHORT_ARG(0) == 0 ? ANM_SCRIPT_FACE_START : ANM_SCRIPT_FACE_START + 2));
             break;
         case MSG_OPCODE_PORTRAIT_ANM_SPRITE:
             args = this->msg.currentInstr->args;
-            g_AnmManager->SetActiveSprite(
-                &this->msg.portraits[GET_ARG(i16, 0)],
-                GET_ARG(i16, 1) + (GET_ARG(i16, 0) == 0 ? ANM_SCRIPT_FACE_START : ANM_SCRIPT_FACE_START + 8));
+            g_AnmManager->SetActiveSprite(&this->msg.portraits[SHORT_ARG(0)],
+                                          SHORT_ARG(1) +
+                                              (SHORT_ARG(0) == 0 ? ANM_SCRIPT_FACE_START : ANM_SCRIPT_FACE_START + 8));
             break;
         case MSG_OPCODE_TEXT_DIALOGUE:
             args = this->msg.currentInstr->args;
-            if (GET_ARG(i16, 1) == 0 && this->msg.dialogueLines[1].anmFileIndex >= 0)
+            if (SHORT_ARG(1) == 0 && this->msg.dialogueLines[1].anmFileIndex >= 0)
             {
-                g_AnmManager->DrawVmTextFmt(&this->msg.dialogueLines[1], this->msg.textColorsA[GET_ARG(i16, 0)],
-                                            this->msg.textColorsB[GET_ARG(i16, 0)], " ");
+                g_AnmManager->DrawVmTextFmt(&this->msg.dialogueLines[1], this->msg.textColors[SHORT_ARG(0)],
+                                            this->msg.textShadowColors[SHORT_ARG(0)], " ");
             }
-            g_AnmManager->SetAndExecuteScriptIdx(&this->msg.dialogueLines[GET_ARG(i16, 1)],
-                                                 ANM_SCRIPT_TEXT_DIALOGUE_LINES + GET_ARG(i16, 1));
-            this->msg.dialogueLines[GET_ARG(i16, 1)].fontWidth = this->msg.dialogueLines[GET_ARG(i16, 1)].fontHeight =
+            g_AnmManager->SetAndExecuteScriptIdx(&this->msg.dialogueLines[SHORT_ARG(1)],
+                                                 ANM_SCRIPT_TEXT_DIALOGUE_LINES + SHORT_ARG(1));
+            this->msg.dialogueLines[SHORT_ARG(1)].fontWidth = this->msg.dialogueLines[SHORT_ARG(1)].fontHeight =
                 this->msg.fontSize;
-            g_AnmManager->DrawVmTextFmt(&this->msg.dialogueLines[GET_ARG(i16, 1)],
-                                        this->msg.textColorsA[GET_ARG(i16, 0)], this->msg.textColorsB[GET_ARG(i16, 0)],
-                                        (char *)(args + 4));
+            g_AnmManager->DrawVmTextFmt(&this->msg.dialogueLines[SHORT_ARG(1)], this->msg.textColors[SHORT_ARG(0)],
+                                        this->msg.textShadowColors[SHORT_ARG(0)], STRING_ARG(4));
             this->msg.framesElapsedDuringPause = 0;
             break;
         case MSG_OPCODE_WAIT:
@@ -654,7 +665,7 @@ ZunResult GuiImpl::RunMsg()
             {
                 if (!WAS_PRESSED(TH_BUTTON_SHOOT) || this->msg.framesElapsedDuringPause < 8)
                 {
-                    if (this->msg.framesElapsedDuringPause >= *(i32 *)this->msg.currentInstr->args)
+                    if (this->msg.framesElapsedDuringPause >= this->msg.currentInstr->args[0])
                     {
                         break;
                     }
@@ -665,13 +676,13 @@ ZunResult GuiImpl::RunMsg()
             break;
         case MSG_OPCODE_ANM_INTERRUPT:
             args = this->msg.currentInstr->args;
-            if (GET_ARG(i16, 0) < MSG_PORTRAIT_COUNT)
+            if (SHORT_ARG(0) < MSG_PORTRAIT_COUNT)
             {
-                this->msg.portraits[GET_ARG(i16, 0)].pendingInterrupt = GET_ARG(u8, 2);
+                this->msg.portraits[SHORT_ARG(0)].pendingInterrupt = BYTE_ARG(2);
             }
             else
             {
-                this->msg.dialogueLines[GET_ARG(i16, 0) - MSG_PORTRAIT_COUNT].pendingInterrupt = GET_ARG(u8, 2);
+                this->msg.dialogueLines[SHORT_ARG(0) - MSG_PORTRAIT_COUNT].pendingInterrupt = BYTE_ARG(2);
             }
             break;
         case MSG_OPCODE_ECL_RESUME:
@@ -682,20 +693,18 @@ ZunResult GuiImpl::RunMsg()
             this->songNameSprite.fontWidth = DEFAULT_ANM_FONT_SIZE + 1;
             this->songNameSprite.fontHeight = DEFAULT_ANM_FONT_SIZE + 1;
             g_AnmManager->DrawStringFormat(&this->songNameSprite, COLOR_RGB(COLOR_LIGHTCYAN), COLOR_RGB(COLOR_BLACK),
-                                           TH_SONG_NAME,
-                                           g_Stage.stdData->songNames[*(i32 *)this->msg.currentInstr->args]);
-            if (g_Supervisor.PlayMidiFile(*(i32 *)this->msg.currentInstr->args))
+                                           TH_SONG_NAME, g_Stage.stdData->songNames[this->msg.currentInstr->args[0]]);
+            if (g_Supervisor.PlayMidiFile(this->msg.currentInstr->args[0]))
             {
-                g_Supervisor.PlayAudio(g_Stage.stdData->songPaths[*(i32 *)this->msg.currentInstr->args]);
+                g_Supervisor.PlayAudio(g_Stage.stdData->songPaths[this->msg.currentInstr->args[0]]);
             }
             break;
         case MSG_OPCODE_TEXT_INTRO:
             args = this->msg.currentInstr->args;
-            g_AnmManager->SetAndExecuteScriptIdx(&this->msg.introLines[GET_ARG(i16, 1)],
-                                                 ANM_SCRIPT_TEXT_INTRO_LINES + GET_ARG(i16, 1));
-            g_AnmManager->DrawStringFormat(&this->msg.introLines[GET_ARG(i16, 1)],
-                                           this->msg.textColorsA[GET_ARG(i16, 0)],
-                                           this->msg.textColorsB[GET_ARG(i16, 0)], (char *)(args + 4));
+            g_AnmManager->SetAndExecuteScriptIdx(&this->msg.introLines[SHORT_ARG(1)],
+                                                 ANM_SCRIPT_TEXT_INTRO_LINES + SHORT_ARG(1));
+            g_AnmManager->DrawStringFormat(&this->msg.introLines[SHORT_ARG(1)], this->msg.textColors[SHORT_ARG(0)],
+                                           this->msg.textShadowColors[SHORT_ARG(0)], STRING_ARG(4));
             this->msg.framesElapsedDuringPause = 0;
             break;
         case MSG_OPCODE_STAGE_RESULTS:
@@ -760,10 +769,10 @@ ZunResult GuiImpl::RunMsg()
             }
             goto break_skip_time;
         case MSG_OPCODE_MSG_FLAG_WAIT_SKIPPABLE:
-            this->msg.dialogueSkippable = *(i32 *)this->msg.currentInstr->args;
+            this->msg.dialogueSkippable = this->msg.currentInstr->args[0];
             break;
         }
-        this->msg.currentInstr = (MsgRawInstr *)((u32)this->msg.currentInstr->args + this->msg.currentInstr->argSize);
+        this->msg.currentInstr = (MsgRawInstr *)((u32)(this->msg.currentInstr + 1) + this->msg.currentInstr->argSize);
     }
     this->msg.scriptTimer++;
 break_skip_time:
@@ -787,12 +796,12 @@ ZunResult GuiImpl::DrawDialogue()
 {
     f32 dialogueBoxHeight;
 
-    if (this->msg.currentMsgIdx < 0)
+    if (this->msg.currentMsgId < 0)
     {
         return ZUN_ERROR;
     }
     if (g_GameManager.currentStage == Stage6 &&
-        (this->msg.currentMsgIdx == MSG_SCRIPT_ID(REIMU, 1) || this->msg.currentMsgIdx == MSG_SCRIPT_ID(MARISA, 1)))
+        (this->msg.currentMsgId == MSG_SCRIPT_ID(REIMU, 1) || this->msg.currentMsgId == MSG_SCRIPT_ID(MARISA, 1)))
     {
         return ZUN_SUCCESS;
     }
@@ -820,8 +829,8 @@ ZunResult GuiImpl::DrawDialogue()
                                            (g_GameManager.gameRegionSize.x - 256.0f) / 2.0f + 256.0f + 16.0f,
                                        384.0f + dialogueBoxHeight, 0.0f);
 
-    vertices[0].diffuse = vertices[1].diffuse = 0xd0000000;
-    vertices[2].diffuse = vertices[3].diffuse = 0x90000000;
+    vertices[0].diffuse = vertices[1].diffuse = COLOR_SET_ALPHA(COLOR_BLACK, 0xd0);
+    vertices[2].diffuse = vertices[3].diffuse = COLOR_SET_ALPHA(COLOR_BLACK, 0x90);
     vertices[0].position_w = vertices[1].position_w = vertices[2].position_w = vertices[3].position_w = 1.0f;
     g_AnmManager->DrawNoRotation(&this->msg.portraits[0]);
     g_AnmManager->DrawNoRotation(&this->msg.portraits[1]);
@@ -862,82 +871,82 @@ ZunBool Gui::MsgWait()
     {
         return false;
     }
-    return this->impl->msg.currentMsgIdx >= 0;
+    return this->impl->msg.currentMsgId >= 0;
 }
 
 ZunBool Gui::IsMsgActive()
 {
-    return this->impl->msg.currentMsgIdx >= 0;
+    return this->impl->msg.currentMsgId >= 0;
 }
 
 void Gui::UpdateStageElements()
 {
     for (i32 idx = 0; idx < ARRAY_SIZE_SIGNED(this->impl->vms); idx++)
     {
-        if (idx == 19 && this->impl->msg.currentMsgIdx < 0)
+        if (idx == 19 && this->impl->msg.currentMsgId < 0)
         {
             if (this->bossPresent)
             {
-                if (!this->impl->bossHealthBarState)
+                if (this->impl->bossHealthBarState == BOSS_BAR_HIDDEN)
                 {
-                    g_AnmManager->SetAndExecuteScriptIdx(&this->impl->vms[idx], ANM_SCRIPT_FRONT_ENEMY_TEXT);
-                    this->impl->bossHealthBarState = 1;
-                    this->bossUIOpacity = 0;
+                    g_AnmManager->SetAndExecuteScriptIdx(&this->impl->vms[idx], ANM_SCRIPT_FRONT_ENEMY_TEXT_FADE_IN);
+                    this->impl->bossHealthBarState = BOSS_BAR_FADING_IN;
+                    this->bossUIAlpha = 0;
                 }
                 else
                 {
                     if (g_AnmManager->ExecuteScript(&this->impl->vms[idx]))
                     {
-                        this->impl->bossHealthBarState = 2;
+                        this->impl->bossHealthBarState = BOSS_BAR_SHOWN;
                     }
-                    if (this->bossUIOpacity < 256 - 4)
+                    if (this->bossUIAlpha < 256 - 4)
                     {
-                        this->bossUIOpacity += 4;
+                        this->bossUIAlpha += 4;
                     }
                     else
                     {
-                        this->bossUIOpacity = 255;
+                        this->bossUIAlpha = 255;
                     }
                 }
             }
-            else if (this->impl->bossHealthBarState != 0)
+            else if (this->impl->bossHealthBarState != BOSS_BAR_HIDDEN)
             {
-                if (this->impl->bossHealthBarState <= 2)
+                if (this->impl->bossHealthBarState <= BOSS_BAR_SHOWN)
                 {
-                    g_AnmManager->SetAndExecuteScriptIdx(&this->impl->vms[idx], ANM_SCRIPT_FRONT_ENEMY_TEXT2);
-                    this->impl->bossHealthBarState = 3;
+                    g_AnmManager->SetAndExecuteScriptIdx(&this->impl->vms[idx], ANM_SCRIPT_FRONT_ENEMY_TEXT_FADE_OUT);
+                    this->impl->bossHealthBarState = BOSS_BAR_FADING_OUT;
                 }
-                if (this->bossUIOpacity > 0)
+                if (this->bossUIAlpha > 0)
                 {
-                    this->bossUIOpacity -= 4;
+                    this->bossUIAlpha -= 4;
                 }
                 else
                 {
-                    this->bossUIOpacity = 0;
+                    this->bossUIAlpha = 0;
                 }
                 if (g_AnmManager->ExecuteScript(&this->impl->vms[idx]))
                 {
-                    this->impl->bossHealthBarState = 0;
-                    this->bossHealthBar2 = 0.0f;
-                    this->bossUIOpacity = 0;
+                    this->impl->bossHealthBarState = BOSS_BAR_HIDDEN;
+                    this->bossHealthBarDisplay = 0.0f;
+                    this->bossUIAlpha = 0;
                 }
             }
-            if (this->impl->bossHealthBarState >= 2)
+            if (this->impl->bossHealthBarState >= BOSS_BAR_SHOWN)
             {
-                if (this->bossHealthBar1 > this->bossHealthBar2)
+                if (this->bossHealthBarValue > this->bossHealthBarDisplay)
                 {
-                    this->bossHealthBar2 += 0.01f;
-                    if (this->bossHealthBar1 < this->bossHealthBar2)
+                    this->bossHealthBarDisplay += 0.01f;
+                    if (this->bossHealthBarValue < this->bossHealthBarDisplay)
                     {
-                        this->bossHealthBar2 = this->bossHealthBar1;
+                        this->bossHealthBarDisplay = this->bossHealthBarValue;
                     }
                 }
-                else if (this->bossHealthBar1 < this->bossHealthBar2)
+                else if (this->bossHealthBarValue < this->bossHealthBarDisplay)
                 {
-                    this->bossHealthBar2 -= 0.02f;
-                    if (this->bossHealthBar1 > this->bossHealthBar2)
+                    this->bossHealthBarDisplay -= 0.02f;
+                    if (this->bossHealthBarValue > this->bossHealthBarDisplay)
                     {
-                        this->bossHealthBar2 = this->bossHealthBar1;
+                        this->bossHealthBarDisplay = this->bossHealthBarValue;
                     }
                 }
             }
@@ -1065,20 +1074,20 @@ void Gui::DrawGameScene()
     f32 yPos;
 
 #pragma var_order(cappedSpellcardSecondsRemaining, bossLivesColor, textPos)
-    if (this->impl->msg.currentMsgIdx < 0 && (this->bossPresent + this->impl->bossHealthBarState) > 0)
+    if (this->impl->msg.currentMsgId < 0 && (this->bossPresent + this->impl->bossHealthBarState) > 0)
     {
         vm = &this->impl->vms[19];
         g_AnmManager->DrawNoRotation(vm);
         vm = &this->impl->vms[21];
         vm->flags.anchor = AnmVmAnchor_TopLeft;
-        vm->scaleX = (this->bossHealthBar2 * 288.0f) / 14.0f;
+        vm->scaleX = (this->bossHealthBarDisplay * 288.0f) / 14.0f;
         vm->pos.x = 96.0f;
         vm->pos.y = 24.0f;
         vm->pos.z = 0.0f;
         g_AnmManager->DrawNoRotation(vm);
         D3DXVECTOR3 textPos(80.0f, 16.0f, 0.0f);
-        g_AsciiManager.SetColor(this->bossUIOpacity << 24 | 0xffff80);
-        g_AsciiManager.AddFormatText(&textPos, "%d", this->eclSetLives);
+        g_AsciiManager.SetColor(COLOR_SET_ALPHA(COLOR_LIGHT_YELLOW, this->bossUIAlpha));
+        g_AsciiManager.AddFormatText(&textPos, "%d", this->bossLifeCount);
         textPos = D3DXVECTOR3(384.0f, 16.0f, 0.0f);
         D3DCOLOR bossLivesColor;
         if (this->spellcardSecondsRemaining >= 20)
@@ -1098,13 +1107,12 @@ void Gui::DrawGameScene()
             bossLivesColor = COLOR4;
         }
 
-        g_AsciiManager.SetColor(this->bossUIOpacity << 24 | bossLivesColor);
-        i32 cappedSpellcardSecondsRemaining =
-            this->spellcardSecondsRemaining > 99 ? 99 : this->spellcardSecondsRemaining;
+        g_AsciiManager.SetColor(this->bossUIAlpha << 24 | bossLivesColor);
+        i32 cappedSpellcardSecondsRemaining = min(99, this->spellcardSecondsRemaining);
         if (cappedSpellcardSecondsRemaining < 10 &&
             this->lastSpellcardSecondsRemaining != this->spellcardSecondsRemaining)
         {
-            g_SoundPlayer.PlaySoundByIdx(SOUND_1D);
+            g_SoundPlayer.PlaySoundByIdx(SOUND_29);
         }
         g_AsciiManager.AddFormatText(&textPos, "%.2d", cappedSpellcardSecondsRemaining);
         g_AsciiManager.SetColor(COLOR_WHITE);
@@ -1158,11 +1166,11 @@ void Gui::DrawGameScene()
         g_AnmManager->DrawNoRotation(&this->impl->vms[13]);
         g_AnmManager->DrawNoRotation(&this->impl->vms[14]);
         g_AnmManager->DrawNoRotation(&this->impl->vms[15]);
-        this->flags.flag0 = 2;
-        this->flags.flag1 = 2;
-        this->flags.flag3 = 2;
-        this->flags.flag4 = 2;
-        this->flags.flag2 = 2;
+        this->redrawFrames.lifeIcons = 2;
+        this->redrawFrames.bombIcons = 2;
+        this->redrawFrames.grazeCounter = 2;
+        this->redrawFrames.pointItemCounter = 2;
+        this->redrawFrames.powerGauge = 2;
     }
     if (!g_Supervisor.IsMinimumGraphicsMode())
     {
@@ -1172,27 +1180,27 @@ void Gui::DrawGameScene()
         g_AnmManager->DrawNoRotation(vm);
         vm->pos = D3DXVECTOR3(xPos, 82.0f, 0.49f);
         g_AnmManager->DrawNoRotation(vm);
-        if (this->flags.flag0 != 0)
+        if (this->redrawFrames.lifeIcons != 0)
         {
             vm->pos = D3DXVECTOR3(xPos, 122.0f, 0.49f);
             g_AnmManager->DrawNoRotation(vm);
         }
-        if (this->flags.flag1 != 0)
+        if (this->redrawFrames.bombIcons != 0)
         {
             vm->pos = D3DXVECTOR3(xPos, 146.0f, 0.49f);
             g_AnmManager->DrawNoRotation(vm);
         }
-        if (this->flags.flag2 != 0)
+        if (this->redrawFrames.powerGauge != 0)
         {
             vm->pos = D3DXVECTOR3(xPos, 186.0f, 0.49f);
             g_AnmManager->DrawNoRotation(vm);
         }
-        if (this->flags.flag3 != 0)
+        if (this->redrawFrames.grazeCounter != 0)
         {
             vm->pos = D3DXVECTOR3(xPos, 206.0f, 0.49f);
             g_AnmManager->DrawNoRotation(vm);
         }
-        if (this->flags.flag4 != 0)
+        if (this->redrawFrames.pointItemCounter != 0)
         {
             vm->pos = D3DXVECTOR3(xPos, 226.0f, 0.49f);
             g_AnmManager->DrawNoRotation(vm);
@@ -1202,7 +1210,7 @@ void Gui::DrawGameScene()
         vm->pos = D3DXVECTOR3(0.0f, 464.0f, 0.49f);
         g_AnmManager->DrawNoRotation(vm);
     }
-    if (this->flags.flag0 != 0 || g_Supervisor.IsMinimumGraphicsMode())
+    if (this->redrawFrames.lifeIcons != 0 || g_Supervisor.IsMinimumGraphicsMode())
     {
         vm = &this->impl->vms[16];
         for (idx = 0, xPos = 496.0f; idx < g_GameManager.livesRemaining; idx++, xPos += 16.0f)
@@ -1211,7 +1219,7 @@ void Gui::DrawGameScene()
             g_AnmManager->DrawNoRotation(vm);
         }
     }
-    if (this->flags.flag1 != 0 || g_Supervisor.IsMinimumGraphicsMode())
+    if (this->redrawFrames.bombIcons != 0 || g_Supervisor.IsMinimumGraphicsMode())
     {
         vm = &this->impl->vms[17];
         for (idx = 0, xPos = 496.0f; idx < g_GameManager.bombsRemaining; idx++, xPos += 16.0f)
@@ -1220,7 +1228,7 @@ void Gui::DrawGameScene()
             g_AnmManager->DrawNoRotation(vm);
         }
     }
-    if (this->flags.flag2 != 0 || g_Supervisor.IsMinimumGraphicsMode())
+    if (this->redrawFrames.powerGauge != 0 || g_Supervisor.IsMinimumGraphicsMode())
     {
         VertexDiffuseXyzrwh vertices[4];
         if (g_GameManager.currentPower > 0)
@@ -1277,36 +1285,36 @@ void Gui::DrawGameScene()
         g_AsciiManager.AddFormatText(&elemPos, "%.9d", g_GameManager.guiScore);
         elemPos = D3DXVECTOR3(496.0f, 58.0f, 0.0f);
         g_AsciiManager.AddFormatText(&elemPos, "%.9d", g_GameManager.highScore);
-        if (this->flags.flag3 || g_Supervisor.IsMinimumGraphicsMode())
+        if (this->redrawFrames.grazeCounter || g_Supervisor.IsMinimumGraphicsMode())
         {
             elemPos = D3DXVECTOR3(496.0f, 206.0f, 0.0f);
             g_AsciiManager.AddFormatText(&elemPos, "%d", g_GameManager.grazeInStage);
         }
-        if (this->flags.flag4 || g_Supervisor.IsMinimumGraphicsMode())
+        if (this->redrawFrames.pointItemCounter || g_Supervisor.IsMinimumGraphicsMode())
         {
             elemPos = D3DXVECTOR3(496.0f, 226.0f, 0.0f);
             g_AsciiManager.AddFormatText(&elemPos, "%d", g_GameManager.pointItemsCollectedInStage);
         }
     }
-    if (this->flags.flag0 != 0)
+    if (this->redrawFrames.lifeIcons != 0)
     {
-        this->flags.flag0--;
+        this->redrawFrames.lifeIcons--;
     }
-    if (this->flags.flag2 != 0)
+    if (this->redrawFrames.powerGauge != 0)
     {
-        this->flags.flag2--;
+        this->redrawFrames.powerGauge--;
     }
-    if (this->flags.flag1 != 0)
+    if (this->redrawFrames.bombIcons != 0)
     {
-        this->flags.flag1--;
+        this->redrawFrames.bombIcons--;
     }
-    if (this->flags.flag3 != 0)
+    if (this->redrawFrames.grazeCounter != 0)
     {
-        this->flags.flag3--;
+        this->redrawFrames.grazeCounter--;
     }
-    if (this->flags.flag4 != 0)
+    if (this->redrawFrames.pointItemCounter != 0)
     {
-        this->flags.flag4--;
+        this->redrawFrames.pointItemCounter--;
     }
 }
 
@@ -1365,17 +1373,16 @@ void Gui::DrawStageElements()
     if (this->impl->bombSpellcardName.IsVisible())
     {
         this->impl->bombSpellcardBackground.pos = this->impl->bombSpellcardName.pos;
-        this->impl->bombSpellcardBackground.pos.x +=
-            this->bombSpellcardBarLength * 16.0f / 15.0f / 2.0f + -128.0f - 16.0f;
-        this->impl->bombSpellcardBackground.scaleX = this->bombSpellcardBarLength / 14.0f;
+        this->impl->bombSpellcardBackground.pos.x += this->bombNameBarLength * 16.0f / 15.0f / 2.0f + -128.0f - 16.0f;
+        this->impl->bombSpellcardBackground.scaleX = this->bombNameBarLength / 14.0f;
         g_AnmManager->DrawNoRotation(&this->impl->bombSpellcardBackground);
         g_AnmManager->DrawNoRotation(&this->impl->bombSpellcardName);
     }
     if (this->impl->enemySpellcardName.IsVisible())
     {
         this->impl->enemySpellcardBackground.pos = this->impl->enemySpellcardName.pos;
-        this->impl->enemySpellcardBackground.pos.x += 128.0f - this->blueSpellcardBarLength * 16.0f / 15.0f / 2.0f;
-        this->impl->enemySpellcardBackground.scaleX = this->blueSpellcardBarLength / 14.0f;
+        this->impl->enemySpellcardBackground.pos.x += 128.0f - this->spellcardNameBarLength * 16.0f / 15.0f / 2.0f;
+        this->impl->enemySpellcardBackground.scaleX = this->spellcardNameBarLength / 14.0f;
         g_AnmManager->DrawNoRotation(&this->impl->enemySpellcardBackground);
         g_AnmManager->DrawNoRotation(&this->impl->enemySpellcardName);
     }

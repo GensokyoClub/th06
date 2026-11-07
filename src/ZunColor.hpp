@@ -69,7 +69,11 @@
 #define COLOR_RED_BYTE_IDX 2
 #define COLOR_ALPHA_BYTE_IDX 3
 
-#define COLOR_GET_COMPONENT(color, component) (((u8 *)&(color))[(component)])
-#define COLOR_SET_COMPONENT(color, component, value) ((u8 *)&(color))[(component)] = (value);
+#define COLOR_CHANNEL(color, channel) ((u8 *)&(color))[channel]
+
+#define BLUE(color) COLOR_CHANNEL((color), COLOR_BLUE_BYTE_IDX)
+#define GREEN(color) COLOR_CHANNEL((color), COLOR_GREEN_BYTE_IDX)
+#define RED(color) COLOR_CHANNEL((color), COLOR_RED_BYTE_IDX)
+#define ALPHA(color) COLOR_CHANNEL((color), COLOR_ALPHA_BYTE_IDX)
 
 typedef u32 ZunColor;

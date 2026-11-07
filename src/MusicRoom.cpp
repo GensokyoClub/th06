@@ -25,9 +25,8 @@ ZunBool MusicRoom::ProcessInput()
 
     if (WAS_PRESSED(TH_BUTTON_UP))
     {
-        this->cursor--;
         // Vertical wrap-around
-        if (this->cursor < 0)
+        if (--this->cursor < 0)
         {
 #if !TRIALBUILD
             this->cursor = this->numDescriptors - 1;
@@ -46,12 +45,11 @@ ZunBool MusicRoom::ProcessInput()
 
     if (WAS_PRESSED(TH_BUTTON_DOWN))
     {
-        this->cursor++;
         // Vertical wrap-around
 #if !TRIALBUILD
-        if (this->cursor >= this->numDescriptors)
+        if (++this->cursor >= this->numDescriptors)
 #else
-        if (this->cursor >= 7)
+        if (++this->cursor >= 7)
 #endif
         {
             this->cursor = 0;

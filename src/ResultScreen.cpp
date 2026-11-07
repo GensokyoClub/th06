@@ -117,10 +117,7 @@ const char *g_CharacterList[] = {
 #pragma var_order(scoresAmount, nextNode)
 static i32 LinkScore(ScoreListNode *prevNode, Hscr *newScore)
 {
-    i32 scoresAmount;
-    ScoreListNode *nextNode;
-
-    scoresAmount = 0;
+    i32 scoresAmount = 0;
     while (prevNode->next != NULL)
     {
         if (prevNode->next->data != NULL && prevNode->next->data->score <= newScore->score)
@@ -130,8 +127,8 @@ static i32 LinkScore(ScoreListNode *prevNode, Hscr *newScore)
         prevNode = prevNode->next;
         scoresAmount++;
     }
-    nextNode = prevNode->next;
 
+    ScoreListNode *nextNode = prevNode->next;
     prevNode->next = ZUN_ALLOC_TYPE(ScoreListNode);
     prevNode->next->prev = prevNode;
     prevNode = prevNode->next;
@@ -419,7 +416,8 @@ ZunResult ParsePscr(ScoreDat *scoreDat, Pscr *outClrd)
                 pscr->stage >= PSCR_NUM_STAGES + 1)
                 break;
 
-            outClrd[pscr->character * 6 * 4 + pscr->stage * 4 + pscr->difficulty] = *pscr;
+            outClrd[pscr->character * PSCR_NUM_STAGES * SHOTTYPE_COUNT + pscr->stage * PSCR_NUM_DIFFICULTIES +
+                    pscr->difficulty] = *pscr;
         }
         cursor -= parsedPscr->base.th6kLen;
         parsedPscr = (Pscr *)((u8 *)parsedPscr + parsedPscr->base.th6kLen);
@@ -865,7 +863,7 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
                 {
                     break;
                 }
-                if (g_GameManager.catk[i].numAttempts == 0)
+                if (g_GameManager.catk[i].attempts == 0)
                 {
                     g_AnmManager->DrawVmTextFmt(&resultScreen->textLineVms[i % SPELLS_PER_PAGE], COLOR_RGB(COLOR_WHITE),
                                                 COLOR_RGB(COLOR_BLACK), TH_UNKNOWN_SPELLCARD);
@@ -881,6 +879,7 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
         {
             break;
         }
+        // TODO: Derive 7 from CATK_COUNT
         if (MoveResultCursorHorizontally(resultScreen, 7))
         {
             resultScreen->frameTimer = 0;
@@ -1028,6 +1027,7 @@ i32 ResultScreen::HandleResultKeyboard()
     {
     left_press_skip_spaces:
         this->selectedCharacter--;
+
         if (this->selectedCharacter % RESULT_KEYBOARD_COLUMNS == RESULT_KEYBOARD_COLUMNS - 1)
         {
             this->selectedCharacter += RESULT_KEYBOARD_COLUMNS;
@@ -1356,6 +1356,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
         {
         left_press_skip_spaces:
             this->selectedCharacter--;
+
             if (this->selectedCharacter % RESULT_KEYBOARD_COLUMNS == RESULT_KEYBOARD_COLUMNS - 1)
             {
                 this->selectedCharacter += RESULT_KEYBOARD_COLUMNS;
@@ -1376,6 +1377,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
         {
         right_press_skip_spaces:
             this->selectedCharacter++;
+
             if (this->selectedCharacter % RESULT_KEYBOARD_COLUMNS == 0)
             {
                 this->selectedCharacter -= RESULT_KEYBOARD_COLUMNS;
@@ -1414,8 +1416,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
             }
             if (this->cursor < MAX_NAME_LENGTH)
             {
-                this->cursor++;
-                if (this->cursor == MAX_NAME_LENGTH)
+                if (++this->cursor == MAX_NAME_LENGTH)
                 {
                     this->selectedCharacter = RESULT_KEYBOARD_END;
                 }
@@ -1489,8 +1490,7 @@ static void MoveResultCursor(ResultScreen *resultScreen, i32 length)
 {
     if (WAS_PRESSED_REPEATING(TH_BUTTON_UP))
     {
-        resultScreen->cursor--;
-        if (resultScreen->cursor < 0)
+        if (--resultScreen->cursor < 0)
         {
             resultScreen->cursor += length;
         }
@@ -1498,8 +1498,7 @@ static void MoveResultCursor(ResultScreen *resultScreen, i32 length)
     }
     if (WAS_PRESSED_REPEATING(TH_BUTTON_DOWN))
     {
-        resultScreen->cursor++;
-        if (resultScreen->cursor >= length)
+        if (++resultScreen->cursor >= length)
         {
             resultScreen->cursor -= length;
         }
@@ -1511,8 +1510,7 @@ static ZunBool MoveResultCursorHorizontally(ResultScreen *resultScreen, i32 leng
 {
     if (WAS_PRESSED_REPEATING(TH_BUTTON_LEFT))
     {
-        resultScreen->cursor--;
-        if (resultScreen->cursor < 0)
+        if (--resultScreen->cursor < 0)
         {
             resultScreen->cursor += length;
         }
@@ -1521,8 +1519,7 @@ static ZunBool MoveResultCursorHorizontally(ResultScreen *resultScreen, i32 leng
     }
     else if (WAS_PRESSED_REPEATING(TH_BUTTON_RIGHT))
     {
-        resultScreen->cursor++;
-        if (resultScreen->cursor >= length)
+        if (++resultScreen->cursor >= length)
         {
             resultScreen->cursor -= length;
         }
@@ -1594,12 +1591,16 @@ u32 ResultScreen::DrawFinalStats()
         g_AsciiManager.SetColor(vm->color);
         rating = 0.0f;
 
+#define FULL_GAME_DURATION_NORMAL 89500.0f
 #if BUILT_SINCE(013)
-        completion = g_GameManager.difficulty < 4 ? g_GameManager.counat / 89500.0f : g_GameManager.counat / 39600.0f;
+#define FULL_GAME_DURATION_EXTRA 39600.0f
 #else
-        // Until 1.02c the Extra stage's completion divides by 36000.
-        completion = g_GameManager.difficulty < 4 ? g_GameManager.counat / 89500.0f : g_GameManager.counat / 36000.0f;
+// Until 1.02c the Extra stage's completion divides by 36000.
+#define FULL_GAME_DURATION_EXTRA 36000.0f
 #endif
+
+        completion = g_GameManager.difficulty < EXTRA ? g_GameManager.gameplayTicks / FULL_GAME_DURATION_NORMAL
+                                                      : g_GameManager.gameplayTicks / FULL_GAME_DURATION_EXTRA;
         strPos = vm->pos;
         strPos.x += 224.0f;
         strPos.y += 32.0f;
@@ -1873,18 +1874,18 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
 
             for (i = 0; i < SPELLS_PER_PAGE; i++)
             {
-                i32 spellcardIdx = resultScreen->spellPageNum * SPELLS_PER_PAGE + i;
-                if (spellcardIdx >= CATK_COUNT)
+                i32 spellcardId = resultScreen->spellPageNum * SPELLS_PER_PAGE + i;
+                if (spellcardId >= CATK_COUNT)
                 {
                     break;
                 }
 
                 resultScreen->textLineVms[i].pos = pos;
-                if (g_GameManager.catk[spellcardIdx].numAttempts == 0)
+                if (g_GameManager.catk[spellcardId].attempts == 0)
                 {
                     g_AsciiManager.SetColor(COLOR_SET_ALPHA(COLOR_PASTEL_BLUE, 0x80));
                 }
-                else if (g_GameManager.catk[spellcardIdx].numSuccess == 0)
+                else if (g_GameManager.catk[spellcardId].captures == 0)
                 {
                     g_AsciiManager.SetColor(COLOR_DIRTY_PALE_RED);
                 }
@@ -1892,7 +1893,7 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
                 {
                     g_AsciiManager.SetColor(COLOR_BARELY_BLUE - i * 0x080800);
                 }
-                g_AsciiManager.AddFormatText(&pos, "No.%.2d", spellcardIdx + 1);
+                g_AsciiManager.AddFormatText(&pos, "No.%.2d", spellcardId + 1);
 
                 resultScreen->textLineVms[i].pos[0] += 96.0f;
 
@@ -1900,8 +1901,8 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
 
                 pos[0] += 368.0f;
 
-                g_AsciiManager.AddFormatText(&pos, "%3d/%3d", g_GameManager.catk[spellcardIdx].numSuccess,
-                                             g_GameManager.catk[spellcardIdx].numAttempts);
+                g_AsciiManager.AddFormatText(&pos, "%3d/%3d", g_GameManager.catk[spellcardId].captures,
+                                             g_GameManager.catk[spellcardId].attempts);
                 pos[0] -= 368.0f;
                 pos[1] += 30.0f;
             }
@@ -1950,11 +1951,11 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
                 {
                     if (column == 14)
                     {
-                        keyboardCharacter[0] = 0x80; // SP
+                        keyboardCharacter[0] = 128; // SP
                     }
                     else if (column == 15)
                     {
-                        keyboardCharacter[0] = 0x81; // END
+                        keyboardCharacter[0] = 129; // END
                     }
                 }
 
@@ -2173,7 +2174,7 @@ ZunResult ResultScreen_RegisterChain(i32 unk)
     ResultScreen *resultScreen;
     resultScreen = ZUN_NEW(ResultScreen);
 
-    DebugPrint(TH_DBG_RESULTSCREEN_COUNAT, g_GameManager.counat);
+    DebugPrint("counat = %d\n", g_GameManager.gameplayTicks);
 
     resultScreen->calcChain = g_FuncChain.CreateElem((ChainCallback)ResultScreen_OnUpdate);
     resultScreen->calcChain->addedCallback = (ChainAddedCallback)ResultScreen_AddedCallback;

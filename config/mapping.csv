@@ -19,7 +19,7 @@ th06::StageMenu::OnUpdateRetryMenu,0x402870,0x7ce,__thiscall,,i32,StageMenu*
 th06::StageMenu::OnDrawRetryMenu,0x403060,0x17c,__thiscall,,void,StageMenu*
 th06::AsciiManager::DrawPopupsWithHwVertexProcessing,0x4031e0,0x1cc,__thiscall,,void,AsciiManager*
 th06::AsciiManager::DrawPopupsWithoutHwVertexProcessing,0x4033b0,0x1cc,__thiscall,,void,AsciiManager*
-th06::AnmVm::Initialize,0x403580,0xee,__thiscall,,void,AnmVm*
+th06::AnmVmBase::Initialize,0x403580,0xee,__thiscall,,void,AnmVm*
 D3DXMatrixIdentity,0x403670,0xa7,__cdecl,,_D3DMATRIX*,_D3DMATRIX*
 th06::AnmVm::AnmVm,0x403720,0x68,__thiscall,,void,AnmVm*
 th06::Stage::Stage,0x403790,0x72,__thiscall,,void,Stage*
@@ -124,9 +124,9 @@ th06::BulletManager::InitializeToZero,0x413430,0x19,__thiscall,,void,BulletManag
 th06::BulletManager::BulletManager,0x413450,0x10e,__thiscall,,BulletManager*,BulletManager*
 th06::BulletTypeSprites::BulletTypeSprites,0x413560,0x50,__thiscall,,AnmVm*,BulletTypeSprites*
 th06::BulletManager::SpawnSingleBullet,0x4135b0,0xb8b,__thiscall,,i32,BulletManager*,EnemyShooter*,i32,i32,f32
-th06::BulletManager::RemoveAllBullets,0x414160,0x1d2,__thiscall,,void,BulletManager*,i32
-th06::BulletManager::TurnAllBulletsIntoPoints,0x414340,0x15,__thiscall,,void,BulletManager*
-th06::BulletManager::DespawnBullets,0x414360,0x25f,__thiscall,,i32,BulletManager*,i32,i32
+th06::BulletManager::DespawnBullets,0x414160,0x1d2,__thiscall,,void,BulletManager*,i32
+th06::BulletManager::CancelAllBullets,0x414340,0x15,__thiscall,,void,BulletManager*
+th06::BulletManager::DespawnBulletsForScore,0x414360,0x25f,__thiscall,,i32,BulletManager*,i32,i32
 th06::BulletManager::SpawnBulletPattern,0x4145c0,0xa5,__thiscall,,ZunResult,BulletManager*,EnemyShooter*
 th06::BulletManager::SpawnLaserPattern,0x414670,0x27b,__thiscall,,Laser*,BulletManager*,EnemyShooter*
 th06::BulletManager_RegisterChain,0x4148f0,0xd3,default,,ZunResult,char*
@@ -164,7 +164,7 @@ th06::Gui_AddedCallback,0x41b1a4,0xd,default,,ZunResult,Gui*
 th06::Gui_DeletedCallback,0x41b1b1,0xa1,default,,ZunResult,Gui*
 th06::Gui_RegisterChain,0x41b252,0xf9,default,,ZunResult
 th06::GuiImpl::GuiImpl,0x41b34b,0x179,__thiscall,,GuiImpl*,GuiImpl*
-th06::GuiMsgVm::GuiMsgVm,0x41b4c4,0xc8,__thiscall,,GuiMsgVm*,GuiMsgVm*
+th06::MsgVm::MsgVm,0x41b4c4,0xc8,__thiscall,,MsgVm*,MsgVm*
 th06::Gui_CutChain,0x41b58c,0x23,default,,void
 th06::ZunTimer::Tick,0x41b5af,0x32,__thiscall,,i32,ZunTimer*
 th06::GameManager::IsInBounds,0x41b5e1,0x82,__thiscall,,i32,GameManager*,f32,f32,f32,f32
@@ -208,8 +208,8 @@ th06::GameErrorContext::Fatal,0x41e620,0x155,__stdcall,varargs,void,GameErrorCon
 th06::Rng::GetRandomU16,0x41e780,0x63,__thiscall,,u16,Rng*
 th06::Rng::GetRandomU32,0x41e7f0,0x30,__thiscall,,u32,Rng*
 th06::Rng::GetRandomF32ZeroToOne,0x41e820,0x2e,__thiscall,,f32,Rng*
-th06::utils::AddNormalizeAngle,0x41e850,0x7f,default,,f32,f32,f32
-th06::utils::Rotate,0x41e8d0,0x6f,default,,void,D3DXVECTOR3*,D3DXVECTOR3*,f32
+th06::ReduceAngleAdd,0x41e850,0x7f,default,,f32,f32,f32
+th06::RotatePoint,0x41e8d0,0x6f,default,,void,D3DXVECTOR3*,D3DXVECTOR3*,f32
 th06::DebugPrint,0x41e940,0x5,__stdcall,varargs,void,char*
 th06::TextHelper::TextHelper,0x41e945,0x3c,__thiscall,,TextHelper*,TextHelper*
 th06::TextHelper::~TextHelper,0x41e981,0x11,__thiscall,,void,TextHelper*
@@ -235,7 +235,7 @@ th06::GameWindow_CreateGameWindow,0x420c10,0x127,default,,void,HINSTANCE__*
 th06::GameWindow_WindowProc,0x420d40,0x114,__stdcall,,long,HWND__*,u32,u32,midihdr_tag*
 th06::GameWindow_InitD3dRendering,0x420e60,0x5b2,default,,void
 th06::GameWindow_InitD3dDevice,0x421420,0x4d9,default,,void
-th06::utils::CheckForRunningGameInstance,0x421900,0x4d,__stdcall,,i32
+th06::CheckForRunningGameInstance,0x421900,0x4d,__stdcall,,i32
 th06::GameErrorContext::Flush,0x421950,0x7e,__thiscall,,void,GameErrorContext*
 th06::AnmManager::ReleaseSurfaces,0x4219d0,0x68,__thiscall,,void,AnmManager*
 th06::AnmManager::TakeScreenshotIfRequested,0x421a40,0x5e,__thiscall,,void,AnmManager*

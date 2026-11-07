@@ -71,6 +71,9 @@ enum MusicMode
     MIDI = 2
 };
 
+#define DEFAULT_LIFE_COUNT 2
+#define DEFAULT_BOMB_COUNT 3
+
 struct GameConfiguration
 {
     ControllerMapping controllerMapping;

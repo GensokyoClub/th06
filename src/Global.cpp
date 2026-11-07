@@ -1208,36 +1208,33 @@ f32 Rng::GetRandomF32(void)
     return (f32)GetRandomU32() / (f32)0xFFFFFFFF;
 }
 
-namespace utils
-{
-f32 AddNormalizeAngle(f32 a, f32 b)
+f32 ReduceAngleAdd(f32 angle, f32 add)
 {
     i32 i = 0;
-    a += b;
-    while (a > ZUN_PI)
+    angle += add;
+    while (angle > ZUN_PI)
     {
-        a -= ZUN_2PI;
+        angle -= ZUN_2PI;
         if (i++ > 16)
             break;
     }
-    while (a < -ZUN_PI)
+    while (angle < -ZUN_PI)
     {
-        a += ZUN_2PI;
+        angle += ZUN_2PI;
         if (i++ > 16)
             break;
     }
-    return a;
+    return angle;
 }
 
 #pragma var_order(sinOut, cosOut)
-void Rotate(D3DXVECTOR3 *outVector, D3DXVECTOR3 *point, f32 angle)
+void RotatePoint(D3DXVECTOR3 *outVector, D3DXVECTOR3 *point, f32 angle)
 {
     f32 sinOut = sinf(angle);
     f32 cosOut = cosf(angle);
     outVector->x = cosOut * point->x + sinOut * point->y;
     outVector->y = cosOut * point->y - sinOut * point->x;
 }
-} // namespace utils
 } // namespace th06
 
 typedef HRESULT(WINAPI *DIRECTDRAWCREATE)(GUID *, LPDIRECTDRAW *, IUnknown *);

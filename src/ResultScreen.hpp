@@ -47,17 +47,19 @@ struct Th6k
 };
 ZUN_ASSERT_TYPE(Th6k, 0xc, 4);
 
+#define MAX_SPELL_ATTEMPTS 9999
+
 struct Catk
 {
     Th6k base;
     i32 captureScore;
     u16 idx;
     u8 nameCsum;
-    u8 characterShotType[SHOTTYPE_COUNT + 1];
+    u8 recentShotTypes[5];
     char name[34]; // probably 36 since 34 as the ECL spell buffer length is likely a bug
     unreferenced_fields(0x2);
-    u16 numAttempts;
-    u16 numSuccess;
+    u16 attempts;
+    u16 captures;
 };
 ZUN_ASSERT_TYPE(Catk, 0x40, 4);
 

@@ -70,8 +70,8 @@ struct MainMenu
     i32 idleFrames;
     D3DCOLOR minimumOpacity;
     D3DCOLOR menuTextColor;
-    D3DCOLOR color2;
-    D3DCOLOR color1;
+    D3DCOLOR selectedColor;
+    D3DCOLOR unselectedColor;
     i32 numFramesSinceActive;
     u32 framesActive;
     u32 framesInactive;

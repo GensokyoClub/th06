@@ -11,14 +11,15 @@ namespace th06
 struct RunningSpellcardInfo
 {
     ZunBool isCapturing;
-    ZunBool isActive;
+    u32 ticksActive;
     i32 captureScore;
-    u32 idx;
-    ZunBool usedBomb;
+    u32 id;
+    u32 usedBombTick;
 };
 ZUN_ASSERT_TYPE(RunningSpellcardInfo, 0x14, 4);
 
 #define MAX_ENEMY_COUNT 256
+#define MAX_BOSS_COUNT 8
 
 struct EnemyManager
 {
@@ -32,7 +33,7 @@ struct EnemyManager
     const char *stgEnm2AnmFilename;
     Enemy enemyTemplate;
     Enemy enemies[MAX_ENEMY_COUNT + 1]; // +1 dummy slot to avoid null checks for failed spawns
-    Enemy *bosses[8];
+    Enemy *bosses[MAX_BOSS_COUNT];
     u16 randomItemSpawnIndex;
     u16 randomItemTableIndex;
     i32 enemyCount;

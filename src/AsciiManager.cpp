@@ -786,11 +786,11 @@ i32 StageMenu::OnUpdateRetryMenu()
             g_GameManager.pointItemsCollectedInStage = 0;
             g_GameManager.currentPower = 0;
             g_GameManager.livesEarned = 0;
-            g_Gui.flags.flag0 = 2;
-            g_Gui.flags.flag1 = 2;
-            g_Gui.flags.flag3 = 2;
-            g_Gui.flags.flag4 = 2;
-            g_Gui.flags.flag2 = 2;
+            g_Gui.redrawFrames.lifeIcons = 2;
+            g_Gui.redrawFrames.bombIcons = 2;
+            g_Gui.redrawFrames.grazeCounter = 2;
+            g_Gui.redrawFrames.pointItemCounter = 2;
+            g_Gui.redrawFrames.powerGauge = 2;
             return 0;
         }
         break;

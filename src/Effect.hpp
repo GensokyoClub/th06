@@ -31,7 +31,7 @@ struct Effect
     i8 inUseFlag;
     i8 effectId;
     i8 flag_17a;
-    i8 unk_17b;
+    i8 counter_17b;
 };
 ZUN_ASSERT_TYPE(Effect, 0x17c, 4);
 

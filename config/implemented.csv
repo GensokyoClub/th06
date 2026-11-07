@@ -19,7 +19,7 @@ th06::ZunTimer::Increment
 th06::ZunTimer::Decrement
 th06::ZunTimer::Tick
 th06::AnmVm::AnmVm
-th06::AnmVm::Initialize
+th06::AnmVmBase::Initialize
 th06::AnmManager::AnmManager
 th06::AnmManager::CopySurfaceToBackBuffer
 th06::AnmManager::DrawEndingRect
@@ -65,9 +65,9 @@ th06::BulletManager::OnUpdate
 th06::BulletManager::OnDraw
 th06::DrawBullet
 th06::DrawBulletNoHwVertex
-th06::BulletManager::RemoveAllBullets
 th06::BulletManager::DespawnBullets
-th06::BulletManager::TurnAllBulletsIntoPoints
+th06::BulletManager::DespawnBulletsForScore
+th06::BulletManager::CancelAllBullets
 th06::BulletManager::SpawnLaserPattern
 th06::BulletManager::BulletManager
 th06::ChainElem::ChainElem
@@ -188,7 +188,7 @@ th06::GameManager::OnUpdate
 th06::GameManager::OnDraw
 th06::GameManager::SetupCameraStageBackground
 th06::GameManager::SetupCamera
-th06::GuiMsgVm::GuiMsgVm
+th06::MsgVm::MsgVm
 th06::Gui::RegisterChain
 th06::Gui::CutChain
 th06::Gui::AddedCallback
@@ -220,7 +220,7 @@ th06::GuiImpl::RunMsg
 th06::GameWindow::WindowProc
 th06::GameWindow::CreateGameWindow
 WinMain
-th06::utils::CheckForRunningGameInstance
+th06::CheckForRunningGameInstance
 th06::FileSystem::OpenPath
 th06::FileSystem::WriteDataToFile
 th06::ItemManager::ItemManager
@@ -358,8 +358,8 @@ th06::ScreenEffect::DrawFadeOut
 th06::ScreenEffect::ShakeScreen
 th06::ScreenEffect::AddedCallback
 th06::ScreenEffect::DeletedCallback
-th06::utils::AddNormalizeAngle
-th06::utils::Rotate
+th06::ReduceAngleAdd
+th06::RotatePoint
 th06::SoundPlayer::SoundPlayer
 th06::SoundPlayer::InitializeDSound
 th06::SoundPlayer::Release

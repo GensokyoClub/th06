@@ -215,7 +215,7 @@ static ZunResult ReplayManager_AddedCallbackDemo(ReplayManager *mgr)
     replayData = mgr->replayData->stageReplayData[STAGE_INDEX(g_GameManager.currentStage)];
     g_GameManager.character = mgr->replayData->shottypeChara / SHOTTYPES_PER_CHARACTER;
     g_GameManager.shotType = mgr->replayData->shottypeChara % SHOTTYPES_PER_CHARACTER;
-    g_GameManager.difficulty = (Difficulty)mgr->replayData->difficulty;
+    g_GameManager.difficulty = mgr->replayData->difficulty;
     g_GameManager.pointItemsCollected = replayData->pointItemsCollected;
     g_Rng.Initialize(replayData->randomSeed);
     g_GameManager.rank = replayData->rank;

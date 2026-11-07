@@ -424,17 +424,17 @@ ZunResult AnmManager::SetActiveSprite(AnmVm *vm, i32 sprite_index)
     return ZUN_SUCCESS;
 }
 
-void AnmManager::SetAndExecuteScript(AnmVm *vm, AnmRawInstr *beginingOfScript)
+void AnmManager::SetAndExecuteScript(AnmVm *vm, AnmRawInstr *beginningOfScript)
 {
     vm->flags.flip = AnmVmMirror_None;
     vm->Initialize();
-    vm->beginingOfScript = beginingOfScript;
-    vm->currentInstruction = vm->beginingOfScript;
+    vm->beginningOfScript = beginningOfScript;
+    vm->currentInstruction = vm->beginningOfScript;
 
-    vm->currentTimeInScript = 0;
+    vm->scriptTime = 0;
 
     vm->flags.isVisible = false;
-    if (beginingOfScript != NULL)
+    if (beginningOfScript != NULL)
     {
         this->ExecuteScript(vm);
     }
@@ -551,7 +551,7 @@ ZunResult AnmManager::DrawInner(AnmVm *vm, ZunBool roundVertices)
     }
 #endif
     // 1.00 only sets the vertex shader when the sprite changes.
-    if (this->currentVertexShader != AnmVertexShader_2)
+    if (this->currentVertexShader != AnmVertexShader_SpriteVertex)
     {
         if (!g_Supervisor.IsVertexBufferDisabled())
         {
@@ -561,7 +561,7 @@ ZunResult AnmManager::DrawInner(AnmVm *vm, ZunBool roundVertices)
         {
             g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZRHW);
         }
-        this->currentVertexShader = AnmVertexShader_2;
+        this->currentVertexShader = AnmVertexShader_SpriteVertex;
     }
 #if BUILT_BEFORE(101)
     }
@@ -844,7 +844,7 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
 #endif
 
     // Set vertex shader to TEX1 | XYZ (1.00 only does this when the sprite changes)
-    if (this->currentVertexShader != AnmVertexShader_3)
+    if (this->currentVertexShader != AnmVertexShader_RenderVertexInfo)
     {
         if (!g_Supervisor.IsVertexBufferDisabled())
         {
@@ -855,7 +855,7 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
         {
             g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZ);
         }
-        this->currentVertexShader = AnmVertexShader_3;
+        this->currentVertexShader = AnmVertexShader_RenderVertexInfo;
     }
 #if BUILT_BEFORE(101)
     }
@@ -934,7 +934,7 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
             this->currentTexture = this->textures[vm->sprite->sourceFileIndex];
             g_Supervisor.d3dDevice->SetTexture(0, this->currentTexture);
         }
-        if (this->currentVertexShader != AnmVertexShader_3)
+        if (this->currentVertexShader != AnmVertexShader_RenderVertexInfo)
         {
             if (!g_Supervisor.IsVertexBufferDisabled())
             {
@@ -945,7 +945,7 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
             {
                 g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZ);
             }
-            this->currentVertexShader = AnmVertexShader_3;
+            this->currentVertexShader = AnmVertexShader_RenderVertexInfo;
         }
     }
     this->SetRenderStateForVm(vm);
@@ -961,9 +961,9 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
     return ZUN_SUCCESS;
 }
 
-#define GET_ARG(type, num) ((type *)curInstr->args)[num]
-#define GET_INT_ARG(num) GET_ARG(i32, num)
-#define GET_FLOAT_ARG(num) GET_ARG(float, num)
+#define GET_ARG_IMM(type, num) ((type *)curInstr->args)[num]
+#define INT_ARG_IMM(num) GET_ARG_IMM(i32, num)
+#define FLOAT_ARG_IMM(num) GET_ARG_IMM(float, num)
 
 i32 AnmManager::ExecuteScript(AnmVm *vm)
 {
@@ -978,7 +978,7 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
     }
 
     AnmRawInstr *curInstr;
-    while (curInstr = vm->currentInstruction, curInstr->time <= (i32)vm->currentTimeInScript)
+    while (curInstr = vm->currentInstruction, curInstr->time <= (i32)vm->scriptTime)
     {
         switch (curInstr->opcode)
         {
@@ -990,37 +990,37 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
             return 1;
         case ANM_OPCODE_SET_SPRITE:
             vm->flags.isVisible = true;
-            this->SetActiveSprite(vm, GET_INT_ARG(0) + this->spriteIndices[vm->anmFileIndex]);
-            vm->timeOfLastSpriteSet = vm->currentTimeInScript;
+            this->SetActiveSprite(vm, INT_ARG_IMM(0) + this->spriteIndices[vm->anmFileIndex]);
+            vm->timeOfLastSpriteSet = vm->scriptTime;
             break;
         case ANM_OPCODE_SPRITE_SET_RAND: {
             vm->flags.isVisible = true;
             u32 *args = (u32 *)curInstr->args;
             this->SetActiveSprite(vm,
                                   args[0] + g_Rng.GetRandomU16InRange(args[1]) + this->spriteIndices[vm->anmFileIndex]);
-            vm->timeOfLastSpriteSet = vm->currentTimeInScript;
+            vm->timeOfLastSpriteSet = vm->scriptTime;
             break;
         }
         case ANM_OPCODE_SCALE:
-            vm->scaleX = GET_FLOAT_ARG(0);
-            vm->scaleY = GET_FLOAT_ARG(1);
+            vm->scaleX = FLOAT_ARG_IMM(0);
+            vm->scaleY = FLOAT_ARG_IMM(1);
             break;
         case ANM_OPCODE_ALPHA:
-            COLOR_SET_COMPONENT(vm->color, COLOR_ALPHA_BYTE_IDX, GET_INT_ARG(0) & 0xff);
+            ALPHA(vm->color) = INT_ARG_IMM(0) & 0xff;
             break;
         case ANM_OPCODE_COLOR:
-            vm->color = COLOR_COMBINE_ALPHA(GET_INT_ARG(0), vm->color);
+            vm->color = COLOR_COMBINE_ALPHA(INT_ARG_IMM(0), vm->color);
             break;
         case ANM_OPCODE_JUMP:
-            vm->currentInstruction = (AnmRawInstr *)((u32)vm->beginingOfScript + GET_INT_ARG(0));
-            vm->currentTimeInScript.current = vm->currentInstruction->time;
+            vm->currentInstruction = (AnmRawInstr *)((u32)vm->beginningOfScript + INT_ARG_IMM(0));
+            vm->scriptTime.current = vm->currentInstruction->time;
             continue;
         case ANM_OPCODE_SCALE_FLIP_X:
             vm->flags.flip ^= AnmVmMirror_X;
             vm->scaleX *= -1.0f;
             break;
         case ANM_OPCODE_POSITION_MODE:
-            vm->flags.usePosOffset = GET_INT_ARG(0);
+            vm->flags.usePosOffset = INT_ARG_IMM(0);
             break;
         case ANM_OPCODE_SCALE_FLIP_Y:
             vm->flags.flip ^= AnmVmMirror_Y;
@@ -1044,14 +1044,14 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
             f32 *scaleInterpVals = (f32 *)curInstr->args;
             vm->scaleInterpFinalX = *scaleInterpVals++;
             vm->scaleInterpFinalY = *scaleInterpVals;
-            vm->scaleInterpEndTime = 0;
+            vm->scaleInterpDuration = 0;
             break;
         }
         case ANM_OPCODE_SCALE_INTERP_LINEAR: {
             f32 *scaleInterpVals = (f32 *)curInstr->args;
             vm->scaleInterpFinalX = *scaleInterpVals++;
             vm->scaleInterpFinalY = *scaleInterpVals++;
-            vm->scaleInterpEndTime = *(u16 *)scaleInterpVals;
+            vm->scaleInterpDuration = *(u16 *)scaleInterpVals;
             vm->scaleInterpTime = 0;
             vm->scaleInterpInitialX = vm->scaleX;
             vm->scaleInterpInitialY = vm->scaleY;
@@ -1061,7 +1061,7 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
             u32 *alphaInterpVals = (u32 *)curInstr->args;
             vm->alphaInterpInitial = vm->color;
             vm->alphaInterpFinal = COLOR_SET_ALPHA2(vm->color, alphaInterpVals[0]);
-            vm->alphaInterpEndTime = alphaInterpVals[1];
+            vm->alphaInterpDuration = alphaInterpVals[1];
             vm->alphaInterpTime = 0;
             break;
         }
@@ -1074,11 +1074,11 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
         case ANM_OPCODE_MOVE_POSITION:
             if (!vm->flags.usePosOffset)
             {
-                vm->pos = D3DXVECTOR3(GET_FLOAT_ARG(0), GET_FLOAT_ARG(1), GET_FLOAT_ARG(2));
+                vm->pos = D3DXVECTOR3(FLOAT_ARG_IMM(0), FLOAT_ARG_IMM(1), FLOAT_ARG_IMM(2));
             }
             else
             {
-                vm->posOffset = D3DXVECTOR3(GET_FLOAT_ARG(0), GET_FLOAT_ARG(1), GET_FLOAT_ARG(2));
+                vm->posOffset = D3DXVECTOR3(FLOAT_ARG_IMM(0), FLOAT_ARG_IMM(1), FLOAT_ARG_IMM(2));
             }
             break;
         case ANM_OPCODE_MOVE_POSITION_INTERP_DECELERATE_FAST:
@@ -1098,8 +1098,8 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
             {
                 vm->posInterpInitial = vm->posOffset;
             }
-            vm->posInterpFinal = D3DXVECTOR3(GET_FLOAT_ARG(0), GET_FLOAT_ARG(1), GET_FLOAT_ARG(2));
-            vm->posInterpEndTime = GET_INT_ARG(3);
+            vm->posInterpFinal = D3DXVECTOR3(FLOAT_ARG_IMM(0), FLOAT_ARG_IMM(1), FLOAT_ARG_IMM(2));
+            vm->posInterpDuration = INT_ARG_IMM(3);
             vm->posInterpTime = 0;
             break;
         case ANM_OPCODE_ANM_HALT_INVISIBLE:
@@ -1108,16 +1108,16 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
             if (vm->pendingInterrupt == 0)
             {
                 vm->flags.isStopped = true;
-                vm->currentTimeInScript--;
+                vm->scriptTime--; // Prevent time advancing when returning
                 goto break_parser;
             }
         run_interrupt:
             AnmRawInstr *nextInstr = NULL;
-            curInstr = vm->beginingOfScript;
-            while ((curInstr->opcode != ANM_OPCODE_INTERRUPT_LABEL || vm->pendingInterrupt != GET_INT_ARG(0)) &&
+            curInstr = vm->beginningOfScript;
+            while ((curInstr->opcode != ANM_OPCODE_INTERRUPT_LABEL || vm->pendingInterrupt != INT_ARG_IMM(0)) &&
                    curInstr->opcode != ANM_OPCODE_ANM_DELETE && curInstr->opcode != ANM_OPCODE_ANM_STATIC)
             {
-                if (curInstr->opcode == ANM_OPCODE_INTERRUPT_LABEL && GET_INT_ARG(0) == -1)
+                if (curInstr->opcode == ANM_OPCODE_INTERRUPT_LABEL && INT_ARG_IMM(0) == -1)
                 {
                     nextInstr = curInstr;
                 }
@@ -1130,7 +1130,7 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
             {
                 if (nextInstr == NULL)
                 {
-                    vm->currentTimeInScript--;
+                    vm->scriptTime--; // Prevent time advancing when returning
                     goto break_parser;
                 }
                 curInstr = nextInstr;
@@ -1138,21 +1138,21 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
 
             curInstr = (AnmRawInstr *)((u32)(curInstr + 1) + curInstr->argsSize);
             vm->currentInstruction = curInstr;
-            vm->currentTimeInScript = vm->currentInstruction->time;
+            vm->scriptTime = vm->currentInstruction->time;
             vm->flags.isVisible = true;
             continue;
         }
         case ANM_OPCODE_ANM_FLAG_VISIBLE:
-            vm->flags.isVisible = GET_INT_ARG(0);
+            vm->flags.isVisible = INT_ARG_IMM(0);
             break;
         case ANM_OPCODE_ANCHOR_TOP_LEFT:
             vm->flags.anchor = AnmVmAnchor_TopLeft;
             break;
         case ANM_OPCODE_SET_AUTO_ROTATE:
-            vm->autoRotate = GET_INT_ARG(0);
+            vm->autoRotate = INT_ARG_IMM(0);
             break;
         case ANM_OPCODE_SCROLL_SET_X:
-            vm->uvScrollPos.x += GET_FLOAT_ARG(0);
+            vm->uvScrollPos.x += FLOAT_ARG_IMM(0);
             if (vm->uvScrollPos.x >= 1.0f)
             {
                 vm->uvScrollPos.x -= 1.0f;
@@ -1163,7 +1163,7 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
             }
             break;
         case ANM_OPCODE_SCROLL_SET_Y:
-            vm->uvScrollPos.y += GET_FLOAT_ARG(0);
+            vm->uvScrollPos.y += FLOAT_ARG_IMM(0);
             if (vm->uvScrollPos.y >= 1.0f)
             {
                 vm->uvScrollPos.y -= 1.0f;
@@ -1174,7 +1174,7 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
             }
             break;
         case ANM_OPCODE_FLAG_DISABLE_Z_WRITE:
-            vm->flags.zWriteDisable = GET_INT_ARG(0);
+            vm->flags.zWriteDisable = INT_ARG_IMM(0);
             break;
         case ANM_OPCODE_NOP:
         case ANM_OPCODE_INTERRUPT_LABEL:
@@ -1187,38 +1187,33 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
 break_parser:
     if (vm->angleVel.x != 0.0f)
     {
-        vm->rotation.x =
-            utils::AddNormalizeAngle(vm->rotation.x, g_Supervisor.effectiveFramerateMultiplier * vm->angleVel.x);
+        vm->rotation.x = ReduceAngleAdd(vm->rotation.x, g_Supervisor.effectiveFramerateMultiplier * vm->angleVel.x);
     }
     if (vm->angleVel.y != 0.0f)
     {
-        vm->rotation.y =
-            utils::AddNormalizeAngle(vm->rotation.y, g_Supervisor.effectiveFramerateMultiplier * vm->angleVel.y);
+        vm->rotation.y = ReduceAngleAdd(vm->rotation.y, g_Supervisor.effectiveFramerateMultiplier * vm->angleVel.y);
     }
     if (vm->angleVel.z != 0.0f)
     {
-        vm->rotation.z =
-            utils::AddNormalizeAngle(vm->rotation.z, g_Supervisor.effectiveFramerateMultiplier * vm->angleVel.z);
+        vm->rotation.z = ReduceAngleAdd(vm->rotation.z, g_Supervisor.effectiveFramerateMultiplier * vm->angleVel.z);
     }
-    if (vm->scaleInterpEndTime > 0)
+    if (vm->scaleInterpDuration > 0)
     {
         vm->scaleInterpTime++;
-        if ((i32)vm->scaleInterpTime >= vm->scaleInterpEndTime)
+        if ((i32)vm->scaleInterpTime >= vm->scaleInterpDuration)
         {
             vm->scaleY = vm->scaleInterpFinalY;
             vm->scaleX = vm->scaleInterpFinalX;
-            vm->scaleInterpEndTime = 0;
+            vm->scaleInterpDuration = 0;
             vm->scaleInterpFinalY = 0.0f;
             vm->scaleInterpFinalX = 0.0f;
         }
         else
         {
-            vm->scaleX =
-                (vm->scaleInterpFinalX - vm->scaleInterpInitialX) * (f32)vm->scaleInterpTime / vm->scaleInterpEndTime +
-                vm->scaleInterpInitialX;
-            vm->scaleY =
-                (vm->scaleInterpFinalY - vm->scaleInterpInitialY) * (f32)vm->scaleInterpTime / vm->scaleInterpEndTime +
-                vm->scaleInterpInitialY;
+            vm->scaleX = ZUN_LERP(vm->scaleInterpInitialX, vm->scaleInterpFinalX,
+                                  (f32)vm->scaleInterpTime / vm->scaleInterpDuration);
+            vm->scaleY = ZUN_LERP(vm->scaleInterpInitialY, vm->scaleInterpFinalY,
+                                  (f32)vm->scaleInterpTime / vm->scaleInterpDuration);
         }
         if (vm->flags.flip & AnmVmMirror_X)
         {
@@ -1235,40 +1230,38 @@ break_parser:
         vm->scaleX = g_Supervisor.effectiveFramerateMultiplier * vm->scaleInterpFinalX + vm->scaleX;
     }
 
-#pragma var_order(colors, alphaInterpVal, colorInterp)
-    if (vm->alphaInterpEndTime > 0)
+#pragma var_order(colors, interpRatio, colorInterp)
+    if (vm->alphaInterpDuration > 0)
     {
         vm->alphaInterpTime++;
         D3DCOLOR colors[2];
         colors[0] = vm->alphaInterpInitial;
         colors[1] = vm->alphaInterpFinal;
-        float alphaInterpVal = (f32)vm->alphaInterpTime / (f32)vm->alphaInterpEndTime;
-        if (alphaInterpVal >= 1.0f)
+        float interpRatio = (f32)vm->alphaInterpTime / (f32)vm->alphaInterpDuration;
+        if (interpRatio >= 1.0f)
         {
-            alphaInterpVal = 1.0f;
+            interpRatio = 1.0f;
         }
         i32 colorInterp;
         for (i32 i = 0; i < 4; i++)
         {
-            colorInterp =
-                ((f32)COLOR_GET_COMPONENT(colors[1], i) - (f32)COLOR_GET_COMPONENT(colors[0], i)) * alphaInterpVal +
-                COLOR_GET_COMPONENT(colors[0], i);
+            colorInterp = ZUN_LERP((f32)COLOR_CHANNEL(colors[0], i), (f32)COLOR_CHANNEL(colors[1], i), interpRatio);
             if (colorInterp < 0)
             {
                 colorInterp = 0;
             }
-            COLOR_SET_COMPONENT(colors[0], i, colorInterp >= 256 ? 255 : colorInterp);
+            COLOR_CHANNEL(colors[0], i) = colorInterp >= 256 ? 255 : colorInterp;
         }
         vm->color = colors[0];
-        if ((i32)vm->alphaInterpTime >= vm->alphaInterpEndTime)
+        if ((i32)vm->alphaInterpTime >= vm->alphaInterpDuration)
         {
-            vm->alphaInterpEndTime = 0;
+            vm->alphaInterpDuration = 0;
         }
     }
 
-    if (vm->posInterpEndTime != 0)
+    if (vm->posInterpDuration != 0)
     {
-        float interpVal = (f32)vm->posInterpTime / (f32)vm->posInterpEndTime;
+        float interpVal = (f32)vm->posInterpTime / (f32)vm->posInterpDuration;
         if (interpVal >= 1.0f)
         {
             interpVal = 1.0f;
@@ -1299,13 +1292,13 @@ break_parser:
             vm->posOffset.z = interpVal * vm->posInterpFinal.z + (1.0f - interpVal) * vm->posInterpInitial.z;
         }
 
-        if ((i32)vm->posInterpTime >= vm->posInterpEndTime)
+        if ((i32)vm->posInterpTime >= vm->posInterpDuration)
         {
-            vm->posInterpEndTime = 0;
+            vm->posInterpDuration = 0;
         }
         vm->posInterpTime++;
     }
-    vm->currentTimeInScript++;
+    vm->scriptTime++;
     return 0;
 }
 

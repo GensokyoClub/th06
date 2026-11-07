@@ -28,40 +28,43 @@ enum LaserAimMode
 
 // Pellets
 // 16 colors
-#define BULLET_SIZE_TINY 8.0f
+#define BULLET_SIZE_TINY 8
 // Everything else
 // 16 colors
-#define BULLET_SIZE_SMALL 16.0f
+#define BULLET_SIZE_SMALL 16
 // Fireballs
 // 4 "colors"
-#define BULLET_SIZE_MEDIUM 30.0f
+#define BULLET_SIZE_MEDIUM 30
 // Big balls, daggers
 // 8 colors
-#define BULLET_SIZE_LARGE 32.0f
+#define BULLET_SIZE_LARGE 32
 // Bubbles
 // 4 colors
-#define BULLET_SIZE_HUGE 64.0f
+#define BULLET_SIZE_HUGE 64
 
 enum BulletType
 {
     // 16 colors
-    BULLET_PELLET = 0,
-    BULLET_RING_BALL = 1,
-    BULLET_RICE = 2,
-    BULLET_BALL = 3,
-    BULLET_KUNAI = 4,
-    BULLET_SHARD = 5,
+    BULLET_PELLET,
+    BULLET_RING_BALL,
+    BULLET_RICE,
+    BULLET_BALL,
+    BULLET_KUNAI,
+    BULLET_SHARD,
     // 8 colors
-    BULLET_BIG_BALL = 6,
-    BULLET_DAGGER = 8,
+    BULLET_BIG_BALL,
     // 4 colors
-    BULLET_FIREBALL = 7,
-    BULLET_BUBBLE = 9,
+    BULLET_FIREBALL,
+    // 8 colors
+    BULLET_DAGGER,
+    // 4 colors
+    BULLET_BUBBLE,
+    ENUM_VALUE_COUNT_DECLARE(BulletType)
 };
 enum LaserSprite
 {
-    LASER_LINE = 0, // Dedicated laser sprite
-    LASER_BEAM = 1, // Stretched ball sprite
+    LASER_LINE, // Dedicated laser sprite
+    LASER_BEAM, // Stretched ball sprite
 };
 
 enum BulletColor16
@@ -206,25 +209,32 @@ struct Laser
 };
 ZUN_ASSERT_TYPE(Laser, 0x270, 4);
 
-#define NUM_ENEMY_BULLET_TYPES 16
+#define MAX_ENEMY_BULLET_TYPES 16
 #define MAX_ENEMY_BULLETS 640
 #define MAX_ENEMY_LASERS 64
+
+enum CancelType
+{
+    BULLET_CLEAR,
+    BULLET_CANCEL
+};
 
 struct BulletManager
 {
     BulletManager();
 
-    void RemoveAllBullets(ZunBool turnIntoItem);
+    void DespawnBullets(ZunBool spawnCancelItems);
     void InitializeToZero();
 
-    void TurnAllBulletsIntoPoints();
+    void CancelAllBullets();
 
-    i32 DespawnBullets(i32 maxBonusScore, ZunBool awardPoints);
+    i32 DespawnBulletsForScore(i32 maxBonusScore, ZunBool spawnCancelItems);
+
     ZunResult SpawnBulletPattern(EnemyShooter *bulletProps);
     Laser *SpawnLaserPattern(EnemyShooter *bulletProps);
     u32 SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, i32 bulletIdx2, f32 angle);
 
-    BulletTypeSprites bulletTypeTemplates[NUM_ENEMY_BULLET_TYPES];
+    BulletTypeSprites bulletTypeTemplates[MAX_ENEMY_BULLET_TYPES];
     Bullet bullets[MAX_ENEMY_BULLETS];
     Laser lasers[MAX_ENEMY_LASERS];
     i32 nextBulletIndex;

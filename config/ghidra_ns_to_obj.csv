@@ -9,8 +9,8 @@ EnemyEclInstr,th06::ExInsCirnoRainbowBallJank,th06::ExInsShootAtRandomArea,th06:
 EnemyManager,th06::EnemyManager,th06::Enemy,th06::Enemy_ResetEffectArray,th06::EnemyManager_RegisterChain,th06::EnemyManager_CutChain,th06::EnemyManager_OnUpdate,th06::EnemyManager_OnDraw,th06::EnemyManager_AddedCallback,th06::EnemyManager_DeletedCallback
 FileAbstraction,th06::FileAbstraction
 GameManager,th06::GameManager,th06::GameManager_RegisterChain,th06::GameManager_CutChain,th06::GameManager_OnUpdate,th06::GameManager_OnDraw,th06::GameManager_AddedCallback,th06::GameManager_DeletedCallback,th06::SetupCamera,th06::SetupCameraStageBackground,th06::CharacterShotType
-Global,th06::Chain,th06::ChainElem,th06::CMyFont,th06::Controller,th06::FileSystem,th06::GameErrorContext,th06::Rng,th06::utils
-Gui,th06::Gui,th06::GuiImpl,th06::Gui_RegisterChain,th06::Gui_CutChain,th06::Gui_AddedCallback,th06::Gui_DeletedCallback,th06::Gui_OnUpdate,th06::Gui_OnDraw,th06::GuiMsgVm
+Global,th06::Chain,th06::ChainElem,th06::CMyFont,th06::Controller,th06::FileSystem,th06::GameErrorContext,th06::Rng,th06::CheckForRunningGameInstance,th06::ReduceAngleAdd,th06::RotatePoint
+Gui,th06::Gui,th06::GuiImpl,th06::Gui_RegisterChain,th06::Gui_CutChain,th06::Gui_AddedCallback,th06::Gui_DeletedCallback,th06::Gui_OnUpdate,th06::Gui_OnDraw,th06::MsgVm
 IPbg3Reader,th06::IPbg3Reader
 ItemManager,th06::ItemManager
 MainMenu,th06::MainMenu,th06::LoadTitleAnm,th06::LoadReplayMenu,th06::MainMenu_OnUpdate,th06::MainMenu_OnDraw,th06::MainMenu_AddedCallback,th06::MainMenu_DeletedCallback,th06::LoadDiffCharSelect,th06::ReleaseTitleAnm,th06::MainMenu_RegisterChain,th06::MoveCursor,th06::SwapMapping,th06::DrawMenuItem

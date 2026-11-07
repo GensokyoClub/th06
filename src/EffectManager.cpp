@@ -97,18 +97,15 @@ EffectCallbackResult Effect_Callback4(Effect *effect)
 
     if (effect->flag_17a)
     {
-        effect->unk_17b++;
-
-        if (effect->unk_17b >= 16)
+        if (++effect->counter_17b >= 16)
         {
             return EFFECT_CALLBACK_RESULT_STOP;
         }
 
-        float alpha = 1.0f - effect->unk_17b / 16.0f;
+        float alpha = 1.0f - effect->counter_17b / 16.0f;
         effect->vm.color = COLOR_SET_ALPHA3(effect->vm.color, (i32)(alpha * 255.0f));
 
-        effect->vm.scaleY = 2.0f - alpha;
-        effect->vm.scaleX = effect->vm.scaleY;
+        effect->vm.scaleX = effect->vm.scaleY = 2.0f - alpha;
     }
 
     return EFFECT_CALLBACK_RESULT_DONE;
@@ -212,7 +209,7 @@ Effect *EffectManager::SpawnParticles(i32 effectIdx, D3DXVECTOR3 *pos, i32 count
         effect->updateCallback = g_Effects[effectIdx].updateCallback;
         effect->timer = 0;
         effect->flag_17a = false;
-        effect->unk_17b = 0;
+        effect->counter_17b = 0;
 
         if (--count == 0)
             break;

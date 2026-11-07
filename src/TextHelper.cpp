@@ -486,7 +486,8 @@ void TextHelper_RenderTextToTexture(i32 xPos, i32 yPos, i32 spriteWidth, i32 spr
     {
         LPDIRECT3DSURFACE8 destSurface;
         outTexture->GetSurfaceLevel(0, &destSurface);
-        D3DXLoadSurfaceFromSurface(destSurface, NULL, &destRect, g_TextBufferSurface, NULL, &srcRect, 4, 0);
+        D3DXLoadSurfaceFromSurface(destSurface, NULL, &destRect, g_TextBufferSurface, NULL, &srcRect,
+                                   D3DX_FILTER_TRIANGLE, 0);
         SAFE_RELEASE(destSurface);
     }
 }

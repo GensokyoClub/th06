@@ -142,7 +142,7 @@ struct AnmManager
         this->SetActiveSprite(vm, spriteIdx);
     }
 
-    void SetAndExecuteScript(AnmVm *vm, AnmRawInstr *beginingOfScript);
+    void SetAndExecuteScript(AnmVm *vm, AnmRawInstr *beginningOfScript);
     void SetAndExecuteScriptIdx(AnmVm *vm, i32 anmFileIdx)
     {
         vm->anmFileIndex = anmFileIdx;

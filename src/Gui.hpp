@@ -7,16 +7,16 @@
 namespace th06
 {
 struct GuiImpl;
-struct GuiFlags
+struct GuiRedrawCounters
 {
-    u32 flag0 : 2;
-    u32 flag1 : 2;
-    u32 flag2 : 2;
-    u32 flag3 : 2;
-    u32 flag4 : 2;
+    u32 lifeIcons : 2;
+    u32 bombIcons : 2;
+    u32 powerGauge : 2;
+    u32 grazeCounter : 2;
+    u32 pointItemCounter : 2;
     alignment_bitfields(u32, 22);
 };
-ZUN_ASSERT_TYPE(GuiFlags, 0x4, 4);
+ZUN_ASSERT_TYPE(GuiRedrawCounters, 0x4, 4);
 
 #define MSG_SCRIPTS_PER_CHARACTER 10
 
@@ -51,7 +51,7 @@ struct Gui
 
     void SetBossHealthBar(f32 val)
     {
-        this->bossHealthBar1 = val;
+        this->bossHealthBarValue = val;
     }
 
     void SetSpellcardSeconds(i32 val)
@@ -61,7 +61,7 @@ struct Gui
 
     void SetLives(i32 lives)
     {
-        this->eclSetLives = lives;
+        this->bossLifeCount = lives;
     }
 
     bool SetBossPresent(bool bossPresent)
@@ -80,18 +80,18 @@ struct Gui
         return this->spellcardSecondsRemaining;
     }
 
-    GuiFlags flags;
+    GuiRedrawCounters redrawFrames;
     GuiImpl *impl;
-    f32 bombSpellcardBarLength;
-    f32 blueSpellcardBarLength;
-    u32 bossUIOpacity;
-    i32 eclSetLives;
+    f32 bombNameBarLength;
+    f32 spellcardNameBarLength;
+    u32 bossUIAlpha;
+    i32 bossLifeCount;
     i32 spellcardSecondsRemaining;
     i32 lastSpellcardSecondsRemaining;
     bool bossPresent;
     alignment_padding(0x3);
-    f32 bossHealthBar1;
-    f32 bossHealthBar2;
+    f32 bossHealthBarValue;
+    f32 bossHealthBarDisplay; // Used to make the visual bar lag behind the real value with *fancy* animations
 };
 ZUN_ASSERT_TYPE(Gui, 0x2c, 4);
 

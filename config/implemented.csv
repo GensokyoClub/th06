@@ -188,7 +188,7 @@ th06::GameManager::OnUpdate
 th06::GameManager::OnDraw
 th06::GameManager::SetupCameraStageBackground
 th06::GameManager::SetupCamera
-th06::GuiMsgVm::GuiMsgVm
+th06::MsgVm::MsgVm
 th06::Gui::RegisterChain
 th06::Gui::CutChain
 th06::Gui::AddedCallback

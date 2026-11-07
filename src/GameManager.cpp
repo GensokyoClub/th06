@@ -151,7 +151,7 @@ ChainCallbackResult GameManager_OnUpdate(GameManager *gameManager)
                 gameManager->livesRemaining++;
                 g_SoundPlayer.PlaySoundByIdx(SOUND_1UP);
             }
-            g_Gui.flags.flag0 = 2;
+            g_Gui.redrawFrames.lifeIcons = 2;
             gameManager->livesEarned++;
             g_GameManager.IncreaseSubrank(200);
         }

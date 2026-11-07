@@ -685,7 +685,7 @@ void Player::ScoreGraze(D3DXVECTOR3 *center)
     g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_8, &particlePosition, 1, COLOR_WHITE);
     g_GameManager.AddScore(500);
     g_GameManager.IncreaseSubrank(6);
-    g_Gui.flags.flag3 = 2;
+    g_Gui.redrawFrames.grazeCounter = 2;
     g_SoundPlayer.PlaySoundByIdx(SOUND_GRAZE);
 }
 
@@ -1040,7 +1040,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
     {
         g_GameManager.bombsUsed++;
         g_GameManager.bombsRemaining--;
-        g_Gui.flags.flag1 = 2;
+        g_Gui.redrawFrames.bombIcons = 2;
         p->bombInfo.isInUse = true;
         p->bombInfo.timer = 0;
         p->bombInfo.duration = 999;
@@ -1073,7 +1073,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
                     {
                         g_GameManager.currentPower -= 16;
                     }
-                    g_Gui.flags.flag2 = 2;
+                    g_Gui.redrawFrames.powerGauge = 2;
                 }
                 else
                 {
@@ -1083,7 +1083,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
                     g_GameManager.currentPower = 0;
-                    g_Gui.flags.flag2 = 2;
+                    g_Gui.redrawFrames.powerGauge = 2;
                     // Disable earning lives from score if a continue is used
                     g_GameManager.livesEarned = -1;
                 }
@@ -1116,7 +1116,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
                 else
                 {
                     g_GameManager.livesRemaining--;
-                    g_Gui.flags.flag0 = 2;
+                    g_Gui.redrawFrames.lifeIcons = 2;
                     if (g_GameManager.difficulty < EXTRA && !g_GameManager.isInPracticeMode)
                     {
 #if BUILT_SINCE(102g)
@@ -1129,7 +1129,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
                     {
                         g_GameManager.bombsRemaining = DEFAULT_BOMB_COUNT;
                     }
-                    g_Gui.flags.flag1 = 2;
+                    g_Gui.redrawFrames.bombIcons = 2;
                     goto spawning;
                 }
             }

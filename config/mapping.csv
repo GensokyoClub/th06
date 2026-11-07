@@ -164,7 +164,7 @@ th06::Gui_AddedCallback,0x41b1a4,0xd,default,,ZunResult,Gui*
 th06::Gui_DeletedCallback,0x41b1b1,0xa1,default,,ZunResult,Gui*
 th06::Gui_RegisterChain,0x41b252,0xf9,default,,ZunResult
 th06::GuiImpl::GuiImpl,0x41b34b,0x179,__thiscall,,GuiImpl*,GuiImpl*
-th06::GuiMsgVm::GuiMsgVm,0x41b4c4,0xc8,__thiscall,,GuiMsgVm*,GuiMsgVm*
+th06::MsgVm::MsgVm,0x41b4c4,0xc8,__thiscall,,MsgVm*,MsgVm*
 th06::Gui_CutChain,0x41b58c,0x23,default,,void
 th06::ZunTimer::Tick,0x41b5af,0x32,__thiscall,,i32,ZunTimer*
 th06::GameManager::IsInBounds,0x41b5e1,0x82,__thiscall,,i32,GameManager*,f32,f32,f32,f32

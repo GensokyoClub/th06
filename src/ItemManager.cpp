@@ -183,7 +183,7 @@ void ItemManager::OnUpdate()
                         g_Gui.ShowFullPowerMode(0);
                     }
                     g_GameManager.AddScore(10);
-                    g_Gui.flags.flag2 = 2;
+                    g_Gui.redrawFrames.powerGauge = 2;
                     while (g_GameManager.currentPower >= g_PowerUpThresholds[powerLevel])
                     {
                         powerLevel++;
@@ -228,7 +228,7 @@ void ItemManager::OnUpdate()
                 g_GameManager.AddScore(itemScore);
                 g_GameManager.pointItemsCollectedInStage++;
                 g_GameManager.pointItemsCollected++;
-                g_Gui.flags.flag4 = 2;
+                g_Gui.redrawFrames.pointItemCounter = 2;
                 if (curItem->currentPosition.y < PIV_LINE)
                 {
                     g_GameManager.IncreaseSubrank(30);
@@ -267,7 +267,7 @@ void ItemManager::OnUpdate()
                         g_BulletManager.TurnAllBulletsIntoPoints();
                         g_Gui.ShowFullPowerMode(0);
                     }
-                    g_Gui.flags.flag2 = 2;
+                    g_Gui.redrawFrames.powerGauge = 2;
                     g_GameManager.AddScore(10);
                     while (g_GameManager.currentPower >= g_PowerUpThresholds[powerLevel])
                     {
@@ -288,7 +288,7 @@ void ItemManager::OnUpdate()
                 if (g_GameManager.bombsRemaining < 8)
                 {
                     g_GameManager.bombsRemaining++;
-                    g_Gui.flags.flag1 = 2;
+                    g_Gui.redrawFrames.bombIcons = 2;
                 }
                 g_GameManager.IncreaseSubrank(5);
                 break;
@@ -296,7 +296,7 @@ void ItemManager::OnUpdate()
                 if (g_GameManager.livesRemaining < 8)
                 {
                     g_GameManager.livesRemaining++;
-                    g_Gui.flags.flag0 = 2;
+                    g_Gui.redrawFrames.lifeIcons = 2;
                 }
                 g_GameManager.IncreaseSubrank(200);
                 g_SoundPlayer.PlaySoundByIdx(SOUND_1UP);
@@ -312,7 +312,7 @@ void ItemManager::OnUpdate()
                 g_GameManager.currentPower = MAX_POWER;
                 g_GameManager.AddScore(1000);
                 g_AsciiManager.CreatePopup1(&curItem->currentPosition, 1000, COLOR_WHITE);
-                g_Gui.flags.flag2 = 2;
+                g_Gui.redrawFrames.powerGauge = 2;
                 break;
             case ITEM_POINT_BULLET:
                 itemScore = (g_GameManager.grazeInStage / 3) * 10 + 500;

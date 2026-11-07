@@ -1095,8 +1095,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
             float scaleFactor = (f32)p->stateTimer / 30.0f;
             p->playerSprite.scaleY = 3.0f * scaleFactor + 1.0f;
             p->playerSprite.scaleX = 1.0f - 1.0f * scaleFactor;
-            p->playerSprite.color =
-                COLOR_SET_ALPHA(COLOR_WHITE, (u32)(255.0f - (f32)p->stateTimer * 255.0f / 30.0f));
+            p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, (u32)(255.0f - (f32)p->stateTimer * 255.0f / 30.0f));
             p->playerSprite.flags.blendMode = AnmBlendMode_Additive;
             p->previousSpeed.x = 0.0f;
             p->previousSpeed.y = 0.0f;

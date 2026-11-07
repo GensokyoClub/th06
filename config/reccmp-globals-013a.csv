@@ -130,7 +130,7 @@ th06::g_GameErrorContext,0x4615B0,global,4108
 th06::g_FormatInfoArray,0x4625C0,global,168
 th06::g_PowerItemScore,0x462668,global,124
 th06::g_PowerUpThresholds,0x4626E4,global,44
-th06::g_BombData,0x462710,global,32
+g_BombData,0x462710,global,32
 th06::g_CharData,0x462730,global,120
 th06::g_CharacterPowerBulletDataReimuARank1,0x4627A8,global,36
 th06::g_CharacterPowerBulletDataReimuARank2,0x4627D0,global,108

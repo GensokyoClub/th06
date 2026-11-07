@@ -52,16 +52,20 @@ namespace th06
 
 #define SHOTTYPE_ID(character, shottype) ((character) * SHOTTYPES_PER_CHARACTER + (shottype))
 
-namespace utils
-{
 ZunResult CheckForRunningGameInstance(void);
 #if BUILT_BEFORE(102g)
 ZunBool CheckDirectXVersion(void);
 #endif
 
-f32 AddNormalizeAngle(f32 a, f32 b);
-void Rotate(D3DXVECTOR3 *outVector, D3DXVECTOR3 *point, f32 angle);
-} // namespace utils
+f32 ReduceAngleAdd(f32 angle, f32 add);
+// Macro version of ReduceAngleAdd to provide a default arg via a better function name
+#define ReduceAngle(angle) ReduceAngleAdd(angle, 0.0f)
+
+void RotatePoint(D3DXVECTOR3 *outVector, D3DXVECTOR3 *point, f32 angle);
+
+#define ZUN_LERP(start, end, time) ((end - start) * time + start)
+
+#define MULTIPLE_OF(val, mult) !((i32)(val) % (mult))
 
 // 1.00/1.01 store a button bitmask; 1.02 switches to signed button indices.
 #if BUILT_SINCE(102)
@@ -245,8 +249,6 @@ class Rng
 };
 
 extern Rng g_Rng;
-
-#define MULTIPLE_OF(val, mult) !((i32)(val) % (mult))
 
 // From t-pot's font.h: https://t-pot.com/program/12_font/index.html
 class CMyFont

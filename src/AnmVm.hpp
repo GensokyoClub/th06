@@ -168,15 +168,15 @@ struct AnmVmBase
         this->angleVel.x = this->angleVel.y = this->angleVel.z = 0.0f;
         this->rotation.x = this->rotation.y = this->rotation.z = 0.0f;
         this->scaleY = this->scaleX = 1.0f;
-        this->scaleInterpEndTime = 0;
-        this->alphaInterpEndTime = 0;
+        this->scaleInterpDuration = 0;
+        this->alphaInterpDuration = 0;
         this->color = COLOR_WHITE;
         D3DXMatrixIdentity(&this->matrix);
         this->flags.flags = AnmVmFlags_Visible | AnmVmFlags_VisibleOverride;
         this->autoRotate = 0;
         this->pendingInterrupt = 0;
-        this->posInterpEndTime = 0;
-        this->currentTimeInScript.Initialize();
+        this->posInterpDuration = 0;
+        this->scriptTime.Initialize();
     }
 
     ZunVec3 rotation;
@@ -186,15 +186,15 @@ struct AnmVmBase
     f32 scaleInterpFinalY;
     f32 scaleInterpFinalX;
     ZunVec2 uvScrollPos;
-    ZunTimer currentTimeInScript;
+    ZunTimer scriptTime;
     D3DXMATRIX matrix;
     ZunColor color;
     AnmVmFlags flags;
-    i16 alphaInterpEndTime;
-    i16 scaleInterpEndTime;
+    i16 alphaInterpDuration;
+    i16 scaleInterpDuration;
     i16 autoRotate;
     i16 pendingInterrupt;
-    i16 posInterpEndTime;
+    i16 posInterpDuration;
     alignment_padding(0x2);
 };
 ZUN_ASSERT_TYPE(AnmVmBase, 0x90, 4);
@@ -231,7 +231,7 @@ struct AnmVm : AnmVmBase
     i16 baseSpriteIndex;
     i16 anmFileIndex;
     alignment_padding(0x2);
-    AnmRawInstr *beginingOfScript;
+    AnmRawInstr *beginningOfScript;
     AnmRawInstr *currentInstruction;
     AnmLoadedSprite *sprite;
     D3DCOLOR alphaInterpInitial;

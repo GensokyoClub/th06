@@ -28,40 +28,43 @@ enum LaserAimMode
 
 // Pellets
 // 16 colors
-#define BULLET_SIZE_TINY 8.0f
+#define BULLET_SIZE_TINY 8
 // Everything else
 // 16 colors
-#define BULLET_SIZE_SMALL 16.0f
+#define BULLET_SIZE_SMALL 16
 // Fireballs
 // 4 "colors"
-#define BULLET_SIZE_MEDIUM 30.0f
+#define BULLET_SIZE_MEDIUM 30
 // Big balls, daggers
 // 8 colors
-#define BULLET_SIZE_LARGE 32.0f
+#define BULLET_SIZE_LARGE 32
 // Bubbles
 // 4 colors
-#define BULLET_SIZE_HUGE 64.0f
+#define BULLET_SIZE_HUGE 64
 
 enum BulletType
 {
     // 16 colors
-    BULLET_PELLET = 0,
-    BULLET_RING_BALL = 1,
-    BULLET_RICE = 2,
-    BULLET_BALL = 3,
-    BULLET_KUNAI = 4,
-    BULLET_SHARD = 5,
+    BULLET_PELLET,
+    BULLET_RING_BALL,
+    BULLET_RICE,
+    BULLET_BALL,
+    BULLET_KUNAI,
+    BULLET_SHARD,
     // 8 colors
-    BULLET_BIG_BALL = 6,
-    BULLET_DAGGER = 8,
+    BULLET_BIG_BALL,
     // 4 colors
-    BULLET_FIREBALL = 7,
-    BULLET_BUBBLE = 9,
+    BULLET_FIREBALL,
+    // 8 colors
+    BULLET_DAGGER,
+    // 4 colors
+    BULLET_BUBBLE,
+    ENUM_VALUE_COUNT_DECLARE(BulletType)
 };
 enum LaserSprite
 {
-    LASER_LINE = 0, // Dedicated laser sprite
-    LASER_BEAM = 1, // Stretched ball sprite
+    LASER_LINE, // Dedicated laser sprite
+    LASER_BEAM, // Stretched ball sprite
 };
 
 enum BulletColor16

@@ -134,7 +134,7 @@ th06::g_ControllerMapping,0x4765a0,global,18
 th06::g_FormatInfoArray,0x4765b8,global,168
 th06::g_PowerItemScore,0x476660,global,124
 th06::g_PowerUpThresholds,0x4766dc,global,44
-th06::g_BombData,0x476708,global,32
+g_BombData,0x476708,global,32
 th06::g_CharData,0x476728,global,120
 th06::g_CharacterPowerBulletDataReimuARank1,0x4767a0,global,36
 th06::g_CharacterPowerBulletDataReimuARank2,0x4767c8,global,108

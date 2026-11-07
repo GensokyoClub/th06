@@ -46,7 +46,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     RenderResult renderResult = RENDER_RESULT_KEEP_RUNNING;
 
-    if (utils::CheckForRunningGameInstance())
+    if (CheckForRunningGameInstance())
     {
         g_GameErrorContext.Flush();
 
@@ -54,7 +54,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     }
 
 #if BUILT_BEFORE(102g)
-    if (utils::CheckDirectXVersion())
+    if (CheckDirectXVersion())
     {
         g_GameErrorContext.Flush();
         return -1;
@@ -230,7 +230,7 @@ RenderResult GameWindow::Render()
                 viewport.MinZ = 0.0f;
                 viewport.MaxZ = 1.0f;
                 g_Supervisor.d3dDevice->SetViewport(&viewport);
-                g_Supervisor.d3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, g_Stage.skyFog.color, 1.0f,
+                g_Supervisor.d3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, g_Stage.sky.fogColor, 1.0f,
                                               0);
                 g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
             }
@@ -751,11 +751,9 @@ static void GameWindow_InitD3dDevice(void)
         g_AnmManager->ClearVertexShader();
         g_AnmManager->ClearTexture();
     }
-    g_Stage.skyFogNeedsSetup = true;
+    g_Stage.skyNeedsSetup = true;
 }
 
-namespace utils
-{
 ZunResult CheckForRunningGameInstance(void)
 {
     static HANDLE g_ExclusiveMutex;
@@ -793,5 +791,4 @@ ZunBool CheckDirectXVersion(void)
     return false;
 }
 #endif
-} // namespace utils
 } // namespace th06

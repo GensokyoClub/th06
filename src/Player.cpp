@@ -306,7 +306,7 @@ static void DrawBullets(Player *p)
         }
         if (bullet->sprite.autoRotate)
         {
-            bullet->sprite.rotation.z = RADIANS(90.0f) - utils::AddNormalizeAngle(bullet->angle, RADIANS(180.0f));
+            bullet->sprite.rotation.z = RADIANS(90.0f) - ReduceAngleAdd(bullet->angle, RADIANS(180.0f));
         }
         g_AnmManager->Draw2(&bullet->sprite);
     }
@@ -325,7 +325,7 @@ static void DrawBulletExplosions(Player *p)
         }
         if (bullet->sprite.autoRotate)
         {
-            bullet->sprite.rotation.z = RADIANS(90.0f) - utils::AddNormalizeAngle(bullet->angle, RADIANS(180.0f));
+            bullet->sprite.rotation.z = RADIANS(90.0f) - ReduceAngleAdd(bullet->angle, RADIANS(180.0f));
         }
         bullet->sprite.pos[2] = 0.4f;
         g_AnmManager->Draw2(&bullet->sprite);
@@ -615,7 +615,7 @@ i32 Player::CalcLaserHitbox(D3DXVECTOR3 *laserCenter, D3DXVECTOR3 *laserSize, D3
     D3DXVECTOR3 playerRelativeBottomRight;
 
     laserTopLeft = this->positionCenter - *rotation;
-    utils::Rotate(&laserBottomRight, &laserTopLeft, angle);
+    RotatePoint(&laserBottomRight, &laserTopLeft, angle);
     laserBottomRight.z = 0.0f;
     laserTopLeft = laserBottomRight + *rotation;
     playerRelativeTopLeft = laserTopLeft - this->hitboxSize;
@@ -1127,7 +1127,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
                     }
                     else
                     {
-                        g_GameManager.bombsRemaining = 3;
+                        g_GameManager.bombsRemaining = DEFAULT_BOMB_COUNT;
                     }
                     g_Gui.flags.flag1 = 2;
                     goto spawning;

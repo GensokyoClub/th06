@@ -60,13 +60,13 @@ struct StdRawInstr
 };
 ZUN_ASSERT_TYPE(StdRawInstr, 0x14, 4);
 
-struct StageCameraSky
+struct StageSky
 {
     f32 nearPlane;
     f32 farPlane;
-    D3DCOLOR color;
+    D3DCOLOR fogColor;
 };
-ZUN_ASSERT_TYPE(StageCameraSky, 0xc, 4);
+ZUN_ASSERT_TYPE(StageSky, 0xc, 4);
 
 enum SpellcardState
 {
@@ -110,23 +110,23 @@ struct Stage
     ZunTimer timer;
     u32 stage;
     D3DXVECTOR3 position;
-    StageCameraSky skyFog;
-    StageCameraSky skyFogInterpInitial;
-    StageCameraSky skyFogInterpFinal;
-    i32 skyFogInterpDuration;
-    ZunTimer skyFogInterpTimer;
-    i8 skyFogNeedsSetup;
+    StageSky sky;
+    StageSky skyInterpInitial;
+    StageSky skyInterpFinal;
+    i32 skyInterpDuration;
+    ZunTimer skyInterpTime;
+    i8 skyNeedsSetup;
     alignment_padding(0x3);
-    SpellcardState spellcardState;
+    i32 spellcardState;
     i32 ticksSinceSpellcardStarted;
     AnmVm spellcardBackground;
     unused_field(AnmVm);
     u8 unpauseFlag;
     alignment_padding(0x3);
-    D3DXVECTOR3 facingDirInterpInitial;
-    D3DXVECTOR3 facingDirInterpFinal;
-    i32 facingDirInterpDuration;
-    ZunTimer facingDirInterpTimer;
+    D3DXVECTOR3 facingInterpInitial;
+    D3DXVECTOR3 facingInterpFinal;
+    i32 facingInterpDuration;
+    ZunTimer facingInterpTime;
     D3DXVECTOR3 positionInterpFinal;
     i32 positionInterpEndTime;
     D3DXVECTOR3 positionInterpInitial;

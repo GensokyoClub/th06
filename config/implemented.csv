@@ -19,7 +19,7 @@ th06::ZunTimer::Increment
 th06::ZunTimer::Decrement
 th06::ZunTimer::Tick
 th06::AnmVm::AnmVm
-th06::AnmVm::Initialize
+th06::AnmVmBase::Initialize
 th06::AnmManager::AnmManager
 th06::AnmManager::CopySurfaceToBackBuffer
 th06::AnmManager::DrawEndingRect
@@ -220,7 +220,7 @@ th06::GuiImpl::RunMsg
 th06::GameWindow::WindowProc
 th06::GameWindow::CreateGameWindow
 WinMain
-th06::utils::CheckForRunningGameInstance
+th06::CheckForRunningGameInstance
 th06::FileSystem::OpenPath
 th06::FileSystem::WriteDataToFile
 th06::ItemManager::ItemManager
@@ -358,8 +358,8 @@ th06::ScreenEffect::DrawFadeOut
 th06::ScreenEffect::ShakeScreen
 th06::ScreenEffect::AddedCallback
 th06::ScreenEffect::DeletedCallback
-th06::utils::AddNormalizeAngle
-th06::utils::Rotate
+th06::ReduceAngleAdd
+th06::RotatePoint
 th06::SoundPlayer::SoundPlayer
 th06::SoundPlayer::InitializeDSound
 th06::SoundPlayer::Release

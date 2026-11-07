@@ -46,7 +46,7 @@ void EnemyManager::Initialize()
     enemy->flags.isInteractable = true;
     enemy->flags.hasContactHitbox = true;
     enemy->flags.hasBeenInBounds = false;
-    enemy->hitboxDimensions = D3DXVECTOR3(12.0f, 12.0f, 12.0f);
+    enemy->hitboxSize = D3DXVECTOR3(12.0f, 12.0f, 12.0f);
     enemy->axisSpeed = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
     enemy->angularVelocity = 0.0f;
     enemy->angle = 0.0f;
@@ -72,7 +72,7 @@ void EnemyManager::Initialize()
     enemy->flags.deathMode = EnemyDeath_DespawnNoCallback;
     enemy->deathCallbackSub = -1;
     enemy->flags.hasMovementBounds = false;
-    enemy->effectIdx = 0;
+    enemy->effectCount = 0;
     enemy->runInterrupt = -1;
     enemy->lifeCallbackThreshold = -1;
     enemy->timerCallbackThreshold = -1;
@@ -125,7 +125,7 @@ Enemy *EnemyManager::SpawnEnemy(i32 eclSubId, D3DXVECTOR3 *pos, i16 life, i16 it
 static void UpdateEffects(Enemy *enemy)
 {
     Effect *effect;
-    for (i32 i = 0; i < enemy->effectIdx; i++)
+    for (i32 i = 0; i < enemy->effectCount; i++)
     {
         effect = enemy->effectArray[i];
         if (!effect)
@@ -139,13 +139,13 @@ static void UpdateEffects(Enemy *enemy)
             effect->distance += 0.3f;
         }
 
-        effect->angleRelated = utils::AddNormalizeAngle(effect->angleRelated, ZUN_PI / 100.0f);
+        effect->angleRelated = ReduceAngleAdd(effect->angleRelated, ZUN_PI / 100.0f);
     }
 }
 
 void Enemy_ResetEffectArray(Enemy *enemy)
 {
-    for (i32 i = 0; i < enemy->effectIdx; i++)
+    for (i32 i = 0; i < enemy->effectCount; i++)
     {
         if (!enemy->effectArray[i])
         {
@@ -154,7 +154,7 @@ void Enemy_ResetEffectArray(Enemy *enemy)
         enemy->effectArray[i]->flag_17a = true;
         enemy->effectArray[i] = NULL;
     }
-    enemy->effectIdx = 0;
+    enemy->effectCount = 0;
 }
 
 void EnemyManager::RunEclTimeline()
@@ -449,7 +449,7 @@ void Enemy::Despawn()
     {
         g_Gui.SetBossPresent(false);
     }
-    if (this->effectIdx != 0)
+    if (this->effectCount != 0)
     {
         Enemy_ResetEffectArray(this);
     }
@@ -547,7 +547,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
             enemyLifeBeforeDmg = curEnemy->life;
             if (curEnemy->flags.hasContactHitbox && curEnemy->flags.isInteractable)
             {
-                enemyHitbox = curEnemy->hitboxDimensions / 1.5f;
+                enemyHitbox = curEnemy->hitboxSize / 1.5f;
                 if (g_Player.CheckCollision(&curEnemy->position, &enemyHitbox) == COLLISION_HIT &&
                     curEnemy->flags.isInteractable && !curEnemy->flags.isBoss)
                 {
@@ -556,7 +556,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
             }
             if (curEnemy->flags.isInteractable)
             {
-                damage = g_Player.CalcDamageToEnemy(&curEnemy->position, &curEnemy->hitboxDimensions, &hitByBomb);
+                damage = g_Player.CalcDamageToEnemy(&curEnemy->position, &curEnemy->hitboxSize, &hitByBomb);
                 if (damage >= 70)
                 {
                     damage = 70;
@@ -645,8 +645,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                             g_ItemManager.SpawnItem(&curEnemy->position,
                                                     (ItemType)g_RandomItems[mgr->randomItemTableIndex],
                                                     (ItemState)hitByBomb);
-                            mgr->randomItemTableIndex++;
-                            if (mgr->randomItemTableIndex >= ARRAY_SIZE_SIGNED(g_RandomItems))
+                            if (++mgr->randomItemTableIndex >= ARRAY_SIZE_SIGNED(g_RandomItems))
                             {
                                 mgr->randomItemTableIndex = 0;
                             }
@@ -709,7 +708,8 @@ static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
     i32 curEnemyVmIdx;
     i32 curEnemyIdx;
 
-    for (curEnemy = &mgr->enemies[0], curEnemyIdx = 0; curEnemyIdx < MAX_ENEMY_COUNT; curEnemyIdx++, curEnemy++)
+    curEnemy = &mgr->enemies[0];
+    for (curEnemyIdx = 0; curEnemyIdx < MAX_ENEMY_COUNT; curEnemyIdx++, curEnemy++)
     {
         if (!curEnemy->flags.isSlotOccupied)
         {
@@ -720,8 +720,8 @@ static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
             continue;
         }
 
-        for (curEnemyVm = &curEnemy->vms[0], curEnemyVmIdx = 0; curEnemyVmIdx < ENEMY_ANM_SLOTS / 2;
-             curEnemyVmIdx++, curEnemyVm++)
+        curEnemyVm = &curEnemy->vms[0];
+        for (curEnemyVmIdx = 0; curEnemyVmIdx < ENEMY_ANM_SLOTS / 2; curEnemyVmIdx++, curEnemyVm++)
         {
             if (curEnemyVm->anmFileIndex >= 0)
             {

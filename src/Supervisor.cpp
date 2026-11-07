@@ -658,8 +658,8 @@ ZunResult Supervisor::LoadConfig(const char *path)
 #endif
     if (data == NULL)
     {
-        g_Supervisor.cfg.lifeCount = 2;
-        g_Supervisor.cfg.bombCount = 3;
+        g_Supervisor.cfg.lifeCount = DEFAULT_LIFE_COUNT;
+        g_Supervisor.cfg.bombCount = DEFAULT_BOMB_COUNT;
         g_Supervisor.cfg.colorMode16bit = 0xff;
 #if BUILT_SINCE(102)
         g_Supervisor.cfg.version = CONFIG_VERSION;
@@ -696,8 +696,8 @@ ZunResult Supervisor::LoadConfig(const char *path)
 #endif
             g_ReadFileSize != sizeof(GameConfiguration))
         {
-            g_Supervisor.cfg.lifeCount = 2;
-            g_Supervisor.cfg.bombCount = 3;
+            g_Supervisor.cfg.lifeCount = DEFAULT_LIFE_COUNT;
+            g_Supervisor.cfg.bombCount = DEFAULT_BOMB_COUNT;
             g_Supervisor.cfg.colorMode16bit = 0xff;
 #if BUILT_SINCE(102)
             g_Supervisor.cfg.version = CONFIG_VERSION;

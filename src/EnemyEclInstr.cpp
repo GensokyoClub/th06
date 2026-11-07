@@ -57,8 +57,8 @@ void ExInsShootAtRandomArea(Enemy *enemy, EclRawInstr *curInstr)
     g_BulletManager.SpawnBulletPattern(&enemy->bulletProps);
 }
 
-#pragma var_order(i, propsSpeedBackup, starPatterTarget1, targetDistance, starPatternTarget0, patternPosition,         \
-                  baseTargetPosition)
+#pragma var_order(i, propsSpeedBackup, starPatternOffsetMax, lerpRatio, starPatternOffset, patternPosition,         \
+                  basePosition)
 void ExInsShootStarPattern(Enemy *enemy, EclRawInstr *curInstr)
 {
 #define ENEMY_POS 0
@@ -75,61 +75,49 @@ void ExInsShootStarPattern(Enemy *enemy, EclRawInstr *curInstr)
         g_EclManager.extra.coords[ENEMY_POS] = enemy->position;
         g_EclManager.extra.coords[PLAYER_POS] = g_Player.positionCenter;
         g_EclManager.extra.starAngleTable[0] = g_Rng.GetRandomF32InRange(ZUN_2PI) - ZUN_PI;
-        g_EclManager.extra.starAngleTable[1] =
-            utils::AddNormalizeAngle(g_EclManager.extra.starAngleTable[0], 4.0f * ZUN_PI / 5.0f);
+        g_EclManager.extra.starAngleTable[1] = ReduceAngleAdd(g_EclManager.extra.starAngleTable[0], 4.0f * ZUN_PI / 5.0f);
     }
     if (enemy->currentContext.int2 % 30 == 0)
     {
         g_EclManager.extra.starAngleTable[0] = g_EclManager.extra.starAngleTable[1];
-        g_EclManager.extra.starAngleTable[1] =
-            utils::AddNormalizeAngle(g_EclManager.extra.starAngleTable[0], 4.0f * ZUN_PI / 5.0f);
-        g_EclManager.extra.starAngleTable[2] =
-            utils::AddNormalizeAngle(g_EclManager.extra.starAngleTable[1], 4.0f * ZUN_PI / 5.0f);
-        g_EclManager.extra.starAngleTable[3] =
-            utils::AddNormalizeAngle(g_EclManager.extra.starAngleTable[2], 4.0f * ZUN_PI / 5.0f);
-        g_EclManager.extra.starAngleTable[4] =
-            utils::AddNormalizeAngle(g_EclManager.extra.starAngleTable[3], 4.0f * ZUN_PI / 5.0f);
-        g_EclManager.extra.starAngleTable[5] =
-            utils::AddNormalizeAngle(g_EclManager.extra.starAngleTable[4], 4.0f * ZUN_PI / 5.0f);
+        g_EclManager.extra.starAngleTable[1] = ReduceAngleAdd(g_EclManager.extra.starAngleTable[0], 4.0f * ZUN_PI / 5.0f);
+        g_EclManager.extra.starAngleTable[2] = ReduceAngleAdd(g_EclManager.extra.starAngleTable[1], 4.0f * ZUN_PI / 5.0f);
+        g_EclManager.extra.starAngleTable[3] = ReduceAngleAdd(g_EclManager.extra.starAngleTable[2], 4.0f * ZUN_PI / 5.0f);
+        g_EclManager.extra.starAngleTable[4] = ReduceAngleAdd(g_EclManager.extra.starAngleTable[3], 4.0f * ZUN_PI / 5.0f);
+        g_EclManager.extra.starAngleTable[5] = ReduceAngleAdd(g_EclManager.extra.starAngleTable[4], 4.0f * ZUN_PI / 5.0f);
     }
     if (enemy->currentContext.int2 % 6 == 0)
     {
-        // Variable names are quick guesses at functionality and should not be trusted.
-        D3DXVECTOR3 baseTargetPosition;
+        D3DXVECTOR3 basePosition;
         i32 i;
         f32 propsSpeedBackup;
-        f32 patternPosition;
-        D3DXVECTOR3 starPatternTarget0;
-        D3DXVECTOR3 starPatterTarget1;
-        f32 targetDistance;
+        D3DXVECTOR3 starPatternOffset;
+        D3DXVECTOR3 starPatternOffsetMax;
 
-        patternPosition = (f32)enemy->currentContext.int2 / (f32)enemy->currentContext.int3;
-        targetDistance = patternPosition * 0.1f;
+        f32 patternPosition = (f32)enemy->currentContext.int2 / (f32)enemy->currentContext.int3;
+        f32 lerpRatio = patternPosition * 0.1f;
 
-        baseTargetPosition =
-            (g_EclManager.extra.coords[PLAYER_POS] - g_EclManager.extra.coords[ENEMY_POS]) * targetDistance +
-            g_EclManager.extra.coords[ENEMY_POS];
-        baseTargetPosition.z = 0.0f;
+        basePosition = ZUN_LERP(g_EclManager.extra.coords[ENEMY_POS], g_EclManager.extra.coords[PLAYER_POS], lerpRatio);
+        basePosition.z = 0.0f;
 
         patternPosition += 0.5f;
         enemy->bulletProps.angle1 = (ZUN_PI / 3.0f) * patternPosition;
 
         for (i = 0; i < 5; i++)
         {
-            targetDistance = (enemy->currentContext.int2 % 30) / 30.0f;
-            sincosmul(&starPatternTarget0, g_EclManager.extra.starAngleTable[i], enemy->currentContext.float3);
-            sincosmul(&starPatterTarget1, g_EclManager.extra.starAngleTable[i + 1], enemy->currentContext.float3);
-            starPatternTarget0 = (starPatterTarget1 - starPatternTarget0) * targetDistance + starPatternTarget0;
-            starPatternTarget0.z = 0.0f;
-            enemy->bulletProps.position = baseTargetPosition + starPatternTarget0;
+            lerpRatio = (enemy->currentContext.int2 % 30) / 30.0f;
+            sincosmul(&starPatternOffset, g_EclManager.extra.starAngleTable[i], enemy->currentContext.float3);
+            sincosmul(&starPatternOffsetMax, g_EclManager.extra.starAngleTable[i + 1], enemy->currentContext.float3);
+            starPatternOffset = ZUN_LERP(starPatternOffset, starPatternOffsetMax, lerpRatio);
+            starPatternOffset.z = 0.0f;
+            enemy->bulletProps.position = basePosition + starPatternOffset;
             propsSpeedBackup = enemy->bulletProps.speed1;
-            enemy->bulletProps.speed1 =
-                g_Rng.GetRandomF32InRange(enemy->bulletProps.speed2) + enemy->bulletProps.speed1;
+            enemy->bulletProps.speed1 = g_Rng.GetRandomF32InRange(enemy->bulletProps.speed2) + enemy->bulletProps.speed1;
             g_BulletManager.SpawnBulletPattern(&enemy->bulletProps);
             enemy->bulletProps.speed1 = propsSpeedBackup;
             enemy->bulletProps.angle1 -= (ZUN_PI / 6.0f) * patternPosition;
         }
-        g_SoundPlayer.PlaySoundByIdx(SOUND_16);
+        g_SoundPlayer.PlaySoundByIdx(SOUND_22);
     }
     enemy->currentContext.int2++;
 #undef ENEMY_POS
@@ -777,7 +765,7 @@ void ExInsStage4Func12(Enemy *enemy, EclRawInstr *curInstr)
         if (enemy->lasers[i] != NULL && enemy->lasers[i]->inUse)
         {
             enemy->bulletProps.position = D3DXVECTOR3(64.0f, 0.0f, 0.0f);
-            utils::Rotate(&enemy->bulletProps.position, &enemy->bulletProps.position, enemy->lasers[i]->angle);
+            RotatePoint(&enemy->bulletProps.position, &enemy->bulletProps.position, enemy->lasers[i]->angle);
             enemy->bulletProps.position += enemy->position;
             g_BulletManager.SpawnBulletPattern(&enemy->bulletProps);
         }

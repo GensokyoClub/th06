@@ -109,3 +109,13 @@ typedef double f64;
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(x[0]))
 #define ARRAY_SIZE_SIGNED(x) ((i32)sizeof(x) / (i32)sizeof(x[0]))
+
+#define ENUM_MAX_VALUE_DECLARE(enum_name) \
+MACRO_CATW(_,enum_name,_MAX_VALUE_DUMMY), \
+MACRO_CAT(enum_name,_MAX_VALUE) = MACRO_CATW(_,enum_name,_MAX_VALUE_DUMMY) - 1
+
+#define ENUM_VALUE_COUNT_DECLARE(enum_name) \
+MACRO_CAT(enum_name,_VALUE_COUNT)
+
+#define ENUM_MAX_VALUE(enum_name) MACRO_CAT(enum_name,_MAX_VALUE)
+#define ENUM_VALUE_COUNT(enum_name) MACRO_CAT(enum_name,_VALUE_COUNT)

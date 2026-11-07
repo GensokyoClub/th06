@@ -65,8 +65,8 @@ void BombReimuACalc(Player *player)
                     sinf(angleX) * player->bombInfo.reimuABombProjectilesRelated[i];
                 player->bombRegionTotalDamages[i] = 0;
 
-                for (bombSprite = &player->bombInfo.sprites[0][i * 4], bombIdx = 0; bombIdx < 4;
-                     bombIdx++, bombSprite++)
+                bombSprite = &player->bombInfo.sprites[0][i * 4];
+                for (bombIdx = 0; bombIdx < 4; bombIdx++, bombSprite++)
                 {
                     g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_REIMU_A_BOMB_ARRAY + bombIdx);
                 }
@@ -154,15 +154,14 @@ void BombReimuACalc(Player *player)
 
                     player->bombInfo.bombRegionVelocities[i] / 8.0f; // ZUN moment
 
-                    g_SoundPlayer.PlaySoundByIdx(SOUND_F);
+                    g_SoundPlayer.PlaySoundByIdx(SOUND_15);
                     ScreenEffect_RegisterChain(SCREEN_EFFECT_SHAKE, 16, 8, 0, 0);
                 }
             }
         }
         else if (player->bombInfo.reimuABombProjectilesState[i] != 0 && player->bombInfo.timer.HasTicked())
         {
-            player->bombInfo.reimuABombProjectilesState[i]++;
-            if (player->bombInfo.reimuABombProjectilesState[i] >= 30)
+            if (++player->bombInfo.reimuABombProjectilesState[i] >= 30)
             {
                 player->bombInfo.reimuABombProjectilesState[i] = 0;
             }
@@ -206,8 +205,8 @@ static void DarkenViewport(Player *player)
     {
         darknessLevel = 176;
     }
-
-    ScreenEffect_DrawSquare(&viewport, darknessLevel << 24);
+    
+    ScreenEffect_DrawSquare(&viewport, COLOR_SET_ALPHA(COLOR_BLACK, darknessLevel));
 }
 
 void BombReimuADraw(Player *player)
@@ -521,7 +520,7 @@ void BombMarisaBDraw(Player *player)
         bombSprite->pos.x += (cosf(spriteAngle) * bombSprite->sprite->heightPx * bombSprite->scaleY) / 2.0f;
         bombSprite->pos.y += (sinf(spriteAngle) * bombSprite->sprite->heightPx * bombSprite->scaleY) / 2.0f;
         spriteAngle = ZUN_HALF_PI - spriteAngle;
-        bombSprite->rotation.z = utils::AddNormalizeAngle(spriteAngle, ZUN_PI);
+        bombSprite->rotation.z = ReduceAngleAdd(spriteAngle, ZUN_PI);
         bombSprite->pos.x += g_GameManager.gameRegionScreenPos.x;
         bombSprite->pos.y += g_GameManager.gameRegionScreenPos.y;
         bombSprite->pos.z = 0.0f;

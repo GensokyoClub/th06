@@ -55,8 +55,8 @@ struct GuiMsgVm
     AnmVm portraits[MSG_PORTRAIT_COUNT];
     AnmVm dialogueLines[MSG_DIALOGUE_LINE_COUNT];
     AnmVm introLines[2];
-    D3DCOLOR textColorsA[4];
-    D3DCOLOR textColorsB[4];
+    D3DCOLOR textColors[4];
+    D3DCOLOR textShadowColors[4];
     u32 fontSize;
     u32 ignoreWaitCounter;
     u8 dialogueSkippable;
@@ -578,10 +578,10 @@ void GuiImpl::MsgRead(i32 msgIdx)
     this->msg.dialogueLines[0].anmFileIndex = -1;
     this->msg.dialogueLines[1].anmFileIndex = -1;
     this->msg.fontSize = DEFAULT_ANM_FONT_SIZE;
-    this->msg.textColorsA[0] = COLOR_RGB(COLOR_GUI_1);
-    this->msg.textColorsA[1] = COLOR_RGB(COLOR_GUI_2);
-    this->msg.textColorsB[0] = COLOR_RGB(COLOR_BLACK);
-    this->msg.textColorsB[1] = COLOR_RGB(COLOR_BLACK);
+    this->msg.textColors[0] = COLOR_RGB(COLOR_GUI_1);
+    this->msg.textColors[1] = COLOR_RGB(COLOR_GUI_2);
+    this->msg.textShadowColors[0] = COLOR_RGB(COLOR_BLACK);
+    this->msg.textShadowColors[1] = COLOR_RGB(COLOR_BLACK);
     this->msg.dialogueSkippable = true;
     if (g_GameManager.currentStage == Stage6 &&
         (msgIdx == MSG_SCRIPT_ID(REIMU, 0) || msgIdx == MSG_SCRIPT_ID(MARISA, 0)))
@@ -597,6 +597,10 @@ void GuiImpl::MsgRead(i32 msgIdx)
 }
 
 #define GET_ARG(type, num) ((type *)args)[num]
+#define STRING_ARG(offset) &GET_ARG(char, offset)
+#define INT_ARG(num) GET_ARG(i32, num)
+#define SHORT_ARG(num) GET_ARG(i16, num)
+#define BYTE_ARG(num) GET_ARG(u8, num)
 
 ZunResult GuiImpl::RunMsg()
 {
@@ -624,29 +628,29 @@ ZunResult GuiImpl::RunMsg()
         case MSG_OPCODE_PORTRAIT_ANM_SCRIPT:
             args = this->msg.currentInstr->args;
             g_AnmManager->SetAndExecuteScriptIdx(
-                &this->msg.portraits[GET_ARG(i16, 0)],
-                GET_ARG(i16, 1) + (GET_ARG(i16, 0) == 0 ? ANM_SCRIPT_FACE_START : ANM_SCRIPT_FACE_START + 2));
+                &this->msg.portraits[SHORT_ARG(0)],
+                SHORT_ARG(1) + (SHORT_ARG(0) == 0 ? ANM_SCRIPT_FACE_START : ANM_SCRIPT_FACE_START + 2));
             break;
         case MSG_OPCODE_PORTRAIT_ANM_SPRITE:
             args = this->msg.currentInstr->args;
             g_AnmManager->SetActiveSprite(
-                &this->msg.portraits[GET_ARG(i16, 0)],
-                GET_ARG(i16, 1) + (GET_ARG(i16, 0) == 0 ? ANM_SCRIPT_FACE_START : ANM_SCRIPT_FACE_START + 8));
+                &this->msg.portraits[SHORT_ARG(0)],
+                SHORT_ARG(1) + (SHORT_ARG(0) == 0 ? ANM_SCRIPT_FACE_START : ANM_SCRIPT_FACE_START + 8));
             break;
         case MSG_OPCODE_TEXT_DIALOGUE:
             args = this->msg.currentInstr->args;
-            if (GET_ARG(i16, 1) == 0 && this->msg.dialogueLines[1].anmFileIndex >= 0)
+            if (SHORT_ARG(1) == 0 && this->msg.dialogueLines[1].anmFileIndex >= 0)
             {
-                g_AnmManager->DrawVmTextFmt(&this->msg.dialogueLines[1], this->msg.textColorsA[GET_ARG(i16, 0)],
-                                            this->msg.textColorsB[GET_ARG(i16, 0)], " ");
+                g_AnmManager->DrawVmTextFmt(&this->msg.dialogueLines[1], this->msg.textColors[SHORT_ARG(0)],
+                                            this->msg.textShadowColors[SHORT_ARG(0)], " ");
             }
-            g_AnmManager->SetAndExecuteScriptIdx(&this->msg.dialogueLines[GET_ARG(i16, 1)],
-                                                 ANM_SCRIPT_TEXT_DIALOGUE_LINES + GET_ARG(i16, 1));
-            this->msg.dialogueLines[GET_ARG(i16, 1)].fontWidth = this->msg.dialogueLines[GET_ARG(i16, 1)].fontHeight =
+            g_AnmManager->SetAndExecuteScriptIdx(&this->msg.dialogueLines[SHORT_ARG(1)],
+                                                 ANM_SCRIPT_TEXT_DIALOGUE_LINES + SHORT_ARG(1));
+            this->msg.dialogueLines[SHORT_ARG(1)].fontWidth = this->msg.dialogueLines[SHORT_ARG(1)].fontHeight =
                 this->msg.fontSize;
-            g_AnmManager->DrawVmTextFmt(&this->msg.dialogueLines[GET_ARG(i16, 1)],
-                                        this->msg.textColorsA[GET_ARG(i16, 0)], this->msg.textColorsB[GET_ARG(i16, 0)],
-                                        (char *)(args + 4));
+            g_AnmManager->DrawVmTextFmt(&this->msg.dialogueLines[SHORT_ARG(1)],
+                                        this->msg.textColors[SHORT_ARG(0)], this->msg.textShadowColors[SHORT_ARG(0)],
+                                        STRING_ARG(4));
             this->msg.framesElapsedDuringPause = 0;
             break;
         case MSG_OPCODE_WAIT:
@@ -665,13 +669,13 @@ ZunResult GuiImpl::RunMsg()
             break;
         case MSG_OPCODE_ANM_INTERRUPT:
             args = this->msg.currentInstr->args;
-            if (GET_ARG(i16, 0) < MSG_PORTRAIT_COUNT)
+            if (SHORT_ARG(0) < MSG_PORTRAIT_COUNT)
             {
-                this->msg.portraits[GET_ARG(i16, 0)].pendingInterrupt = GET_ARG(u8, 2);
+                this->msg.portraits[SHORT_ARG(0)].pendingInterrupt = BYTE_ARG(2);
             }
             else
             {
-                this->msg.dialogueLines[GET_ARG(i16, 0) - MSG_PORTRAIT_COUNT].pendingInterrupt = GET_ARG(u8, 2);
+                this->msg.dialogueLines[SHORT_ARG(0) - MSG_PORTRAIT_COUNT].pendingInterrupt = BYTE_ARG(2);
             }
             break;
         case MSG_OPCODE_ECL_RESUME:
@@ -691,11 +695,11 @@ ZunResult GuiImpl::RunMsg()
             break;
         case MSG_OPCODE_TEXT_INTRO:
             args = this->msg.currentInstr->args;
-            g_AnmManager->SetAndExecuteScriptIdx(&this->msg.introLines[GET_ARG(i16, 1)],
-                                                 ANM_SCRIPT_TEXT_INTRO_LINES + GET_ARG(i16, 1));
-            g_AnmManager->DrawStringFormat(&this->msg.introLines[GET_ARG(i16, 1)],
-                                           this->msg.textColorsA[GET_ARG(i16, 0)],
-                                           this->msg.textColorsB[GET_ARG(i16, 0)], (char *)(args + 4));
+            g_AnmManager->SetAndExecuteScriptIdx(&this->msg.introLines[SHORT_ARG(1)],
+                                                 ANM_SCRIPT_TEXT_INTRO_LINES + SHORT_ARG(1));
+            g_AnmManager->DrawStringFormat(&this->msg.introLines[SHORT_ARG(1)],
+                                           this->msg.textColors[SHORT_ARG(0)],
+                                           this->msg.textShadowColors[SHORT_ARG(0)], STRING_ARG(4));
             this->msg.framesElapsedDuringPause = 0;
             break;
         case MSG_OPCODE_STAGE_RESULTS:
@@ -820,8 +824,8 @@ ZunResult GuiImpl::DrawDialogue()
                                            (g_GameManager.gameRegionSize.x - 256.0f) / 2.0f + 256.0f + 16.0f,
                                        384.0f + dialogueBoxHeight, 0.0f);
 
-    vertices[0].diffuse = vertices[1].diffuse = 0xd0000000;
-    vertices[2].diffuse = vertices[3].diffuse = 0x90000000;
+    vertices[0].diffuse = vertices[1].diffuse = COLOR_SET_ALPHA(COLOR_BLACK, 0xd0);
+    vertices[2].diffuse = vertices[3].diffuse = COLOR_SET_ALPHA(COLOR_BLACK, 0x90);
     vertices[0].position_w = vertices[1].position_w = vertices[2].position_w = vertices[3].position_w = 1.0f;
     g_AnmManager->DrawNoRotation(&this->msg.portraits[0]);
     g_AnmManager->DrawNoRotation(&this->msg.portraits[1]);
@@ -1077,7 +1081,7 @@ void Gui::DrawGameScene()
         vm->pos.z = 0.0f;
         g_AnmManager->DrawNoRotation(vm);
         D3DXVECTOR3 textPos(80.0f, 16.0f, 0.0f);
-        g_AsciiManager.SetColor(this->bossUIOpacity << 24 | 0xffff80);
+        g_AsciiManager.SetColor(COLOR_SET_ALPHA(COLOR_LIGHT_YELLOW, this->bossUIOpacity));
         g_AsciiManager.AddFormatText(&textPos, "%d", this->eclSetLives);
         textPos = D3DXVECTOR3(384.0f, 16.0f, 0.0f);
         D3DCOLOR bossLivesColor;
@@ -1099,12 +1103,11 @@ void Gui::DrawGameScene()
         }
 
         g_AsciiManager.SetColor(this->bossUIOpacity << 24 | bossLivesColor);
-        i32 cappedSpellcardSecondsRemaining =
-            this->spellcardSecondsRemaining > 99 ? 99 : this->spellcardSecondsRemaining;
+        i32 cappedSpellcardSecondsRemaining = min(99, this->spellcardSecondsRemaining);
         if (cappedSpellcardSecondsRemaining < 10 &&
             this->lastSpellcardSecondsRemaining != this->spellcardSecondsRemaining)
         {
-            g_SoundPlayer.PlaySoundByIdx(SOUND_1D);
+            g_SoundPlayer.PlaySoundByIdx(SOUND_29);
         }
         g_AsciiManager.AddFormatText(&textPos, "%.2d", cappedSpellcardSecondsRemaining);
         g_AsciiManager.SetColor(COLOR_WHITE);

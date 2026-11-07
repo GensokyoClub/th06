@@ -80,7 +80,7 @@ struct GameManager
     u32 score;
     u32 nextScoreIncrement;
     u32 highScore;
-    Difficulty difficulty;
+    i32 difficulty;
     i32 grazeInStage;
     i32 grazeInTotal;
     ZunBool isInReplay;

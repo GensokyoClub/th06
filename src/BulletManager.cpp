@@ -197,7 +197,7 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
     bullet->state = BULLET_STATE_FIRED;
     bullet->unk_5c2 = 1;
     bullet->speed = bulletSpeed;
-    bullet->angle = utils::AddNormalizeAngle(bulletAngle, 0.0f);
+    bullet->angle = ReduceAngle(bulletAngle);
     bullet->pos = bulletProps->position;
     bullet->pos[2] = 0.1f;
 #if BUILT_SINCE(013)
@@ -730,10 +730,8 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                     }
                     else
                     {
-                        curBullet->angle = utils::AddNormalizeAngle(
-                            curBullet->angle, curBullet->exVelAngle * g_Supervisor.effectiveFramerateMultiplier);
+                        curBullet->angle = ReduceAngleAdd(curBullet->angle, curBullet->exVelAngle * g_Supervisor.effectiveFramerateMultiplier);
                         curBullet->speed += curBullet->exVelSpeed * g_Supervisor.effectiveFramerateMultiplier;
-                        // Has to be done in asm. Just, great.
                         sincosmul(&curBullet->velocity, curBullet->angle, curBullet->speed);
                     }
                 }
@@ -817,7 +815,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                         if (curBullet->pos.x < GAME_REGION_LEFT || curBullet->pos.x >= GAME_REGION_RIGHT)
                         {
                             curBullet->angle = -curBullet->angle - ZUN_PI;
-                            curBullet->angle = utils::AddNormalizeAngle(curBullet->angle, 0.0f);
+                            curBullet->angle = ReduceAngle(curBullet->angle);
                         }
 
                         if (curBullet->pos.y < GAME_REGION_TOP || curBullet->pos.y >= GAME_REGION_BOTTOM)
@@ -844,7 +842,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                         if (curBullet->pos.x < GAME_REGION_LEFT || curBullet->pos.x >= GAME_REGION_RIGHT)
                         {
                             curBullet->angle = -curBullet->angle - ZUN_PI;
-                            curBullet->angle = utils::AddNormalizeAngle(curBullet->angle, 0.0f);
+                            curBullet->angle = ReduceAngle(curBullet->angle);
                         }
 
                         if (curBullet->pos.y < GAME_REGION_TOP)
@@ -1192,14 +1190,12 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
             curLaser->baseGlowVm.pos[2] = 0.0f;
             curLaser->baseGlowVm.color = curLaser->vm.color;
             curLaser->baseGlowVm.flags.colorOp = AnmColorOp_Add;
-            curLaser->baseGlowVm.color = COLOR_SET_ALPHA2(curLaser->baseGlowVm.color, 0xff);
-            curLaser->baseGlowVm.scaleX = (curLaser->width / 10.0f) * ((16.0f - curLaser->startOffset) / 16.0f);
-            curLaser->baseGlowVm.scaleY = curLaser->baseGlowVm.scaleX;
+            curLaser->baseGlowVm.color = COLOR_SET_ALPHA(curLaser->baseGlowVm.color, 0xff);
+            curLaser->baseGlowVm.scaleY = curLaser->baseGlowVm.scaleX = (curLaser->width / 10.0f) * ((16.0f - curLaser->startOffset) / 16.0f);
 
             if (curLaser->baseGlowVm.scaleY < 0.0f)
             {
-                curLaser->baseGlowVm.scaleX = curLaser->width / 10.0f;
-                curLaser->baseGlowVm.scaleY = curLaser->baseGlowVm.scaleX;
+                curLaser->baseGlowVm.scaleY = curLaser->baseGlowVm.scaleX = curLaser->width / 10.0f;
             }
 
             g_AnmManager->Draw3(&curLaser->baseGlowVm);
@@ -1218,7 +1214,7 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
                 continue;
             }
 
-            if (curBullet->sprites.bulletHeight > 16)
+            if (curBullet->sprites.bulletHeight > BULLET_SIZE_SMALL)
             {
                 DrawBullet(curBullet);
             }
@@ -1231,7 +1227,7 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
                 continue;
             }
 
-            if (curBullet->sprites.bulletHeight == 16 &&
+            if (curBullet->sprites.bulletHeight == BULLET_SIZE_SMALL &&
                 (curBullet->sprites.spriteBullet.anmFileIndex == ANM_SCRIPT_BULLET3_RING_BALL ||
                  curBullet->sprites.spriteBullet.anmFileIndex == ANM_SCRIPT_BULLET3_BALL))
             {
@@ -1246,7 +1242,7 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
                 continue;
             }
 
-            if (curBullet->sprites.bulletHeight == 16 &&
+            if (curBullet->sprites.bulletHeight == BULLET_SIZE_SMALL &&
                 curBullet->sprites.spriteBullet.anmFileIndex != ANM_SCRIPT_BULLET3_RING_BALL &&
                 curBullet->sprites.spriteBullet.anmFileIndex != ANM_SCRIPT_BULLET3_BALL)
             {
@@ -1261,7 +1257,7 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
                 continue;
             }
 
-            if (curBullet->sprites.bulletHeight == 8)
+            if (curBullet->sprites.bulletHeight == BULLET_SIZE_TINY)
             {
                 DrawBullet(curBullet);
             }
@@ -1277,7 +1273,7 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
                 continue;
             }
 
-            if (curBullet->sprites.bulletHeight > 16)
+            if (curBullet->sprites.bulletHeight > BULLET_SIZE_SMALL)
             {
                 DrawBulletNoHwVertex(curBullet);
             }
@@ -1290,7 +1286,7 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
                 continue;
             }
 
-            if (curBullet->sprites.bulletHeight == 16 &&
+            if (curBullet->sprites.bulletHeight == BULLET_SIZE_SMALL &&
                 (curBullet->sprites.spriteBullet.anmFileIndex == ANM_SCRIPT_BULLET3_RING_BALL ||
                  curBullet->sprites.spriteBullet.anmFileIndex == ANM_SCRIPT_BULLET3_BALL))
             {
@@ -1305,7 +1301,7 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
                 continue;
             }
 
-            if (curBullet->sprites.bulletHeight == 16 &&
+            if (curBullet->sprites.bulletHeight == BULLET_SIZE_SMALL &&
                 curBullet->sprites.spriteBullet.anmFileIndex != ANM_SCRIPT_BULLET3_RING_BALL &&
                 curBullet->sprites.spriteBullet.anmFileIndex != ANM_SCRIPT_BULLET3_BALL)
             {
@@ -1320,7 +1316,7 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
                 continue;
             }
 
-            if (curBullet->sprites.bulletHeight == 8)
+            if (curBullet->sprites.bulletHeight == BULLET_SIZE_TINY)
             {
                 DrawBulletNoHwVertex(curBullet);
             }
@@ -1334,8 +1330,6 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
 
 static ZunResult BulletManager_AddedCallback(BulletManager *mgr)
 {
-    u32 idx;
-
     if (g_Supervisor.IsNotLoadingNextStage())
     {
         if (g_AnmManager->LoadAnm(ANM_FILE_BULLET3, "data/etama3.anm", ANM_OFFSET_BULLET3) != ZUN_SUCCESS)
@@ -1349,7 +1343,7 @@ static ZunResult BulletManager_AddedCallback(BulletManager *mgr)
         }
     }
 
-    for (idx = 0; idx < 10; idx++)
+    for (u32 idx = 0; idx < ENUM_VALUE_COUNT(BulletType); idx++)
     {
         g_AnmManager->SetAndExecuteScriptIdx(&mgr->bulletTypeTemplates[idx].spriteBullet,
                                              g_BulletTypeInfos[idx].bulletAnmScriptIdx);

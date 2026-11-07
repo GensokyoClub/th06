@@ -160,8 +160,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
         {
             menu->idleFrames = 0;
         }
-        menu->idleFrames++;
-        if (menu->idleFrames >= TITLE_SCREEN_DEMO_DELAY)
+        if (++menu->idleFrames >= TITLE_SCREEN_DEMO_DELAY)
         {
 #if BUILT_SINCE(102g)
         load_menu_rpy:
@@ -198,7 +197,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
         vmList = &menu->vm[34];
         for (i = 0; i < KEY_CONFIG_BUTTON_COUNT + 2; i++, vmList++)
         {
-            DrawMenuItem(vmList, i, menu->cursor, menu->color2, menu->color1, MENU_KEY_CONFIG_HIGHLIGHT_OFFSET);
+            DrawMenuItem(vmList, i, menu->cursor, menu->selectedColor, menu->unselectedColor, MENU_KEY_CONFIG_HIGHLIGHT_OFFSET);
         }
         for (i = 0; i < KEY_CONFIG_BUTTON_COUNT; i++, vmList++)
         {
@@ -208,7 +207,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                 continue;
             }
             vmList->flags.isVisibleOverride = true;
-            DrawMenuItem(vmList, i, menu->cursor, menu->color2, menu->color1, MENU_KEY_CONFIG_HIGHLIGHT_OFFSET);
+            DrawMenuItem(vmList, i, menu->cursor, menu->selectedColor, menu->unselectedColor, MENU_KEY_CONFIG_HIGHLIGHT_OFFSET);
         }
         for (i = 0; i < KEY_CONFIG_BUTTON_COUNT * 2; i++, vmList++)
         {
@@ -240,7 +239,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                 g_AnmManager->SetActiveSprite(vmList, mapping % 10 + ANM_SPRITE_TITLE01_START);
             }
             vmList->baseSpriteIndex = vmList->activeSpriteIndex;
-            DrawMenuItem(vmList, i / 2, menu->cursor, menu->color2, menu->color1, ARRAY_SIZE_SIGNED(menu->vm));
+            DrawMenuItem(vmList, i / 2, menu->cursor, menu->selectedColor, menu->unselectedColor, ARRAY_SIZE_SIGNED(menu->vm));
         }
 
 #pragma var_order(idx, controllerData)
@@ -428,7 +427,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                         vmList->color = 0x60ffffff;
                     }
                     vmList->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-                    vmList->alphaInterpEndTime = 0;
+                    vmList->alphaInterpDuration = 0;
                 }
                 else
                 {
@@ -504,7 +503,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
             {
                 vmList = &menu->vm[MENU_VMS_DIFFICULTY_SELECT + menu->cursor];
                 vmList->pendingInterrupt = 8;
-                g_GameManager.difficulty = (Difficulty)menu->cursor;
+                g_GameManager.difficulty = menu->cursor;
                 menu->cursor = g_GameManager.character;
             }
             else
@@ -540,16 +539,14 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
             break;
         if (WAS_PRESSED_REPEATING(TH_BUTTON_LEFT))
         {
-            menu->cursor++;
-            if (menu->cursor >= CHARACTER_COUNT)
+            if (++menu->cursor >= CHARACTER_COUNT)
             {
                 menu->cursor -= CHARACTER_COUNT;
             }
             if (g_GameManager.difficulty == EXTRA && !g_GameManager.HasExtraUnlocked(menu->cursor, SHOT_TYPE_A) &&
                 !g_GameManager.HasExtraUnlocked(menu->cursor, SHOT_TYPE_B))
             {
-                menu->cursor--;
-                if (menu->cursor < 0)
+                if (--menu->cursor < 0)
                 {
                     menu->cursor += CHARACTER_COUNT;
                 }
@@ -575,16 +572,14 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
         }
         if (WAS_PRESSED_REPEATING(TH_BUTTON_RIGHT))
         {
-            menu->cursor--;
-            if (menu->cursor < 0)
+            if (--menu->cursor < 0)
             {
                 menu->cursor += CHARACTER_COUNT;
             }
             if (g_GameManager.difficulty == EXTRA && !g_GameManager.HasExtraUnlocked(menu->cursor, SHOT_TYPE_A) &&
                 !g_GameManager.HasExtraUnlocked(menu->cursor, SHOT_TYPE_B))
             {
-                menu->cursor++;
-                if (menu->cursor >= CHARACTER_COUNT)
+                if (++menu->cursor >= CHARACTER_COUNT)
                 {
                     menu->cursor -= CHARACTER_COUNT;
                 }
@@ -778,8 +773,8 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                 g_GameManager.bombsRemaining = g_Supervisor.cfg.bombCount;
                 if (g_GameManager.difficulty == EXTRA || g_GameManager.isInPracticeMode)
                 {
-                    g_GameManager.livesRemaining = 2;
-                    g_GameManager.bombsRemaining = 3;
+                    g_GameManager.livesRemaining = DEFAULT_LIFE_COUNT;
+                    g_GameManager.bombsRemaining = DEFAULT_BOMB_COUNT;
                 }
                 g_Supervisor.curState = SUPERVISOR_STATE_GAMEMANAGER;
                 g_SoundPlayer.PlaySoundByIdx(SOUND_SELECT);
@@ -1039,8 +1034,7 @@ static void DrawMenuItem(AnmVm *vm, int itemNumber, int cursor, D3DCOLOR current
         else
         {
             g_AnmManager->SetActiveSprite(vm, vm->baseSpriteIndex + vm_amount);
-            vm->color = currentItemColor & D3DCOLOR_RGBA(0x00, 0x00, 0x00, 0xff) |
-                        D3DCOLOR_RGBA(0xff, 0xff, 0xff, 0x00); // just... why?
+            vm->color = COLOR_COMBINE_ALPHA(COLOR_WHITE, currentItemColor);
         }
         vm->posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
     }
@@ -1053,8 +1047,7 @@ static void DrawMenuItem(AnmVm *vm, int itemNumber, int cursor, D3DCOLOR current
         else
         {
             g_AnmManager->SetActiveSprite(vm, vm->baseSpriteIndex);
-            vm->color = otherItemColor & D3DCOLOR_RGBA(0x00, 0x00, 0x00, 0xff) |
-                        D3DCOLOR_RGBA(0xff, 0xff, 0xff, 0x00); // again, why?
+            vm->color = COLOR_COMBINE_ALPHA(COLOR_WHITE, otherItemColor);
         }
         vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
     }
@@ -1455,9 +1448,7 @@ ZunBool MainMenu::ReplayHandling()
 
                 while (this->replayFileData[this->chosenReplay].stageReplayData[this->cursor] == NULL)
                 {
-                    this->cursor++;
-
-                    if (this->cursor >= ARRAY_SIZE_SIGNED(this->currentReplay->stageReplayData))
+                    if (++this->cursor >= ARRAY_SIZE_SIGNED(this->currentReplay->stageReplayData))
                     {
                         return ZUN_SUCCESS;
                     }
@@ -1487,8 +1478,7 @@ ZunBool MainMenu::ReplayHandling()
         {
             while (this->replayFileData[this->chosenReplay].stageReplayData[this->cursor] == NULL)
             {
-                this->cursor--;
-                if (this->cursor < 0)
+                if (--this->cursor < 0)
                 {
                     this->cursor = 6;
                 }
@@ -1498,8 +1488,7 @@ ZunBool MainMenu::ReplayHandling()
         {
             while (this->replayFileData[this->chosenReplay].stageReplayData[this->cursor] == NULL)
             {
-                this->cursor++;
-                if (this->cursor >= 7)
+                if (++this->cursor >= 7)
                 {
                     this->cursor = 0;
                 }
@@ -1514,7 +1503,7 @@ ZunBool MainMenu::ReplayHandling()
             g_GameManager.isInReplay = true;
             g_Supervisor.framerateMultiplier = 1.0f;
             strcpy(g_GameManager.replayFile, this->replayFilePaths[this->chosenReplay]);
-            g_GameManager.difficulty = (Difficulty)this->currentReplay->difficulty;
+            g_GameManager.difficulty = this->currentReplay->difficulty;
             g_GameManager.character = this->currentReplay->shottypeChara / SHOTTYPES_PER_CHARACTER;
             g_GameManager.shotType = this->currentReplay->shottypeChara % SHOTTYPES_PER_CHARACTER;
 #if BUILT_SINCE(102g)
@@ -1705,11 +1694,11 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelect
     {
         if (!g_Supervisor.IsHardwareBlendingDisabled())
         {
-            vm->color = COLOR_SET_ALPHA2(vm->color, 0x80);
+            vm->color = COLOR_SET_ALPHA(vm->color, 0x80);
         }
         else
         {
-            vm->color = COLOR_SET_ALPHA2(vm->color, 0x80);
+            vm->color = COLOR_SET_ALPHA(vm->color, 0x80);
         }
 
         vm->posOffset += D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -1718,11 +1707,11 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelect
     {
         if (!g_Supervisor.IsHardwareBlendingDisabled())
         {
-            vm->color = COLOR_SET_ALPHA2(vm->color, 0xff);
+            vm->color = COLOR_SET_ALPHA(vm->color, 0xff);
         }
         else
         {
-            vm->color = COLOR_SET_ALPHA2(vm->color, 0xff);
+            vm->color = COLOR_SET_ALPHA(vm->color, 0xff);
         }
 
         vm->posOffset += D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
@@ -1940,8 +1929,8 @@ ZunBool MainMenu::OnUpdateOptionsMenu()
             case OPTIONS_CURSOR_SETDEFAULT:
 
                 g_Supervisor.StopAudio();
-                g_Supervisor.cfg.lifeCount = 2;
-                g_Supervisor.cfg.bombCount = 3;
+                g_Supervisor.cfg.lifeCount = DEFAULT_LIFE_COUNT;
+                g_Supervisor.cfg.bombCount = DEFAULT_BOMB_COUNT;
                 g_Supervisor.cfg.musicMode = WAV;
                 g_Supervisor.cfg.playSounds = true;
                 g_Supervisor.cfg.defaultDifficulty = NORMAL;
@@ -2278,13 +2267,13 @@ static ZunResult MainMenu_AddedCallback(MainMenu *menu)
     g_GameManager.isInPracticeMode = false;
     if (!g_Supervisor.IsHardwareBlendingDisabled())
     {
-        menu->color1 = 0x80004000;
-        menu->color2 = 0xff008000;
+        menu->unselectedColor = 0x80004000;
+        menu->selectedColor = 0xff008000;
     }
     else
     {
-        menu->color1 = COLOR_TRANSPARENT_WHITE;
-        menu->color2 = COLOR_WHITE;
+        menu->unselectedColor = COLOR_TRANSPARENT_WHITE;
+        menu->selectedColor = COLOR_WHITE;
     }
     menu->minimumOpacity = 0;
     menu->menuTextColor = 0x40000000;

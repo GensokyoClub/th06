@@ -117,10 +117,7 @@ const char *g_CharacterList[] = {
 #pragma var_order(scoresAmount, nextNode)
 static i32 LinkScore(ScoreListNode *prevNode, Hscr *newScore)
 {
-    i32 scoresAmount;
-    ScoreListNode *nextNode;
-
-    scoresAmount = 0;
+    i32 scoresAmount = 0;
     while (prevNode->next != NULL)
     {
         if (prevNode->next->data != NULL && prevNode->next->data->score <= newScore->score)
@@ -130,8 +127,8 @@ static i32 LinkScore(ScoreListNode *prevNode, Hscr *newScore)
         prevNode = prevNode->next;
         scoresAmount++;
     }
-    nextNode = prevNode->next;
 
+    ScoreListNode *nextNode = prevNode->next;
     prevNode->next = ZUN_ALLOC_TYPE(ScoreListNode);
     prevNode->next->prev = prevNode;
     prevNode = prevNode->next;
@@ -419,7 +416,7 @@ ZunResult ParsePscr(ScoreDat *scoreDat, Pscr *outClrd)
                 pscr->stage >= PSCR_NUM_STAGES + 1)
                 break;
 
-            outClrd[pscr->character * 6 * 4 + pscr->stage * 4 + pscr->difficulty] = *pscr;
+            outClrd[pscr->character * PSCR_NUM_STAGES * SHOTTYPE_COUNT + pscr->stage * PSCR_NUM_DIFFICULTIES + pscr->difficulty] = *pscr;
         }
         cursor -= parsedPscr->base.th6kLen;
         parsedPscr = (Pscr *)((u8 *)parsedPscr + parsedPscr->base.th6kLen);
@@ -881,6 +878,7 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
         {
             break;
         }
+        // TODO: Derive 7 from CATK_COUNT
         if (MoveResultCursorHorizontally(resultScreen, 7))
         {
             resultScreen->frameTimer = 0;
@@ -1028,6 +1026,7 @@ i32 ResultScreen::HandleResultKeyboard()
     {
     left_press_skip_spaces:
         this->selectedCharacter--;
+
         if (this->selectedCharacter % RESULT_KEYBOARD_COLUMNS == RESULT_KEYBOARD_COLUMNS - 1)
         {
             this->selectedCharacter += RESULT_KEYBOARD_COLUMNS;
@@ -1356,6 +1355,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
         {
         left_press_skip_spaces:
             this->selectedCharacter--;
+
             if (this->selectedCharacter % RESULT_KEYBOARD_COLUMNS == RESULT_KEYBOARD_COLUMNS - 1)
             {
                 this->selectedCharacter += RESULT_KEYBOARD_COLUMNS;
@@ -1376,6 +1376,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
         {
         right_press_skip_spaces:
             this->selectedCharacter++;
+
             if (this->selectedCharacter % RESULT_KEYBOARD_COLUMNS == 0)
             {
                 this->selectedCharacter -= RESULT_KEYBOARD_COLUMNS;
@@ -1414,8 +1415,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
             }
             if (this->cursor < MAX_NAME_LENGTH)
             {
-                this->cursor++;
-                if (this->cursor == MAX_NAME_LENGTH)
+                if (++this->cursor == MAX_NAME_LENGTH)
                 {
                     this->selectedCharacter = RESULT_KEYBOARD_END;
                 }
@@ -1489,8 +1489,7 @@ static void MoveResultCursor(ResultScreen *resultScreen, i32 length)
 {
     if (WAS_PRESSED_REPEATING(TH_BUTTON_UP))
     {
-        resultScreen->cursor--;
-        if (resultScreen->cursor < 0)
+        if (--resultScreen->cursor < 0)
         {
             resultScreen->cursor += length;
         }
@@ -1498,8 +1497,7 @@ static void MoveResultCursor(ResultScreen *resultScreen, i32 length)
     }
     if (WAS_PRESSED_REPEATING(TH_BUTTON_DOWN))
     {
-        resultScreen->cursor++;
-        if (resultScreen->cursor >= length)
+        if (++resultScreen->cursor >= length)
         {
             resultScreen->cursor -= length;
         }
@@ -1511,8 +1509,7 @@ static ZunBool MoveResultCursorHorizontally(ResultScreen *resultScreen, i32 leng
 {
     if (WAS_PRESSED_REPEATING(TH_BUTTON_LEFT))
     {
-        resultScreen->cursor--;
-        if (resultScreen->cursor < 0)
+        if (--resultScreen->cursor < 0)
         {
             resultScreen->cursor += length;
         }
@@ -1521,8 +1518,7 @@ static ZunBool MoveResultCursorHorizontally(ResultScreen *resultScreen, i32 leng
     }
     else if (WAS_PRESSED_REPEATING(TH_BUTTON_RIGHT))
     {
-        resultScreen->cursor++;
-        if (resultScreen->cursor >= length)
+        if (++resultScreen->cursor >= length)
         {
             resultScreen->cursor -= length;
         }
@@ -1950,11 +1946,11 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
                 {
                     if (column == 14)
                     {
-                        keyboardCharacter[0] = 0x80; // SP
+                        keyboardCharacter[0] = 128; // SP
                     }
                     else if (column == 15)
                     {
-                        keyboardCharacter[0] = 0x81; // END
+                        keyboardCharacter[0] = 129; // END
                     }
                 }
 

@@ -685,8 +685,7 @@ ZunResult GuiImpl::RunMsg()
             this->songNameSprite.fontWidth = DEFAULT_ANM_FONT_SIZE + 1;
             this->songNameSprite.fontHeight = DEFAULT_ANM_FONT_SIZE + 1;
             g_AnmManager->DrawStringFormat(&this->songNameSprite, COLOR_RGB(COLOR_LIGHTCYAN), COLOR_RGB(COLOR_BLACK),
-                                           TH_SONG_NAME,
-                                           g_Stage.stdData->songNames[this->msg.currentInstr->args[0]]);
+                                           TH_SONG_NAME, g_Stage.stdData->songNames[this->msg.currentInstr->args[0]]);
             if (g_Supervisor.PlayMidiFile(this->msg.currentInstr->args[0]))
             {
                 g_Supervisor.PlayAudio(g_Stage.stdData->songPaths[this->msg.currentInstr->args[0]]);

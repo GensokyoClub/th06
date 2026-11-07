@@ -31,7 +31,7 @@ struct MsgRawInstr
     u16 time;
     u8 opcode;
     u8 argSize;
-    u8 args[];
+    i32 args[];
 };
 ZUN_ASSERT_SIZE(MsgRawInstr, 0x4);
 
@@ -604,7 +604,7 @@ void GuiImpl::MsgRead(i32 msgIdx)
 
 ZunResult GuiImpl::RunMsg()
 {
-    u8 *args;
+    void *args;
 
     if (this->msg.currentMsgIdx < 0)
     {
@@ -657,7 +657,7 @@ ZunResult GuiImpl::RunMsg()
             {
                 if (!WAS_PRESSED(TH_BUTTON_SHOOT) || this->msg.framesElapsedDuringPause < 8)
                 {
-                    if (this->msg.framesElapsedDuringPause >= *(i32 *)this->msg.currentInstr->args)
+                    if (this->msg.framesElapsedDuringPause >= this->msg.currentInstr->args[0])
                     {
                         break;
                     }
@@ -686,10 +686,10 @@ ZunResult GuiImpl::RunMsg()
             this->songNameSprite.fontHeight = DEFAULT_ANM_FONT_SIZE + 1;
             g_AnmManager->DrawStringFormat(&this->songNameSprite, COLOR_RGB(COLOR_LIGHTCYAN), COLOR_RGB(COLOR_BLACK),
                                            TH_SONG_NAME,
-                                           g_Stage.stdData->songNames[*(i32 *)this->msg.currentInstr->args]);
-            if (g_Supervisor.PlayMidiFile(*(i32 *)this->msg.currentInstr->args))
+                                           g_Stage.stdData->songNames[this->msg.currentInstr->args[0]]);
+            if (g_Supervisor.PlayMidiFile(this->msg.currentInstr->args[0]))
             {
-                g_Supervisor.PlayAudio(g_Stage.stdData->songPaths[*(i32 *)this->msg.currentInstr->args]);
+                g_Supervisor.PlayAudio(g_Stage.stdData->songPaths[this->msg.currentInstr->args[0]]);
             }
             break;
         case MSG_OPCODE_TEXT_INTRO:
@@ -762,10 +762,10 @@ ZunResult GuiImpl::RunMsg()
             }
             goto break_skip_time;
         case MSG_OPCODE_MSG_FLAG_WAIT_SKIPPABLE:
-            this->msg.dialogueSkippable = *(i32 *)this->msg.currentInstr->args;
+            this->msg.dialogueSkippable = this->msg.currentInstr->args[0];
             break;
         }
-        this->msg.currentInstr = (MsgRawInstr *)((u32)this->msg.currentInstr->args + this->msg.currentInstr->argSize);
+        this->msg.currentInstr = (MsgRawInstr *)((u32)(this->msg.currentInstr + 1) + this->msg.currentInstr->argSize);
     }
     this->msg.scriptTimer++;
 break_skip_time:

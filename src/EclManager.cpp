@@ -842,13 +842,13 @@ restart_sub_changed:
             g_Gui.ShowSpellcard(GET_INSTR_SHORT_ARG(0), GET_INSTR_STRING_ARG(4));
             g_EnemyManager.spellcardInfo.isCapturing = true;
             g_EnemyManager.spellcardInfo.isActive = 1;
-            g_EnemyManager.spellcardInfo.idx = GET_INSTR_SHORT_ARG(1);
-            g_EnemyManager.spellcardInfo.captureScore = g_SpellcardScore[g_EnemyManager.spellcardInfo.idx];
+            g_EnemyManager.spellcardInfo.id = GET_INSTR_SHORT_ARG(1);
+            g_EnemyManager.spellcardInfo.captureScore = g_SpellcardScore[g_EnemyManager.spellcardInfo.id];
             g_BulletManager.TurnAllBulletsIntoPoints();
             g_Stage.spellcardState = RUNNING;
             g_Stage.ticksSinceSpellcardStarted = 0;
             enemy->ResetRank();
-            Catk *catk = &g_GameManager.catk[g_EnemyManager.spellcardInfo.idx];
+            Catk *catk = &g_GameManager.catk[g_EnemyManager.spellcardInfo.id];
             i32 csum = 0;
             i32 length;
 #if BUILT_SINCE(100)
@@ -886,7 +886,7 @@ restart_sub_changed:
                     if (g_EnemyManager.spellcardInfo.isCapturing)
                     {
                         i32 idx;
-                        Catk *catk = &g_GameManager.catk[g_EnemyManager.spellcardInfo.idx];
+                        Catk *catk = &g_GameManager.catk[g_EnemyManager.spellcardInfo.id];
                         i32 score = g_EnemyManager.spellcardInfo.captureScore >= 500000
                                         ? 500000 / 10
                                         : g_EnemyManager.spellcardInfo.captureScore / 10;

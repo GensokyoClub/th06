@@ -729,7 +729,7 @@ static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
         {
             if (curEnemyVm->anmFileIndex >= 0)
             {
-                if (curEnemyVm->autoRotate != 0)
+                if (curEnemyVm->autoRotate != AnmAutoRotate_Off)
                 {
                     curEnemyVm->rotation.z = curEnemy->angle;
                 }
@@ -749,7 +749,7 @@ static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
         {
             if (curEnemyVm->anmFileIndex >= 0)
             {
-                if (curEnemyVm->autoRotate != 0)
+                if (curEnemyVm->autoRotate != AnmAutoRotate_Off)
                 {
                     curEnemyVm->rotation.z = curEnemy->angle;
                 }

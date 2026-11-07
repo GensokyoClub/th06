@@ -601,7 +601,7 @@ ZunResult Stage::RenderObjects(i32 zLevel)
                     {
                         curQuadVm->scaleY = curQuad->size.y / curQuadVm->sprite->heightPx;
                     }
-                    if (curQuadVm->autoRotate == 2)
+                    if (curQuadVm->autoRotate == AnmAutoRotate_Billboard)
                     {
                         float quadWidth;
                         if (curQuad->size.x != 0.0f)

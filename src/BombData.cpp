@@ -30,7 +30,7 @@ void BombReimuACalc(Player *player)
     {
         g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT, TH_REIMU_A_BOMB_NAME);
         player->bombInfo.duration = 300;
-        player->invulnerabilityTimer = 360;
+        player->stateTimer = 360;
 
         for (i = 0; i < 8; i++)
         {
@@ -270,7 +270,7 @@ void BombReimuBCalc(Player *player)
         g_ItemManager.MagnetAllItems();
         g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT, TH_REIMU_B_BOMB_NAME);
         player->bombInfo.duration = 140;
-        player->invulnerabilityTimer = 200;
+        player->stateTimer = 200;
         bombSprite = player->bombInfo.sprites[0];
 
         for (i = 0; i < 4; i++, bombSprite++)
@@ -364,7 +364,7 @@ void BombMarisaACalc(Player *player)
         g_ItemManager.MagnetAllItems();
         g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT, TH_MARISA_A_BOMB_NAME);
         player->bombInfo.duration = 250;
-        player->invulnerabilityTimer = 300;
+        player->stateTimer = 300;
 
         starSprite = player->bombInfo.sprites[0];
         for (i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.sprites); i++, starSprite++)
@@ -465,7 +465,7 @@ void BombMarisaBCalc(Player *player)
         g_ItemManager.MagnetAllItems();
         g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT, TH_MARISA_B_BOMB_NAME);
         player->bombInfo.duration = 300;
-        player->invulnerabilityTimer = 360;
+        player->stateTimer = 360;
         bombSprite = player->bombInfo.sprites[0];
         for (i = 0; i < 4; i++, bombSprite++)
         {

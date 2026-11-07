@@ -1115,7 +1115,7 @@ static void DrawBullet(Bullet *bullet)
     anmVm->pos.z = 0.0f;
     anmVm->color = COLOR_COMBINE_ALPHA(COLOR_WHITE, anmVm->color);
 
-    if (anmVm->autoRotate != 0)
+    if (anmVm->autoRotate != AnmAutoRotate_Off)
     {
         anmVm->rotation.z = ZUN_HALF_PI - bullet->angle;
     }
@@ -1151,7 +1151,7 @@ static void DrawBulletNoHwVertex(Bullet *bullet)
     anmVm->pos[2] = 0.0f;
     anmVm->color = COLOR_COMBINE_ALPHA(COLOR_WHITE, anmVm->color);
 
-    if (anmVm->autoRotate != 0)
+    if (anmVm->autoRotate != AnmAutoRotate_Off)
     {
         anmVm->rotation.z = ZUN_HALF_PI - bullet->angle;
     }

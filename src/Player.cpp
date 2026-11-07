@@ -304,7 +304,7 @@ static void DrawBullets(Player *p)
         {
             continue;
         }
-        if (bullet->sprite.autoRotate)
+        if (bullet->sprite.autoRotate != AnmAutoRotate_Off)
         {
             bullet->sprite.rotation.z = RADIANS(90.0f) - ReduceAngleAdd(bullet->angle, RADIANS(180.0f));
         }
@@ -323,7 +323,7 @@ static void DrawBulletExplosions(Player *p)
         {
             continue;
         }
-        if (bullet->sprite.autoRotate)
+        if (bullet->sprite.autoRotate != AnmAutoRotate_Off)
         {
             bullet->sprite.rotation.z = RADIANS(90.0f) - ReduceAngleAdd(bullet->angle, RADIANS(180.0f));
         }
@@ -695,7 +695,7 @@ void Player::Die()
     g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &this->positionCenter, 1, COLOR_NEONBLUE);
     g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_6, &this->positionCenter, 16, COLOR_WHITE);
     this->playerState = PLAYER_STATE_DEAD;
-    this->invulnerabilityTimer = 0;
+    this->stateTimer = 0;
     g_SoundPlayer.PlaySoundByIdx(SOUND_PICHUN);
     g_GameManager.deaths++;
     for (i32 i = 0; i < ARRAY_SIZE_SIGNED(this->laserTimer); i++)
@@ -1092,21 +1092,21 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
         }
         else
         {
-            float scaleFactor = (f32)p->invulnerabilityTimer / 30.0f;
+            float scaleFactor = (f32)p->stateTimer / 30.0f;
             p->playerSprite.scaleY = 3.0f * scaleFactor + 1.0f;
             p->playerSprite.scaleX = 1.0f - 1.0f * scaleFactor;
             p->playerSprite.color =
-                COLOR_SET_ALPHA(COLOR_WHITE, (u32)(255.0f - (f32)p->invulnerabilityTimer * 255.0f / 30.0f));
+                COLOR_SET_ALPHA(COLOR_WHITE, (u32)(255.0f - (f32)p->stateTimer * 255.0f / 30.0f));
             p->playerSprite.flags.blendMode = AnmBlendMode_Additive;
             p->previousSpeed.x = 0.0f;
             p->previousSpeed.y = 0.0f;
-            if ((i32)p->invulnerabilityTimer >= 30)
+            if ((i32)p->stateTimer >= 30)
             {
                 p->playerState = PLAYER_STATE_SPAWNING;
                 p->positionCenter[0] = g_GameManager.gameRegionSize.x / 2.0f;
                 p->positionCenter[1] = g_GameManager.gameRegionSize.y - 64.0f;
                 p->positionCenter[2] = 0.2f;
-                p->invulnerabilityTimer = 0;
+                p->stateTimer = 0;
                 p->playerSprite.scaleY = p->playerSprite.scaleX = 3.0f;
                 g_AnmManager->SetAndExecuteScriptIdx(&p->playerSprite, ANM_SCRIPT_PLAYER_IDLE);
                 if (g_GameManager.livesRemaining <= 0)
@@ -1139,20 +1139,20 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
     {
     spawning:
         p->bulletGracePeriod = 90;
-        float scaleFactor = 1.0f - (f32)p->invulnerabilityTimer / 30.0f;
+        float scaleFactor = 1.0f - (f32)p->stateTimer / 30.0f;
         p->playerSprite.scaleY = 2.0f * scaleFactor + 1.0f;
         p->playerSprite.scaleX = 1.0f - 1.0f * scaleFactor;
         p->playerSprite.flags.blendMode = AnmBlendMode_Additive;
         p->speedMultiplierDuringBomb.x = p->speedMultiplierDuringBomb.y = 1.0f;
-        p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, (i32)p->invulnerabilityTimer * 255 / 30);
+        p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, (i32)p->stateTimer * 255 / 30);
         p->respawnTimer = 0;
-        if ((i32)p->invulnerabilityTimer >= 30)
+        if ((i32)p->stateTimer >= 30)
         {
             p->playerState = PLAYER_STATE_INVULNERABLE;
             p->playerSprite.scaleY = p->playerSprite.scaleX = 1.0f;
             p->playerSprite.color = COLOR_WHITE;
             p->playerSprite.flags.blendMode = AnmBlendMode_Normal;
-            p->invulnerabilityTimer = 240;
+            p->stateTimer = 240;
             p->respawnTimer = 6;
         }
     }
@@ -1163,15 +1163,15 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
     }
     if (p->playerState == PLAYER_STATE_INVULNERABLE)
     {
-        p->invulnerabilityTimer--;
-        if ((i32)p->invulnerabilityTimer <= 0)
+        p->stateTimer--;
+        if ((i32)p->stateTimer <= 0)
         {
             p->playerState = PLAYER_STATE_ALIVE;
-            p->invulnerabilityTimer = 0;
+            p->stateTimer = 0;
             p->playerSprite.flags.colorOp = AnmColorOp_Modulate;
             p->playerSprite.color = COLOR_WHITE;
         }
-        else if ((i32)p->invulnerabilityTimer % 8 < 2)
+        else if ((i32)p->stateTimer % 8 < 2)
         {
             p->playerSprite.flags.colorOp = AnmColorOp_Add;
             p->playerSprite.color = 0xff404040;
@@ -1184,7 +1184,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
     }
     else
     {
-        p->invulnerabilityTimer++;
+        p->stateTimer++;
     }
     if (p->playerState != PLAYER_STATE_DEAD && p->playerState != PLAYER_STATE_SPAWNING)
     {
@@ -1313,7 +1313,7 @@ static ZunResult Player_AddedCallback(Player *p)
     p->fireBulletCallback = p->characterData.fireBulletCallback;
     p->fireBulletFocusCallback = p->characterData.fireBulletFocusCallback;
     p->playerState = PLAYER_STATE_SPAWNING;
-    p->invulnerabilityTimer = 120;
+    p->stateTimer = 120;
     p->orbState = ORB_HIDDEN;
     g_AnmManager->SetAndExecuteScriptIdx(&p->orbsSprite[0], ANM_SCRIPT_PLAYER_ORB_LEFT);
     g_AnmManager->SetAndExecuteScriptIdx(&p->orbsSprite[1], ANM_SCRIPT_PLAYER_ORB_RIGHT);
@@ -1348,7 +1348,7 @@ ZunResult Player_RegisterChain(u8 unk)
     Player *p = &g_Player;
     memset(p, 0, sizeof(Player));
 
-    p->invulnerabilityTimer = 0;
+    p->stateTimer = 0;
     p->unk_9e1 = unk;
     p->chainCalc = g_FuncChain.CreateElem((ChainCallback)Player_OnUpdate);
     p->chainDraw1 = g_FuncChain.CreateElem((ChainCallback)Player_OnDrawHighPrio);

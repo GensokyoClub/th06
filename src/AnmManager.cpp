@@ -551,7 +551,7 @@ ZunResult AnmManager::DrawInner(AnmVm *vm, ZunBool roundVertices)
     }
 #endif
     // 1.00 only sets the vertex shader when the sprite changes.
-    if (this->currentVertexShader != AnmVertexShader_2)
+    if (this->currentVertexShader != AnmVertexShader_SpriteVertex)
     {
         if (!g_Supervisor.IsVertexBufferDisabled())
         {
@@ -561,7 +561,7 @@ ZunResult AnmManager::DrawInner(AnmVm *vm, ZunBool roundVertices)
         {
             g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZRHW);
         }
-        this->currentVertexShader = AnmVertexShader_2;
+        this->currentVertexShader = AnmVertexShader_SpriteVertex;
     }
 #if BUILT_BEFORE(101)
     }
@@ -844,7 +844,7 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
 #endif
 
     // Set vertex shader to TEX1 | XYZ (1.00 only does this when the sprite changes)
-    if (this->currentVertexShader != AnmVertexShader_3)
+    if (this->currentVertexShader != AnmVertexShader_RenderVertexInfo)
     {
         if (!g_Supervisor.IsVertexBufferDisabled())
         {
@@ -855,7 +855,7 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
         {
             g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZ);
         }
-        this->currentVertexShader = AnmVertexShader_3;
+        this->currentVertexShader = AnmVertexShader_RenderVertexInfo;
     }
 #if BUILT_BEFORE(101)
     }
@@ -934,7 +934,7 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
             this->currentTexture = this->textures[vm->sprite->sourceFileIndex];
             g_Supervisor.d3dDevice->SetTexture(0, this->currentTexture);
         }
-        if (this->currentVertexShader != AnmVertexShader_3)
+        if (this->currentVertexShader != AnmVertexShader_RenderVertexInfo)
         {
             if (!g_Supervisor.IsVertexBufferDisabled())
             {
@@ -945,7 +945,7 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
             {
                 g_Supervisor.d3dDevice->SetVertexShader(D3DFVF_TEX1 | D3DFVF_DIFFUSE | D3DFVF_XYZ);
             }
-            this->currentVertexShader = AnmVertexShader_3;
+            this->currentVertexShader = AnmVertexShader_RenderVertexInfo;
         }
     }
     this->SetRenderStateForVm(vm);

@@ -133,10 +133,17 @@ enum AnmVmInterpMode
 enum AnmVertexShader
 {
     AnmVertexShader_NotSet = -1,
-    AnmVertexShader_0,
-    AnmVertexShader_1,
-    AnmVertexShader_2,
-    AnmVertexShader_3,
+    AnmVertexShader_0, // Set in constructor, not used after. Means none maybe?
+    AnmVertexShader_1, // Never referenced?
+    AnmVertexShader_SpriteVertex,
+    AnmVertexShader_RenderVertexInfo,
+};
+
+enum AnmAutoRotate
+{
+    AnmAutoRotate_Off = 0,
+    AnmAutoRotate_On = 1,
+    AnmAutoRotate_Billboard = 2
 };
 
 union AnmVmFlags {
@@ -173,7 +180,7 @@ struct AnmVmBase
         this->color = COLOR_WHITE;
         D3DXMatrixIdentity(&this->matrix);
         this->flags.flags = AnmVmFlags_Visible | AnmVmFlags_VisibleOverride;
-        this->autoRotate = 0;
+        this->autoRotate = AnmAutoRotate_Off;
         this->pendingInterrupt = 0;
         this->posInterpDuration = 0;
         this->scriptTime.Initialize();
@@ -192,7 +199,7 @@ struct AnmVmBase
     AnmVmFlags flags;
     i16 alphaInterpDuration;
     i16 scaleInterpDuration;
-    i16 autoRotate;
+    i16 autoRotate; // This isn't a bool/flag because it's multipurposed for STD
     i16 pendingInterrupt;
     i16 posInterpDuration;
     alignment_padding(0x2);

@@ -217,7 +217,7 @@ struct Player
     D3DXVECTOR3 positionOfLastEnemyHit;
     PlayerBullet bullets[MAX_PLAYER_BULLETS];
     ZunTimer fireBulletTimer;
-    ZunTimer invulnerabilityTimer;
+    ZunTimer stateTimer;
     FireBulletCallback fireBulletCallback;
     FireBulletCallback fireBulletFocusCallback;
     PlayerBombInfo bombInfo;

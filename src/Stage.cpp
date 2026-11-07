@@ -185,13 +185,13 @@ ChainCallbackResult Stage_OnUpdate(Stage *stage)
             stage->scriptTime++;
         }
         stage->UpdateObjects();
-        if (stage->spellcardState >= RUNNING)
+        if (stage->spellcardState >= SPELL_STATE_FADING_IN)
         {
-            if (stage->ticksSinceSpellcardStarted == 60)
+            if (stage->spellcardTicks == SPELL_BACKGROUND_FADE_IN_DURATION)
             {
-                stage->spellcardState++;
+                stage->spellcardState++; // SPELL_STATE_ACTIVE
             }
-            stage->ticksSinceSpellcardStarted++;
+            stage->spellcardTicks++;
             g_AnmManager->ExecuteScript(&stage->spellcardBackground);
         }
         return CHAIN_CALLBACK_RESULT_CONTINUE;
@@ -207,7 +207,10 @@ ChainCallbackResult Stage_OnDrawHighPrio(Stage *stage)
     }
     g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGSTART, *(DWORD *)&stage->sky.nearPlane);
     g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGEND, *(DWORD *)&stage->sky.farPlane);
-    if (stage->spellcardState <= RUNNING)
+    
+    // Stop rendering the background once a spell background
+    // has finished fading in since it wouldn't be visible anyway
+    if (stage->spellcardState <= SPELL_STATE_FADING_IN)
     {
         if (!g_Gui.IsStageFinished())
         {
@@ -220,29 +223,33 @@ ChainCallbackResult Stage_OnDrawHighPrio(Stage *stage)
 
 ChainCallbackResult Stage_OnDrawLowPrio(Stage *stage)
 {
-    if (stage->spellcardState <= RUNNING)
+    // Stop rendering the background once a spell background
+    // has finished fading in since it wouldn't be visible anyway
+    if (stage->spellcardState <= SPELL_STATE_FADING_IN)
     {
         if (!g_Gui.IsStageFinished())
         {
             stage->RenderObjects(2);
             stage->RenderObjects(3);
 
-            i32 stageToSpellcardBackgroundAlpha;
-            if (stage->spellcardState == RUNNING)
+            i32 spellBackgroundAlpha;
+            if (stage->spellcardState == SPELL_STATE_FADING_IN)
             {
                 ZunRect gameRegion;
                 gameRegion.left = GAME_REGION_POS_X;
                 gameRegion.top = GAME_REGION_POS_Y;
                 gameRegion.right = GAME_REGION_POS_RIGHT;
                 gameRegion.bottom = GAME_REGION_POS_BOTTOM;
-                stageToSpellcardBackgroundAlpha = (stage->ticksSinceSpellcardStarted * 255) / 60;
-                ScreenEffect_DrawSquare(&gameRegion, COLOR_SET_ALPHA(COLOR_BLACK, stageToSpellcardBackgroundAlpha));
+                spellBackgroundAlpha = (stage->spellcardTicks * 255) / SPELL_BACKGROUND_FADE_IN_DURATION;
+                ScreenEffect_DrawSquare(&gameRegion, COLOR_SET_ALPHA(COLOR_BLACK, spellBackgroundAlpha));
             }
         }
     }
-    if (stage->spellcardState >= RUNNING)
+    if (stage->spellcardState >= SPELL_STATE_FADING_IN)
     {
-        if (stage->ticksSinceSpellcardStarted <= g_Supervisor.cfg.frameskipConfig)
+        // Why does this need to check the frameskip like
+        // this, won't that just restart the script?
+        if (stage->spellcardTicks <= g_Supervisor.cfg.frameskipConfig)
         {
             g_AnmManager->SetAndExecuteScriptIdx(&stage->spellcardBackground, ANM_SCRIPT_EFFECTS_SPELLCARD_BACKGROUND);
         }
@@ -279,7 +286,7 @@ ZunResult Stage_AddedCallback(Stage *stage)
     stage->position.x = 0.0f;
     stage->position.y = 0.0f;
     stage->position.z = 0.0f;
-    stage->spellcardState = NOT_RUNNING;
+    stage->spellcardState = SPELL_STATE_NOT_ACTIVE;
     stage->skyInterpDuration = 0;
 
     if (stage->LoadStageData(g_StageFiles[g_GameManager.currentStage].anmFile,

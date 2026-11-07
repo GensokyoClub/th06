@@ -590,7 +590,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                     else
                     {
                         // Bombs used before a spell starts do no damage during spells
-                        // BUG?: This negates all non-bomb damage simultaneously
+                        // BUG(?): This negates all non-bomb damage simultaneously
                         damage = 0;
                     }
                 }

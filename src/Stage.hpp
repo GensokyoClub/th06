@@ -70,10 +70,12 @@ ZUN_ASSERT_TYPE(StageSky, 0xc, 4);
 
 enum SpellcardState
 {
-    NOT_RUNNING,
-    RUNNING,
-    RAN_FOR_60_FRAMES
+    SPELL_STATE_NOT_ACTIVE,
+    SPELL_STATE_FADING_IN,
+    SPELL_STATE_ACTIVE
 };
+
+#define SPELL_BACKGROUND_FADE_IN_DURATION 60
 
 struct StageFile
 {
@@ -118,7 +120,7 @@ struct Stage
     i8 skyNeedsSetup;
     alignment_padding(0x3);
     i32 spellcardState;
-    i32 ticksSinceSpellcardStarted;
+    i32 spellcardTicks;
     AnmVm spellcardBackground;
     unused_field(AnmVm);
     u8 unpauseFlag;

@@ -845,8 +845,8 @@ restart_sub_changed:
             g_EnemyManager.spellcardInfo.id = GET_INSTR_SHORT_ARG(1);
             g_EnemyManager.spellcardInfo.captureScore = g_SpellcardScore[g_EnemyManager.spellcardInfo.id];
             g_BulletManager.TurnAllBulletsIntoPoints();
-            g_Stage.spellcardState = RUNNING;
-            g_Stage.ticksSinceSpellcardStarted = 0;
+            g_Stage.spellcardState = SPELL_STATE_FADING_IN;
+            g_Stage.spellcardTicks = 0;
             enemy->ResetRank();
             Catk *catk = &g_GameManager.catk[g_EnemyManager.spellcardInfo.id];
             i32 csum = 0;
@@ -912,7 +912,7 @@ restart_sub_changed:
                 }
                 g_EnemyManager.spellcardInfo.ticksActive = 0;
             }
-            g_Stage.spellcardState = NOT_RUNNING;
+            g_Stage.spellcardState = SPELL_STATE_NOT_ACTIVE;
             break;
         case ECL_OPCODE_PHASE_TIMER_SET:
             enemy->phaseTimer = GET_INSTR_INT_ARG(0);

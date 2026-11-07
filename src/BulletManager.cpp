@@ -407,7 +407,7 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
 }
 
 #pragma var_order(itemPos, i, sine, bullet, laser, cosine)
-void BulletManager::RemoveAllBullets(ZunBool turnIntoItem)
+void BulletManager::DespawnBullets(ZunBool spawnCancelItems)
 {
     i32 i;
     f32 sine;
@@ -422,9 +422,9 @@ void BulletManager::RemoveAllBullets(ZunBool turnIntoItem)
             continue;
         }
 
-        if (turnIntoItem)
+        if (spawnCancelItems)
         {
-            g_ItemManager.SpawnItem(&bullet->pos, ITEM_POINT_BULLET, ITEM_STATE_MAGNETED);
+            g_ItemManager.SpawnItem(&bullet->pos, ITEM_STAR, ITEM_STATE_MAGNETED);
             memset(bullet, 0, sizeof(Bullet));
         }
         else
@@ -446,7 +446,7 @@ void BulletManager::RemoveAllBullets(ZunBool turnIntoItem)
             laser->state = LASER_STATE_DESPAWNING;
             laser->timer = 0;
 
-            if (turnIntoItem)
+            if (spawnCancelItems)
             {
                 float offset = laser->startOffset;
                 fsincos_wrapper(&sine, &cosine, laser->angle);
@@ -456,7 +456,7 @@ void BulletManager::RemoveAllBullets(ZunBool turnIntoItem)
                     itemPos.x = cosine * offset + laser->pos.x;
                     itemPos.y = sine * offset + laser->pos.y;
                     itemPos.z = 0.0f;
-                    g_ItemManager.SpawnItem(&itemPos, ITEM_POINT_BULLET, ITEM_STATE_MAGNETED);
+                    g_ItemManager.SpawnItem(&itemPos, ITEM_STAR, ITEM_STATE_MAGNETED);
                     offset += 32.0f;
                 }
             }
@@ -466,13 +466,13 @@ void BulletManager::RemoveAllBullets(ZunBool turnIntoItem)
     }
 }
 
-void BulletManager::TurnAllBulletsIntoPoints()
+void BulletManager::CancelAllBullets()
 {
-    this->RemoveAllBullets(true);
+    this->DespawnBullets(BULLET_CANCEL);
 }
 
 #pragma var_order(bulletScore, totalBonusScore, awardedBullets, i, sine, bullet, itemPos, laser, cosine)
-i32 BulletManager::DespawnBullets(i32 maxBonusScore, ZunBool awardPoints)
+i32 BulletManager::DespawnBulletsForPoints(i32 maxBonusScore, ZunBool spawnCancelItems)
 {
     i32 i;
     f32 sine;
@@ -491,9 +491,9 @@ i32 BulletManager::DespawnBullets(i32 maxBonusScore, ZunBool awardPoints)
             continue;
         }
 
-        if (awardPoints)
+        if (spawnCancelItems)
         {
-            g_ItemManager.SpawnItem(&bullet->pos, ITEM_POINT_BULLET, ITEM_STATE_MAGNETED);
+            g_ItemManager.SpawnItem(&bullet->pos, ITEM_STAR, ITEM_STATE_MAGNETED);
         }
 
         g_AsciiManager.CreatePopup1(&bullet->pos, bulletScore,
@@ -524,13 +524,13 @@ i32 BulletManager::DespawnBullets(i32 maxBonusScore, ZunBool awardPoints)
             laser->state = LASER_STATE_DESPAWNING;
             laser->timer = 0;
 
-            if (awardPoints)
+            if (spawnCancelItems)
             {
 #if BUILT_SINCE(101)
-                g_ItemManager.SpawnItem(&laser->pos, ITEM_POINT_BULLET, ITEM_STATE_MAGNETED);
+                g_ItemManager.SpawnItem(&laser->pos, ITEM_STAR, ITEM_STATE_MAGNETED);
 #else
                 // 1.00 bug: the laser's item spawns at the last bullet visited by the loop above.
-                g_ItemManager.SpawnItem(&bullet->pos, ITEM_POINT_BULLET, ITEM_STATE_MAGNETED);
+                g_ItemManager.SpawnItem(&bullet->pos, ITEM_STAR, ITEM_STATE_MAGNETED);
 #endif
                 float offset = laser->startOffset;
                 fsincos_wrapper(&sine, &cosine, laser->angle);
@@ -540,7 +540,7 @@ i32 BulletManager::DespawnBullets(i32 maxBonusScore, ZunBool awardPoints)
                     itemPos.x = cosine * offset + laser->pos.x;
                     itemPos.y = sine * offset + laser->pos.y;
                     itemPos.z = 0.0f;
-                    g_ItemManager.SpawnItem(&itemPos, ITEM_POINT_BULLET, ITEM_STATE_MAGNETED);
+                    g_ItemManager.SpawnItem(&itemPos, ITEM_STAR, ITEM_STATE_MAGNETED);
                     offset += 32.0f;
                 }
             }
@@ -900,7 +900,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                 else if (checkResult == CANCELED_BY_BOMB)
                 {
                     curBullet->state = BULLET_STATE_DESPAWNING;
-                    g_ItemManager.SpawnItem(&curBullet->pos, ITEM_POINT_BULLET, ITEM_STATE_MAGNETED);
+                    g_ItemManager.SpawnItem(&curBullet->pos, ITEM_STAR, ITEM_STATE_MAGNETED);
                 }
             }
             else if (curBullet->isGrazed == TRUE)
@@ -912,7 +912,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                     curBullet->state = BULLET_STATE_DESPAWNING;
                     if (checkResult == COLLISION_GRAZE)
                     {
-                        g_ItemManager.SpawnItem(&curBullet->pos, ITEM_POINT_BULLET, ITEM_STATE_MAGNETED);
+                        g_ItemManager.SpawnItem(&curBullet->pos, ITEM_STAR, ITEM_STATE_MAGNETED);
                     }
                 }
             }

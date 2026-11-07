@@ -844,7 +844,7 @@ restart_sub_changed:
             g_EnemyManager.spellcardInfo.ticksActive = 1;
             g_EnemyManager.spellcardInfo.id = GET_INSTR_SHORT_ARG(1);
             g_EnemyManager.spellcardInfo.captureScore = g_SpellcardScore[g_EnemyManager.spellcardInfo.id];
-            g_BulletManager.TurnAllBulletsIntoPoints();
+            g_BulletManager.CancelAllBullets();
             g_Stage.spellcardState = SPELL_STATE_FADING_IN;
             g_Stage.spellcardTicks = 0;
             enemy->ResetRank();
@@ -881,7 +881,7 @@ restart_sub_changed:
                 g_Gui.EndEnemySpellcard();
                 if (g_EnemyManager.spellcardInfo.ticksActive == 1)
                 {
-                    i32 scoreIncrease = g_BulletManager.DespawnBullets(12800, true);
+                    i32 scoreIncrease = g_BulletManager.DespawnBulletsForPoints(12800, BULLET_CANCEL);
 #pragma var_order(catk, idx, score)
                     if (g_EnemyManager.spellcardInfo.isCapturing)
                     {
@@ -1022,7 +1022,7 @@ restart_sub_changed:
             enemy->vms[GET_INT_ARG(0)].pendingInterrupt = GET_INT_ARG(1);
             break;
         case ECL_OPCODE_BULLET_CANCEL:
-            g_BulletManager.TurnAllBulletsIntoPoints();
+            g_BulletManager.CancelAllBullets();
             break;
         case ECL_OPCODE_BULLET_SOUND:
             if (GET_INSTR_ARG(SoundIdx, 0) >= 0)

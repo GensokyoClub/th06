@@ -16,7 +16,7 @@ enum ItemType // This enum is 1 byte in size on Enemy
     ITEM_BOMB,
     ITEM_FULL_POWER,
     ITEM_LIFE,
-    ITEM_POINT_BULLET,
+    ITEM_STAR, // Spawned by cancels and grazing
 };
 
 enum ItemState

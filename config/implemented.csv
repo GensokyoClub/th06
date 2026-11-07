@@ -65,9 +65,9 @@ th06::BulletManager::OnUpdate
 th06::BulletManager::OnDraw
 th06::DrawBullet
 th06::DrawBulletNoHwVertex
-th06::BulletManager::RemoveAllBullets
 th06::BulletManager::DespawnBullets
-th06::BulletManager::TurnAllBulletsIntoPoints
+th06::BulletManager::DespawnBulletsForPoints
+th06::BulletManager::CancelAllBullets
 th06::BulletManager::SpawnLaserPattern
 th06::BulletManager::BulletManager
 th06::ChainElem::ChainElem

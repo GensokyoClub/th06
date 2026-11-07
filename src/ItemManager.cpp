@@ -179,7 +179,7 @@ void ItemManager::OnUpdate()
                     if (g_GameManager.currentPower >= MAX_POWER)
                     {
                         g_GameManager.currentPower = MAX_POWER;
-                        g_BulletManager.TurnAllBulletsIntoPoints();
+                        g_BulletManager.CancelAllBullets();
                         g_Gui.ShowFullPowerMode(0);
                     }
                     g_GameManager.AddScore(10);
@@ -264,7 +264,7 @@ void ItemManager::OnUpdate()
                     if (g_GameManager.currentPower >= MAX_POWER)
                     {
                         g_GameManager.currentPower = MAX_POWER;
-                        g_BulletManager.TurnAllBulletsIntoPoints();
+                        g_BulletManager.CancelAllBullets();
                         g_Gui.ShowFullPowerMode(0);
                     }
                     g_Gui.redrawFrames.powerGauge = 2;
@@ -304,7 +304,7 @@ void ItemManager::OnUpdate()
             case ITEM_FULL_POWER:
                 if (g_GameManager.currentPower < MAX_POWER)
                 {
-                    g_BulletManager.TurnAllBulletsIntoPoints();
+                    g_BulletManager.CancelAllBullets();
                     g_Gui.ShowFullPowerMode(0);
                     g_SoundPlayer.PlaySoundByIdx(SOUND_POWERUP);
                     g_AsciiManager.CreatePopup1(&curItem->currentPosition, -1, COLOR_BABY_BLUE);
@@ -314,7 +314,7 @@ void ItemManager::OnUpdate()
                 g_AsciiManager.CreatePopup1(&curItem->currentPosition, 1000, COLOR_WHITE);
                 g_Gui.redrawFrames.powerGauge = 2;
                 break;
-            case ITEM_POINT_BULLET:
+            case ITEM_STAR:
                 itemScore = (g_GameManager.grazeInStage / 3) * 10 + 500;
                 if (g_Player.bombInfo.isInUse)
                 {

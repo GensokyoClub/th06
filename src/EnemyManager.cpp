@@ -406,7 +406,7 @@ ZunBool Enemy::HandleTimerCallback()
             {
                 g_EnemyManager.spellcardInfo.ticksActive++;
             }
-            g_BulletManager.RemoveAllBullets(false);
+            g_BulletManager.DespawnBullets(BULLET_CLEAR);
         }
 
         Enemy *curEnemy = g_EnemyManager.enemies;
@@ -658,7 +658,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                     }
                     if (curEnemy->flags.isBoss && g_EnemyManager.spellcardInfo.ticksActive == 0)
                     {
-                        g_BulletManager.DespawnBullets(12800, false);
+                        g_BulletManager.DespawnBulletsForPoints(12800, BULLET_CLEAR);
                     }
                     curEnemy->life = 0;
                     break;

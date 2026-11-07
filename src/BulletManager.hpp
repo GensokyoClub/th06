@@ -209,25 +209,33 @@ struct Laser
 };
 ZUN_ASSERT_TYPE(Laser, 0x270, 4);
 
-#define NUM_ENEMY_BULLET_TYPES 16
+#define MAX_ENEMY_BULLET_TYPES 16
 #define MAX_ENEMY_BULLETS 640
 #define MAX_ENEMY_LASERS 64
+
+enum CancelType
+{
+    BULLET_CLEAR,
+    BULLET_CANCEL
+};
 
 struct BulletManager
 {
     BulletManager();
 
-    void RemoveAllBullets(ZunBool turnIntoItem);
+    void DespawnBullets(ZunBool spawnCancelItems);
     void InitializeToZero();
 
-    void TurnAllBulletsIntoPoints();
+    void CancelAllBullets();
 
-    i32 DespawnBullets(i32 maxBonusScore, ZunBool awardPoints);
+    // TODO: Better name
+    i32 DespawnBulletsForPoints(i32 maxBonusScore, ZunBool spawnCancelItems);
+
     ZunResult SpawnBulletPattern(EnemyShooter *bulletProps);
     Laser *SpawnLaserPattern(EnemyShooter *bulletProps);
     u32 SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, i32 bulletIdx2, f32 angle);
 
-    BulletTypeSprites bulletTypeTemplates[NUM_ENEMY_BULLET_TYPES];
+    BulletTypeSprites bulletTypeTemplates[MAX_ENEMY_BULLET_TYPES];
     Bullet bullets[MAX_ENEMY_BULLETS];
     Laser lasers[MAX_ENEMY_LASERS];
     i32 nextBulletIndex;

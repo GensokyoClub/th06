@@ -1158,7 +1158,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
     if (p->bulletGracePeriod != 0)
     {
         p->bulletGracePeriod--;
-        g_BulletManager.RemoveAllBullets(false);
+        g_BulletManager.DespawnBullets(BULLET_CLEAR);
     }
     if (p->playerState == PLAYER_STATE_INVULNERABLE)
     {

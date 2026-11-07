@@ -341,7 +341,7 @@ void EnemyManager::RunEclTimeline()
     }
     if (!g_Gui.IsMsgActive())
     {
-        g_GameManager.counat++;
+        g_GameManager.gameplayTicks++;
     }
 }
 

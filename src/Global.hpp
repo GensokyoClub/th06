@@ -308,7 +308,7 @@ class GameErrorContext
 
         if (m_BufferEnd != m_Buffer)
         {
-            this->Log(TH_ERR_LOGGER_END);
+            this->Log("---------------------------------------------------------- \n");
 
             if (m_ShowMessageBox)
             {

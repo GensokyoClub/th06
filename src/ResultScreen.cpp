@@ -1591,12 +1591,16 @@ u32 ResultScreen::DrawFinalStats()
         g_AsciiManager.SetColor(vm->color);
         rating = 0.0f;
 
+#define FULL_GAME_DURATION_NORMAL 89500.0f
 #if BUILT_SINCE(013)
-        completion = g_GameManager.difficulty < 4 ? g_GameManager.counat / 89500.0f : g_GameManager.counat / 39600.0f;
+#define FULL_GAME_DURATION_EXTRA 39600.0f
 #else
-        // Until 1.02c the Extra stage's completion divides by 36000.
-        completion = g_GameManager.difficulty < 4 ? g_GameManager.counat / 89500.0f : g_GameManager.counat / 36000.0f;
+// Until 1.02c the Extra stage's completion divides by 36000.
+#define FULL_GAME_DURATION_EXTRA 36000.0f
 #endif
+
+        completion = g_GameManager.difficulty < EXTRA ? g_GameManager.gameplayTicks / FULL_GAME_DURATION_NORMAL
+                                                      : g_GameManager.gameplayTicks / FULL_GAME_DURATION_EXTRA;
         strPos = vm->pos;
         strPos.x += 224.0f;
         strPos.y += 32.0f;
@@ -2170,7 +2174,7 @@ ZunResult ResultScreen_RegisterChain(i32 unk)
     ResultScreen *resultScreen;
     resultScreen = ZUN_NEW(ResultScreen);
 
-    DebugPrint(TH_DBG_RESULTSCREEN_COUNAT, g_GameManager.counat);
+    DebugPrint("counat = %d\n", g_GameManager.gameplayTicks);
 
     resultScreen->calcChain = g_FuncChain.CreateElem((ChainCallback)ResultScreen_OnUpdate);
     resultScreen->calcChain->addedCallback = (ChainAddedCallback)ResultScreen_AddedCallback;

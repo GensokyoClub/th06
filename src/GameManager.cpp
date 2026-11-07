@@ -231,7 +231,7 @@ static ZunResult GameManager_AddedCallback(GameManager *mgr)
         mgr->playerMovementAreaTopLeftPos.y = GAME_REGION_TOP + 16.0f;
         mgr->playerMovementAreaSize.x = GAME_REGION_WIDTH - 8.0f * 2.0f;
         mgr->playerMovementAreaSize.y = GAME_REGION_HEIGHT - 16.0f * 2.0f;
-        mgr->counat = 0;
+        mgr->gameplayTicks = 0;
         mgr->guiScore = 0;
         mgr->score = 0;
         mgr->nextScoreIncrement = 0;

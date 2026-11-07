@@ -982,7 +982,8 @@ restart_sub_changed:
             break;
         case ECL_OPCODE_BOSS_SET_LIFE_COUNT:
             g_Gui.SetLives(GET_INSTR_INT_ARG(0));
-            g_GameManager.counat += 1800;
+            // Add 30 seconds worth of game completion for some reason???
+            g_GameManager.gameplayTicks += 1800;
             break;
         case ECL_OPCODE_ENEMY_CREATE: {
             EclRawInstrEnemyCreateArgs args = GET_INSTR_ARG(EclRawInstrEnemyCreateArgs, 0);

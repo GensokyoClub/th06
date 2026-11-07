@@ -863,7 +863,7 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
                 {
                     break;
                 }
-                if (g_GameManager.catk[i].numAttempts == 0)
+                if (g_GameManager.catk[i].attempts == 0)
                 {
                     g_AnmManager->DrawVmTextFmt(&resultScreen->textLineVms[i % SPELLS_PER_PAGE], COLOR_RGB(COLOR_WHITE),
                                                 COLOR_RGB(COLOR_BLACK), TH_UNKNOWN_SPELLCARD);
@@ -1877,11 +1877,11 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
                 }
 
                 resultScreen->textLineVms[i].pos = pos;
-                if (g_GameManager.catk[spellcardId].numAttempts == 0)
+                if (g_GameManager.catk[spellcardId].attempts == 0)
                 {
                     g_AsciiManager.SetColor(COLOR_SET_ALPHA(COLOR_PASTEL_BLUE, 0x80));
                 }
-                else if (g_GameManager.catk[spellcardId].numSuccess == 0)
+                else if (g_GameManager.catk[spellcardId].captures == 0)
                 {
                     g_AsciiManager.SetColor(COLOR_DIRTY_PALE_RED);
                 }
@@ -1897,8 +1897,8 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
 
                 pos[0] += 368.0f;
 
-                g_AsciiManager.AddFormatText(&pos, "%3d/%3d", g_GameManager.catk[spellcardId].numSuccess,
-                                             g_GameManager.catk[spellcardId].numAttempts);
+                g_AsciiManager.AddFormatText(&pos, "%3d/%3d", g_GameManager.catk[spellcardId].captures,
+                                             g_GameManager.catk[spellcardId].attempts);
                 pos[0] -= 368.0f;
                 pos[1] += 30.0f;
             }

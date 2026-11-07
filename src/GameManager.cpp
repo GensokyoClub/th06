@@ -269,8 +269,8 @@ static ZunResult GameManager_AddedCallback(GameManager *mgr)
             catk->base.th6kLen = sizeof(Catk);
             catk->base.version = TH6K_VERSION;
             catk->idx = i;
-            catk->numAttempts = 0;
-            catk->numSuccess = 0;
+            catk->attempts = 0;
+            catk->captures = 0;
         }
         {
             ScoreDat *scoredat = OpenScore("score.dat");

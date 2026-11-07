@@ -863,14 +863,14 @@ restart_sub_changed:
                 }
                 if (catk->nameCsum != (u8)csum)
                 {
-                    catk->numSuccess = 0;
-                    catk->numAttempts = 0;
+                    catk->captures = 0;
+                    catk->attempts = 0;
                     catk->nameCsum = csum;
                 }
                 catk->captureScore = g_EnemyManager.spellcardInfo.captureScore;
-                if (catk->numAttempts < 9999)
+                if (catk->attempts < MAX_SPELL_ATTEMPTS)
                 {
-                    catk->numAttempts++;
+                    catk->attempts++;
                 }
             }
             break;
@@ -899,7 +899,8 @@ restart_sub_changed:
                         if (!g_GameManager.isInReplay)
 #endif
                         {
-                            catk->numSuccess++;
+                            // BUG: Capture count isn't capped like attempt count
+                            catk->captures++;
                             for (idx = ARRAY_SIZE(catk->recentShotTypes) - 1; idx > 0; idx--)
                             {
                                 catk->recentShotTypes[idx] = catk->recentShotTypes[idx - 1];

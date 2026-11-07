@@ -207,7 +207,7 @@ ChainCallbackResult Stage_OnDrawHighPrio(Stage *stage)
     }
     g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGSTART, *(DWORD *)&stage->sky.nearPlane);
     g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGEND, *(DWORD *)&stage->sky.farPlane);
-    
+
     // Stop rendering the background once a spell background
     // has finished fading in since it wouldn't be visible anyway
     if (stage->spellcardState <= SPELL_STATE_FADING_IN)

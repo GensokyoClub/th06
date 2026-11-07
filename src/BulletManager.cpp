@@ -472,7 +472,7 @@ void BulletManager::CancelAllBullets()
 }
 
 #pragma var_order(bulletScore, totalBonusScore, awardedBullets, i, sine, bullet, itemPos, laser, cosine)
-i32 BulletManager::DespawnBulletsForPoints(i32 maxBonusScore, ZunBool spawnCancelItems)
+i32 BulletManager::DespawnBulletsForScore(i32 maxBonusScore, ZunBool spawnCancelItems)
 {
     i32 i;
     f32 sine;

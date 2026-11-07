@@ -228,8 +228,7 @@ struct BulletManager
 
     void CancelAllBullets();
 
-    // TODO: Better name
-    i32 DespawnBulletsForPoints(i32 maxBonusScore, ZunBool spawnCancelItems);
+    i32 DespawnBulletsForScore(i32 maxBonusScore, ZunBool spawnCancelItems);
 
     ZunResult SpawnBulletPattern(EnemyShooter *bulletProps);
     Laser *SpawnLaserPattern(EnemyShooter *bulletProps);

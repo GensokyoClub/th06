@@ -309,7 +309,7 @@ void Gui::ShowBombNamePortrait(u32 sprite, const char *bombName)
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->bombSpellcardName, ANM_SCRIPT_TEXT_BOMB_NAME);
     g_AnmManager->DrawVmTextFmt(&this->impl->bombSpellcardName, COLOR_RGB(COLOR_BARELY_BLUE), COLOR_RGB(COLOR_BLACK),
                                 bombName);
-    this->bombNameBarLength = strlen(bombName) * 15 / 2.0f + 16.0f; // TODO: Is this 15 the font size?
+    this->bombNameBarLength = strlen(bombName) * DEFAULT_ANM_FONT_SIZE / 2.0f + 16.0f;
 #if BUILT_SINCE(102g)
     g_Supervisor.forceRedrawFrames = 3;
 #endif
@@ -323,7 +323,7 @@ void Gui::ShowSpellcard(i32 spellcardSprite, const char *spellcardName)
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->enemySpellcardName, ANM_SCRIPT_TEXT_ENEMY_SPELLCARD_NAME);
     g_AnmManager->DrawStringFormat(&this->impl->enemySpellcardName, COLOR_RGB(COLOR_BARELY_RED), COLOR_RGB(COLOR_BLACK),
                                    spellcardName);
-    this->spellcardNameBarLength = strlen(spellcardName) * 15 / 2.0f + 16.0f;
+    this->spellcardNameBarLength = strlen(spellcardName) * DEFAULT_ANM_FONT_SIZE / 2.0f + 16.0f;
     g_SoundPlayer.PlaySoundByIdx(SOUND_SPELL_START);
 }
 

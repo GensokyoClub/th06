@@ -881,7 +881,7 @@ restart_sub_changed:
                 g_Gui.EndEnemySpellcard();
                 if (g_EnemyManager.spellcardInfo.ticksActive == 1)
                 {
-                    i32 scoreIncrease = g_BulletManager.DespawnBulletsForPoints(12800, BULLET_CANCEL);
+                    i32 scoreIncrease = g_BulletManager.DespawnBulletsForScore(12800, BULLET_CANCEL);
 #pragma var_order(catk, idx, score)
                     if (g_EnemyManager.spellcardInfo.isCapturing)
                     {

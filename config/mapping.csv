@@ -126,7 +126,7 @@ th06::BulletTypeSprites::BulletTypeSprites,0x413560,0x50,__thiscall,,AnmVm*,Bull
 th06::BulletManager::SpawnSingleBullet,0x4135b0,0xb8b,__thiscall,,i32,BulletManager*,EnemyShooter*,i32,i32,f32
 th06::BulletManager::DespawnBullets,0x414160,0x1d2,__thiscall,,void,BulletManager*,i32
 th06::BulletManager::CancelAllBullets,0x414340,0x15,__thiscall,,void,BulletManager*
-th06::BulletManager::DespawnBulletsForPoints,0x414360,0x25f,__thiscall,,i32,BulletManager*,i32,i32
+th06::BulletManager::DespawnBulletsForScore,0x414360,0x25f,__thiscall,,i32,BulletManager*,i32,i32
 th06::BulletManager::SpawnBulletPattern,0x4145c0,0xa5,__thiscall,,ZunResult,BulletManager*,EnemyShooter*
 th06::BulletManager::SpawnLaserPattern,0x414670,0x27b,__thiscall,,Laser*,BulletManager*,EnemyShooter*
 th06::BulletManager_RegisterChain,0x4148f0,0xd3,default,,ZunResult,char*

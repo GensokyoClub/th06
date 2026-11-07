@@ -658,7 +658,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                     }
                     if (curEnemy->flags.isBoss && g_EnemyManager.spellcardInfo.ticksActive == 0)
                     {
-                        g_BulletManager.DespawnBulletsForPoints(12800, BULLET_CLEAR);
+                        g_BulletManager.DespawnBulletsForScore(12800, BULLET_CLEAR);
                     }
                     curEnemy->life = 0;
                     break;

@@ -4,7 +4,6 @@
 #include "i18n.hpp"
 
 #include <d3d8.h>
-#include <string>
 
 namespace th06
 {

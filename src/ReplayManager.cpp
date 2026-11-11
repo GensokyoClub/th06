@@ -1,8 +1,10 @@
-#include "ReplayManager.hpp"
 #include "stdafx.h"
+
+#include "ReplayManager.hpp"
 
 #include <stddef.h>
 #include <time.h>
+#include <string>
 
 namespace th06
 {

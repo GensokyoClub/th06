@@ -8,6 +8,7 @@
 #include "ReplayManager.hpp"
 #include "Supervisor.hpp"
 #include "TextHelper.hpp"
+#include <string>
 
 namespace th06
 {

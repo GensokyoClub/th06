@@ -1,6 +1,8 @@
-#include "EclManager.hpp"
 #include "stdafx.h"
 
+#include "EclManager.hpp"
+
+#include "DebugPrint.hpp"
 #include "EffectManager.hpp"
 #include "EnemyEclInstr.hpp"
 #include "EnemyManager.hpp"
@@ -9,7 +11,6 @@
 
 namespace th06
 {
-
 // clang-format off
 i32 g_SpellcardScore[] = {
 #if BUILT_SINCE(100)
@@ -203,6 +204,14 @@ static void EclMoveTime(Enemy *enemy, EclRawInstr *instr)
     enemy->flags.movementMode = EnemyMove_Interp;
 }
 
+// Both retail diagnostics call the same empty release stub. Its original name is unknown.
+static void ReportEclError(const char *message)
+{
+#ifdef DEBUG
+    DebugPrint("%s", message);
+#endif
+}
+
 #pragma var_order(genericFloat3, genericInt, genericFloat, args, curInstr)
 ZunResult EclManager::RunEcl(Enemy *enemy)
 {
@@ -385,7 +394,7 @@ restart_sub_changed:
 #if !TRIALBUILD
             if (enemy->flags.disableCallStack)
             {
-                DebugPrint("error : no Stack Ret\n");
+                ReportEclError("error : no Stack Ret\n");
             }
 #endif
             enemy->stackDepth--;
@@ -428,7 +437,7 @@ restart_sub_changed:
 #if !TRIALBUILD
             if (GET_INSTR_INT_ARG(0) >= ENEMY_ANM_SLOTS)
             {
-                DebugPrint("error : sub anim overflow\n");
+                ReportEclError("error : sub anim overflow\n");
             }
 #endif
             g_AnmManager->SetAndExecuteScriptIdx(&enemy->vms[GET_INSTR_INT_ARG(0)],

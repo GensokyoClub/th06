@@ -162,6 +162,22 @@ def configure(build_type, build_version, ver_suffix):
 
         force_ob1_sources = set(["GameManager", "Supervisor", "MainMenu"])
 
+        # Retail 1.02g uses the 1.02f Supervisor field offsets in these objects.
+        # ReplayManager already has 1.02g code, so keep the release's source and flags.
+        stale_supervisor_sources = {
+            "AnmManager",
+            "BombData",
+            "BulletManager",
+            "EclManager",
+            "EffectManager",
+            "Ending",
+            "EnemyManager",
+            "ItemManager",
+            "MusicRoom",
+            "ReplayManager",
+            "ResultScreen",
+        }
+
         small_codegen_sources = set(
             [
                 "GameManager",
@@ -214,6 +230,20 @@ def configure(build_type, build_version, ver_suffix):
                 variables["cl_flags"] += " /Oi"
             if rule in force_ob1_sources:
                 variables["cl_flags"] += " /Ob1"
+            if (
+                build_version == BuildVersion.VER_102g
+                and rule in stale_supervisor_sources
+            ):
+                variables["cl_flags"] += " /DTH06_102G_STALE_SUPERVISOR_LAYOUT"
+            if (
+                build_type == BuildType.BINARY_MATCHBUILD
+                and rule == "Supervisor"
+                and build_version
+                in (BuildVersion.VER_102b, BuildVersion.VER_102c, BuildVersion.VER_102g)
+            ):
+                # Reproduce the observed ReleaseVertexBuffer order in Supervisor.obj.
+                # An early include of its MIDI dependency fits all three. The original PCH is unknown.
+                variables["cl_flags"] += " /FIMidiOutput.hpp"
 
             writer.build(
                 "$builddir/" + rule + ".obj",

@@ -255,7 +255,7 @@ struct Supervisor
     D3DVIEWPORT8 viewport;
     D3DPRESENT_PARAMETERS presentParameters;
     GameConfiguration cfg;
-#if BUILT_SINCE(102g)
+#if BUILT_SINCE(102g) && !defined(TH06_102G_STALE_SUPERVISOR_LAYOUT)
     // NOTE: This is not even close to a default config
     GameConfiguration defaultConfig;
 #endif
@@ -293,7 +293,7 @@ struct Supervisor
 };
 ZunResult Supervisor_RegisterChain();
 
-#if BUILT_SINCE(102g)
+#if BUILT_SINCE(102g) && !defined(TH06_102G_STALE_SUPERVISOR_LAYOUT)
 ZUN_ASSERT_SIZE(Supervisor, 0x4d8);
 #elif BUILT_SINCE(102f)
 ZUN_ASSERT_SIZE(Supervisor, 0x4a0);

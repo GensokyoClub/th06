@@ -1,37 +1,61 @@
 #include "stdafx.h"
 
 #include "TextHelper.hpp"
+#include <string>
 
 namespace th06
 {
+struct TextFont
+{
+    HFONT font;
+    i32 width;
+    i32 height;
+    std::string name;
+    i32 weight;
+
+    TextFont()
+    {
+        font = NULL;
+        width = 0;
+        height = 16;
+        weight = FW_SEMIBOLD;
+        name = TH_FONT_NAME;
+    }
+
+    ~TextFont()
+    {
+        Release();
+    }
+
+    void SetName(const char *value);
+
+    void Release();
+
+    void SetFontSize(i32 h, i32 w)
+    {
+        height = h;
+        width = w;
+    }
+    HFONT GetFont()
+    {
+        return font;
+    }
+    HFONT Create()
+    {
+        Release();
+        font = CreateFont(height, width, 0, 0, weight, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+                          CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_MODERN | DEFAULT_PITCH, name.c_str());
+        return font;
+    }
+};
+
 static LPDIRECT3DSURFACE8 g_TextBufferSurface;
 
 // Font helper utilities
-TextFont::TextFont()
-{
-    font = NULL;
-    width = 0;
-    height = 16;
-    weight = FW_SEMIBOLD;
-    name = TH_FONT_NAME;
-}
-
-TextFont::~TextFont()
-{
-    Release();
-}
 
 void TextFont::SetName(const char *value)
 {
     name = value;
-}
-
-HFONT TextFont::Create()
-{
-    Release();
-    font = CreateFont(height, width, 0, 0, weight, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
-                      CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_MODERN | DEFAULT_PITCH, name.c_str());
-    return font;
 }
 
 void TextFont::Release()
@@ -263,6 +287,37 @@ struct A1R5G5B5
     u16 alpha : 1;
 };
 
+bool TextHelper::DrawStringWithFont(i32 x, i32 y, HFONT font, COLORREF color, COLORREF shadow, const char *text)
+{
+    if (text == NULL)
+    {
+        return false;
+    }
+    HGDIOBJ previous = SelectObject(hdc, font);
+    SetBkMode(hdc, TRANSPARENT);
+    if (shadow != (COLORREF)-1)
+    {
+        SetTextColor(hdc, shadow);
+        RECT r0 = {x, y, x + width - 2, y + height - 2};
+        DrawText(hdc, text, -1, &r0, 0);
+        RECT r1 = {x + 2, y, x + width + 2, y + height};
+        RECT r2 = {x + 1, y + 2, x + width + 1, y + height + 2};
+        RECT r3 = {x + 2, y, x + width + 2, y + height};
+        RECT r4 = {x, y + 2, x + width, y + height + 2};
+        RECT r5 = {x + 2, y + 2, x + width + 2, y + height + 2};
+        DrawText(hdc, text, -1, &r1, 0);
+        DrawText(hdc, text, -1, &r2, 0);
+        DrawText(hdc, text, -1, &r3, 0);
+        DrawText(hdc, text, -1, &r4, 0);
+        DrawText(hdc, text, -1, &r5, 0);
+    }
+    SetTextColor(hdc, color);
+    RECT r = {x + 1, y + 1, x + width + 1, y + height + 1};
+    DrawText(hdc, text, -1, &r, 0);
+    SelectObject(hdc, previous);
+    return true;
+}
+
 bool TextHelper::SetAlpha(u8 alpha)
 {
     i32 i;
@@ -350,37 +405,6 @@ bool TextHelper::DrawString(i32 x, i32 y, i32 fontSize, COLORREF color, COLORREF
     font.SetFontSize(fontSize, 0);
     font.Create();
     return DrawStringWithFont(x, y, font.GetFont(), color, shadow, text);
-}
-
-bool TextHelper::DrawStringWithFont(i32 x, i32 y, HFONT font, COLORREF color, COLORREF shadow, const char *text)
-{
-    if (text == NULL)
-    {
-        return false;
-    }
-    HGDIOBJ previous = SelectObject(hdc, font);
-    SetBkMode(hdc, TRANSPARENT);
-    if (shadow != (COLORREF)-1)
-    {
-        SetTextColor(hdc, shadow);
-        RECT r0 = {x, y, x + width - 2, y + height - 2};
-        DrawText(hdc, text, -1, &r0, 0);
-        RECT r1 = {x + 2, y, x + width + 2, y + height};
-        RECT r2 = {x + 1, y + 2, x + width + 1, y + height + 2};
-        RECT r3 = {x + 2, y, x + width + 2, y + height};
-        RECT r4 = {x, y + 2, x + width, y + height + 2};
-        RECT r5 = {x + 2, y + 2, x + width + 2, y + height + 2};
-        DrawText(hdc, text, -1, &r1, 0);
-        DrawText(hdc, text, -1, &r2, 0);
-        DrawText(hdc, text, -1, &r3, 0);
-        DrawText(hdc, text, -1, &r4, 0);
-        DrawText(hdc, text, -1, &r5, 0);
-    }
-    SetTextColor(hdc, color);
-    RECT r = {x + 1, y + 1, x + width + 1, y + height + 1};
-    DrawText(hdc, text, -1, &r, 0);
-    SelectObject(hdc, previous);
-    return true;
 }
 
 #pragma var_order(dstBuf, dstWidthBytes, rectToLock, curHeight, srcWidthBytes, outSurfaceDesc, srcBuf, lockedRect)

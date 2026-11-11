@@ -171,7 +171,7 @@ void EnemyManager::RunEclTimeline()
         // regular intervals, where the interval is made shorter based on the
         // number of lives lost?
         i32 subrankIncreaseFrame = 10 * 4 * 60;
-        subrankIncreaseFrame -= g_GameManager.livesRemaining * 4 * 60;
+        subrankIncreaseFrame -= g_GameManager.GetLives() * 4 * 60;
         if (this->timelineTime.HasTicked() && MULTIPLE_OF(this->timelineTime, subrankIncreaseFrame))
         {
             g_GameManager.IncreaseSubrank(100);

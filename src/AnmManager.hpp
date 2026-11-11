@@ -142,7 +142,6 @@ struct AnmManager
         this->SetActiveSprite(vm, spriteIdx);
     }
 
-    void SetAndExecuteScript(AnmVm *vm, AnmRawInstr *beginningOfScript);
     void SetAndExecuteScriptIdx(AnmVm *vm, i32 anmFileIdx)
     {
         vm->anmFileIndex = anmFileIdx;
@@ -213,6 +212,7 @@ struct AnmManager
 
     void LoadSprite(u32 spriteIdx, AnmLoadedSprite *sprite);
     ZunResult SetActiveSprite(AnmVm *vm, i32 spriteIdx);
+    void SetAndExecuteScript(AnmVm *vm, AnmRawInstr *beginningOfScript);
 
     ZunResult LoadSurface(i32 surfaceIdx, const char *path);
     void ReleaseSurface(i32 surfaceIdx);

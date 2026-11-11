@@ -8,33 +8,6 @@
 
 namespace th06
 {
-struct TextFont
-{
-    HFONT font;
-    i32 width;
-    i32 height;
-    std::string name;
-    i32 weight;
-
-    TextFont();
-
-    ~TextFont();
-
-    void SetName(const char *value);
-
-    void Release();
-
-    void SetFontSize(i32 h, i32 w)
-    {
-        height = h;
-        width = w;
-    }
-    HFONT GetFont()
-    {
-        return font;
-    }
-    HFONT Create();
-};
 
 void TextHelper_CreateTextBuffer();
 void TextHelper_ReleaseTextBuffer();

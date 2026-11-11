@@ -382,10 +382,12 @@ restart_sub_changed:
             enemy->currentContext.float0 = GET_INSTR_FLOAT_ARG(2);
             goto restart_sub_changed;
         case ECL_OPCODE_RET:
+#if !TRIALBUILD
             if (enemy->flags.disableCallStack)
             {
                 DebugPrint("error : no Stack Ret\n");
             }
+#endif
             enemy->stackDepth--;
             enemy->currentContext = enemy->savedContextStack[enemy->stackDepth];
             goto restart_sub_changed;
@@ -423,10 +425,12 @@ restart_sub_changed:
             g_AnmManager->SetAndExecuteScriptIdx(&enemy->primaryVm, GET_INSTR_INT_ARG(0) + ANM_SCRIPT_ENEMY_START);
             break;
         case ECL_OPCODE_ANM_SET_SLOT:
+#if !TRIALBUILD
             if (GET_INSTR_INT_ARG(0) >= ENEMY_ANM_SLOTS)
             {
                 DebugPrint("error : sub anim overflow\n");
             }
+#endif
             g_AnmManager->SetAndExecuteScriptIdx(&enemy->vms[GET_INSTR_INT_ARG(0)],
                                                  GET_INT_ARG(1) + ANM_SCRIPT_ENEMY_START);
             break;
@@ -668,7 +672,7 @@ restart_sub_changed:
             {
                 g_EnemyManager.bosses[GET_INSTR_INT_ARG(0)] = enemy;
                 g_Gui.SetBossPresent(true);
-                g_Gui.SetBossHealthBar(1.0f);
+                g_Gui.bossHealthBarValue = 1.0f;
                 enemy->flags.isBoss = true;
                 enemy->bossId = GET_INSTR_INT_ARG(0);
             }

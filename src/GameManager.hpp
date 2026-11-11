@@ -57,6 +57,16 @@ struct GameManager
                this->clrd[shottype + character * SHOTTYPES_PER_CHARACTER].stagesClearedWithoutContinues[LUNATIC] ==
                    ALL_CLEARED;
     }
+    i32 GetLives()
+    {
+        return this->livesRemaining;
+    }
+
+    i32 GetBombs()
+    {
+        return this->bombsRemaining;
+    }
+
     void IncreaseSubrank(i32 amount);
     void DecreaseSubrank(i32 amount);
     ZunBool IsInBounds(f32 x, f32 y, f32 width, f32 height);

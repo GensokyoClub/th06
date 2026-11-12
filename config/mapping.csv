@@ -301,7 +301,7 @@ th06::MusicRoom_OnDraw,0x42545a,0x1f2,__cdecl,,ChainCallbackResult,MusicRoom*
 th06::MusicRoom_AddedCallback,0x42564c,0x74b,__cdecl,,ZunResult,MusicRoom*
 th06::MusicRoom_DeletedCallback,0x425d97,0x6c,__cdecl,,ZunResult,MusicRoom*
 th06::Player::Player,0x425e10,0x1e8,__thiscall,,Player*,Player*
-th06::PlayerBombInfo::PlayerBombInfo,0x426000,0xc2,__thiscall,,PlayerBombInfo*,PlayerBombInfo*
+th06::BombInfo::BombInfo,0x426000,0xc2,__thiscall,,BombInfo*,BombInfo*
 th06::FireBulletReimuA,0x4260d0,0x22,default,,FireBulletResult,Player*,PlayerBullet*,u32,u32
 th06::FireSingleBullet,0x426100,0x31b,default,,FireBulletResult,Player*,PlayerBullet*,i32,i32,CharacterPowerData*
 th06::FireBulletReimuB,0x426420,0x22,default,,FireBulletResult,Player*,PlayerBullet*,u32,u32

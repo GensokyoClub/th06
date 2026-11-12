@@ -38,7 +38,7 @@ static FireBulletResult FireSingleBullet(Player *player, PlayerBullet *bullet, i
     if (bulletData->bulletType == PLAYER_LASER)
     {
         bulletFrame = bulletData->bulletFrame;
-        if (!(i32)player->laserTimer[bulletFrame])
+        if ((i32)player->laserTimer[bulletFrame] == 0)
         {
             player->laserTimer[bulletFrame] = bulletData->waitBetweenBullets;
 
@@ -182,7 +182,7 @@ static void UpdatePlayerBullets(Player *player)
     f32 vecLength;
     i32 idx;
 
-    for (idx = 0; idx < ARRAY_SIZE_SIGNED(player->laserTimer); idx++)
+    for (idx = 0; idx < PLAYER_LASER_TIMER_COUNT; idx++)
     {
         if ((i32)player->laserTimer[idx] != 0)
         {
@@ -454,22 +454,22 @@ i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPos, D3DXVECTOR3 *enemyHitboxSiz
             }
         }
     }
-    for (idx = 0; idx < PLAYER_BOMB_REGION_COUNT; idx++)
+    for (idx = 0; idx < MAX_DAMAGE_REGION_COUNT; idx++)
     {
-        if (this->bombRegionSizes[idx].x <= 0.0f)
+        if (this->damageRegionSize[idx].x <= 0.0f)
         {
             continue;
         }
 
-        bulletTopLeft = this->bombRegionPositions[idx] - this->bombRegionSizes[idx] / 2.0f;
-        bulletBottomRight = this->bombRegionPositions[idx] + this->bombRegionSizes[idx] / 2.0f;
+        bulletTopLeft = this->damageRegionPosition[idx] - this->damageRegionSize[idx] / 2.0f;
+        bulletBottomRight = this->damageRegionPosition[idx] + this->damageRegionSize[idx] / 2.0f;
         if (bulletTopLeft.x > enemyBottomRight.x || bulletBottomRight.x < enemyTopLeft.x ||
             bulletTopLeft.y > enemyBottomRight.y || bulletBottomRight.y < enemyTopLeft.y)
         {
             continue;
         }
-        damage += this->bombRegionDamages[idx];
-        this->bombRegionTotalDamages[idx] += this->bombRegionDamages[idx];
+        damage += this->damageRegionDamage[idx];
+        this->damageRegionDamageDealt[idx] += this->damageRegionDamage[idx];
         this->particleTimer++;
         if (this->particleTimer % 4 == 0)
         {
@@ -483,32 +483,32 @@ i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPos, D3DXVECTOR3 *enemyHitboxSiz
     return damage;
 }
 
-#pragma var_order(bombProjectileTopLeft, curBombIdx, bulletBottomRight, bulletTopLeft, curBombProjectile,              \
-                  bombProjectileBottomRight)
-i32 Player::CheckCollision(D3DXVECTOR3 *bulletCenter, D3DXVECTOR3 *bulletSize)
+#pragma var_order(cancelRegionTopLeft, i, bulletBottomRight, bulletTopLeft, curCancelRegion, cancelRegionBottomRight)
+i32 Player::CheckCollision(D3DXVECTOR3 *position, D3DXVECTOR3 *size)
 {
-    PlayerRect *curBombProjectile;
+    PlayerRect *curCancelRegion;
     D3DXVECTOR3 bulletTopLeft, bulletBottomRight;
-    D3DXVECTOR3 bombProjectileTopLeft, bombProjectileBottomRight;
-    i32 curBombIdx;
+    D3DXVECTOR3 cancelRegionTopLeft, cancelRegionBottomRight;
+    i32 i;
 
-    curBombProjectile = this->bombProjectiles;
-    bulletTopLeft.x = bulletCenter->x - bulletSize->x / 2.0f;
-    bulletTopLeft.y = bulletCenter->y - bulletSize->y / 2.0f;
-    bulletBottomRight.x = bulletCenter->x + bulletSize->x / 2.0f;
-    bulletBottomRight.y = bulletCenter->y + bulletSize->y / 2.0f;
-    for (curBombIdx = 0; curBombIdx < ARRAY_SIZE_SIGNED(this->bombProjectiles); curBombIdx++, curBombProjectile++)
+    curCancelRegion = this->cancelRegions;
+    bulletTopLeft.x = position->x - size->x / 2.0f;
+    bulletTopLeft.y = position->y - size->y / 2.0f;
+    bulletBottomRight.x = position->x + size->x / 2.0f;
+    bulletBottomRight.y = position->y + size->y / 2.0f;
+
+    for (i = 0; i < MAX_CANCEL_REGION_COUNT; i++, curCancelRegion++)
     {
-        if (curBombProjectile->size.x == 0.0f)
+        if (curCancelRegion->size.x == 0.0f)
         {
             continue;
         }
-        bombProjectileTopLeft.x = curBombProjectile->pos.x - curBombProjectile->size.x / 2.0f;
-        bombProjectileTopLeft.y = curBombProjectile->pos.y - curBombProjectile->size.y / 2.0f;
-        bombProjectileBottomRight.x = curBombProjectile->pos.x + curBombProjectile->size.x / 2.0f;
-        bombProjectileBottomRight.y = curBombProjectile->pos.y + curBombProjectile->size.y / 2.0f;
-        if (!(bombProjectileTopLeft.x > bulletBottomRight.x || bombProjectileBottomRight.x < bulletTopLeft.x ||
-              bombProjectileTopLeft.y > bulletBottomRight.y || bombProjectileBottomRight.y < bulletTopLeft.y))
+        cancelRegionTopLeft.x = curCancelRegion->pos.x - curCancelRegion->size.x / 2.0f;
+        cancelRegionTopLeft.y = curCancelRegion->pos.y - curCancelRegion->size.y / 2.0f;
+        cancelRegionBottomRight.x = curCancelRegion->pos.x + curCancelRegion->size.x / 2.0f;
+        cancelRegionBottomRight.y = curCancelRegion->pos.y + curCancelRegion->size.y / 2.0f;
+        if (!(cancelRegionTopLeft.x > bulletBottomRight.x || cancelRegionBottomRight.x < bulletTopLeft.x ||
+              cancelRegionTopLeft.y > bulletBottomRight.y || cancelRegionBottomRight.y < bulletTopLeft.y))
         {
             return COLLISION_GRAZE;
         }
@@ -529,37 +529,35 @@ i32 Player::CheckCollision(D3DXVECTOR3 *bulletCenter, D3DXVECTOR3 *bulletSize)
     }
 }
 
-#pragma var_order(bombTopLeft, i, bulletBottomRight, bulletTopLeft, bombProjectile, bombBottomRight)
-i32 Player::CheckGraze(D3DXVECTOR3 *center, D3DXVECTOR3 *size)
+#pragma var_order(cancelRegionTopLeft, i, bulletBottomRight, bulletTopLeft, curCancelRegion, cancelRegionBottomRight)
+i32 Player::CheckGraze(D3DXVECTOR3 *position, D3DXVECTOR3 *size)
 {
-    D3DXVECTOR3 bombBottomRight;
-    PlayerRect *bombProjectile;
-    D3DXVECTOR3 bombTopLeft;
-    D3DXVECTOR3 bulletBottomRight;
-    D3DXVECTOR3 bulletTopLeft;
+    PlayerRect *curCancelRegion;
+    D3DXVECTOR3 bulletTopLeft, bulletBottomRight;
+    D3DXVECTOR3 cancelRegionTopLeft, cancelRegionBottomRight;
     i32 i;
 
-    bulletTopLeft.x = center->x - size->x / 2.0f - 20.0f;
-    bulletTopLeft.y = center->y - size->y / 2.0f - 20.0f;
-    bulletBottomRight.x = center->x + size->x / 2.0f + 20.0f;
-    bulletBottomRight.y = center->y + size->y / 2.0f + 20.0f;
-    bombProjectile = this->bombProjectiles;
+    bulletTopLeft.x = position->x - size->x / 2.0f - 20.0f;
+    bulletTopLeft.y = position->y - size->y / 2.0f - 20.0f;
+    bulletBottomRight.x = position->x + size->x / 2.0f + 20.0f;
+    bulletBottomRight.y = position->y + size->y / 2.0f + 20.0f;
+    curCancelRegion = this->cancelRegions;
 
-    for (i = 0; i < ARRAY_SIZE_SIGNED(this->bombProjectiles); i++, bombProjectile++)
+    for (i = 0; i < MAX_CANCEL_REGION_COUNT; i++, curCancelRegion++)
     {
-        if (bombProjectile->size.x == 0.0f)
+        if (curCancelRegion->size.x == 0.0f)
         {
             continue;
         }
 
-        bombTopLeft.x = bombProjectile->pos.x - bombProjectile->size.x / 2.0f;
-        bombTopLeft.y = bombProjectile->pos.y - bombProjectile->size.y / 2.0f;
-        bombBottomRight.x = bombProjectile->size.x / 2.0f + bombProjectile->pos.x;
-        bombBottomRight.y = bombProjectile->size.y / 2.0f + bombProjectile->pos.y;
+        cancelRegionTopLeft.x = curCancelRegion->pos.x - curCancelRegion->size.x / 2.0f;
+        cancelRegionTopLeft.y = curCancelRegion->pos.y - curCancelRegion->size.y / 2.0f;
+        cancelRegionBottomRight.x = curCancelRegion->size.x / 2.0f + curCancelRegion->pos.x;
+        cancelRegionBottomRight.y = curCancelRegion->size.y / 2.0f + curCancelRegion->pos.y;
 
         // Bomb clips bullet's hitbox, destroys bullet upon return
-        if (!(bombTopLeft.x > bulletBottomRight.x || bombBottomRight.x < bulletTopLeft.x ||
-              bombTopLeft.y > bulletBottomRight.y || bombBottomRight.y < bulletTopLeft.y))
+        if (!(cancelRegionTopLeft.x > bulletBottomRight.x || cancelRegionBottomRight.x < bulletTopLeft.x ||
+              cancelRegionTopLeft.y > bulletBottomRight.y || cancelRegionBottomRight.y < bulletTopLeft.y))
         {
             return CANCELED_BY_BOMB;
         }
@@ -576,7 +574,7 @@ i32 Player::CheckGraze(D3DXVECTOR3 *center, D3DXVECTOR3 *size)
     }
 
     // Bullet clips player's graze hitbox, add score and check for death upon return
-    this->ScoreGraze(center);
+    this->ScoreGraze(position);
     return GRAZE_TRUE;
 }
 
@@ -698,7 +696,7 @@ void Player::Die()
     this->stateTimer = 0;
     g_SoundPlayer.PlaySoundByIdx(SOUND_PICHUN);
     g_GameManager.deaths++;
-    for (i32 i = 0; i < ARRAY_SIZE_SIGNED(this->laserTimer); i++)
+    for (i32 i = 0; i < PLAYER_LASER_TIMER_COUNT; i++)
     {
         this->laserTimer[i] = 2;
     }
@@ -776,41 +774,41 @@ ZunResult Player::HandlePlayerInputs()
     case MOVEMENT_RIGHT:
         if (IS_PRESSED(TH_BUTTON_FOCUS))
         {
-            speedX = this->characterData.orthogonalMovementSpeedFocus;
+            speedX = this->characterData.linearMovementSpeedFocus;
         }
         else
         {
-            speedX = this->characterData.orthogonalMovementSpeed;
+            speedX = this->characterData.linearMovementSpeed;
         }
         break;
     case MOVEMENT_LEFT:
         if (IS_PRESSED(TH_BUTTON_FOCUS))
         {
-            speedX = -this->characterData.orthogonalMovementSpeedFocus;
+            speedX = -this->characterData.linearMovementSpeedFocus;
         }
         else
         {
-            speedX = -this->characterData.orthogonalMovementSpeed;
+            speedX = -this->characterData.linearMovementSpeed;
         }
         break;
     case MOVEMENT_UP:
         if (IS_PRESSED(TH_BUTTON_FOCUS))
         {
-            speedY = -this->characterData.orthogonalMovementSpeedFocus;
+            speedY = -this->characterData.linearMovementSpeedFocus;
         }
         else
         {
-            speedY = -this->characterData.orthogonalMovementSpeed;
+            speedY = -this->characterData.linearMovementSpeed;
         }
         break;
     case MOVEMENT_DOWN:
         if (IS_PRESSED(TH_BUTTON_FOCUS))
         {
-            speedY = this->characterData.orthogonalMovementSpeedFocus;
+            speedY = this->characterData.linearMovementSpeedFocus;
         }
         else
         {
-            speedY = this->characterData.orthogonalMovementSpeed;
+            speedY = this->characterData.linearMovementSpeed;
         }
         break;
     case MOVEMENT_UP_LEFT:
@@ -1023,13 +1021,13 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
     {
         return CHAIN_CALLBACK_RESULT_CONTINUE;
     }
-    for (idx = 0; idx < PLAYER_BOMB_REGION_COUNT; idx++)
+    for (idx = 0; idx < MAX_DAMAGE_REGION_COUNT; idx++)
     {
-        p->bombRegionSizes[idx].x = 0.0f;
+        p->damageRegionSize[idx].x = 0.0f;
     }
-    for (idx = 0; idx < PLAYER_BOMB_PROJECTILE_COUNT; idx++)
+    for (idx = 0; idx < MAX_CANCEL_REGION_COUNT; idx++)
     {
-        p->bombProjectiles[idx].size.x = 0.0f;
+        p->cancelRegions[idx].size.x = 0.0f;
     }
     if (p->bombInfo.isInUse)
     {
@@ -1295,9 +1293,9 @@ static ZunResult Player_AddedCallback(Player *p)
     p->positionCenter[2] = 0.49f;
     p->orbsPosition[0].z = 0.49f;
     p->orbsPosition[1].z = 0.49f;
-    for (idx = 0; idx < PLAYER_BOMB_REGION_COUNT; idx++)
+    for (idx = 0; idx < MAX_DAMAGE_REGION_COUNT; idx++)
     {
-        p->bombRegionSizes[idx].x = 0.0f;
+        p->damageRegionSize[idx].x = 0.0f;
     }
     p->hitboxSize.x = 1.25f;
     p->hitboxSize.y = 1.25f;
@@ -1307,8 +1305,8 @@ static ZunResult Player_AddedCallback(Player *p)
     p->grabItemSize.z = 5.0f;
     p->playerDirection = MOVEMENT_NONE;
     p->characterData = g_CharData[CURRENT_SHOTTYPE()];
-    p->characterData.diagonalMovementSpeed = p->characterData.orthogonalMovementSpeed / sqrtf(2.0f);
-    p->characterData.diagonalMovementSpeedFocus = p->characterData.orthogonalMovementSpeedFocus / sqrtf(2.0f);
+    p->characterData.diagonalMovementSpeed = p->characterData.linearMovementSpeed / sqrtf(2.0f);
+    p->characterData.diagonalMovementSpeedFocus = p->characterData.linearMovementSpeedFocus / sqrtf(2.0f);
     p->fireBulletCallback = p->characterData.fireBulletCallback;
     p->fireBulletFocusCallback = p->characterData.fireBulletFocusCallback;
     p->playerState = PLAYER_STATE_SPAWNING;
@@ -1324,7 +1322,7 @@ static ZunResult Player_AddedCallback(Player *p)
     p->bombInfo.calc = g_BombData[CURRENT_SHOTTYPE()].calc;
     p->bombInfo.draw = g_BombData[CURRENT_SHOTTYPE()].draw;
     p->bombInfo.isInUse = false;
-    for (idx = 0; idx < ARRAY_SIZE_SIGNED(p->laserTimer); idx++)
+    for (idx = 0; idx < PLAYER_LASER_TIMER_COUNT; idx++)
     {
         p->laserTimer[idx] = 0;
     }

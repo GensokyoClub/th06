@@ -507,4 +507,4 @@ th06::DebugPrint
 th06::AnmManager::~AnmManager
 th06::IPbg3Reader::~IPbg3Reader
 th06::Pbg3Archive::~Pbg3Archive
-th06::PlayerBombInfo::PlayerBombInfo
+th06::BombInfo::BombInfo

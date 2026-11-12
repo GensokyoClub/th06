@@ -5,8 +5,8 @@ namespace th06
 {
 struct BombData
 {
-    void (*calc)(Player *p);
-    void (*draw)(Player *p);
+    BombCallback calc;
+    BombCallback draw;
 };
 
 void BombReimuACalc(Player *);

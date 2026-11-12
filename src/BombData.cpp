@@ -58,11 +58,9 @@ void BombReimuACalc(Player *player)
 
                 angleX = g_Rng.GetRandomF32InRange(ZUN_2PI) - ZUN_PI;
 
-                player->bombInfo.projectileVelocity[i].x =
-                    cosf(angleX) * player->bombInfo.projectileCustom[i];
+                player->bombInfo.projectileVelocity[i].x = cosf(angleX) * player->bombInfo.projectileCustom[i];
 
-                player->bombInfo.projectileVelocity[i].y =
-                    sinf(angleX) * player->bombInfo.projectileCustom[i];
+                player->bombInfo.projectileVelocity[i].y = sinf(angleX) * player->bombInfo.projectileCustom[i];
                 player->damageRegionDamageDealt[i] = 0;
 
                 vm = &player->bombInfo.vms[0][i * 4];
@@ -96,8 +94,8 @@ void BombReimuACalc(Player *player)
                 angleX = bombPivot.x - player->bombInfo.projectilePosition[i].x;
                 angleY = bombPivot.y - player->bombInfo.projectilePosition[i].y;
 
-                vecLength = sqrtf(ZUN_SQUARE(angleX) + ZUN_SQUARE(angleY)) /
-                            (player->bombInfo.projectileCustom[i] / 8.0f);
+                vecLength =
+                    sqrtf(ZUN_SQUARE(angleX) + ZUN_SQUARE(angleY)) / (player->bombInfo.projectileCustom[i] / 8.0f);
                 if (vecLength < 1.0f)
                 {
                     vecLength = 1.0f;
@@ -113,10 +111,8 @@ void BombReimuACalc(Player *player)
                     player->bombInfo.projectileCustom[i] = 1.0f;
                 }
 
-                player->bombInfo.projectileVelocity[i].x =
-                    (angleX * player->bombInfo.projectileCustom[i]) / vecLength;
-                player->bombInfo.projectileVelocity[i].y =
-                    (angleY * player->bombInfo.projectileCustom[i]) / vecLength;
+                player->bombInfo.projectileVelocity[i].x = (angleX * player->bombInfo.projectileCustom[i]) / vecLength;
+                player->bombInfo.projectileVelocity[i].y = (angleY * player->bombInfo.projectileCustom[i]) / vecLength;
 
                 player->damageRegionSize[i].x = 48.0f;
                 player->damageRegionSize[i].y = 48.0f;

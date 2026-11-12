@@ -52,8 +52,6 @@ def build(
 
     if target is not None:
         ninja_args += [target]
-    elif build_type == BuildType.TESTS:
-        ninja_args += ["build/th06-tests.exe"]
     elif build_type == BuildType.OBJDIFFBUILD:
         ninja_args += ["objdiff"]
     else:
@@ -91,7 +89,7 @@ def main():
     )
     parser.add_argument(
         "--build-type",
-        choices=["normal", "tests", "objdiffbuild", "binary_matchbuild"],
+        choices=["normal", "objdiffbuild", "binary_matchbuild"],
         default="normal",
     )
     parser.add_argument(
@@ -140,8 +138,6 @@ def main():
     # First, create the build.ninja file that will be used to build.
     if args.build_type == "normal":
         build_type = BuildType.NORMAL
-    elif args.build_type == "tests":
-        build_type = BuildType.TESTS
     elif args.build_type == "objdiffbuild":
         build_type = BuildType.OBJDIFFBUILD
     elif args.build_type == "binary_matchbuild":

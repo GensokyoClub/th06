@@ -108,20 +108,22 @@ struct PlayerBullet
 };
 ZUN_ASSERT_TYPE(PlayerBullet, 0x158, 4);
 
-struct PlayerBombInfo
+typedef void (*BombCallback)(Player *);
+
+struct BombInfo
 {
     ZunBool isInUse;
     i32 duration;
     ZunTimer timer;
-    void (*calc)(Player *p);
-    void (*draw)(Player *p);
-    i32 reimuABombProjectilesState[8];
-    f32 reimuABombProjectilesRelated[8];
-    D3DXVECTOR3 bombRegionPositions[8];
-    D3DXVECTOR3 bombRegionVelocities[8];
-    AnmVm sprites[8][4];
+    BombCallback calc;
+    BombCallback draw;
+    i32 projectileState[8];
+    f32 projectileCustom[8];
+    D3DXVECTOR3 projectilePosition[8];
+    D3DXVECTOR3 projectileVelocity[8];
+    AnmVm vms[8][4];
 };
-ZUN_ASSERT_TYPE(PlayerBombInfo, 0x231c, 4);
+ZUN_ASSERT_TYPE(BombInfo, 0x231c, 4);
 
 typedef i32 FireBulletResult;
 #define FBR_STOP_SPAWNING (-2)
@@ -130,8 +132,8 @@ typedef i32 FireBulletResult;
 typedef FireBulletResult (*FireBulletCallback)(Player *, PlayerBullet *, u32, u32);
 struct CharacterData
 {
-    f32 orthogonalMovementSpeed;
-    f32 orthogonalMovementSpeedFocus;
+    f32 linearMovementSpeed;
+    f32 linearMovementSpeedFocus;
     f32 diagonalMovementSpeed;
     f32 diagonalMovementSpeedFocus;
     FireBulletCallback fireBulletCallback;
@@ -164,8 +166,9 @@ struct CharacterPowerData
 ZUN_ASSERT_TYPE(CharacterPowerData, 0xc, 4);
 
 #define MAX_PLAYER_BULLETS 80
-#define PLAYER_BOMB_REGION_COUNT 32
-#define PLAYER_BOMB_PROJECTILE_COUNT 16
+#define MAX_DAMAGE_REGION_COUNT 32
+#define MAX_CANCEL_REGION_COUNT 16
+#define PLAYER_LASER_TIMER_COUNT 2
 
 struct Player
 {
@@ -173,8 +176,8 @@ struct Player
 
     f32 AngleFromPlayer(D3DXVECTOR3 *pos);
     f32 AngleToPlayer(D3DXVECTOR3 *pos);
-    i32 CheckGraze(D3DXVECTOR3 *center, D3DXVECTOR3 *size);
-    i32 CheckCollision(D3DXVECTOR3 *bulletCenter, D3DXVECTOR3 *bulletSize);
+    i32 CheckGraze(D3DXVECTOR3 *position, D3DXVECTOR3 *size);
+    i32 CheckCollision(D3DXVECTOR3 *position, D3DXVECTOR3 *size);
     i32 CalcLaserHitbox(D3DXVECTOR3 *laserCenter, D3DXVECTOR3 *laserSize, D3DXVECTOR3 *rotation, f32 angle,
                         ZunBool canGraze);
     i32 CalcDamageToEnemy(D3DXVECTOR3 *enemyPos, D3DXVECTOR3 *enemySize, ZunBool *hitByBomb);
@@ -193,12 +196,12 @@ struct Player
     D3DXVECTOR3 hitboxSize;
     D3DXVECTOR3 grabItemSize;
     D3DXVECTOR3 orbsPosition[2];
-    D3DXVECTOR3 bombRegionPositions[PLAYER_BOMB_REGION_COUNT];
-    D3DXVECTOR3 bombRegionSizes[PLAYER_BOMB_REGION_COUNT];
-    i32 bombRegionDamages[PLAYER_BOMB_REGION_COUNT];
-    i32 bombRegionTotalDamages[PLAYER_BOMB_REGION_COUNT];
-    PlayerRect bombProjectiles[PLAYER_BOMB_PROJECTILE_COUNT];
-    ZunTimer laserTimer[2];
+    D3DXVECTOR3 damageRegionPosition[MAX_DAMAGE_REGION_COUNT];
+    D3DXVECTOR3 damageRegionSize[MAX_DAMAGE_REGION_COUNT];
+    i32 damageRegionDamage[MAX_DAMAGE_REGION_COUNT];
+    i32 damageRegionDamageDealt[MAX_DAMAGE_REGION_COUNT];
+    PlayerRect cancelRegions[MAX_CANCEL_REGION_COUNT];
+    ZunTimer laserTimer[PLAYER_LASER_TIMER_COUNT];
     ZunVec2 speedMultiplierDuringBomb;
     i32 respawnTimer;
     i32 bulletGracePeriod;
@@ -220,7 +223,7 @@ struct Player
     ZunTimer stateTimer;
     FireBulletCallback fireBulletCallback;
     FireBulletCallback fireBulletFocusCallback;
-    PlayerBombInfo bombInfo;
+    BombInfo bombInfo;
     ChainElem *chainCalc;
     ChainElem *chainDraw1;
     ChainElem *chainDraw2;

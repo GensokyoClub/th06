@@ -9,14 +9,14 @@
 namespace th06
 {
 
-#pragma var_order(angleY, angleX, i, bombSprite, vecLength, bombPivot, bombIdx)
+#pragma var_order(angleY, angleX, i, vm, vecLength, bombPivot, bombIdx)
 void BombReimuACalc(Player *player)
 {
     i32 i;
     f32 vecLength;
     i32 bombIdx;
     D3DXVECTOR3 bombPivot;
-    AnmVm *bombSprite;
+    AnmVm *vm;
     f32 angleX;
     f32 angleY;
 
@@ -34,16 +34,16 @@ void BombReimuACalc(Player *player)
 
         for (i = 0; i < 8; i++)
         {
-            player->bombInfo.reimuABombProjectilesState[i] = 0;
+            player->bombInfo.projectileState[i] = 0;
         }
         g_ItemManager.MagnetAllItems();
         g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &player->positionCenter, 1, COLOR_NEONBLUE);
 
-        player->bombProjectiles[8].pos.x = player->positionCenter.x;
-        player->bombProjectiles[8].pos.y = player->positionCenter.y;
+        player->cancelRegions[8].pos.x = player->positionCenter.x;
+        player->cancelRegions[8].pos.y = player->positionCenter.y;
 
-        player->bombProjectiles[8].size.x = 256.0f;
-        player->bombProjectiles[8].size.y = 256.0f;
+        player->cancelRegions[8].size.x = 256.0f;
+        player->cancelRegions[8].size.y = 256.0f;
     }
     if (player->bombInfo.timer >= 60 && player->bombInfo.timer < 180)
     {
@@ -52,36 +52,36 @@ void BombReimuACalc(Player *player)
             i = ((i32)player->bombInfo.timer - 60) / 16;
             if (i != 0)
             {
-                player->bombInfo.reimuABombProjectilesState[i] = 1;
-                player->bombInfo.reimuABombProjectilesRelated[i] = 4.0f;
-                player->bombInfo.bombRegionPositions[i] = player->positionCenter;
+                player->bombInfo.projectileState[i] = 1;
+                player->bombInfo.projectileCustom[i] = 4.0f;
+                player->bombInfo.projectilePosition[i] = player->positionCenter;
 
                 angleX = g_Rng.GetRandomF32InRange(ZUN_2PI) - ZUN_PI;
 
-                player->bombInfo.bombRegionVelocities[i].x =
-                    cosf(angleX) * player->bombInfo.reimuABombProjectilesRelated[i];
+                player->bombInfo.projectileVelocity[i].x =
+                    cosf(angleX) * player->bombInfo.projectileCustom[i];
 
-                player->bombInfo.bombRegionVelocities[i].y =
-                    sinf(angleX) * player->bombInfo.reimuABombProjectilesRelated[i];
-                player->bombRegionTotalDamages[i] = 0;
+                player->bombInfo.projectileVelocity[i].y =
+                    sinf(angleX) * player->bombInfo.projectileCustom[i];
+                player->damageRegionDamageDealt[i] = 0;
 
-                bombSprite = &player->bombInfo.sprites[0][i * 4];
-                for (bombIdx = 0; bombIdx < 4; bombIdx++, bombSprite++)
+                vm = &player->bombInfo.vms[0][i * 4];
+                for (bombIdx = 0; bombIdx < 4; bombIdx++, vm++)
                 {
-                    g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_REIMU_A_BOMB_ARRAY + bombIdx);
+                    g_AnmManager->ExecuteAnmIdx(vm, ANM_SCRIPT_PLAYER_REIMU_A_BOMB_ARRAY + bombIdx);
                 }
                 g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB_REIMU_A);
             }
         }
     }
     player->playerState = PLAYER_STATE_INVULNERABLE;
-    for (i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.reimuABombProjectilesState); i++)
+    for (i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.projectileState); i++)
     {
-        if (player->bombInfo.reimuABombProjectilesState[i] == 0)
+        if (player->bombInfo.projectileState[i] == 0)
         {
             continue;
         }
-        if (player->bombInfo.reimuABombProjectilesState[i] == 1)
+        if (player->bombInfo.projectileState[i] == 1)
         {
             if (player->bombInfo.timer.HasTicked())
             {
@@ -93,88 +93,88 @@ void BombReimuACalc(Player *player)
                 {
                     bombPivot = player->positionCenter;
                 }
-                angleX = bombPivot.x - player->bombInfo.bombRegionPositions[i].x;
-                angleY = bombPivot.y - player->bombInfo.bombRegionPositions[i].y;
+                angleX = bombPivot.x - player->bombInfo.projectilePosition[i].x;
+                angleY = bombPivot.y - player->bombInfo.projectilePosition[i].y;
 
                 vecLength = sqrtf(ZUN_SQUARE(angleX) + ZUN_SQUARE(angleY)) /
-                            (player->bombInfo.reimuABombProjectilesRelated[i] / 8.0f);
+                            (player->bombInfo.projectileCustom[i] / 8.0f);
                 if (vecLength < 1.0f)
                 {
                     vecLength = 1.0f;
                 }
-                angleX = angleX / vecLength + player->bombInfo.bombRegionVelocities[i].x;
-                angleY = angleY / vecLength + player->bombInfo.bombRegionVelocities[i].y;
+                angleX = angleX / vecLength + player->bombInfo.projectileVelocity[i].x;
+                angleY = angleY / vecLength + player->bombInfo.projectileVelocity[i].y;
                 vecLength = sqrtf(ZUN_SQUARE(angleX) + ZUN_SQUARE(angleY));
 
-                player->bombInfo.reimuABombProjectilesRelated[i] = ZUN_MIN(vecLength, 10.0f);
+                player->bombInfo.projectileCustom[i] = ZUN_MIN(vecLength, 10.0f);
 
-                if (player->bombInfo.reimuABombProjectilesRelated[i] < 1.0f)
+                if (player->bombInfo.projectileCustom[i] < 1.0f)
                 {
-                    player->bombInfo.reimuABombProjectilesRelated[i] = 1.0f;
+                    player->bombInfo.projectileCustom[i] = 1.0f;
                 }
 
-                player->bombInfo.bombRegionVelocities[i].x =
-                    (angleX * player->bombInfo.reimuABombProjectilesRelated[i]) / vecLength;
-                player->bombInfo.bombRegionVelocities[i].y =
-                    (angleY * player->bombInfo.reimuABombProjectilesRelated[i]) / vecLength;
+                player->bombInfo.projectileVelocity[i].x =
+                    (angleX * player->bombInfo.projectileCustom[i]) / vecLength;
+                player->bombInfo.projectileVelocity[i].y =
+                    (angleY * player->bombInfo.projectileCustom[i]) / vecLength;
 
-                player->bombRegionSizes[i].x = 48.0f;
-                player->bombRegionSizes[i].y = 48.0f;
+                player->damageRegionSize[i].x = 48.0f;
+                player->damageRegionSize[i].y = 48.0f;
 
-                player->bombRegionPositions[i] = player->bombInfo.bombRegionPositions[i];
-                player->bombRegionDamages[i] = 8;
+                player->damageRegionPosition[i] = player->bombInfo.projectilePosition[i];
+                player->damageRegionDamage[i] = 8;
 
-                player->bombProjectiles[i].pos.x = player->bombInfo.bombRegionPositions[i].x;
-                player->bombProjectiles[i].pos.y = player->bombInfo.bombRegionPositions[i].y;
+                player->cancelRegions[i].pos.x = player->bombInfo.projectilePosition[i].x;
+                player->cancelRegions[i].pos.y = player->bombInfo.projectilePosition[i].y;
 
-                player->bombProjectiles[i].size.x = 48.0f;
-                player->bombProjectiles[i].size.y = 48.0f;
+                player->cancelRegions[i].size.x = 48.0f;
+                player->cancelRegions[i].size.y = 48.0f;
 
-                if (player->bombRegionTotalDamages[i] >= 100 ||
+                if (player->damageRegionDamageDealt[i] >= 100 ||
                     player->bombInfo.timer >= player->bombInfo.duration - 30)
                 {
-                    g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_6, &player->bombInfo.bombRegionPositions[i], 8,
+                    g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_6, &player->bombInfo.projectilePosition[i], 8,
                                                    COLOR_WHITE);
-                    g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &player->bombInfo.bombRegionPositions[i], 1,
+                    g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &player->bombInfo.projectilePosition[i], 1,
                                                    COLOR_NEONBLUE);
-                    player->bombInfo.reimuABombProjectilesState[i] = 2;
+                    player->bombInfo.projectileState[i] = 2;
 
-                    player->bombInfo.sprites[0][i * 4].pendingInterrupt = 1;
-                    player->bombInfo.sprites[0][i * 4 + 1].pendingInterrupt = 1;
-                    player->bombInfo.sprites[0][i * 4 + 2].pendingInterrupt = 1;
-                    player->bombInfo.sprites[0][i * 4 + 3].pendingInterrupt = 1;
+                    player->bombInfo.vms[0][i * 4].pendingInterrupt = 1;
+                    player->bombInfo.vms[0][i * 4 + 1].pendingInterrupt = 1;
+                    player->bombInfo.vms[0][i * 4 + 2].pendingInterrupt = 1;
+                    player->bombInfo.vms[0][i * 4 + 3].pendingInterrupt = 1;
 
-                    player->bombRegionSizes[i].x = 256.0f;
-                    player->bombRegionSizes[i].y = 256.0f;
+                    player->damageRegionSize[i].x = 256.0f;
+                    player->damageRegionSize[i].y = 256.0f;
 
-                    player->bombRegionDamages[i] = 200;
+                    player->damageRegionDamage[i] = 200;
 
-                    player->bombProjectiles[i].size.x = 256.0f;
-                    player->bombProjectiles[i].size.y = 256.0f;
+                    player->cancelRegions[i].size.x = 256.0f;
+                    player->cancelRegions[i].size.y = 256.0f;
 
-                    player->bombInfo.bombRegionVelocities[i] / 8.0f; // ZUN moment
+                    player->bombInfo.projectileVelocity[i] / 8.0f; // ZUN moment
 
                     g_SoundPlayer.PlaySoundByIdx(SOUND_15);
                     ScreenEffect_RegisterChain(SCREEN_EFFECT_SHAKE, 16, 8, 0, 0);
                 }
             }
         }
-        else if (player->bombInfo.reimuABombProjectilesState[i] != 0 && player->bombInfo.timer.HasTicked())
+        else if (player->bombInfo.projectileState[i] != 0 && player->bombInfo.timer.HasTicked())
         {
-            if (++player->bombInfo.reimuABombProjectilesState[i] >= 30)
+            if (++player->bombInfo.projectileState[i] >= 30)
             {
-                player->bombInfo.reimuABombProjectilesState[i] = 0;
+                player->bombInfo.projectileState[i] = 0;
             }
         }
-        player->bombInfo.bombRegionPositions[i].x +=
-            g_Supervisor.effectiveFramerateMultiplier * player->bombInfo.bombRegionVelocities[i].x;
-        player->bombInfo.bombRegionPositions[i].y +=
-            g_Supervisor.effectiveFramerateMultiplier * player->bombInfo.bombRegionVelocities[i].y;
+        player->bombInfo.projectilePosition[i].x +=
+            g_Supervisor.effectiveFramerateMultiplier * player->bombInfo.projectileVelocity[i].x;
+        player->bombInfo.projectilePosition[i].y +=
+            g_Supervisor.effectiveFramerateMultiplier * player->bombInfo.projectileVelocity[i].y;
 
-        g_AnmManager->ExecuteScript(&player->bombInfo.sprites[0][i * 4]);
-        g_AnmManager->ExecuteScript(&player->bombInfo.sprites[0][i * 4 + 1]);
-        g_AnmManager->ExecuteScript(&player->bombInfo.sprites[0][i * 4 + 2]);
-        g_AnmManager->ExecuteScript(&player->bombInfo.sprites[0][i * 4 + 3]);
+        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][i * 4]);
+        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][i * 4 + 1]);
+        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][i * 4 + 2]);
+        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][i * 4 + 3]);
     }
     player->bombInfo.timer++;
 }
@@ -212,49 +212,49 @@ static void DarkenViewport(Player *player)
 void BombReimuADraw(Player *player)
 {
     DarkenViewport(player);
-    AnmVm *bombSprite = &player->bombInfo.sprites[0][0];
-    for (i32 i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.sprites); i++)
+    AnmVm *vm = &player->bombInfo.vms[0][0];
+    for (i32 i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.vms); i++)
     {
-        if (player->bombInfo.reimuABombProjectilesState[i] == 0)
+        if (player->bombInfo.projectileState[i] == 0)
         {
-            bombSprite = &bombSprite[4];
+            vm = &vm[4];
             continue;
         }
 
-        bombSprite->pos = player->bombInfo.bombRegionPositions[i] + bombSprite->posOffset;
-        bombSprite->pos[0] += g_GameManager.gameRegionScreenPos.x;
-        bombSprite->pos[1] += g_GameManager.gameRegionScreenPos.y;
-        bombSprite->pos[2] = 0.0f;
-        g_AnmManager->DrawNoRotation(bombSprite);
-        bombSprite++;
+        vm->pos = player->bombInfo.projectilePosition[i] + vm->posOffset;
+        vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
+        vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
+        vm->pos[2] = 0.0f;
+        g_AnmManager->DrawNoRotation(vm);
+        vm++;
 
-        bombSprite->pos = player->bombInfo.bombRegionPositions[i] + bombSprite->posOffset;
-        bombSprite->pos[0] += g_GameManager.gameRegionScreenPos.x;
-        bombSprite->pos[1] += g_GameManager.gameRegionScreenPos.y;
-        bombSprite->pos[2] = 0.0f;
-        g_AnmManager->DrawNoRotation(bombSprite);
-        bombSprite++;
+        vm->pos = player->bombInfo.projectilePosition[i] + vm->posOffset;
+        vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
+        vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
+        vm->pos[2] = 0.0f;
+        g_AnmManager->DrawNoRotation(vm);
+        vm++;
 
-        bombSprite->pos = player->bombInfo.bombRegionPositions[i] + bombSprite->posOffset;
-        bombSprite->pos[0] += g_GameManager.gameRegionScreenPos.x;
-        bombSprite->pos[1] += g_GameManager.gameRegionScreenPos.y;
-        bombSprite->pos[2] = 0.0f;
-        g_AnmManager->DrawNoRotation(bombSprite);
-        bombSprite++;
+        vm->pos = player->bombInfo.projectilePosition[i] + vm->posOffset;
+        vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
+        vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
+        vm->pos[2] = 0.0f;
+        g_AnmManager->DrawNoRotation(vm);
+        vm++;
 
-        bombSprite->pos = player->bombInfo.bombRegionPositions[i] + bombSprite->posOffset;
-        bombSprite->pos[0] += g_GameManager.gameRegionScreenPos.x;
-        bombSprite->pos[1] += g_GameManager.gameRegionScreenPos.y;
-        bombSprite->pos[2] = 0.0f;
-        g_AnmManager->DrawNoRotation(bombSprite);
-        bombSprite++;
+        vm->pos = player->bombInfo.projectilePosition[i] + vm->posOffset;
+        vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
+        vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
+        vm->pos[2] = 0.0f;
+        g_AnmManager->DrawNoRotation(vm);
+        vm++;
     }
 }
 
-#pragma var_order(i, bombSprite, unusedVector)
+#pragma var_order(i, vm, unusedVector)
 void BombReimuBCalc(Player *player)
 {
-    AnmVm *bombSprite;
+    AnmVm *vm;
     i32 i;
     D3DXVECTOR3 unusedVector;
 
@@ -271,26 +271,26 @@ void BombReimuBCalc(Player *player)
         g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT, TH_REIMU_B_BOMB_NAME);
         player->bombInfo.duration = 140;
         player->stateTimer = 200;
-        bombSprite = player->bombInfo.sprites[0];
+        vm = player->bombInfo.vms[0];
 
-        for (i = 0; i < 4; i++, bombSprite++)
+        for (i = 0; i < 4; i++, vm++)
         {
-            g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_REIMU_B_BOMB_ARRAY + i);
+            g_AnmManager->ExecuteAnmIdx(vm, ANM_SCRIPT_PLAYER_REIMU_B_BOMB_ARRAY + i);
         }
 
         g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB_REIMARI);
-        player->bombInfo.bombRegionPositions[0].x = player->positionCenter.x;
-        player->bombInfo.bombRegionPositions[0].y = GAME_REGION_HEIGHT / 2.0f;
-        player->bombInfo.bombRegionPositions[0].z = 0.42f;
-        player->bombInfo.bombRegionPositions[1].x = GAME_REGION_WIDTH / 2.0f;
-        player->bombInfo.bombRegionPositions[1].y = player->positionCenter.y;
-        player->bombInfo.bombRegionPositions[1].z = 0.415f;
-        player->bombInfo.bombRegionPositions[2].x = player->positionCenter.x;
-        player->bombInfo.bombRegionPositions[2].y = GAME_REGION_HEIGHT / 2.0f;
-        player->bombInfo.bombRegionPositions[2].z = 0.41f;
-        player->bombInfo.bombRegionPositions[3].x = GAME_REGION_WIDTH / 2.0f;
-        player->bombInfo.bombRegionPositions[3].y = player->positionCenter.y;
-        player->bombInfo.bombRegionPositions[3].z = 0.405f;
+        player->bombInfo.projectilePosition[0].x = player->positionCenter.x;
+        player->bombInfo.projectilePosition[0].y = GAME_REGION_HEIGHT / 2.0f;
+        player->bombInfo.projectilePosition[0].z = 0.42f;
+        player->bombInfo.projectilePosition[1].x = GAME_REGION_WIDTH / 2.0f;
+        player->bombInfo.projectilePosition[1].y = player->positionCenter.y;
+        player->bombInfo.projectilePosition[1].z = 0.415f;
+        player->bombInfo.projectilePosition[2].x = player->positionCenter.x;
+        player->bombInfo.projectilePosition[2].y = GAME_REGION_HEIGHT / 2.0f;
+        player->bombInfo.projectilePosition[2].z = 0.41f;
+        player->bombInfo.projectilePosition[3].x = GAME_REGION_WIDTH / 2.0f;
+        player->bombInfo.projectilePosition[3].y = player->positionCenter.y;
+        player->bombInfo.projectilePosition[3].z = 0.405f;
         ScreenEffect_RegisterChain(SCREEN_EFFECT_SHAKE, 60, 2, 6, 0);
     }
     else
@@ -300,29 +300,29 @@ void BombReimuBCalc(Player *player)
             ScreenEffect_RegisterChain(SCREEN_EFFECT_SHAKE, 80, 20, 0, 0);
         }
 
-        player->bombProjectiles[0].size.x = 62.0f;
-        player->bombProjectiles[0].size.y = GAME_REGION_HEIGHT;
-        player->bombProjectiles[1].size.x = GAME_REGION_WIDTH;
-        player->bombProjectiles[1].size.y = 62.0f;
-        player->bombProjectiles[2].size.x = 62.0f;
-        player->bombProjectiles[2].size.y = GAME_REGION_HEIGHT;
-        player->bombProjectiles[3].size.x = GAME_REGION_WIDTH;
-        player->bombProjectiles[3].size.y = 62.0f;
+        player->cancelRegions[0].size.x = 62.0f;
+        player->cancelRegions[0].size.y = GAME_REGION_HEIGHT;
+        player->cancelRegions[1].size.x = GAME_REGION_WIDTH;
+        player->cancelRegions[1].size.y = 62.0f;
+        player->cancelRegions[2].size.x = 62.0f;
+        player->cancelRegions[2].size.y = GAME_REGION_HEIGHT;
+        player->cancelRegions[3].size.x = GAME_REGION_WIDTH;
+        player->cancelRegions[3].size.y = 62.0f;
 
         for (i = 0; i < 4; i++)
         {
-            g_AnmManager->ExecuteScript(&player->bombInfo.sprites[0][i]);
+            g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][i]);
             if (player->bombInfo.timer.HasTicked() && !MULTIPLE_OF(player->bombInfo.timer, 2))
             {
-                player->bombProjectiles[i].pos.x =
-                    player->bombInfo.bombRegionPositions[i].x + player->bombInfo.sprites[0][i].posOffset.x;
-                player->bombProjectiles[i].pos.y =
-                    player->bombInfo.bombRegionPositions[i].y + player->bombInfo.sprites[0][i].posOffset.y;
-                player->bombRegionSizes[i].x = player->bombProjectiles[i].size.x;
-                player->bombRegionSizes[i].y = player->bombProjectiles[i].size.y;
-                player->bombRegionPositions[i] =
-                    player->bombInfo.bombRegionPositions[i] + player->bombInfo.sprites[0][i].posOffset;
-                player->bombRegionDamages[i] = 8;
+                player->cancelRegions[i].pos.x =
+                    player->bombInfo.projectilePosition[i].x + player->bombInfo.vms[0][i].posOffset.x;
+                player->cancelRegions[i].pos.y =
+                    player->bombInfo.projectilePosition[i].y + player->bombInfo.vms[0][i].posOffset.y;
+                player->damageRegionSize[i].x = player->cancelRegions[i].size.x;
+                player->damageRegionSize[i].y = player->cancelRegions[i].size.y;
+                player->damageRegionPosition[i] =
+                    player->bombInfo.projectilePosition[i] + player->bombInfo.vms[0][i].posOffset;
+                player->damageRegionDamage[i] = 8;
             }
         }
     }
@@ -334,14 +334,14 @@ void BombReimuBCalc(Player *player)
 void BombReimuBDraw(Player *player)
 {
     DarkenViewport(player);
-    AnmVm *bombSprite = player->bombInfo.sprites[0];
-    for (i32 i = 0; i < 4; i++, bombSprite++)
+    AnmVm *vm = player->bombInfo.vms[0];
+    for (i32 i = 0; i < 4; i++, vm++)
     {
-        bombSprite->pos = player->bombInfo.bombRegionPositions[i] + bombSprite->posOffset;
-        bombSprite->pos.x += g_GameManager.gameRegionScreenPos.x;
-        bombSprite->pos.y += g_GameManager.gameRegionScreenPos.y;
-        bombSprite->pos.z = 0.0f;
-        g_AnmManager->Draw(bombSprite);
+        vm->pos = player->bombInfo.projectilePosition[i] + vm->posOffset;
+        vm->pos.x += g_GameManager.gameRegionScreenPos.x;
+        vm->pos.y += g_GameManager.gameRegionScreenPos.y;
+        vm->pos.z = 0.0f;
+        g_AnmManager->Draw(vm);
     }
 }
 
@@ -366,41 +366,41 @@ void BombMarisaACalc(Player *player)
         player->bombInfo.duration = 250;
         player->stateTimer = 300;
 
-        starSprite = player->bombInfo.sprites[0];
-        for (i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.sprites); i++, starSprite++)
+        starSprite = player->bombInfo.vms[0];
+        for (i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.vms); i++, starSprite++)
         {
             g_AnmManager->ExecuteAnmIdx(starSprite, ANM_SCRIPT_PLAYER_MARISA_A_BLUE_STAR + i % 3);
-            player->bombInfo.bombRegionPositions[i] = player->positionCenter;
+            player->bombInfo.projectilePosition[i] = player->positionCenter;
 
             float starAngle = i * ZUN_2PI / 8.0f;
 
-            player->bombInfo.bombRegionVelocities[i].x = cosf(starAngle) * 2.0f;
-            player->bombInfo.bombRegionVelocities[i].y = sinf(starAngle) * 2.0f;
-            player->bombInfo.bombRegionVelocities[i].z = 0.0f;
+            player->bombInfo.projectileVelocity[i].x = cosf(starAngle) * 2.0f;
+            player->bombInfo.projectileVelocity[i].y = sinf(starAngle) * 2.0f;
+            player->bombInfo.projectileVelocity[i].z = 0.0f;
         }
         g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB_REIMARI);
         ScreenEffect_RegisterChain(SCREEN_EFFECT_SHAKE, 120, 4, 1, 0);
     }
     else
     {
-        for (i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.sprites); i++)
+        for (i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.vms); i++)
         {
-            player->bombInfo.bombRegionPositions[i] +=
-                player->bombInfo.bombRegionVelocities[i] * g_Supervisor.effectiveFramerateMultiplier;
+            player->bombInfo.projectilePosition[i] +=
+                player->bombInfo.projectileVelocity[i] * g_Supervisor.effectiveFramerateMultiplier;
 
             if (player->bombInfo.timer.HasTicked() && !MULTIPLE_OF(player->bombInfo.timer, 3))
             {
-                player->bombProjectiles[i].pos.x = player->bombInfo.bombRegionPositions[i].x;
-                player->bombProjectiles[i].pos.y = player->bombInfo.bombRegionPositions[i].y;
-                player->bombProjectiles[i].size.x = 128.0f;
-                player->bombProjectiles[i].size.y = 128.0f;
-                player->bombRegionSizes[i].x = 128.0f;
-                player->bombRegionSizes[i].y = 128.0f;
+                player->cancelRegions[i].pos.x = player->bombInfo.projectilePosition[i].x;
+                player->cancelRegions[i].pos.y = player->bombInfo.projectilePosition[i].y;
+                player->cancelRegions[i].size.x = 128.0f;
+                player->cancelRegions[i].size.y = 128.0f;
+                player->damageRegionSize[i].x = 128.0f;
+                player->damageRegionSize[i].y = 128.0f;
 
-                player->bombRegionPositions[i] = player->bombInfo.bombRegionPositions[i];
-                player->bombRegionDamages[i] = 8;
+                player->damageRegionPosition[i] = player->bombInfo.projectilePosition[i];
+                player->damageRegionDamage[i] = 8;
             }
-            g_AnmManager->ExecuteScript(&player->bombInfo.sprites[0][i]);
+            g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][i]);
         }
     }
     player->playerState = PLAYER_STATE_INVULNERABLE;
@@ -410,45 +410,45 @@ void BombMarisaACalc(Player *player)
 void BombMarisaADraw(Player *player)
 {
     DarkenViewport(player);
-    AnmVm *bombSprite = &player->bombInfo.sprites[0][0];
-    for (i32 i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.sprites); i++)
+    AnmVm *vm = &player->bombInfo.vms[0][0];
+    for (i32 i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.vms); i++)
     {
-        bombSprite->pos = player->bombInfo.bombRegionPositions[i];
-        bombSprite->pos.x += g_GameManager.gameRegionScreenPos.x;
-        bombSprite->pos.y += g_GameManager.gameRegionScreenPos.y;
-        bombSprite->pos.z = 0.0f;
-        bombSprite->scaleX = 3.2f;
-        bombSprite->scaleY = 3.2f;
-        g_AnmManager->Draw(bombSprite);
+        vm->pos = player->bombInfo.projectilePosition[i];
+        vm->pos.x += g_GameManager.gameRegionScreenPos.x;
+        vm->pos.y += g_GameManager.gameRegionScreenPos.y;
+        vm->pos.z = 0.0f;
+        vm->scaleX = 3.2f;
+        vm->scaleY = 3.2f;
+        g_AnmManager->Draw(vm);
 
-        bombSprite->pos -= player->bombInfo.bombRegionVelocities[i] * 6.0f;
-        bombSprite->pos.x += -32.0f;
-        bombSprite->pos.y += -32.0f;
-        bombSprite->pos.z = 0.0f;
-        bombSprite->scaleX = 2.2f;
-        bombSprite->scaleY = 2.2f;
-        g_AnmManager->Draw(bombSprite);
+        vm->pos -= player->bombInfo.projectileVelocity[i] * 6.0f;
+        vm->pos.x += -32.0f;
+        vm->pos.y += -32.0f;
+        vm->pos.z = 0.0f;
+        vm->scaleX = 2.2f;
+        vm->scaleY = 2.2f;
+        g_AnmManager->Draw(vm);
 
-        bombSprite->pos -= player->bombInfo.bombRegionVelocities[i] * 2.0f;
-        bombSprite->pos.x += 64.0f;
-        bombSprite->pos.y += 64.0f;
-        bombSprite->pos.z = 0.0f;
+        vm->pos -= player->bombInfo.projectileVelocity[i] * 2.0f;
+        vm->pos.x += 64.0f;
+        vm->pos.y += 64.0f;
+        vm->pos.z = 0.0f;
 
-        bombSprite->pos -= player->bombInfo.bombRegionVelocities[i] * 2.0f;
-        bombSprite->pos.x += -32.0f;
-        bombSprite->pos.y += -32.0f;
-        bombSprite->pos.z = 0.0f;
-        bombSprite->scaleX = 1.0f;
-        bombSprite->scaleY = 1.0f;
-        g_AnmManager->Draw(bombSprite);
-        bombSprite++;
+        vm->pos -= player->bombInfo.projectileVelocity[i] * 2.0f;
+        vm->pos.x += -32.0f;
+        vm->pos.y += -32.0f;
+        vm->pos.z = 0.0f;
+        vm->scaleX = 1.0f;
+        vm->scaleY = 1.0f;
+        g_AnmManager->Draw(vm);
+        vm++;
     }
 }
 
-#pragma var_order(i, bombSprite, unusedVector)
+#pragma var_order(i, vm, unusedVector)
 void BombMarisaBCalc(Player *player)
 {
-    AnmVm *bombSprite;
+    AnmVm *vm;
     i32 i;
     D3DXVECTOR3 unusedVector;
 
@@ -466,11 +466,11 @@ void BombMarisaBCalc(Player *player)
         g_Gui.ShowBombNamePortrait(ANM_SCRIPT_FACE_BOMB_PORTRAIT, TH_MARISA_B_BOMB_NAME);
         player->bombInfo.duration = 300;
         player->stateTimer = 360;
-        bombSprite = player->bombInfo.sprites[0];
-        for (i = 0; i < 4; i++, bombSprite++)
+        vm = player->bombInfo.vms[0];
+        for (i = 0; i < 4; i++, vm++)
         {
-            g_AnmManager->ExecuteAnmIdx(bombSprite, ANM_SCRIPT_PLAYER_MARISA_B_MASTER_SPARK + i);
-            player->bombInfo.bombRegionPositions[i] = player->positionCenter;
+            g_AnmManager->ExecuteAnmIdx(vm, ANM_SCRIPT_PLAYER_MARISA_B_MASTER_SPARK + i);
+            player->bombInfo.projectilePosition[i] = player->positionCenter;
         }
         g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB_MARISA_B);
         player->speedMultiplierDuringBomb.x = player->speedMultiplierDuringBomb.y = 0.3f;
@@ -488,21 +488,21 @@ void BombMarisaBCalc(Player *player)
 
         if (player->bombInfo.timer.HasTicked() && !MULTIPLE_OF(player->bombInfo.timer, 4))
         {
-            player->bombProjectiles[0].pos.x = GAME_REGION_WIDTH / 2.0f;
-            player->bombProjectiles[0].pos.y = player->positionCenter.y / 2.0f;
-            player->bombProjectiles[0].size.x = GAME_REGION_WIDTH;
-            player->bombProjectiles[0].size.y = player->positionCenter.y;
-            player->bombRegionSizes[0].x = GAME_REGION_WIDTH;
-            player->bombRegionSizes[0].y = player->positionCenter.y;
-            player->bombRegionPositions[0].x = player->bombProjectiles[0].pos.x;
-            player->bombRegionPositions[0].y = player->bombProjectiles[0].pos.y;
-            player->bombRegionDamages[0] = 12;
+            player->cancelRegions[0].pos.x = GAME_REGION_WIDTH / 2.0f;
+            player->cancelRegions[0].pos.y = player->positionCenter.y / 2.0f;
+            player->cancelRegions[0].size.x = GAME_REGION_WIDTH;
+            player->cancelRegions[0].size.y = player->positionCenter.y;
+            player->damageRegionSize[0].x = GAME_REGION_WIDTH;
+            player->damageRegionSize[0].y = player->positionCenter.y;
+            player->damageRegionPosition[0].x = player->cancelRegions[0].pos.x;
+            player->damageRegionPosition[0].y = player->cancelRegions[0].pos.y;
+            player->damageRegionDamage[0] = 12;
         }
 
-        g_AnmManager->ExecuteScript(&player->bombInfo.sprites[0][0]);
-        g_AnmManager->ExecuteScript(&player->bombInfo.sprites[0][1]);
-        g_AnmManager->ExecuteScript(&player->bombInfo.sprites[0][2]);
-        g_AnmManager->ExecuteScript(&player->bombInfo.sprites[0][3]);
+        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][0]);
+        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][1]);
+        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][2]);
+        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][3]);
     }
 
     player->playerState = PLAYER_STATE_INVULNERABLE;
@@ -512,20 +512,20 @@ void BombMarisaBCalc(Player *player)
 void BombMarisaBDraw(Player *player)
 {
     DarkenViewport(player);
-    AnmVm *bombSprite = player->bombInfo.sprites[0];
+    AnmVm *vm = player->bombInfo.vms[0];
     for (i32 i = 0; i < 4; i++)
     {
         float spriteAngle = (((ZUN_PI / 5.0f) * i) / 3.0f - ZUN_PI) + (ZUN_2PI / 5.0f);
-        bombSprite->pos = player->positionCenter;
-        bombSprite->pos.x += (cosf(spriteAngle) * bombSprite->sprite->heightPx * bombSprite->scaleY) / 2.0f;
-        bombSprite->pos.y += (sinf(spriteAngle) * bombSprite->sprite->heightPx * bombSprite->scaleY) / 2.0f;
+        vm->pos = player->positionCenter;
+        vm->pos.x += (cosf(spriteAngle) * vm->sprite->heightPx * vm->scaleY) / 2.0f;
+        vm->pos.y += (sinf(spriteAngle) * vm->sprite->heightPx * vm->scaleY) / 2.0f;
         spriteAngle = ZUN_HALF_PI - spriteAngle;
-        bombSprite->rotation.z = ReduceAngleAdd(spriteAngle, ZUN_PI);
-        bombSprite->pos.x += g_GameManager.gameRegionScreenPos.x;
-        bombSprite->pos.y += g_GameManager.gameRegionScreenPos.y;
-        bombSprite->pos.z = 0.0f;
-        g_AnmManager->Draw(bombSprite);
-        bombSprite++;
+        vm->rotation.z = ReduceAngleAdd(spriteAngle, ZUN_PI);
+        vm->pos.x += g_GameManager.gameRegionScreenPos.x;
+        vm->pos.y += g_GameManager.gameRegionScreenPos.y;
+        vm->pos.z = 0.0f;
+        g_AnmManager->Draw(vm);
+        vm++;
     }
 }
 } // namespace th06

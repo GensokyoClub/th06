@@ -276,7 +276,7 @@ ZunResult AnmManager::CreateEmptyTexture(i32 textureIdx, u32 width, u32 height, 
     return ZUN_SUCCESS;
 }
 
-#pragma var_order(anm, anmName, rawSprite, i, curOffset)
+#pragma var_order(anm, texturePath, rawSprite, i, curOffset)
 ZunResult AnmManager::LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset)
 {
     this->ReleaseAnm(anmIdx);
@@ -292,24 +292,24 @@ ZunResult AnmManager::LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset)
 
     anm->textureIdx = anmIdx;
 
-    const char *anmName = (char *)anm + anm->nameOffset;
+    const char *texturePath = (char *)anm + anm->texturePathOffset;
 
-    if (*anmName == '@')
+    if (*texturePath == '@')
     {
         this->CreateEmptyTexture(anm->textureIdx, anm->width, anm->height, anm->format);
     }
-    else if (this->LoadTexture(anm->textureIdx, anmName, anm->format, anm->colorKey) != ZUN_SUCCESS)
+    else if (this->LoadTexture(anm->textureIdx, texturePath, anm->format, anm->colorKey) != ZUN_SUCCESS)
     {
-        g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, anmName);
+        g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, texturePath);
         return ZUN_ERROR;
     }
 
-    if (anm->mipmapNameOffset != 0)
+    if (anm->alphaTexturePathOffset != 0)
     {
-        anmName = (char *)anm + anm->mipmapNameOffset;
-        if (this->LoadTextureAlphaChannel(anm->textureIdx, anmName, anm->format, anm->colorKey) != ZUN_SUCCESS)
+        texturePath = (const char *)anm + anm->alphaTexturePathOffset;
+        if (this->LoadTextureAlphaChannel(anm->textureIdx, texturePath, anm->format, anm->colorKey) != ZUN_SUCCESS)
         {
-            g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, anmName);
+            g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, texturePath);
             return ZUN_ERROR;
         }
     }

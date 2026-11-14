@@ -85,7 +85,7 @@ struct AnmRawEntry
     u32 texturePathOffset;
     u32 spriteIdxOffset;
     u32 alphaTexturePathOffset;
-    unreferenced_fields(0x18);      // Seemingly to align the ANM header to 64 bytes
+    unreferenced_fields(0x18); // Seemingly to align the ANM header to 64 bytes
     u32 spriteOffsets[];
 };
 ZUN_ASSERT_TYPE(AnmRawEntry, 0x40, 4);

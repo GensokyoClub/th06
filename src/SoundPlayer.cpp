@@ -103,16 +103,14 @@ ZunResult SoundPlayer::InitializeDSound(HWND gameWindow)
     return ZUN_SUCCESS;
 }
 
-ZunResult SoundPlayer::Release(void)
+ZunResult SoundPlayer::Release()
 {
 #if BUILT_SINCE(100)
-    i32 i;
-
     if (this->manager == NULL)
     {
         return ZUN_SUCCESS;
     }
-    for (i = 0; i < SOUND_EFFECT_COUNT; i++)
+    for (i32 i = 0; i < SOUND_EFFECT_COUNT; i++)
     {
 #if BUILT_SINCE(101)
         SAFE_RELEASE(this->duplicateSoundBuffers[i]);

@@ -1128,7 +1128,7 @@ ZunBool MainMenu::WeirdSecondInputCheck()
 }
 
 #pragma var_order(i, vm)
-ZunResult MainMenu::DrawStartMenu(void)
+ZunResult MainMenu::DrawStartMenu()
 {
     i32 i = MoveCursor(this, 8);
 #if TRIALBUILD

@@ -184,7 +184,7 @@ void AsciiManager::AddFormatText(D3DXVECTOR3 *position, const char *fmt, ...)
 }
 
 #pragma var_order(charWidth, i, string, text, guiString, unusedVec3)
-void AsciiManager::DrawStrings(void)
+void AsciiManager::DrawStrings()
 {
     f32 charWidth;
     u8 *text;

@@ -116,7 +116,7 @@ struct AnmManager
     ZunResult LoadTextureAlphaChannel(i32 textureIdx, const char *textureName, i32 textureFormat, D3DCOLOR colorKey);
     void ReleaseTexture(i32 textureIdx);
 
-    void ReleaseSurfaces(void)
+    void ReleaseSurfaces()
     {
         for (i32 i = 0; i < ARRAY_SIZE_SIGNED(this->surfaces); i++)
         {

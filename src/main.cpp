@@ -400,7 +400,7 @@ static LRESULT CALLBACK GameWindow_WindowProc(HWND hWnd, UINT uMsg, WPARAM wPara
     return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-static i32 GameWindow_InitD3dInterface(void)
+static i32 GameWindow_InitD3dInterface()
 {
     g_Supervisor.d3dIface = Direct3DCreate8(D3D_SDK_VERSION);
 
@@ -447,7 +447,7 @@ static void GameWindow_CreateGameWindow(HINSTANCE hInstance)
 
 #pragma var_order(using_d3d_hal, display_mode, present_params, camera_distance, half_height, half_width, aspect_ratio, \
                   field_of_view_y)
-static i32 GameWindow_InitD3dRendering(void)
+static i32 GameWindow_InitD3dRendering()
 {
     u8 using_d3d_hal;
     D3DPRESENT_PARAMETERS present_params;
@@ -650,11 +650,8 @@ static i32 GameWindow_InitD3dRendering(void)
 }
 
 #pragma var_order(fogVal, fogDensity)
-static void GameWindow_InitD3dDevice(void)
+static void GameWindow_InitD3dDevice()
 {
-    f32 fogVal;
-    f32 fogDensity;
-
     if (!g_Supervisor.IsDepthTestDisabled())
     {
         g_Supervisor.d3dDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
@@ -695,11 +692,11 @@ static void GameWindow_InitD3dDevice(void)
     {
         g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
     }
-    fogDensity = 1.0f;
+    f32 fogDensity = 1.0f;
     g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGDENSITY, *(DWORD *)&fogDensity);
     g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_LINEAR);
     g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGCOLOR, COLOR_MEDIUM_GREY);
-    fogVal = 1000.0f;
+    f32 fogVal = 1000.0f;
     g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGSTART, *(DWORD *)&fogVal);
     fogVal = 5000.0f;
     g_Supervisor.d3dDevice->SetRenderState(D3DRS_FOGEND, *(DWORD *)&fogVal);
@@ -754,7 +751,7 @@ static void GameWindow_InitD3dDevice(void)
     g_Stage.skyNeedsSetup = true;
 }
 
-ZunResult CheckForRunningGameInstance(void)
+ZunResult CheckForRunningGameInstance()
 {
     static HANDLE g_ExclusiveMutex;
     g_ExclusiveMutex = CreateMutex(NULL, TRUE, TEXT("Touhou Koumakyou App"));
@@ -775,7 +772,7 @@ ZunResult CheckForRunningGameInstance(void)
 #if BUILT_BEFORE(102g)
 // Adapted from the DirectX 8 SDK's getdxver sample (dxver.cpp). Returns true when DirectX 8 is missing;
 // 1.02f is the only build that doesn't inline it, so its code shows this form.
-ZunBool CheckDirectXVersion(void)
+ZunBool CheckDirectXVersion()
 {
     DWORD dwDXVersion = GetDXVersion();
 

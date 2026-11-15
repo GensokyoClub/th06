@@ -2,7 +2,7 @@ name,address,type,size
 _c_rgodfDIJoy2,0x43d160,global,2624
 _c_rgodfDIKeyboard,0x43dba0,global,4096
 DirectSoundCreate8,0x46a008,global,4
-g_BulletTypeInfos,0x46a6e8,global,200
+g_BulletAnmScripts,0x46a6e8,global,200
 th06::MidiTimer::`vftable',0x46b564,vtable,4
 th06::MidiOutput::`vftable',0x46b568,vtable,4
 g_DifficultyWeightsList,0x46bca4,global,20

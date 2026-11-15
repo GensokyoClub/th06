@@ -61,11 +61,14 @@ void ItemManager::SpawnItem(D3DXVECTOR3 *position, ItemType itemType, ItemState 
     }
 }
 
-i32 g_PowerItemScore[] = {
-    10,  20,  30,   40,   50,   60,   70,   80,   90,   100,  200,  300,   400,   500,   600,   700,
-    800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 51200,
-};
 // clang-format off
+i32 g_PowerItemScore[] = {
+    10,    20,    30,    40,    50,    60,    70,    80,    90,
+    100,   200,   300,   400,   500,   600,   700,   800,   900,
+    1000,  2000,  3000,  4000,  5000,  6000,  7000,  8000,  9000,
+    10000, 11000, 12000,
+    51200,
+};
 // Why are there a 1 and 0 at the end of this???
 i32 g_PowerUpThresholds[] = {
     LEVEL_1,
@@ -169,12 +172,12 @@ void ItemManager::OnUpdate()
             case ITEM_POWER_SMALL:
                 if (g_GameManager.currentPower >= MAX_POWER)
                 {
-                    g_GameManager.powerItemCountForScore++;
-                    if (g_GameManager.powerItemCountForScore >= ARRAY_SIZE(g_PowerItemScore))
+                    g_GameManager.fullPowerScoreIdx++;
+                    if (g_GameManager.fullPowerScoreIdx >= ARRAY_SIZE(g_PowerItemScore))
                     {
-                        g_GameManager.powerItemCountForScore = ARRAY_SIZE(g_PowerItemScore) - 1;
+                        g_GameManager.fullPowerScoreIdx = ARRAY_SIZE(g_PowerItemScore) - 1;
                     }
-                    itemScore = g_PowerItemScore[g_GameManager.powerItemCountForScore];
+                    itemScore = g_PowerItemScore[g_GameManager.fullPowerScoreIdx];
                     g_GameManager.AddScore(itemScore);
                     g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore,
                                                 itemScore >= 12800 ? COLOR_YELLOW : COLOR_WHITE);
@@ -188,7 +191,7 @@ void ItemManager::OnUpdate()
                         powerLevel++;
                     }
                     i32 prevPowerLevel = powerLevel;
-                    g_GameManager.powerItemCountForScore = 0;
+                    g_GameManager.fullPowerScoreIdx = 0;
                     g_GameManager.currentPower++;
                     if (g_GameManager.currentPower >= MAX_POWER)
                     {
@@ -255,12 +258,12 @@ void ItemManager::OnUpdate()
             case ITEM_POWER_BIG:
                 if (g_GameManager.currentPower >= MAX_POWER)
                 {
-                    g_GameManager.powerItemCountForScore += POWER_PER_LEVEL / 2;
-                    if (g_GameManager.powerItemCountForScore >= ARRAY_SIZE(g_PowerItemScore))
+                    g_GameManager.fullPowerScoreIdx += POWER_PER_LEVEL / 2;
+                    if (g_GameManager.fullPowerScoreIdx >= ARRAY_SIZE(g_PowerItemScore))
                     {
-                        g_GameManager.powerItemCountForScore = ARRAY_SIZE(g_PowerItemScore) - 1;
+                        g_GameManager.fullPowerScoreIdx = ARRAY_SIZE(g_PowerItemScore) - 1;
                     }
-                    itemScore = g_PowerItemScore[g_GameManager.powerItemCountForScore];
+                    itemScore = g_PowerItemScore[g_GameManager.fullPowerScoreIdx];
                     g_GameManager.AddScore(itemScore);
                     g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore,
                                                 itemScore >= 12800 ? COLOR_YELLOW : COLOR_WHITE);
@@ -274,6 +277,7 @@ void ItemManager::OnUpdate()
                         powerLevel++;
                     }
                     i32 prevPowerLevel = powerLevel;
+                    // BUG: fullPowerScoreIdx is not set to 0 like for regular power items
                     g_GameManager.currentPower += POWER_PER_LEVEL / 2;
                     if (g_GameManager.currentPower >= MAX_POWER)
                     {
@@ -343,7 +347,7 @@ void ItemManager::OnUpdate()
             continue;
         }
         curItem->timer++;
-        g_AnmManager->ExecuteScript(&curItem->sprite);
+        g_AnmManager->RunAnm(&curItem->sprite);
     }
     if (itemAcquired)
     {

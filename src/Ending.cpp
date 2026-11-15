@@ -21,11 +21,9 @@ i32 Ending::ReadEndFileParameter()
     return readResult;
 }
 
-#pragma var_order(endingRect, color)
 void Ending::FadingEffect()
 {
     ZunRect endingRect;
-    i32 color;
 
     endingRect.left = 0.0f;
     endingRect.top = 0.0f;
@@ -34,6 +32,8 @@ void Ending::FadingEffect()
 
     switch (this->fadeType)
     {
+        i32 alpha;
+
     case ENDING_FADE_TYPE_FADE_IN_BLACK:
         if (this->fadeTimer >= this->fadeDuration)
         {
@@ -43,8 +43,8 @@ void Ending::FadingEffect()
         }
         else
         {
-            color = 255 - this->fadeTimer * 255 / this->fadeDuration;
-            this->fadeColor = COLOR_SET_ALPHA(COLOR_BLACK, color);
+            alpha = RAMP_DOWN(255, this->fadeTimer, this->fadeDuration);
+            this->fadeColor = COLOR_SET_ALPHA(COLOR_BLACK, alpha);
             this->fadeTimer++;
             break;
         }
@@ -56,8 +56,8 @@ void Ending::FadingEffect()
         }
         else
         {
-            color = this->fadeTimer * 255 / this->fadeDuration;
-            this->fadeColor = COLOR_SET_ALPHA(COLOR_BLACK, color);
+            alpha = RAMP_UP(255, this->fadeTimer, this->fadeDuration);
+            this->fadeColor = COLOR_SET_ALPHA(COLOR_BLACK, alpha);
             this->fadeTimer++;
             break;
         }
@@ -70,8 +70,8 @@ void Ending::FadingEffect()
         }
         else
         {
-            color = 255 - this->fadeTimer * 255 / this->fadeDuration;
-            this->fadeColor = COLOR_SET_ALPHA(COLOR_WHITE, color);
+            alpha = RAMP_DOWN(255, this->fadeTimer, this->fadeDuration);
+            this->fadeColor = COLOR_SET_ALPHA(COLOR_WHITE, alpha);
             this->fadeTimer++;
             break;
         }
@@ -83,8 +83,8 @@ void Ending::FadingEffect()
         }
         else
         {
-            color = this->fadeTimer * 255 / this->fadeDuration;
-            this->fadeColor = COLOR_SET_ALPHA(COLOR_WHITE, color);
+            alpha = RAMP_UP(255, this->fadeTimer, this->fadeDuration);
+            this->fadeColor = COLOR_SET_ALPHA(COLOR_WHITE, alpha);
             this->fadeTimer++;
             break;
         }
@@ -211,7 +211,7 @@ ZunResult Ending::ParseEndFile()
                         }
                     }
                 }
-                // no break
+                // fallthrough
             }
             case END_OPCODE_CLEAR: { // staffroll()
                 for (i32 spriteIdx = 0; spriteIdx < END_SPRITE_COUNT; spriteIdx++)
@@ -326,7 +326,7 @@ ZunResult Ending::ParseEndFile()
                 g_AnmManager->SetAndExecuteScriptIdx(
                     &this->sprites[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP],
                     ANM_SCRIPT_TEXT_ENDING_TEXT + firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP);
-                g_AnmManager->DrawVmTextFmt(
+                g_AnmManager->DrawTextToTextureLeft(
                     &this->sprites[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP], this->textColor,
                     COLOR_END_TEXT_SHADOW, textBuffer);
             }
@@ -362,7 +362,7 @@ ZunResult Ending::ParseEndFile()
                 g_AnmManager->SetAndExecuteScriptIdx(
                     &this->sprites[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP],
                     ANM_SCRIPT_TEXT_ENDING_TEXT + firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP);
-                g_AnmManager->DrawVmTextFmt(
+                g_AnmManager->DrawTextToTextureLeft(
                     &this->sprites[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP], this->textColor,
                     COLOR_END_TEXT_SHADOW, textBuffer);
                 if (firstLineDisplayed)
@@ -425,7 +425,7 @@ skipping:
     {
         if (ending->sprites[idx].anmFileIndex != 0)
         {
-            g_AnmManager->ExecuteScript(&ending->sprites[idx]);
+            g_AnmManager->RunAnm(&ending->sprites[idx]);
         }
     }
     if (ending->hasSeenEnding && IS_PRESSED(TH_BUTTON_SKIP) && framesSkipped < 4)

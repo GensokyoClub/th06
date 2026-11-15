@@ -437,6 +437,7 @@ i32 StageMenu::OnUpdateGameMenu()
             this->menuBackground.pos.y = GAME_REGION_POS_Y;
             this->menuBackground.pos.z = 0.0f;
         }
+        // fallthrough
     case GAME_MENU_PAUSE_CURSOR_UNPAUSE:
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].color = COLOR_LIGHT_RED;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
@@ -576,11 +577,11 @@ i32 StageMenu::OnUpdateGameMenu()
     }
     for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites); vmIdx++)
     {
-        g_AnmManager->ExecuteScript(&this->menuSprites[vmIdx]);
+        g_AnmManager->RunAnm(&this->menuSprites[vmIdx]);
     }
     if (g_Supervisor.lockableBackbuffer)
     {
-        g_AnmManager->ExecuteScript(&this->menuBackground);
+        g_AnmManager->RunAnm(&this->menuBackground);
     }
     this->numFrames++;
     return 0;
@@ -693,6 +694,7 @@ i32 StageMenu::OnUpdateRetryMenu()
             break;
         this->curState += RETRY_MENU_CURSOR_NO;
         this->numFrames = 0;
+        // fallthrough
     case RETRY_MENU_CURSOR_YES:
         this->menuSprites[RETRY_MENU_SPRITE_YES].color = COLOR_LIGHT_RED;
         this->menuSprites[RETRY_MENU_SPRITE_NO].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
@@ -797,11 +799,11 @@ i32 StageMenu::OnUpdateRetryMenu()
     }
     for (i = RETRY_MENU_SPRITES_START; i < RETRY_MENU_SPRITES_END; i++)
     {
-        g_AnmManager->ExecuteScript(&this->menuSprites[i]);
+        g_AnmManager->RunAnm(&this->menuSprites[i]);
     }
     if (g_Supervisor.lockableBackbuffer)
     {
-        g_AnmManager->ExecuteScript(&this->menuBackground);
+        g_AnmManager->RunAnm(&this->menuBackground);
     }
     this->numFrames++;
     return 0;

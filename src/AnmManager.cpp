@@ -327,10 +327,10 @@ ZunResult AnmManager::LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset)
 
         AnmLoadedSprite loadedSprite;
         loadedSprite.sourceFileIndex = this->anmFiles[anmIdx]->textureIdx;
-        loadedSprite.startPixelInclusive.x = rawSprite->offset.x;
-        loadedSprite.startPixelInclusive.y = rawSprite->offset.y;
-        loadedSprite.endPixelInclusive.x = rawSprite->offset.x + rawSprite->size.x;
-        loadedSprite.endPixelInclusive.y = rawSprite->offset.y + rawSprite->size.y;
+        loadedSprite.startPixel.x = rawSprite->offset.x;
+        loadedSprite.startPixel.y = rawSprite->offset.y;
+        loadedSprite.endPixel.x = rawSprite->offset.x + rawSprite->size.x;
+        loadedSprite.endPixel.y = rawSprite->offset.y + rawSprite->size.y;
         loadedSprite.textureWidth = anm->width;
         loadedSprite.textureHeight = anm->height;
         this->LoadSprite(rawSprite->id + spriteIdxOffset, &loadedSprite);
@@ -394,18 +394,18 @@ void AnmManager::LoadSprite(u32 spriteIdx, AnmLoadedSprite *sprite)
     this->sprites[spriteIdx].spriteId = this->maybeLoadedSpriteCount++;
 
     this->sprites[spriteIdx].uvStart.x =
-        this->sprites[spriteIdx].startPixelInclusive.x / (this->sprites[spriteIdx].textureWidth);
+        this->sprites[spriteIdx].startPixel.x / (this->sprites[spriteIdx].textureWidth);
     this->sprites[spriteIdx].uvEnd.x =
-        this->sprites[spriteIdx].endPixelInclusive.x / (this->sprites[spriteIdx].textureWidth);
+        this->sprites[spriteIdx].endPixel.x / (this->sprites[spriteIdx].textureWidth);
     this->sprites[spriteIdx].uvStart.y =
-        this->sprites[spriteIdx].startPixelInclusive.y / (this->sprites[spriteIdx].textureHeight);
+        this->sprites[spriteIdx].startPixel.y / (this->sprites[spriteIdx].textureHeight);
     this->sprites[spriteIdx].uvEnd.y =
-        this->sprites[spriteIdx].endPixelInclusive.y / (this->sprites[spriteIdx].textureHeight);
+        this->sprites[spriteIdx].endPixel.y / (this->sprites[spriteIdx].textureHeight);
 
-    this->sprites[spriteIdx].widthPx =
-        this->sprites[spriteIdx].endPixelInclusive.x - this->sprites[spriteIdx].startPixelInclusive.x;
-    this->sprites[spriteIdx].heightPx =
-        this->sprites[spriteIdx].endPixelInclusive.y - this->sprites[spriteIdx].startPixelInclusive.y;
+    this->sprites[spriteIdx].width =
+        this->sprites[spriteIdx].endPixel.x - this->sprites[spriteIdx].startPixel.x;
+    this->sprites[spriteIdx].height =
+        this->sprites[spriteIdx].endPixel.y - this->sprites[spriteIdx].startPixel.y;
 }
 
 ZunResult AnmManager::SetActiveSprite(AnmVm *vm, i32 sprite_index)
@@ -418,8 +418,8 @@ ZunResult AnmManager::SetActiveSprite(AnmVm *vm, i32 sprite_index)
     vm->activeSpriteIndex = sprite_index;
     vm->sprite = this->sprites + sprite_index;
     D3DXMatrixIdentity(&vm->matrix);
-    vm->matrix.m[0][0] = vm->sprite->widthPx / vm->sprite->textureWidth;
-    vm->matrix.m[1][1] = vm->sprite->heightPx / vm->sprite->textureHeight;
+    vm->matrix.m[0][0] = vm->sprite->width / vm->sprite->textureWidth;
+    vm->matrix.m[1][1] = vm->sprite->height / vm->sprite->textureHeight;
 
     return ZUN_SUCCESS;
 }
@@ -436,7 +436,7 @@ void AnmManager::SetAndExecuteScript(AnmVm *vm, AnmRawInstr *beginningOfScript)
     vm->flags.isVisible = false;
     if (beginningOfScript != NULL)
     {
-        this->ExecuteScript(vm);
+        this->RunAnm(vm);
     }
 }
 
@@ -601,6 +601,7 @@ ZunResult AnmManager::DrawInner(AnmVm *vm, ZunBool roundVertices)
 }
 // clang-format on
 
+#pragma var_order(halfWidth, halfHeight)
 ZunResult AnmManager::DrawNoRotation(AnmVm *vm)
 {
     if (!vm->IsVisible())
@@ -617,29 +618,29 @@ ZunResult AnmManager::DrawNoRotation(AnmVm *vm)
         return ZUN_ERROR;
     }
 #endif
-    float fVar2 = vm->sprite->widthPx * vm->scaleX / 2.0f;
-    float fVar3 = vm->sprite->heightPx * vm->scaleY / 2.0f;
+    f32 halfWidth = vm->sprite->width * vm->scaleX / 2.0f;
+    f32 halfHeight = vm->sprite->height * vm->scaleY / 2.0f;
     if (!(vm->flags.anchor & AnmVmAnchor_Left))
     {
-        g_PrimitivesToDrawVertexBuf[0].position.x = g_PrimitivesToDrawVertexBuf[2].position.x = vm->pos.x - fVar2;
-        g_PrimitivesToDrawVertexBuf[1].position.x = g_PrimitivesToDrawVertexBuf[3].position.x = fVar2 + vm->pos.x;
+        g_PrimitivesToDrawVertexBuf[0].position.x = g_PrimitivesToDrawVertexBuf[2].position.x = vm->pos.x - halfWidth;
+        g_PrimitivesToDrawVertexBuf[1].position.x = g_PrimitivesToDrawVertexBuf[3].position.x = vm->pos.x + halfWidth;
     }
     else
     {
         g_PrimitivesToDrawVertexBuf[0].position.x = g_PrimitivesToDrawVertexBuf[2].position.x = vm->pos.x;
         g_PrimitivesToDrawVertexBuf[1].position.x = g_PrimitivesToDrawVertexBuf[3].position.x =
-            fVar2 + vm->pos.x + fVar2;
+            vm->pos.x + halfWidth + halfWidth;
     }
     if (!(vm->flags.anchor & AnmVmAnchor_Top))
     {
-        g_PrimitivesToDrawVertexBuf[0].position.y = g_PrimitivesToDrawVertexBuf[1].position.y = vm->pos.y - fVar3;
-        g_PrimitivesToDrawVertexBuf[2].position.y = g_PrimitivesToDrawVertexBuf[3].position.y = fVar3 + vm->pos.y;
+        g_PrimitivesToDrawVertexBuf[0].position.y = g_PrimitivesToDrawVertexBuf[1].position.y = vm->pos.y - halfHeight;
+        g_PrimitivesToDrawVertexBuf[2].position.y = g_PrimitivesToDrawVertexBuf[3].position.y = vm->pos.y + halfHeight;
     }
     else
     {
         g_PrimitivesToDrawVertexBuf[0].position.y = g_PrimitivesToDrawVertexBuf[1].position.y = vm->pos.y;
         g_PrimitivesToDrawVertexBuf[2].position.y = g_PrimitivesToDrawVertexBuf[3].position.y =
-            fVar3 + vm->pos.y + fVar3;
+            vm->pos.y + halfHeight + halfHeight;
     }
     return this->DrawInner(vm, RENDER_VERTICES_ROUND_INPUTS);
 }
@@ -651,16 +652,16 @@ void AnmManager::TranslateRotation(VertexTex1Xyzrwh *param_1, f32 x, f32 y, f32 
     param_1->position.y = -x * sine + y * cosine + yOffset;
 }
 
-#pragma var_order(spriteXCenter, spriteYCenter, yOffset, xOffset, zSine, z, zCosine)
+#pragma var_order(halfWidth, halfHeight, y, x, yOffset, rotation, xOffset)
 ZunResult AnmManager::Draw(AnmVm *vm)
 {
-    f32 zSine;
-    f32 zCosine;
-    f32 spriteXCenter;
-    f32 spriteYCenter;
-    f32 xOffset;
     f32 yOffset;
-    f32 z;
+    f32 xOffset;
+    f32 halfWidth;
+    f32 halfHeight;
+    f32 x;
+    f32 y;
+    f32 rotation;
 
     if (vm->rotation.z == 0.0f)
     {
@@ -680,39 +681,40 @@ ZunResult AnmManager::Draw(AnmVm *vm)
         return ZUN_ERROR;
     }
 #endif
-    z = vm->rotation.z;
-    sincos(z, zSine, zCosine);
-    xOffset = rintf(vm->pos.x);
-    yOffset = rintf(vm->pos.y);
-    spriteXCenter = rintf(vm->sprite->widthPx * vm->scaleX / 2.0f);
-    spriteYCenter = rintf(vm->sprite->heightPx * vm->scaleY / 2.0f);
-    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[0], -spriteXCenter - 0.5f, -spriteYCenter - 0.5f, zSine,
-                            zCosine, xOffset, yOffset);
-    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[1], spriteXCenter - 0.5f, -spriteYCenter - 0.5f, zSine,
-                            zCosine, xOffset, yOffset);
-    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[2], -spriteXCenter - 0.5f, spriteYCenter - 0.5f, zSine,
-                            zCosine, xOffset, yOffset);
-    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[3], spriteXCenter - 0.5f, spriteYCenter - 0.5f, zSine, zCosine,
-                            xOffset, yOffset);
+    rotation = vm->rotation.z;
+    sincos(rotation, yOffset, xOffset);
+    x = rintf(vm->pos.x);
+    y = rintf(vm->pos.y);
+    halfWidth = rintf(vm->sprite->width * vm->scaleX / 2.0f);
+    halfHeight = rintf(vm->sprite->height * vm->scaleY / 2.0f);
+    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[0], -halfWidth - 0.5f, -halfHeight - 0.5f, yOffset,
+                            xOffset, x, y);
+    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[1], halfWidth - 0.5f, -halfHeight - 0.5f, yOffset,
+                            xOffset, x, y);
+    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[2], -halfWidth - 0.5f, halfHeight - 0.5f, yOffset,
+                            xOffset, x, y);
+    this->TranslateRotation(&g_PrimitivesToDrawVertexBuf[3], halfWidth - 0.5f, halfHeight - 0.5f, yOffset, xOffset,
+                            x, y);
     g_PrimitivesToDrawVertexBuf[0].position.z = g_PrimitivesToDrawVertexBuf[1].position.z =
         g_PrimitivesToDrawVertexBuf[2].position.z = g_PrimitivesToDrawVertexBuf[3].position.z = vm->pos.z;
     if (vm->flags.anchor & AnmVmAnchor_Left)
     {
-        g_PrimitivesToDrawVertexBuf[0].position.x += spriteXCenter;
-        g_PrimitivesToDrawVertexBuf[1].position.x += spriteXCenter;
-        g_PrimitivesToDrawVertexBuf[2].position.x += spriteXCenter;
-        g_PrimitivesToDrawVertexBuf[3].position.x += spriteXCenter;
+        g_PrimitivesToDrawVertexBuf[0].position.x += halfWidth;
+        g_PrimitivesToDrawVertexBuf[1].position.x += halfWidth;
+        g_PrimitivesToDrawVertexBuf[2].position.x += halfWidth;
+        g_PrimitivesToDrawVertexBuf[3].position.x += halfWidth;
     }
     if (vm->flags.anchor & AnmVmAnchor_Top)
     {
-        g_PrimitivesToDrawVertexBuf[0].position.y += spriteYCenter;
-        g_PrimitivesToDrawVertexBuf[1].position.y += spriteYCenter;
-        g_PrimitivesToDrawVertexBuf[2].position.y += spriteYCenter;
-        g_PrimitivesToDrawVertexBuf[3].position.y += spriteYCenter;
+        g_PrimitivesToDrawVertexBuf[0].position.y += halfHeight;
+        g_PrimitivesToDrawVertexBuf[1].position.y += halfHeight;
+        g_PrimitivesToDrawVertexBuf[2].position.y += halfHeight;
+        g_PrimitivesToDrawVertexBuf[3].position.y += halfHeight;
     }
     return this->DrawInner(vm, RENDER_VERTICES_DEFAULT);
 }
 
+#pragma var_order(halfWidth, halfHeight)
 ZunResult AnmManager::DrawFacingCamera(AnmVm *vm)
 {
     if (!vm->IsVisible())
@@ -730,29 +732,27 @@ ZunResult AnmManager::DrawFacingCamera(AnmVm *vm)
     }
 #endif
 
-    f32 centerX = vm->sprite->widthPx * vm->scaleX / 2.0f;
-    f32 centerY = vm->sprite->heightPx * vm->scaleY / 2.0f;
+    f32 halfWidth = vm->sprite->width * vm->scaleX / 2.0f;
+    f32 halfHeight = vm->sprite->height * vm->scaleY / 2.0f;
     if (!(vm->flags.anchor & AnmVmAnchor_Left))
     {
-        g_PrimitivesToDrawVertexBuf[0].position.x = g_PrimitivesToDrawVertexBuf[2].position.x = vm->pos.x - centerX;
-        g_PrimitivesToDrawVertexBuf[1].position.x = g_PrimitivesToDrawVertexBuf[3].position.x = vm->pos.x + centerX;
+        g_PrimitivesToDrawVertexBuf[0].position.x = g_PrimitivesToDrawVertexBuf[2].position.x = vm->pos.x - halfWidth;
+        g_PrimitivesToDrawVertexBuf[1].position.x = g_PrimitivesToDrawVertexBuf[3].position.x = vm->pos.x + halfWidth;
     }
     else
     {
         g_PrimitivesToDrawVertexBuf[0].position.x = g_PrimitivesToDrawVertexBuf[2].position.x = vm->pos.x;
-        g_PrimitivesToDrawVertexBuf[1].position.x = g_PrimitivesToDrawVertexBuf[3].position.x =
-            vm->pos.x + centerX + centerX;
+        g_PrimitivesToDrawVertexBuf[1].position.x = g_PrimitivesToDrawVertexBuf[3].position.x = vm->pos.x + halfWidth + halfWidth;
     }
     if (!(vm->flags.anchor & AnmVmAnchor_Top))
     {
-        g_PrimitivesToDrawVertexBuf[0].position.y = g_PrimitivesToDrawVertexBuf[1].position.y = vm->pos.y - centerY;
-        g_PrimitivesToDrawVertexBuf[2].position.y = g_PrimitivesToDrawVertexBuf[3].position.y = vm->pos.y + centerY;
+        g_PrimitivesToDrawVertexBuf[0].position.y = g_PrimitivesToDrawVertexBuf[1].position.y = vm->pos.y - halfHeight;
+        g_PrimitivesToDrawVertexBuf[2].position.y = g_PrimitivesToDrawVertexBuf[3].position.y = vm->pos.y + halfHeight;
     }
     else
     {
         g_PrimitivesToDrawVertexBuf[0].position.y = g_PrimitivesToDrawVertexBuf[1].position.y = vm->pos.y;
-        g_PrimitivesToDrawVertexBuf[2].position.y = g_PrimitivesToDrawVertexBuf[3].position.y =
-            vm->pos.y + centerY + centerY;
+        g_PrimitivesToDrawVertexBuf[2].position.y = g_PrimitivesToDrawVertexBuf[3].position.y = vm->pos.y + halfHeight + halfHeight;
     }
     return this->DrawInner(vm, RENDER_VERTICES_DEFAULT);
 }
@@ -808,7 +808,7 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
     }
     else
     {
-        worldTransformMatrix.m[3][0] = fabsf(vm->sprite->widthPx * vm->scaleX / 2.0f) + vm->pos.x;
+        worldTransformMatrix.m[3][0] = fabsf(vm->sprite->width * vm->scaleX / 2.0f) + vm->pos.x;
     }
 
     if (!(vm->flags.anchor & AnmVmAnchor_Top))
@@ -817,7 +817,7 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
     }
     else
     {
-        worldTransformMatrix.m[3][1] = -vm->pos.y - fabsf(vm->sprite->heightPx * vm->scaleY / 2.0f);
+        worldTransformMatrix.m[3][1] = -vm->pos.y - fabsf(vm->sprite->height * vm->scaleY / 2.0f);
     }
 
     worldTransformMatrix.m[3][2] = vm->pos.z;
@@ -900,7 +900,7 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
     }
 
 #if BUILT_SINCE(102)
-    if (vm->color == 0)
+    if (vm->color == COLOR_NONE)
     {
         return ZUN_ERROR;
     }
@@ -911,11 +911,11 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
     worldTransformMatrix.m[3][1] = -rintf(vm->pos.y) + 0.5f;
     if (vm->flags.anchor & AnmVmAnchor_Left)
     {
-        worldTransformMatrix.m[3][0] += (vm->sprite->widthPx * vm->scaleX) / 2.0f;
+        worldTransformMatrix.m[3][0] += vm->sprite->width * vm->scaleX / 2.0f;
     }
     if (vm->flags.anchor & AnmVmAnchor_Top)
     {
-        worldTransformMatrix.m[3][1] -= (vm->sprite->heightPx * vm->scaleY) / 2.0f;
+        worldTransformMatrix.m[3][1] -= vm->sprite->height * vm->scaleY / 2.0f;
     }
     worldTransformMatrix.m[3][2] = vm->pos.z;
     worldTransformMatrix.m[0][0] *= vm->scaleX;
@@ -965,11 +965,11 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
 #define INT_ARG_IMM(num) GET_ARG_IMM(i32, num)
 #define FLOAT_ARG_IMM(num) GET_ARG_IMM(float, num)
 
-i32 AnmManager::ExecuteScript(AnmVm *vm)
+i32 AnmManager::RunAnm(AnmVm *vm)
 {
     if (vm->currentInstruction == NULL)
     {
-        return 1;
+        return SCRIPT_STOPPED;
     }
 
     if (vm->pendingInterrupt != 0)
@@ -987,7 +987,8 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
             // fallthrough
         case ANM_OPCODE_ANM_STATIC:
             vm->currentInstruction = NULL;
-            return 1;
+            return SCRIPT_STOPPED;
+
         case ANM_OPCODE_SET_SPRITE:
             vm->flags.isVisible = true;
             this->SetActiveSprite(vm, INT_ARG_IMM(0) + this->spriteIndices[vm->anmFileIndex]);
@@ -1104,6 +1105,7 @@ i32 AnmManager::ExecuteScript(AnmVm *vm)
             break;
         case ANM_OPCODE_ANM_HALT_INVISIBLE:
             vm->flags.isVisible = false;
+            // fallthrough
         case ANM_OPCODE_ANM_HALT: {
             if (vm->pendingInterrupt == 0)
             {
@@ -1299,10 +1301,10 @@ break_parser:
         vm->posInterpTime++;
     }
     vm->scriptTime++;
-    return 0;
+    return SCRIPT_RUNNING;
 }
 
-void AnmManager::DrawTextToSprite(u32 textureDstIdx, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight,
+void AnmManager::DrawTextToTexture(u32 textureDstIdx, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight,
                                   i32 fontWidth, i32 fontHeight, ZunColor textColor, ZunColor shadowColor,
                                   const char *strToPrint)
 {
@@ -1319,7 +1321,7 @@ void AnmManager::DrawTextToSprite(u32 textureDstIdx, i32 xPos, i32 yPos, i32 spr
 }
 
 #pragma var_order(args, buffer, fontWidth)
-void AnmManager::DrawVmTextFmt(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
+void AnmManager::DrawTextToTextureLeft(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
 {
     char buffer[64];
     va_list args;
@@ -1328,14 +1330,14 @@ void AnmManager::DrawVmTextFmt(AnmVm *vm, ZunColor textColor, ZunColor shadowCol
     va_start(args, fmt);
     vsprintf(buffer, fmt, args);
     va_end(args);
-    this->DrawTextToSprite(vm->sprite->sourceFileIndex, vm->sprite->startPixelInclusive.x,
-                           vm->sprite->startPixelInclusive.y, vm->sprite->textureWidth, vm->sprite->textureHeight,
+    this->DrawTextToTexture(vm->sprite->sourceFileIndex, vm->sprite->startPixel.x,
+                           vm->sprite->startPixel.y, vm->sprite->textureWidth, vm->sprite->textureHeight,
                            fontWidth, vm->fontHeight, textColor, shadowColor, buffer);
     vm->flags.isVisible = true;
 }
 
 #pragma var_order(args, secondPartStartX, buffer, fontWidth)
-void AnmManager::DrawStringFormat(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
+void AnmManager::DrawTextToTextureRight(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
 {
     char buffer[64];
     va_list args;
@@ -1344,19 +1346,20 @@ void AnmManager::DrawStringFormat(AnmVm *vm, ZunColor textColor, ZunColor shadow
     va_start(args, fmt);
     vsprintf(buffer, fmt, args);
     va_end(args);
-    this->DrawTextToSprite(vm->sprite->sourceFileIndex, vm->sprite->startPixelInclusive.x,
-                           vm->sprite->startPixelInclusive.y, vm->sprite->textureWidth, vm->sprite->textureHeight,
+    this->DrawTextToTexture(vm->sprite->sourceFileIndex, vm->sprite->startPixel.x,
+                           vm->sprite->startPixel.y, vm->sprite->textureWidth, vm->sprite->textureHeight,
                            fontWidth, vm->fontHeight, textColor, shadowColor, " ");
-    i32 secondPartStartX = vm->sprite->startPixelInclusive.x + vm->sprite->textureWidth -
-                           ((f32)strlen(buffer) * (f32)(fontWidth + 1) / 2.0f);
-    this->DrawTextToSprite(vm->sprite->sourceFileIndex, secondPartStartX, vm->sprite->startPixelInclusive.y,
+    // Calculate the right side of the texture and then subtract the calculated length of the text
+    // to get the correct starting pixel for right aligned text within the texture.
+    i32 secondPartStartX = vm->sprite->startPixel.x + vm->sprite->textureWidth - ANM_TEXT_SIZE(buffer, fontWidth + 1) / 2.0f;
+    this->DrawTextToTexture(vm->sprite->sourceFileIndex, secondPartStartX, vm->sprite->startPixel.y,
                            vm->sprite->textureWidth, vm->sprite->textureHeight, fontWidth, vm->fontHeight, textColor,
                            shadowColor, buffer);
     vm->flags.isVisible = true;
 }
 
 #pragma var_order(args, secondPartStartX, buffer, fontWidth)
-void AnmManager::DrawStringFormat2(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
+void AnmManager::DrawTextToTextureCenter(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
 {
     char buffer[64];
     va_list args;
@@ -1365,12 +1368,13 @@ void AnmManager::DrawStringFormat2(AnmVm *vm, ZunColor textColor, ZunColor shado
     va_start(args, fmt);
     vsprintf(buffer, fmt, args);
     va_end(args);
-    this->DrawTextToSprite(vm->sprite->sourceFileIndex, vm->sprite->startPixelInclusive.x,
-                           vm->sprite->startPixelInclusive.y, vm->sprite->textureWidth, vm->sprite->textureHeight,
+    this->DrawTextToTexture(vm->sprite->sourceFileIndex, vm->sprite->startPixel.x,
+                           vm->sprite->startPixel.y, vm->sprite->textureWidth, vm->sprite->textureHeight,
                            fontWidth, vm->fontHeight, textColor, shadowColor, " ");
-    i32 secondPartStartX = vm->sprite->startPixelInclusive.x + vm->sprite->textureWidth / 2.0f -
-                           ((f32)strlen(buffer) * (f32)(fontWidth + 1) / 4.0f);
-    this->DrawTextToSprite(vm->sprite->sourceFileIndex, secondPartStartX, vm->sprite->startPixelInclusive.y,
+    // Calculate the midpoint of the texture and then subtract half the calculated length of the text
+    // to get the correct starting pixel for center aligned text within the texture.
+    i32 secondPartStartX = vm->sprite->startPixel.x + vm->sprite->textureWidth / 2.0f - ANM_TEXT_SIZE(buffer, fontWidth + 1) / 4.0f;
+    this->DrawTextToTexture(vm->sprite->sourceFileIndex, secondPartStartX, vm->sprite->startPixel.y,
                            vm->sprite->textureWidth, vm->sprite->textureHeight, fontWidth, vm->fontHeight, textColor,
                            shadowColor, buffer);
     vm->flags.isVisible = true;

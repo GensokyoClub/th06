@@ -229,8 +229,8 @@ static ZunResult GameManager_AddedCallback(GameManager *mgr)
         mgr->gameRegionSize.y = GAME_REGION_HEIGHT;
         mgr->playerMovementAreaTopLeftPos.x = GAME_REGION_LEFT + 8.0f;
         mgr->playerMovementAreaTopLeftPos.y = GAME_REGION_TOP + 16.0f;
-        mgr->playerMovementAreaSize.x = GAME_REGION_WIDTH - 8.0f * 2.0f;
-        mgr->playerMovementAreaSize.y = GAME_REGION_HEIGHT - 16.0f * 2.0f;
+        mgr->playerMovementAreaSize.x = GAME_REGION_WIDTH - (8.0f * 2.0f);
+        mgr->playerMovementAreaSize.y = GAME_REGION_HEIGHT - (16.0f * 2.0f);
         mgr->gameplayTicks = 0;
         mgr->guiScore = 0;
         mgr->score = 0;
@@ -251,7 +251,7 @@ static ZunResult GameManager_AddedCallback(GameManager *mgr)
             // Disable earning more lives
             mgr->livesEarned = ARRAY_SIZE(g_ExtraLivesScores) - 1;
         }
-        g_GameManager.powerItemCountForScore = 0;
+        g_GameManager.fullPowerScoreIdx = 0;
         mgr->rank = 8;
         mgr->grazeInTotal = 0;
         mgr->pointItemsCollected = 0;
@@ -493,9 +493,9 @@ void SetupCamera(f32 extraRenderDistance)
     f32 cameraDistance = viewportMiddleHeight / (f32)tan(fov / 2.0f);
     D3DXMatrixLookAtLH(&g_Supervisor.viewMatrix,
                        &D3DXVECTOR3(viewportMiddleWidth, -viewportMiddleHeight,
-                                    -cameraDistance * (f32)g_GameManager.stageCameraFacingDir.z),
-                       &D3DXVECTOR3(viewportMiddleWidth + (f32)g_GameManager.stageCameraFacingDir.x,
-                                    -viewportMiddleHeight + (f32)g_GameManager.stageCameraFacingDir.y, 0.0f),
+                                    -cameraDistance * g_GameManager.stageCameraFacingDir.z),
+                       &D3DXVECTOR3(viewportMiddleWidth + g_GameManager.stageCameraFacingDir.x,
+                                    -viewportMiddleHeight + g_GameManager.stageCameraFacingDir.y, 0.0f),
                        &D3DXVECTOR3(0.0f, 1.0f, 0.0f));
     g_GameManager.cameraDistance = fabsf(cameraDistance);
     D3DXMatrixPerspectiveFovLH(&g_Supervisor.projectionMatrix, fov, aspectRatio, 100.0f,

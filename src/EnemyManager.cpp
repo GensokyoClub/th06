@@ -503,14 +503,14 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
         curEnemy->Move();
         curEnemy->ClampPos();
         if (curEnemy->flags.hasBeenInBounds == FALSE &&
-            g_GameManager.IsInBounds(curEnemy->position[0], curEnemy->position[1], curEnemy->primaryVm.sprite->widthPx,
-                                     curEnemy->primaryVm.sprite->heightPx))
+            g_GameManager.IsInBounds(curEnemy->position[0], curEnemy->position[1], curEnemy->primaryVm.sprite->width,
+                                     curEnemy->primaryVm.sprite->height))
         {
             curEnemy->flags.hasBeenInBounds = TRUE;
         }
         if (curEnemy->flags.hasBeenInBounds == TRUE &&
-            !g_GameManager.IsInBounds(curEnemy->position.x, curEnemy->position.y, curEnemy->primaryVm.sprite->widthPx,
-                                      curEnemy->primaryVm.sprite->heightPx))
+            !g_GameManager.IsInBounds(curEnemy->position.x, curEnemy->position.y, curEnemy->primaryVm.sprite->width,
+                                      curEnemy->primaryVm.sprite->height))
         {
             curEnemy->flags.isSlotOccupied = false;
             curEnemy->Despawn();
@@ -532,11 +532,12 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
         }
         curEnemy->ClampPos();
         curEnemy->primaryVm.color = curEnemy->color;
-        g_AnmManager->ExecuteScript(&curEnemy->primaryVm);
+        g_AnmManager->RunAnm(&curEnemy->primaryVm);
         curEnemy->color = curEnemy->primaryVm.color;
         for (enemyVmIdx = 0; enemyVmIdx < ENEMY_ANM_SLOTS; enemyVmIdx++)
         {
-            if (curEnemy->vms[enemyVmIdx].anmFileIndex >= 0 && g_AnmManager->ExecuteScript(&curEnemy->vms[enemyVmIdx]))
+            if (curEnemy->vms[enemyVmIdx].anmFileIndex >= 0 &&
+                g_AnmManager->RunAnm(&curEnemy->vms[enemyVmIdx]) != SCRIPT_RUNNING)
             {
                 curEnemy->vms[enemyVmIdx].anmFileIndex = -1;
             }

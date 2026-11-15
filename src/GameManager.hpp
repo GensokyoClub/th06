@@ -123,7 +123,7 @@ struct GameManager
     u16 pointItemsCollectedInStage;
     u16 pointItemsCollected;
     u8 continuesUsed;
-    i8 powerItemCountForScore;
+    i8 fullPowerScoreIdx;
     i8 livesRemaining;
     i8 bombsRemaining;
     i8 livesEarned;

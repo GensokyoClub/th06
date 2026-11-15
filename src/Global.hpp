@@ -65,6 +65,9 @@ void RotatePoint(D3DXVECTOR3 *outVector, D3DXVECTOR3 *point, f32 angle);
 
 #define ZUN_LERP(start, end, time) ((end - start) * time + start)
 
+#define RAMP_UP(val, time, duration) ((time) * (val) / (duration))
+#define RAMP_DOWN(val, time, duration) (val - RAMP_UP(val, time, duration))
+
 #define MULTIPLE_OF(val, mult) !((i32)(val) % (mult))
 
 // 1.00/1.01 store a button bitmask; 1.02 switches to signed button indices.

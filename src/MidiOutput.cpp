@@ -622,7 +622,7 @@ void MidiOutput::ProcessMsg(MidiTrack *track)
         case 7:
             // Channel Volume
             this->channels[opcodeLow].channelVolume = arg2;
-            volume = (f32)arg2 * this->fadeOutVolumeMultiplier;
+            volume = arg2 * this->fadeOutVolumeMultiplier;
             if (volume < 0)
             {
                 volume = 0;

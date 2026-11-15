@@ -192,7 +192,7 @@ ChainCallbackResult Stage_OnUpdate(Stage *stage)
                 stage->spellcardState++; // SPELL_STATE_ACTIVE
             }
             stage->spellcardTicks++;
-            g_AnmManager->ExecuteScript(&stage->spellcardBackground);
+            g_AnmManager->RunAnm(&stage->spellcardBackground);
         }
         return CHAIN_CALLBACK_RESULT_CONTINUE;
     }
@@ -418,14 +418,14 @@ ZunResult Stage::UpdateObjects()
                 switch (objQuad->type)
                 {
                 case 0:
-                    g_AnmManager->ExecuteScript(vm);
+                    g_AnmManager->RunAnm(vm);
                     break;
                 case 1:
                     // I assume this casts it, but this is all dead code
                     // as the engine doesn't contain any other reference
                     // to type 1 quads.
                     objQuadType1 = objQuad;
-                    g_AnmManager->ExecuteScript(vm);
+                    g_AnmManager->RunAnm(vm);
                     break;
                 }
                 if (vm->currentInstruction != NULL)
@@ -595,11 +595,11 @@ ZunResult Stage::RenderObjects(i32 zLevel)
                     curQuadVm->pos.z = curQuad->position.z + instance->position.z - this->position.z;
                     if (curQuad->size.x != 0.0f)
                     {
-                        curQuadVm->scaleX = curQuad->size.x / curQuadVm->sprite->widthPx;
+                        curQuadVm->scaleX = curQuad->size.x / curQuadVm->sprite->width;
                     }
                     if (curQuad->size.y != 0.0f)
                     {
-                        curQuadVm->scaleY = curQuad->size.y / curQuadVm->sprite->heightPx;
+                        curQuadVm->scaleY = curQuad->size.y / curQuadVm->sprite->height;
                     }
                     if (curQuadVm->autoRotate == AnmAutoRotate_Billboard)
                     {
@@ -610,7 +610,7 @@ ZunResult Stage::RenderObjects(i32 zLevel)
                         }
                         else
                         {
-                            quadWidth = curQuadVm->sprite->widthPx;
+                            quadWidth = curQuadVm->sprite->width;
                         }
                         worldMatrix.m[3][0] = curQuadVm->pos.x;
                         worldMatrix.m[3][1] = -curQuadVm->pos.y;

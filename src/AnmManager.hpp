@@ -194,13 +194,18 @@ struct AnmManager
         this->currentSprite = NULL;
     }
 
-    i32 ExecuteScript(AnmVm *vm);
+#define SCRIPT_STOPPED 1
+#define SCRIPT_RUNNING 0
+    i32 RunAnm(AnmVm *vm);
+
     ZunResult Draw(AnmVm *vm);
-    void DrawTextToSprite(u32 spriteDstIndex, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontWidth,
+
+    void DrawTextToTexture(u32 spriteDstIndex, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontWidth,
                           i32 fontHeight, ZunColor textColor, ZunColor shadowColor, const char *strToPrint);
-    void DrawStringFormat(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
-    void DrawStringFormat2(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
-    void DrawVmTextFmt(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
+    void DrawTextToTextureRight(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
+    void DrawTextToTextureCenter(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
+    void DrawTextToTextureLeft(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
+
     ZunResult DrawNoRotation(AnmVm *vm);
 
 #define RENDER_VERTICES_DEFAULT false

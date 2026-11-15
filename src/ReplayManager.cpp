@@ -174,7 +174,7 @@ static ZunResult ReplayManager_AddedCallback(ReplayManager *mgr)
     stageReplayData->rank = g_GameManager.rank;
     stageReplayData->pointItemsCollected = g_GameManager.pointItemsCollected;
     stageReplayData->randomSeed = g_GameManager.randomSeed;
-    stageReplayData->powerItemCountForScore = g_GameManager.powerItemCountForScore;
+    stageReplayData->fullPowerScoreIdx = g_GameManager.fullPowerScoreIdx;
     mgr->replayInputs = stageReplayData->replayInputs;
     mgr->replayInputs->frameNum = 0;
     mgr->replayInputs->inputKey = 0;
@@ -223,7 +223,7 @@ static ZunResult ReplayManager_AddedCallbackDemo(ReplayManager *mgr)
     g_GameManager.bombsRemaining = replayData->bombsRemaining;
     g_GameManager.currentPower = replayData->power;
     mgr->replayInputs = replayData->replayInputs;
-    g_GameManager.powerItemCountForScore = replayData->powerItemCountForScore;
+    g_GameManager.fullPowerScoreIdx = replayData->fullPowerScoreIdx;
     if (g_GameManager.currentStage >= Stage2 &&
         mgr->replayData->stageReplayData[STAGE_INDEX(g_GameManager.currentStage) - 1] != NULL)
     {

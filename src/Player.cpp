@@ -279,13 +279,13 @@ static void UpdatePlayerBullets(Player *player)
         bullet->sprite.pos.z = bullet->position.z;
 
         if (bullet->bulletType != PLAYER_LASER &&
-            !g_GameManager.IsInBounds(bullet->position[0], bullet->position[1], bullet->sprite.sprite->widthPx,
-                                      bullet->sprite.sprite->heightPx))
+            !g_GameManager.IsInBounds(bullet->position[0], bullet->position[1], bullet->sprite.sprite->width,
+                                      bullet->sprite.sprite->height))
         {
             bullet->bulletState = PLAYER_BULLET_STATE_INACTIVE;
         }
 
-        if (g_AnmManager->ExecuteScript(&bullet->sprite))
+        if (g_AnmManager->RunAnm(&bullet->sprite) != SCRIPT_RUNNING)
         {
             bullet->bulletState = PLAYER_BULLET_STATE_INACTIVE;
         }
@@ -1054,7 +1054,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
             p->respawnTimer--;
             if (p->respawnTimer == 0)
             {
-                g_GameManager.powerItemCountForScore = 0;
+                g_GameManager.fullPowerScoreIdx = 0;
                 if (g_GameManager.livesRemaining > 0)
                 {
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_BIG, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
@@ -1093,7 +1093,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
             float scaleFactor = (f32)p->stateTimer / 30.0f;
             p->playerSprite.scaleY = 3.0f * scaleFactor + 1.0f;
             p->playerSprite.scaleX = 1.0f - 1.0f * scaleFactor;
-            p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, (u32)(255.0f - (f32)p->stateTimer * 255.0f / 30.0f));
+            p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, (u32)RAMP_DOWN(255.0f, (f32)p->stateTimer, 30.0f));
             p->playerSprite.flags.blendMode = AnmBlendMode_Additive;
             p->previousSpeed.x = 0.0f;
             p->previousSpeed.y = 0.0f;
@@ -1141,7 +1141,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
         p->playerSprite.scaleX = 1.0f - 1.0f * scaleFactor;
         p->playerSprite.flags.blendMode = AnmBlendMode_Additive;
         p->speedMultiplierDuringBomb.x = p->speedMultiplierDuringBomb.y = 1.0f;
-        p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, (i32)p->stateTimer * 255 / 30);
+        p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, RAMP_UP(255, (i32)p->stateTimer, 30));
         p->respawnTimer = 0;
         if ((i32)p->stateTimer >= 30)
         {
@@ -1187,12 +1187,12 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
     {
         p->HandlePlayerInputs();
     }
-    g_AnmManager->ExecuteScript(&p->playerSprite);
+    g_AnmManager->RunAnm(&p->playerSprite);
     UpdatePlayerBullets(p);
     if (p->orbState != ORB_HIDDEN)
     {
-        g_AnmManager->ExecuteScript(&p->orbsSprite[0]);
-        g_AnmManager->ExecuteScript(&p->orbsSprite[1]);
+        g_AnmManager->RunAnm(&p->orbsSprite[0]);
+        g_AnmManager->RunAnm(&p->orbsSprite[1]);
     }
     p->positionOfLastEnemyHit = D3DXVECTOR3(-999.0f, -999.0f, 0.0f);
     UpdateFireBulletsTimer(p);

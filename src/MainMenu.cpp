@@ -852,7 +852,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
 
 #if BUILT_SINCE(102)
             // Before 1.02 the restored cursor is not clamped to the stages cleared.
-            i32 stagesCleared = min(6, g_GameManager.clrd[CURRENT_SHOTTYPE()].stagesCleared[g_GameManager.difficulty]);
+            i32 stagesCleared = ZUN_MIN(g_GameManager.clrd[CURRENT_SHOTTYPE()].stagesCleared[g_GameManager.difficulty], 6);
             if (g_GameManager.difficulty == EASY && stagesCleared == 6)
             {
                 stagesCleared = 5;
@@ -865,7 +865,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
         }
         break;
     case STATE_PRACTICE_LVL_SELECT: {
-        u32 chosenStage = min(6, g_GameManager.clrd[CURRENT_SHOTTYPE()].stagesCleared[g_GameManager.difficulty]);
+        u32 chosenStage = ZUN_MIN(g_GameManager.clrd[CURRENT_SHOTTYPE()].stagesCleared[g_GameManager.difficulty], 6);
         if (g_GameManager.difficulty == EASY && chosenStage == 6)
         {
             chosenStage = 5;
@@ -942,7 +942,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
     {
         if (g_AnmManager->ShouldDraw(&menu->vm[i]))
         {
-            g_AnmManager->ExecuteScript(&menu->vm[i]);
+            g_AnmManager->RunAnm(&menu->vm[i]);
         }
     }
     return CHAIN_CALLBACK_RESULT_CONTINUE;
@@ -1975,10 +1975,10 @@ ZunResult MainMenu::ChoosePracticeLevel()
     if (this->gameState == STATE_PRACTICE_LVL_SELECT)
     {
         D3DXVECTOR3 textPos(320.0f, 200.0f, 0.0f);
-        u32 alpha = (this->stateTimer < 30) ? this->stateTimer * 255 / 30 : 255;
+        u32 alpha = this->stateTimer < 30 ? RAMP_UP(255, this->stateTimer, 30) : 255;
         i32 shottype = CURRENT_SHOTTYPE();
 
-        i32 reachedStage = min(6, g_GameManager.clrd[shottype].stagesCleared[g_GameManager.difficulty]);
+        i32 reachedStage = ZUN_MIN(g_GameManager.clrd[shottype].stagesCleared[g_GameManager.difficulty], 6);
         if (g_GameManager.difficulty == EASY && reachedStage == 6)
         {
             reachedStage = 5;
@@ -2013,8 +2013,8 @@ ChainCallbackResult MainMenu_OnDraw(MainMenu *menu)
     i32 targetOpacity;
 
     vm = menu->vm;
-    window.left = 0.0;
-    window.top = 0.0;
+    window.left = 0.0f;
+    window.top = 0.0f;
     window.right = GAME_WINDOW_WIDTH;
     window.bottom = GAME_WINDOW_HEIGHT;
     if (menu->gameState == STATE_STARTUP)

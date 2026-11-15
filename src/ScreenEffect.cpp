@@ -39,7 +39,7 @@ ChainCallbackResult ScreenEffect_CalcFadeIn(ScreenEffect *effect)
 {
     if (effect->effectLength != 0)
     {
-        effect->fadeAlpha = 255.0f - (((f32)effect->timer * 255.0f) / effect->effectLength);
+        effect->fadeAlpha = RAMP_DOWN(255.0f, (f32)effect->timer, effect->effectLength);
         if (effect->fadeAlpha < 0)
         {
             effect->fadeAlpha = 0;
@@ -103,7 +103,7 @@ ChainCallbackResult ScreenEffect_CalcFadeOut(ScreenEffect *effect)
 {
     if (effect->effectLength != 0)
     {
-        effect->fadeAlpha = ((f32)effect->timer * 255.0f) / effect->effectLength;
+        effect->fadeAlpha = RAMP_UP(255.0f, (f32)effect->timer, effect->effectLength);
         if (effect->fadeAlpha < 0)
         {
             effect->fadeAlpha = 0;

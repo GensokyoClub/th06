@@ -65,8 +65,22 @@ i32 g_PowerItemScore[] = {
     10,  20,  30,   40,   50,   60,   70,   80,   90,   100,  200,  300,   400,   500,   600,   700,
     800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 51200,
 };
+// clang-format off
 // Why are there a 1 and 0 at the end of this???
-i32 g_PowerUpThresholds[] = {8, 16, 32, 48, 64, 80, 96, 128, 999, 1, 0};
+i32 g_PowerUpThresholds[] = {
+    LEVEL_1,
+    LEVEL_2,
+    LEVEL_3,
+    LEVEL_4,
+    LEVEL_5,
+    LEVEL_6,
+    LEVEL_7,
+    MAX_POWER,
+    LEVEL_UNREACHABLE,
+    1,
+    0,
+};
+// clang-format on
 
 #define PIV_LINE 128
 #define ITEM_SIZE 16.0f
@@ -241,7 +255,7 @@ void ItemManager::OnUpdate()
             case ITEM_POWER_BIG:
                 if (g_GameManager.currentPower >= MAX_POWER)
                 {
-                    g_GameManager.powerItemCountForScore += 8;
+                    g_GameManager.powerItemCountForScore += POWER_PER_LEVEL / 2;
                     if (g_GameManager.powerItemCountForScore >= ARRAY_SIZE(g_PowerItemScore))
                     {
                         g_GameManager.powerItemCountForScore = ARRAY_SIZE(g_PowerItemScore) - 1;
@@ -260,7 +274,7 @@ void ItemManager::OnUpdate()
                         powerLevel++;
                     }
                     i32 prevPowerLevel = powerLevel;
-                    g_GameManager.currentPower += 8;
+                    g_GameManager.currentPower += POWER_PER_LEVEL / 2;
                     if (g_GameManager.currentPower >= MAX_POWER)
                     {
                         g_GameManager.currentPower = MAX_POWER;

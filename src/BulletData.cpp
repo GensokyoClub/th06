@@ -151,15 +151,15 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuARank9[] = {
 };
 
 CharacterPowerData g_CharacterPowerDataReimuA[] = {
-    /* Rank1   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank1), 8, g_CharacterPowerBulletDataReimuARank1},
-    /* Rank2   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank2), 16, g_CharacterPowerBulletDataReimuARank2},
-    /* Rank3   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank3), 32, g_CharacterPowerBulletDataReimuARank3},
-    /* Rank4   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank4), 48, g_CharacterPowerBulletDataReimuARank4},
-    /* Rank5   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank5), 64, g_CharacterPowerBulletDataReimuARank5},
-    /* Rank6   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank6), 80, g_CharacterPowerBulletDataReimuARank6},
-    /* Rank7   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank7), 96, g_CharacterPowerBulletDataReimuARank7},
-    /* Rank8   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank8), 127, g_CharacterPowerBulletDataReimuARank8},
-    /* Rank9   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank9), 999, g_CharacterPowerBulletDataReimuARank9},
+    /* Rank1   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank1), LEVEL_1, g_CharacterPowerBulletDataReimuARank1},
+    /* Rank2   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank2), LEVEL_2, g_CharacterPowerBulletDataReimuARank2},
+    /* Rank3   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank3), LEVEL_3, g_CharacterPowerBulletDataReimuARank3},
+    /* Rank4   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank4), LEVEL_4, g_CharacterPowerBulletDataReimuARank4},
+    /* Rank5   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank5), LEVEL_5, g_CharacterPowerBulletDataReimuARank5},
+    /* Rank6   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank6), LEVEL_6, g_CharacterPowerBulletDataReimuARank6},
+    /* Rank7   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank7), LEVEL_7, g_CharacterPowerBulletDataReimuARank7},
+    /* Rank8   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank8), LEVEL_8, g_CharacterPowerBulletDataReimuARank8},
+    /* Rank9   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuARank9), LEVEL_UNREACHABLE, g_CharacterPowerBulletDataReimuARank9},
 };
 
 /* ----------ReimuB---------- */
@@ -307,15 +307,15 @@ CharacterPowerBulletData g_CharacterPowerBulletDataReimuBRank9[] = {
 };
 
 CharacterPowerData g_CharacterPowerDataReimuB[] = {
-    /* Rank1   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank1), 8, g_CharacterPowerBulletDataReimuBRank1},
-    /* Rank2   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank2), 16, g_CharacterPowerBulletDataReimuBRank2},
-    /* Rank3   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank3), 32, g_CharacterPowerBulletDataReimuBRank3},
-    /* Rank4   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank4), 48, g_CharacterPowerBulletDataReimuBRank4},
-    /* Rank5   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank5), 64, g_CharacterPowerBulletDataReimuBRank5},
-    /* Rank6   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank6), 80, g_CharacterPowerBulletDataReimuBRank6},
-    /* Rank7   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank7), 96, g_CharacterPowerBulletDataReimuBRank7},
-    /* Rank8   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank8), 127, g_CharacterPowerBulletDataReimuBRank8},
-    /* Rank9   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank9), 999, g_CharacterPowerBulletDataReimuBRank9},
+    /* Rank1   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank1), LEVEL_1, g_CharacterPowerBulletDataReimuBRank1},
+    /* Rank2   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank2), LEVEL_2, g_CharacterPowerBulletDataReimuBRank2},
+    /* Rank3   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank3), LEVEL_3, g_CharacterPowerBulletDataReimuBRank3},
+    /* Rank4   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank4), LEVEL_4, g_CharacterPowerBulletDataReimuBRank4},
+    /* Rank5   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank5), LEVEL_5, g_CharacterPowerBulletDataReimuBRank5},
+    /* Rank6   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank6), LEVEL_6, g_CharacterPowerBulletDataReimuBRank6},
+    /* Rank7   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank7), LEVEL_7, g_CharacterPowerBulletDataReimuBRank7},
+    /* Rank8   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank8), LEVEL_8, g_CharacterPowerBulletDataReimuBRank8},
+    /* Rank9   */ {ARRAY_SIZE(g_CharacterPowerBulletDataReimuBRank9), LEVEL_UNREACHABLE, g_CharacterPowerBulletDataReimuBRank9},
 };
 
 /* ----------MarisaA---------- */
@@ -455,15 +455,15 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaARank9[] = {
 };
 
 CharacterPowerData g_CharacterPowerDataMarisaA[] = {
-    /* Rank1   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank1), 8, g_CharacterPowerBulletDataMarisaARank1},
-    /* Rank2   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank2), 16, g_CharacterPowerBulletDataMarisaARank2},
-    /* Rank3   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank3), 32, g_CharacterPowerBulletDataMarisaARank3},
-    /* Rank4   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank4), 48, g_CharacterPowerBulletDataMarisaARank4},
-    /* Rank5   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank5), 64, g_CharacterPowerBulletDataMarisaARank5},
-    /* Rank6   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank6), 80, g_CharacterPowerBulletDataMarisaARank6},
-    /* Rank7   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank7), 96, g_CharacterPowerBulletDataMarisaARank7},
-    /* Rank8   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank8), 127, g_CharacterPowerBulletDataMarisaARank8},
-    /* Rank9   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank9), 999, g_CharacterPowerBulletDataMarisaARank9},
+    /* Rank1   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank1), LEVEL_1, g_CharacterPowerBulletDataMarisaARank1},
+    /* Rank2   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank2), LEVEL_2, g_CharacterPowerBulletDataMarisaARank2},
+    /* Rank3   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank3), LEVEL_3, g_CharacterPowerBulletDataMarisaARank3},
+    /* Rank4   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank4), LEVEL_4, g_CharacterPowerBulletDataMarisaARank4},
+    /* Rank5   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank5), LEVEL_5, g_CharacterPowerBulletDataMarisaARank5},
+    /* Rank6   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank6), LEVEL_6, g_CharacterPowerBulletDataMarisaARank6},
+    /* Rank7   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank7), LEVEL_7, g_CharacterPowerBulletDataMarisaARank7},
+    /* Rank8   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank8), LEVEL_8, g_CharacterPowerBulletDataMarisaARank8},
+    /* Rank9   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaARank9), LEVEL_UNREACHABLE, g_CharacterPowerBulletDataMarisaARank9},
 };
 
 /* ----------MarisaB---------- */
@@ -577,14 +577,14 @@ CharacterPowerBulletData g_CharacterPowerBulletDataMarisaBRank9[] = {
 };
 
 CharacterPowerData g_CharacterPowerDataMarisaB[] = {
-    /* Rank1   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank1), 8, g_CharacterPowerBulletDataMarisaBRank1},
-    /* Rank2   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank2), 16, g_CharacterPowerBulletDataMarisaBRank2},
-    /* Rank3   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank3), 32, g_CharacterPowerBulletDataMarisaBRank3},
-    /* Rank4   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank4), 48, g_CharacterPowerBulletDataMarisaBRank4},
-    /* Rank5   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank5), 64, g_CharacterPowerBulletDataMarisaBRank5},
-    /* Rank6   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank6), 80, g_CharacterPowerBulletDataMarisaBRank6},
-    /* Rank7   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank7), 96, g_CharacterPowerBulletDataMarisaBRank7},
-    /* Rank8   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank8), 127, g_CharacterPowerBulletDataMarisaBRank8},
-    /* Rank9   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank9), 999, g_CharacterPowerBulletDataMarisaBRank9},
+    /* Rank1   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank1), LEVEL_1, g_CharacterPowerBulletDataMarisaBRank1},
+    /* Rank2   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank2), LEVEL_2, g_CharacterPowerBulletDataMarisaBRank2},
+    /* Rank3   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank3), LEVEL_3, g_CharacterPowerBulletDataMarisaBRank3},
+    /* Rank4   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank4), LEVEL_4, g_CharacterPowerBulletDataMarisaBRank4},
+    /* Rank5   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank5), LEVEL_5, g_CharacterPowerBulletDataMarisaBRank5},
+    /* Rank6   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank6), LEVEL_6, g_CharacterPowerBulletDataMarisaBRank6},
+    /* Rank7   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank7), LEVEL_7, g_CharacterPowerBulletDataMarisaBRank7},
+    /* Rank8   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank8), LEVEL_8, g_CharacterPowerBulletDataMarisaBRank8},
+    /* Rank9   */ {ARRAY_SIZE(g_CharacterPowerBulletDataMarisaBRank9), LEVEL_UNREACHABLE, g_CharacterPowerBulletDataMarisaBRank9},
 };
 } // namespace th06

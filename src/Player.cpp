@@ -913,7 +913,7 @@ ZunResult Player::HandlePlayerInputs()
 
     orbOffsetX = orbOffsetY = 0.0f;
 
-    if (g_GameManager.currentPower < 8)
+    if (g_GameManager.currentPower < LEVEL_1)
     {
         this->orbState = ORB_HIDDEN;
     }
@@ -1063,13 +1063,13 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
-                    if (g_GameManager.currentPower <= 16)
+                    if (g_GameManager.currentPower <= POWER_PER_LEVEL)
                     {
                         g_GameManager.currentPower = 0;
                     }
                     else
                     {
-                        g_GameManager.currentPower -= 16;
+                        g_GameManager.currentPower -= POWER_PER_LEVEL;
                     }
                     g_Gui.redrawFrames.powerGauge = 2;
                 }

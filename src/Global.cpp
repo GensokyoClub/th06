@@ -83,7 +83,7 @@ Chain::Chain()
     unk = 0;
 }
 
-ZunResult Chain::AddToCalcChain(ChainElem *elem, int priority)
+ZunResult Chain::AddToCalcChain(ChainElem *elem, i32 priority)
 {
     ChainElem *cur = &this->calcChain;
 #if BUILT_SINCE(102g)
@@ -133,7 +133,7 @@ ZunResult Chain::AddToCalcChain(ChainElem *elem, int priority)
     }
 }
 
-ZunResult Chain::AddToDrawChain(ChainElem *elem, int priority)
+ZunResult Chain::AddToDrawChain(ChainElem *elem, i32 priority)
 {
     ChainElem *cur = &this->drawChain;
 #if BUILT_SINCE(102g)
@@ -180,15 +180,11 @@ ZunResult Chain::AddToDrawChain(ChainElem *elem, int priority)
     }
 }
 
-int Chain::RunCalcChain(void)
+int Chain::RunCalcChain()
 {
-    ChainElem *tmp1;
-    ChainElem *current;
-    int updatedCount;
-
 restart_from_first_job:
-    updatedCount = 0;
-    current = &this->calcChain;
+    i32 updatedCount = 0;
+    ChainElem *current = &this->calcChain;
 
     while (current != NULL)
     {
@@ -197,13 +193,14 @@ restart_from_first_job:
         execute_again:
             switch (current->callback(current->arg))
             {
-            case CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB:
-                tmp1 = current;
+            case CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB: {
+                ChainElem *old = current;
                 current = current->next;
-                Cut(tmp1);
+                Cut(old);
 
                 updatedCount++;
                 continue;
+            }
 
             case CHAIN_CALLBACK_RESULT_EXECUTE_AGAIN:
                 goto execute_again;
@@ -235,9 +232,7 @@ restart_from_first_job:
 
 int Chain::RunDrawChain(void)
 {
-    ChainElem *tmp1;
-
-    int updatedCount = 0;
+    i32 updatedCount = 0;
     ChainElem *current = &this->drawChain;
 
     while (current != NULL)
@@ -247,13 +242,14 @@ int Chain::RunDrawChain(void)
         execute_again:
             switch (current->callback(current->arg))
             {
-            case CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB:
-                tmp1 = current;
+            case CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB: {
+                ChainElem *old = current;
                 current = current->next;
-                Cut(tmp1);
+                Cut(old);
 
                 updatedCount++;
                 continue;
+            }
 
             case CHAIN_CALLBACK_RESULT_EXECUTE_AGAIN:
                 goto execute_again;
@@ -320,7 +316,7 @@ void Chain::ReleaseSingleChain(ChainElem *root)
     }
 }
 
-void Chain::Release(void)
+void Chain::Release()
 {
     ReleaseSingleChain(&this->calcChain);
     ReleaseSingleChain(&this->drawChain);
@@ -426,7 +422,7 @@ ZunMemory g_ZunMemoryMgr;
 // FileSystem
 long g_ReadFileSize;
 
-u16 Controller::GetJoystickCaps(void)
+u16 Controller::GetJoystickCaps()
 {
     // NOTE: This isn't stubbed in trial 0.08.
     // Current trial build is based on version 0.13.
@@ -848,7 +844,7 @@ u8 *th06::Controller::GetControllerState()
     }
 }
 
-u16 Controller::GetInput(void)
+u16 Controller::GetInput()
 {
     u8 keyboardState[256];
     u16 buttons = 0;
@@ -928,7 +924,7 @@ u16 Controller::GetInput(void)
     return Controller::GetControllerInput(buttons);
 }
 
-void Controller::ResetKeyboard(void)
+void Controller::ResetKeyboard()
 {
     u8 key_states[256];
 
@@ -1189,7 +1185,7 @@ const char *GameErrorContext::DetailedLog(const char *fmt, ...)
 }
 #endif
 
-u16 Rng::GetRandomU16(void)
+u16 Rng::GetRandomU16()
 {
     u16 a = (this->seed ^ 0x9630) - 0x6553;
 
@@ -1198,12 +1194,12 @@ u16 Rng::GetRandomU16(void)
     return this->seed;
 }
 
-u32 Rng::GetRandomU32(void)
+u32 Rng::GetRandomU32()
 {
     return GetRandomU16() << 16 | GetRandomU16();
 }
 
-f32 Rng::GetRandomF32(void)
+f32 Rng::GetRandomF32()
 {
     return (f32)GetRandomU32() / (f32)0xFFFFFFFF;
 }

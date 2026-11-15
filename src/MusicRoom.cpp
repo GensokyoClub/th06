@@ -85,15 +85,15 @@ ZunBool MusicRoom::ProcessInput()
             if (lineCharBuffer[0] != '\0')
             {
                 this->descriptionSprites[i].flags.isVisibleOverride = true;
-                g_AnmManager->DrawVmTextFmt(&this->descriptionSprites[i], COLOR_MUSIC_ROOM_SONG_DESC_TEXT,
-                                            COLOR_MUSIC_ROOM_SONG_DESC_SHADOW, lineCharBuffer);
+                g_AnmManager->DrawTextToTextureLeft(&this->descriptionSprites[i], COLOR_MUSIC_ROOM_SONG_DESC_TEXT,
+                                                    COLOR_MUSIC_ROOM_SONG_DESC_SHADOW, lineCharBuffer);
             }
             else
             {
                 this->descriptionSprites[i].flags.isVisibleOverride = false;
             }
 
-            this->descriptionSprites[i].pos.x = ((f32)(i % 2)) * 248.0f + 96.0f;
+            this->descriptionSprites[i].pos.x = (i % 2) * 248.0f + 96.0f;
             this->descriptionSprites[i].pos.y = 320.0f + ((i / 2) << 4);
             this->descriptionSprites[i].pos.z = 0.0f;
             this->descriptionSprites[i].flags.anchor = AnmVmAnchor_TopLeft;
@@ -141,7 +141,7 @@ static ChainCallbackResult MusicRoom_OnUpdate(MusicRoom *musicRoom)
     {
         musicRoom->waitFramesCount++;
     }
-    g_AnmManager->ExecuteScript(musicRoom->mainVm);
+    g_AnmManager->RunAnm(musicRoom->mainVm);
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
@@ -156,7 +156,7 @@ static ChainCallbackResult MusicRoom_OnDraw(MusicRoom *musicRoom)
 
     g_AnmManager->ClearTexture();
     g_AnmManager->CopySurfaceToBackBuffer(0, 0, 0, 0, 0);
-    g_AnmManager->DrawNoRotation(musicRoom->mainVm);
+    g_AnmManager->Draw2D(musicRoom->mainVm);
 
     // Draw the 10 songs in the song select window, and list indices
     for (i = musicRoom->listingOffset; i < musicRoom->listingOffset + 10; i++)
@@ -175,7 +175,7 @@ static ChainCallbackResult MusicRoom_OnDraw(MusicRoom *musicRoom)
         musicRoom->titleSprites[i].pos.x = 93.0f;
         musicRoom->titleSprites[i].pos.y = 104.0f + (((i + 1) - musicRoom->listingOffset) * 18) - 20.0f;
         musicRoom->titleSprites[i].pos.z = 0.0f;
-        g_AnmManager->DrawNoRotation(&musicRoom->titleSprites[i]);
+        g_AnmManager->Draw2D(&musicRoom->titleSprites[i]);
 
         textPos = musicRoom->titleSprites[i].pos;
         textPos.x -= 60.0f;
@@ -193,7 +193,7 @@ static ChainCallbackResult MusicRoom_OnDraw(MusicRoom *musicRoom)
 
     for (i = 0; i < ARRAY_SIZE_SIGNED(musicRoom->descriptionSprites); i++)
     {
-        g_AnmManager->DrawNoRotation(&musicRoom->descriptionSprites[i]);
+        g_AnmManager->Draw2D(&musicRoom->descriptionSprites[i]);
     }
 
     g_AsciiManager.SetColor(COLOR_WHITE);
@@ -337,8 +337,8 @@ finishMusiccmtRead:
     for (i = 0; i < musicRoom->numDescriptors; i++)
     {
         g_AnmManager->InitializeAndSetSprite(&musicRoom->titleSprites[i], ANM_OFFSET_MUSIC01 + i);
-        g_AnmManager->DrawVmTextFmt(&musicRoom->titleSprites[i], COLOR_MUSIC_ROOM_SONG_TITLE_TEXT,
-                                    COLOR_MUSIC_ROOM_SONG_TITLE_SHADOW, musicRoom->trackDescriptors[i].title);
+        g_AnmManager->DrawTextToTextureLeft(&musicRoom->titleSprites[i], COLOR_MUSIC_ROOM_SONG_TITLE_TEXT,
+                                            COLOR_MUSIC_ROOM_SONG_TITLE_SHADOW, musicRoom->trackDescriptors[i].title);
         musicRoom->titleSprites[i].pos.x = 93.0f;
         musicRoom->titleSprites[i].pos.y = 104.0f + ((i + 1) * 18) - 20.0f;
         musicRoom->titleSprites[i].pos.z = 0.0f;
@@ -361,15 +361,15 @@ finishMusiccmtRead:
         if (lineCharBuffer[0] != '\0')
         {
             musicRoom->descriptionSprites[i].flags.isVisibleOverride = true;
-            g_AnmManager->DrawVmTextFmt(&musicRoom->descriptionSprites[i], COLOR_MUSIC_ROOM_SONG_DESC_TEXT,
-                                        COLOR_MUSIC_ROOM_SONG_DESC_SHADOW, lineCharBuffer);
+            g_AnmManager->DrawTextToTextureLeft(&musicRoom->descriptionSprites[i], COLOR_MUSIC_ROOM_SONG_DESC_TEXT,
+                                                COLOR_MUSIC_ROOM_SONG_DESC_SHADOW, lineCharBuffer);
         }
         else
         {
             musicRoom->descriptionSprites[i].flags.isVisibleOverride = false;
         }
 
-        musicRoom->descriptionSprites[i].pos.x = ((f32)(i % 2)) * 248.0f + 96.0f;
+        musicRoom->descriptionSprites[i].pos.x = (i % 2) * 248.0f + 96.0f;
         musicRoom->descriptionSprites[i].pos.y = 320.0f + ((i / 2) << 4);
         musicRoom->descriptionSprites[i].pos.z = 0.0f;
         musicRoom->descriptionSprites[i].flags.anchor = AnmVmAnchor_TopLeft;

@@ -37,7 +37,23 @@ enum StageNumber
 
 #define STAGE_INDEX(num) ((num) - 1)
 
-#define MAX_POWER 128
+#define POWER_PER_LEVEL 16
+
+enum PowerLevels
+{
+    LEVEL_0 = 0,
+    LEVEL_1 = POWER_PER_LEVEL / 2,
+    LEVEL_2 = POWER_PER_LEVEL,
+    LEVEL_3 = POWER_PER_LEVEL * 2,
+    LEVEL_4 = POWER_PER_LEVEL * 3,
+    LEVEL_5 = POWER_PER_LEVEL * 4,
+    LEVEL_6 = POWER_PER_LEVEL * 5,
+    LEVEL_7 = POWER_PER_LEVEL * 6,
+    LEVEL_8 = POWER_PER_LEVEL * 8 - 1, // BUG(?)
+    MAX_POWER = POWER_PER_LEVEL * 8,
+    LEVEL_UNREACHABLE = 999,
+};
+STATIC_ASSERT(MAX_POWER < LEVEL_UNREACHABLE);
 
 #define MAX_CONTINUE_CREDITS 3
 
@@ -107,7 +123,7 @@ struct GameManager
     u16 pointItemsCollectedInStage;
     u16 pointItemsCollected;
     u8 continuesUsed;
-    i8 powerItemCountForScore;
+    i8 fullPowerScoreIdx;
     i8 livesRemaining;
     i8 bombsRemaining;
     i8 livesEarned;

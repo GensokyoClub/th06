@@ -279,13 +279,13 @@ static void UpdatePlayerBullets(Player *player)
         bullet->sprite.pos.z = bullet->position.z;
 
         if (bullet->bulletType != PLAYER_LASER &&
-            !g_GameManager.IsInBounds(bullet->position[0], bullet->position[1], bullet->sprite.sprite->widthPx,
-                                      bullet->sprite.sprite->heightPx))
+            !g_GameManager.IsInBounds(bullet->position[0], bullet->position[1], bullet->sprite.sprite->width,
+                                      bullet->sprite.sprite->height))
         {
             bullet->bulletState = PLAYER_BULLET_STATE_INACTIVE;
         }
 
-        if (g_AnmManager->ExecuteScript(&bullet->sprite))
+        if (g_AnmManager->RunAnm(&bullet->sprite) != SCRIPT_RUNNING)
         {
             bullet->bulletState = PLAYER_BULLET_STATE_INACTIVE;
         }
@@ -308,7 +308,7 @@ static void DrawBullets(Player *p)
         {
             bullet->sprite.rotation.z = RADIANS(90.0f) - ReduceAngleAdd(bullet->angle, RADIANS(180.0f));
         }
-        g_AnmManager->Draw2(&bullet->sprite);
+        g_AnmManager->Draw3D(&bullet->sprite);
     }
 }
 
@@ -328,7 +328,7 @@ static void DrawBulletExplosions(Player *p)
             bullet->sprite.rotation.z = RADIANS(90.0f) - ReduceAngleAdd(bullet->angle, RADIANS(180.0f));
         }
         bullet->sprite.pos[2] = 0.4f;
-        g_AnmManager->Draw2(&bullet->sprite);
+        g_AnmManager->Draw3D(&bullet->sprite);
     }
 }
 
@@ -913,7 +913,7 @@ ZunResult Player::HandlePlayerInputs()
 
     orbOffsetX = orbOffsetY = 0.0f;
 
-    if (g_GameManager.currentPower < 8)
+    if (g_GameManager.currentPower < LEVEL_1)
     {
         this->orbState = ORB_HIDDEN;
     }
@@ -1054,7 +1054,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
             p->respawnTimer--;
             if (p->respawnTimer == 0)
             {
-                g_GameManager.powerItemCountForScore = 0;
+                g_GameManager.fullPowerScoreIdx = 0;
                 if (g_GameManager.livesRemaining > 0)
                 {
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_BIG, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
@@ -1063,13 +1063,13 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
                     g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
-                    if (g_GameManager.currentPower <= 16)
+                    if (g_GameManager.currentPower <= POWER_PER_LEVEL)
                     {
                         g_GameManager.currentPower = 0;
                     }
                     else
                     {
-                        g_GameManager.currentPower -= 16;
+                        g_GameManager.currentPower -= POWER_PER_LEVEL;
                     }
                     g_Gui.redrawFrames.powerGauge = 2;
                 }
@@ -1093,7 +1093,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
             float scaleFactor = (f32)p->stateTimer / 30.0f;
             p->playerSprite.scaleY = 3.0f * scaleFactor + 1.0f;
             p->playerSprite.scaleX = 1.0f - 1.0f * scaleFactor;
-            p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, (u32)(255.0f - (f32)p->stateTimer * 255.0f / 30.0f));
+            p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, (u32)RAMP_DOWN(255.0f, (f32)p->stateTimer, 30.0f));
             p->playerSprite.flags.blendMode = AnmBlendMode_Additive;
             p->previousSpeed.x = 0.0f;
             p->previousSpeed.y = 0.0f;
@@ -1141,7 +1141,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
         p->playerSprite.scaleX = 1.0f - 1.0f * scaleFactor;
         p->playerSprite.flags.blendMode = AnmBlendMode_Additive;
         p->speedMultiplierDuringBomb.x = p->speedMultiplierDuringBomb.y = 1.0f;
-        p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, (i32)p->stateTimer * 255 / 30);
+        p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, RAMP_UP(255, (i32)p->stateTimer, 30));
         p->respawnTimer = 0;
         if ((i32)p->stateTimer >= 30)
         {
@@ -1187,12 +1187,12 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
     {
         p->HandlePlayerInputs();
     }
-    g_AnmManager->ExecuteScript(&p->playerSprite);
+    g_AnmManager->RunAnm(&p->playerSprite);
     UpdatePlayerBullets(p);
     if (p->orbState != ORB_HIDDEN)
     {
-        g_AnmManager->ExecuteScript(&p->orbsSprite[0]);
-        g_AnmManager->ExecuteScript(&p->orbsSprite[1]);
+        g_AnmManager->RunAnm(&p->orbsSprite[0]);
+        g_AnmManager->RunAnm(&p->orbsSprite[1]);
     }
     p->positionOfLastEnemyHit = D3DXVECTOR3(-999.0f, -999.0f, 0.0f);
     UpdateFireBulletsTimer(p);
@@ -1211,7 +1211,7 @@ static ChainCallbackResult Player_OnDrawHighPrio(Player *p)
     p->playerSprite.pos.z = 0.49f;
     if (!g_GameManager.isInRetryMenu)
     {
-        g_AnmManager->DrawNoRotation(&p->playerSprite);
+        g_AnmManager->Draw2D(&p->playerSprite);
         if (p->orbState != ORB_HIDDEN &&
             (p->playerState == PLAYER_STATE_ALIVE || p->playerState == PLAYER_STATE_INVULNERABLE))
         {
@@ -1223,8 +1223,8 @@ static ChainCallbackResult Player_OnDrawHighPrio(Player *p)
             p->orbsSprite[1].pos[1] += g_GameManager.gameRegionScreenPos.y;
             p->orbsSprite[0].pos.z = 0.491f;
             p->orbsSprite[1].pos.z = 0.491f;
-            g_AnmManager->Draw(&p->orbsSprite[0]);
-            g_AnmManager->Draw(&p->orbsSprite[1]);
+            g_AnmManager->Draw2DRotated(&p->orbsSprite[0]);
+            g_AnmManager->Draw2DRotated(&p->orbsSprite[1]);
         }
     }
     return CHAIN_CALLBACK_RESULT_CONTINUE;

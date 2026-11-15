@@ -66,11 +66,11 @@ class Chain
     ~Chain();
 
     void Cut(ChainElem *to_remove);
-    void Release(void);
-    ZunResult AddToCalcChain(ChainElem *elem, int priority);
-    ZunResult AddToDrawChain(ChainElem *elem, int priority);
-    int RunDrawChain(void);
-    int RunCalcChain(void);
+    void Release();
+    ZunResult AddToCalcChain(ChainElem *elem, i32 priority);
+    ZunResult AddToDrawChain(ChainElem *elem, i32 priority);
+    int RunDrawChain();
+    int RunCalcChain();
 
     ChainElem *CreateElem(ChainCallback callback);
 };

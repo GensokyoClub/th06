@@ -52,9 +52,9 @@ namespace th06
 
 #define SHOTTYPE_ID(character, shottype) ((character) * SHOTTYPES_PER_CHARACTER + (shottype))
 
-ZunResult CheckForRunningGameInstance(void);
+ZunResult CheckForRunningGameInstance();
 #if BUILT_BEFORE(102g)
-ZunBool CheckDirectXVersion(void);
+ZunBool CheckDirectXVersion();
 #endif
 
 f32 ReduceAngleAdd(f32 angle, f32 add);
@@ -64,6 +64,9 @@ f32 ReduceAngleAdd(f32 angle, f32 add);
 void RotatePoint(D3DXVECTOR3 *outVector, D3DXVECTOR3 *point, f32 angle);
 
 #define ZUN_LERP(start, end, time) ((end - start) * time + start)
+
+#define RAMP_UP(val, time, duration) ((time) * (val) / (duration))
+#define RAMP_DOWN(val, time, duration) (val - RAMP_UP(val, time, duration))
 
 #define MULTIPLE_OF(val, mult) !((i32)(val) % (mult))
 
@@ -124,11 +127,11 @@ enum TouhouButton
 
 namespace Controller
 {
-u16 GetJoystickCaps(void);
+u16 GetJoystickCaps();
 u16 GetControllerInput(u16 buttons);
 u8 *GetControllerState();
-u16 GetInput(void);
-void ResetKeyboard(void);
+u16 GetInput();
+void ResetKeyboard();
 } // namespace Controller
 
 struct ControllerMapping

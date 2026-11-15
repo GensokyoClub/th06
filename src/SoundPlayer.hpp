@@ -83,7 +83,7 @@ struct SoundPlayer
 
     ZunResult InitializeDSound(HWND window);
     ZunResult InitSoundBuffers();
-    ZunResult Release(void);
+    ZunResult Release();
 
     ZunResult LoadSound(i32 idx, const char *path);
 #if BUILT_SINCE(100)

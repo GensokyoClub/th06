@@ -1,5 +1,5 @@
 name,address,type,size
-g_BulletTypeInfos,0x4556B0,global,200
+g_BulletAnmScripts,0x4556B0,global,200
 th06::MidiTimer::`vftable',0x456528,vtable,4
 th06::MidiOutput::`vftable',0x45652C,vtable,4
 g_TextureFormatD3D8Mapping,0x456FE8,global,24

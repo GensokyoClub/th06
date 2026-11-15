@@ -184,7 +184,7 @@ void AsciiManager::AddFormatText(D3DXVECTOR3 *position, const char *fmt, ...)
 }
 
 #pragma var_order(charWidth, i, string, text, guiString, unusedVec3)
-void AsciiManager::DrawStrings(void)
+void AsciiManager::DrawStrings()
 {
     f32 charWidth;
     u8 *text;
@@ -246,7 +246,7 @@ void AsciiManager::DrawStrings(void)
                     this->fontVm.sprite = g_AnmManager->GetSprite(*text + ANM_SPRITE_ASCIIS_FONT_SPRITE(' '));
                     this->fontVm.color = COLOR_WHITE;
                 }
-                g_AnmManager->DrawNoRotation(&this->fontVm);
+                g_AnmManager->Draw2D(&this->fontVm);
                 this->fontVm.pos.x += charWidth;
             }
             text++;
@@ -437,6 +437,7 @@ i32 StageMenu::OnUpdateGameMenu()
             this->menuBackground.pos.y = GAME_REGION_POS_Y;
             this->menuBackground.pos.z = 0.0f;
         }
+        // fallthrough
     case GAME_MENU_PAUSE_CURSOR_UNPAUSE:
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].color = COLOR_LIGHT_RED;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
@@ -576,11 +577,11 @@ i32 StageMenu::OnUpdateGameMenu()
     }
     for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites); vmIdx++)
     {
-        g_AnmManager->ExecuteScript(&this->menuSprites[vmIdx]);
+        g_AnmManager->RunAnm(&this->menuSprites[vmIdx]);
     }
     if (g_Supervisor.lockableBackbuffer)
     {
-        g_AnmManager->ExecuteScript(&this->menuBackground);
+        g_AnmManager->RunAnm(&this->menuBackground);
     }
     this->numFrames++;
     return 0;
@@ -601,13 +602,13 @@ void StageMenu::OnDrawGameMenu()
         {
             AnmVm menuBackground = this->menuBackground;
             menuBackground.flags.zWriteDisable = true;
-            g_AnmManager->DrawNoRotation(&menuBackground);
+            g_AnmManager->Draw2D(&menuBackground);
         }
         for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites); vmIdx++)
         {
             if (this->menuSprites[vmIdx].IsVisible())
             {
-                g_AnmManager->DrawNoRotation(&this->menuSprites[vmIdx]);
+                g_AnmManager->Draw2D(&this->menuSprites[vmIdx]);
             }
         }
     }
@@ -693,6 +694,7 @@ i32 StageMenu::OnUpdateRetryMenu()
             break;
         this->curState += RETRY_MENU_CURSOR_NO;
         this->numFrames = 0;
+        // fallthrough
     case RETRY_MENU_CURSOR_YES:
         this->menuSprites[RETRY_MENU_SPRITE_YES].color = COLOR_LIGHT_RED;
         this->menuSprites[RETRY_MENU_SPRITE_NO].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
@@ -797,11 +799,11 @@ i32 StageMenu::OnUpdateRetryMenu()
     }
     for (i = RETRY_MENU_SPRITES_START; i < RETRY_MENU_SPRITES_END; i++)
     {
-        g_AnmManager->ExecuteScript(&this->menuSprites[i]);
+        g_AnmManager->RunAnm(&this->menuSprites[i]);
     }
     if (g_Supervisor.lockableBackbuffer)
     {
-        g_AnmManager->ExecuteScript(&this->menuBackground);
+        g_AnmManager->RunAnm(&this->menuBackground);
     }
     this->numFrames++;
     return 0;
@@ -818,7 +820,7 @@ void StageMenu::OnDrawRetryMenu()
         g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
         if (g_Supervisor.lockableBackbuffer && (this->curState != RETRY_MENU_OPENING || this->numFrames > 2))
         {
-            g_AnmManager->DrawNoRotation(&this->menuBackground);
+            g_AnmManager->Draw2D(&this->menuBackground);
         }
         if (this->curState == RETRY_MENU_CURSOR_YES || this->curState == RETRY_MENU_CURSOR_NO)
         {
@@ -827,13 +829,13 @@ void StageMenu::OnDrawRetryMenu()
                 8.0f * this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER].scaleX;
             this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER].sprite = g_AnmManager->GetSprite(
                 ANM_SPRITE_ASCII_FONT_SPRITE(' ') + '0' + MAX_CONTINUE_CREDITS - g_GameManager.continuesUsed);
-            g_AnmManager->DrawNoRotation(&this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER]);
+            g_AnmManager->Draw2D(&this->menuSprites[RETRY_MENU_SPRITE_RETRIES_NUMBER]);
         }
         for (i32 i = RETRY_MENU_SPRITES_START; i < RETRY_MENU_SPRITES_END; i++)
         {
             if (this->menuSprites[i].IsVisible())
             {
-                g_AnmManager->DrawNoRotation(&this->menuSprites[i]);
+                g_AnmManager->Draw2D(&this->menuSprites[i]);
             }
         }
     }
@@ -875,16 +877,16 @@ void AsciiManager::DrawPopupsWithHwVertexProcessing()
                 // TODO: explain these values
                 this->scorePopupVm.matrix.m[0][0] = 0.1875f;
                 this->scorePopupVm.matrix.m[1][1] = 0.03125f;
-                g_AnmManager->Draw2(&this->scorePopupVm);
+                g_AnmManager->Draw3D(&this->scorePopupVm);
                 this->scorePopupVm.matrix.m[0][0] = 0.03125f;
                 this->scorePopupVm.matrix.m[1][1] = 0.03125f;
             }
             else
             {
-                g_AnmManager->Draw2(&this->scorePopupVm);
+                g_AnmManager->Draw3D(&this->scorePopupVm);
             }
 #else
-            g_AnmManager->Draw2(&this->scorePopupVm);
+            g_AnmManager->Draw3D(&this->scorePopupVm);
 #endif
 
             this->scorePopupVm.pos.x += 8.0f;
@@ -929,16 +931,16 @@ void AsciiManager::DrawPopupsWithoutHwVertexProcessing()
                 // TODO: explain these values
                 this->scorePopupVm.matrix.m[0][0] = 0.1875f;
                 this->scorePopupVm.matrix.m[1][1] = 0.03125f;
-                g_AnmManager->DrawNoRotation(&this->scorePopupVm);
+                g_AnmManager->Draw2D(&this->scorePopupVm);
                 this->scorePopupVm.matrix.m[0][0] = 0.03125f;
                 this->scorePopupVm.matrix.m[1][1] = 0.03125f;
             }
             else
             {
-                g_AnmManager->Draw2(&this->scorePopupVm);
+                g_AnmManager->Draw3D(&this->scorePopupVm);
             }
 #else
-            g_AnmManager->DrawNoRotation(&this->scorePopupVm);
+            g_AnmManager->Draw2D(&this->scorePopupVm);
 #endif
 
             this->scorePopupVm.pos.x += 8.0f;

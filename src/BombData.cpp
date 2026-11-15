@@ -167,10 +167,10 @@ void BombReimuACalc(Player *player)
         player->bombInfo.projectilePosition[i].y +=
             g_Supervisor.effectiveFramerateMultiplier * player->bombInfo.projectileVelocity[i].y;
 
-        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][i * 4]);
-        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][i * 4 + 1]);
-        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][i * 4 + 2]);
-        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][i * 4 + 3]);
+        g_AnmManager->RunAnm(&player->bombInfo.vms[0][i * 4]);
+        g_AnmManager->RunAnm(&player->bombInfo.vms[0][i * 4 + 1]);
+        g_AnmManager->RunAnm(&player->bombInfo.vms[0][i * 4 + 2]);
+        g_AnmManager->RunAnm(&player->bombInfo.vms[0][i * 4 + 3]);
     }
     player->bombInfo.timer++;
 }
@@ -189,12 +189,12 @@ static void DarkenViewport(Player *player)
 
     if (player->bombInfo.timer < 60)
     {
-        darkeningTimeLeft = ((f32)player->bombInfo.timer * 176.0f) / 60.0f;
+        darkeningTimeLeft = RAMP_UP(176.0f, (f32)player->bombInfo.timer, 60.0f);
         darknessLevel = darkeningTimeLeft >= 176.0f ? 176 : (i32)darkeningTimeLeft;
     }
     else if (player->bombInfo.timer >= player->bombInfo.duration + -60)
     {
-        darkeningTimeLeft = ((player->bombInfo.duration - (f32)player->bombInfo.timer) * 176.0f) / 60.0f;
+        darkeningTimeLeft = RAMP_UP(176.0f, player->bombInfo.duration - (f32)player->bombInfo.timer, 60.0f);
         darknessLevel = darkeningTimeLeft < 0.0f ? 0 : (i32)darkeningTimeLeft;
     }
     else
@@ -221,28 +221,28 @@ void BombReimuADraw(Player *player)
         vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
         vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
         vm->pos[2] = 0.0f;
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
         vm++;
 
         vm->pos = player->bombInfo.projectilePosition[i] + vm->posOffset;
         vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
         vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
         vm->pos[2] = 0.0f;
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
         vm++;
 
         vm->pos = player->bombInfo.projectilePosition[i] + vm->posOffset;
         vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
         vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
         vm->pos[2] = 0.0f;
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
         vm++;
 
         vm->pos = player->bombInfo.projectilePosition[i] + vm->posOffset;
         vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
         vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
         vm->pos[2] = 0.0f;
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
         vm++;
     }
 }
@@ -276,15 +276,15 @@ void BombReimuBCalc(Player *player)
 
         g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB_REIMARI);
         player->bombInfo.projectilePosition[0].x = player->positionCenter.x;
-        player->bombInfo.projectilePosition[0].y = GAME_REGION_HEIGHT / 2.0f;
+        player->bombInfo.projectilePosition[0].y = GAME_REGION_CENTER_Y;
         player->bombInfo.projectilePosition[0].z = 0.42f;
-        player->bombInfo.projectilePosition[1].x = GAME_REGION_WIDTH / 2.0f;
+        player->bombInfo.projectilePosition[1].x = GAME_REGION_CENTER_X;
         player->bombInfo.projectilePosition[1].y = player->positionCenter.y;
         player->bombInfo.projectilePosition[1].z = 0.415f;
         player->bombInfo.projectilePosition[2].x = player->positionCenter.x;
-        player->bombInfo.projectilePosition[2].y = GAME_REGION_HEIGHT / 2.0f;
+        player->bombInfo.projectilePosition[2].y = GAME_REGION_CENTER_Y;
         player->bombInfo.projectilePosition[2].z = 0.41f;
-        player->bombInfo.projectilePosition[3].x = GAME_REGION_WIDTH / 2.0f;
+        player->bombInfo.projectilePosition[3].x = GAME_REGION_CENTER_X;
         player->bombInfo.projectilePosition[3].y = player->positionCenter.y;
         player->bombInfo.projectilePosition[3].z = 0.405f;
         ScreenEffect_RegisterChain(SCREEN_EFFECT_SHAKE, 60, 2, 6, 0);
@@ -307,7 +307,7 @@ void BombReimuBCalc(Player *player)
 
         for (i = 0; i < 4; i++)
         {
-            g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][i]);
+            g_AnmManager->RunAnm(&player->bombInfo.vms[0][i]);
             if (player->bombInfo.timer.HasTicked() && !MULTIPLE_OF(player->bombInfo.timer, 2))
             {
                 player->cancelRegions[i].pos.x =
@@ -337,7 +337,7 @@ void BombReimuBDraw(Player *player)
         vm->pos.x += g_GameManager.gameRegionScreenPos.x;
         vm->pos.y += g_GameManager.gameRegionScreenPos.y;
         vm->pos.z = 0.0f;
-        g_AnmManager->Draw(vm);
+        g_AnmManager->Draw2DRotated(vm);
     }
 }
 
@@ -396,7 +396,7 @@ void BombMarisaACalc(Player *player)
                 player->damageRegionPosition[i] = player->bombInfo.projectilePosition[i];
                 player->damageRegionDamage[i] = 8;
             }
-            g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][i]);
+            g_AnmManager->RunAnm(&player->bombInfo.vms[0][i]);
         }
     }
     player->playerState = PLAYER_STATE_INVULNERABLE;
@@ -415,7 +415,7 @@ void BombMarisaADraw(Player *player)
         vm->pos.z = 0.0f;
         vm->scaleX = 3.2f;
         vm->scaleY = 3.2f;
-        g_AnmManager->Draw(vm);
+        g_AnmManager->Draw2DRotated(vm);
 
         vm->pos -= player->bombInfo.projectileVelocity[i] * 6.0f;
         vm->pos.x += -32.0f;
@@ -423,7 +423,7 @@ void BombMarisaADraw(Player *player)
         vm->pos.z = 0.0f;
         vm->scaleX = 2.2f;
         vm->scaleY = 2.2f;
-        g_AnmManager->Draw(vm);
+        g_AnmManager->Draw2DRotated(vm);
 
         vm->pos -= player->bombInfo.projectileVelocity[i] * 2.0f;
         vm->pos.x += 64.0f;
@@ -436,7 +436,7 @@ void BombMarisaADraw(Player *player)
         vm->pos.z = 0.0f;
         vm->scaleX = 1.0f;
         vm->scaleY = 1.0f;
-        g_AnmManager->Draw(vm);
+        g_AnmManager->Draw2DRotated(vm);
         vm++;
     }
 }
@@ -484,7 +484,7 @@ void BombMarisaBCalc(Player *player)
 
         if (player->bombInfo.timer.HasTicked() && !MULTIPLE_OF(player->bombInfo.timer, 4))
         {
-            player->cancelRegions[0].pos.x = GAME_REGION_WIDTH / 2.0f;
+            player->cancelRegions[0].pos.x = GAME_REGION_CENTER_X;
             player->cancelRegions[0].pos.y = player->positionCenter.y / 2.0f;
             player->cancelRegions[0].size.x = GAME_REGION_WIDTH;
             player->cancelRegions[0].size.y = player->positionCenter.y;
@@ -495,10 +495,10 @@ void BombMarisaBCalc(Player *player)
             player->damageRegionDamage[0] = 12;
         }
 
-        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][0]);
-        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][1]);
-        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][2]);
-        g_AnmManager->ExecuteScript(&player->bombInfo.vms[0][3]);
+        g_AnmManager->RunAnm(&player->bombInfo.vms[0][0]);
+        g_AnmManager->RunAnm(&player->bombInfo.vms[0][1]);
+        g_AnmManager->RunAnm(&player->bombInfo.vms[0][2]);
+        g_AnmManager->RunAnm(&player->bombInfo.vms[0][3]);
     }
 
     player->playerState = PLAYER_STATE_INVULNERABLE;
@@ -513,14 +513,14 @@ void BombMarisaBDraw(Player *player)
     {
         float spriteAngle = (((ZUN_PI / 5.0f) * i) / 3.0f - ZUN_PI) + (ZUN_2PI / 5.0f);
         vm->pos = player->positionCenter;
-        vm->pos.x += (cosf(spriteAngle) * vm->sprite->heightPx * vm->scaleY) / 2.0f;
-        vm->pos.y += (sinf(spriteAngle) * vm->sprite->heightPx * vm->scaleY) / 2.0f;
+        vm->pos.x += (cosf(spriteAngle) * vm->sprite->height * vm->scaleY) / 2.0f;
+        vm->pos.y += (sinf(spriteAngle) * vm->sprite->height * vm->scaleY) / 2.0f;
         spriteAngle = ZUN_HALF_PI - spriteAngle;
         vm->rotation.z = ReduceAngleAdd(spriteAngle, ZUN_PI);
         vm->pos.x += g_GameManager.gameRegionScreenPos.x;
         vm->pos.y += g_GameManager.gameRegionScreenPos.y;
         vm->pos.z = 0.0f;
-        g_AnmManager->Draw(vm);
+        g_AnmManager->Draw2DRotated(vm);
         vm++;
     }
 }

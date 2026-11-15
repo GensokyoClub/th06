@@ -13,14 +13,23 @@ namespace th06
 struct AnmLoadedSprite
 {
     i32 sourceFileIndex;
-    ZunVec2 startPixelInclusive;
-    ZunVec2 endPixelInclusive;
+
+    // Positions of the sprite's corners, inclusive
+    ZunVec2 startPixel;
+    ZunVec2 endPixel;
+
+    // Size of the entire texture
     f32 textureHeight;
     f32 textureWidth;
+
+    // UV values as fractions of texture size
     ZunVec2 uvStart;
     ZunVec2 uvEnd;
-    f32 heightPx;
-    f32 widthPx;
+
+    // Size of the sprite itself
+    f32 height;
+    f32 width;
+
     i32 spriteId;
 };
 ZUN_ASSERT_TYPE(AnmLoadedSprite, 0x38, 4);
@@ -207,6 +216,8 @@ struct AnmVmBase
 ZUN_ASSERT_TYPE(AnmVmBase, 0x90, 4);
 
 #define DEFAULT_ANM_FONT_SIZE 15
+
+#define ANM_TEXT_SIZE(text, fontSize) strlen(text) * (f32)(fontSize)
 
 struct AnmVm : AnmVmBase
 {

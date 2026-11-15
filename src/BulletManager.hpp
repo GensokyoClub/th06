@@ -105,20 +105,20 @@ enum BulletColor4
     BULLET_YELLOW4
 };
 
-struct BulletTypeSprites
+struct BulletBase
 {
-    AnmVm spriteBullet;
-    AnmVm spriteSpawnEffectFast;
-    AnmVm spriteSpawnEffectNormal;
-    AnmVm spriteSpawnEffectSlow;
-    AnmVm spriteSpawnEffectDonut;
+    AnmVm vm;
+    AnmVm spawnEffectFast;
+    AnmVm spawnEffectNormal;
+    AnmVm spawnEffectSlow;
+    AnmVm despawnEffect;
 
     D3DXVECTOR3 grazeSize;
-    u8 unk_55c;
-    u8 bulletHeight;
+    u8 unk_55c; // possibly an old width field?
+    u8 height;
     alignment_padding(0x2);
 };
-ZUN_ASSERT_TYPE(BulletTypeSprites, 0x560, 4);
+ZUN_ASSERT_TYPE(BulletBase, 0x560, 4);
 
 enum BulletState
 {
@@ -151,15 +151,17 @@ enum BulletEffectType
     EX_BOUNCE_TBLR = 0x400,
     EX_BOUNCE_TLR = 0x800
 };
+#define EX_ANGLE (EX_ANGLE_ADD | EX_ANGLE_PLAYER | EX_ANGLE_SET)
+#define EX_BOUNCE (EX_BOUNCE_TBLR | EX_BOUNCE_TLR)
+
 enum LaserFlags
 {
     LASER_FLAG_FADE_IN_OUT = 0x1,
     LASER_FLAG_UNUSED = 0x2
 };
 
-struct Bullet
+struct Bullet : BulletBase
 {
-    BulletTypeSprites sprites;
     D3DXVECTOR3 pos;
     D3DXVECTOR3 velocity;
     D3DXVECTOR3 ex4Acceleration;
@@ -234,7 +236,7 @@ struct BulletManager
     Laser *SpawnLaserPattern(EnemyShooter *bulletProps);
     u32 SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, i32 bulletIdx2, f32 angle);
 
-    BulletTypeSprites bulletTypeTemplates[MAX_ENEMY_BULLET_TYPES];
+    BulletBase bulletTemplates[MAX_ENEMY_BULLET_TYPES];
     Bullet bullets[MAX_ENEMY_BULLETS];
     Laser lasers[MAX_ENEMY_LASERS];
     i32 nextBulletIndex;

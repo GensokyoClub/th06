@@ -815,12 +815,12 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
         if (resultScreen->charUsed != resultScreen->cursor && resultScreen->frameTimer == 20)
         {
             resultScreen->charUsed = resultScreen->cursor;
-            g_AnmManager->DrawStringFormat2(&resultScreen->textLineVms[0], COLOR_RGB(COLOR_WHITE),
-                                            COLOR_RGB(COLOR_BLACK),
-                                            g_CharacterList[SHOTTYPE_ID(resultScreen->charUsed, SHOT_TYPE_A)]);
-            g_AnmManager->DrawStringFormat2(&resultScreen->textLineVms[1], COLOR_RGB(COLOR_WHITE),
-                                            COLOR_RGB(COLOR_BLACK),
-                                            g_CharacterList[SHOTTYPE_ID(resultScreen->charUsed, SHOT_TYPE_B)]);
+            g_AnmManager->DrawTextToTextureCenter(&resultScreen->textLineVms[0], COLOR_RGB(COLOR_WHITE),
+                                                  COLOR_RGB(COLOR_BLACK),
+                                                  g_CharacterList[SHOTTYPE_ID(resultScreen->charUsed, SHOT_TYPE_A)]);
+            g_AnmManager->DrawTextToTextureCenter(&resultScreen->textLineVms[1], COLOR_RGB(COLOR_WHITE),
+                                                  COLOR_RGB(COLOR_BLACK),
+                                                  g_CharacterList[SHOTTYPE_ID(resultScreen->charUsed, SHOT_TYPE_B)]);
         }
         if (resultScreen->frameTimer < 30)
         {
@@ -865,13 +865,15 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
                 }
                 if (g_GameManager.catk[i].attempts == 0)
                 {
-                    g_AnmManager->DrawVmTextFmt(&resultScreen->textLineVms[i % SPELLS_PER_PAGE], COLOR_RGB(COLOR_WHITE),
-                                                COLOR_RGB(COLOR_BLACK), TH_UNKNOWN_SPELLCARD);
+                    g_AnmManager->DrawTextToTextureLeft(&resultScreen->textLineVms[i % SPELLS_PER_PAGE],
+                                                        COLOR_RGB(COLOR_WHITE), COLOR_RGB(COLOR_BLACK),
+                                                        TH_UNKNOWN_SPELLCARD);
                 }
                 else
                 {
-                    g_AnmManager->DrawVmTextFmt(&resultScreen->textLineVms[i % SPELLS_PER_PAGE], COLOR_RGB(COLOR_WHITE),
-                                                COLOR_RGB(COLOR_BLACK), g_GameManager.catk[i].name);
+                    g_AnmManager->DrawTextToTextureLeft(&resultScreen->textLineVms[i % SPELLS_PER_PAGE],
+                                                        COLOR_RGB(COLOR_WHITE), COLOR_RGB(COLOR_BLACK),
+                                                        g_GameManager.catk[i].name);
                 }
             }
         }
@@ -925,7 +927,7 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
     vm = &resultScreen->vms[0];
     for (i = 0; i < ARRAY_SIZE_SIGNED(resultScreen->vms); i++, vm++)
     {
-        g_AnmManager->ExecuteScript(vm);
+        g_AnmManager->RunAnm(vm);
     }
     resultScreen->frameTimer++;
     return CHAIN_CALLBACK_RESULT_CONTINUE;
@@ -948,15 +950,17 @@ i32 ResultScreen::HandleResultKeyboard()
             vm->pendingInterrupt = this->diffSelected + 3;
         }
 
-        g_AnmManager->DrawStringFormat2(&this->textLineVms[SHOT_TYPE_A], COLOR_RGB(COLOR_WHITE), COLOR_RGB(COLOR_BLACK),
-                                        g_CharacterList[SHOTTYPE_ID(this->charUsed, SHOT_TYPE_A)]);
+        g_AnmManager->DrawTextToTextureCenter(&this->textLineVms[SHOT_TYPE_A], COLOR_RGB(COLOR_WHITE),
+                                              COLOR_RGB(COLOR_BLACK),
+                                              g_CharacterList[SHOTTYPE_ID(this->charUsed, SHOT_TYPE_A)]);
         if (g_GameManager.shotType != SHOT_TYPE_A)
         {
             this->textLineVms[0].color = COLOR_TRANSPARENT_WHITE;
         }
 
-        g_AnmManager->DrawStringFormat2(&this->textLineVms[SHOT_TYPE_B], COLOR_RGB(COLOR_WHITE), COLOR_RGB(COLOR_BLACK),
-                                        g_CharacterList[SHOTTYPE_ID(this->charUsed, SHOT_TYPE_B)]);
+        g_AnmManager->DrawTextToTextureCenter(&this->textLineVms[SHOT_TYPE_B], COLOR_RGB(COLOR_WHITE),
+                                              COLOR_RGB(COLOR_BLACK),
+                                              g_CharacterList[SHOTTYPE_ID(this->charUsed, SHOT_TYPE_B)]);
         if (g_GameManager.shotType != SHOT_TYPE_B)
         {
             this->textLineVms[1].color = COLOR_TRANSPARENT_WHITE;
@@ -1741,7 +1745,7 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
     {
         pos = vm->pos;
         vm->pos += vm->posOffset;
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
         vm->pos = pos;
     }
     vm = &resultScreen->vms[14];
@@ -1751,12 +1755,12 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
         {
             pos = vm->pos;
             resultScreen->textLineVms->pos = pos;
-            g_AnmManager->DrawNoRotation(&resultScreen->textLineVms[0]);
+            g_AnmManager->Draw2D(&resultScreen->textLineVms[0]);
 
             pos[0] += 320.0f;
 
             resultScreen->textLineVms[1].pos = pos;
-            g_AnmManager->DrawNoRotation(&resultScreen->textLineVms[1]);
+            g_AnmManager->Draw2D(&resultScreen->textLineVms[1]);
 
             pos[0] -= 320.0f;
             pos[1] += 18.0f;
@@ -1897,7 +1901,7 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
 
                 resultScreen->textLineVms[i].pos[0] += 96.0f;
 
-                g_AnmManager->DrawNoRotation(&resultScreen->textLineVms[i]);
+                g_AnmManager->Draw2D(&resultScreen->textLineVms[i]);
 
                 pos[0] += 368.0f;
 
@@ -1974,7 +1978,7 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
         vm = &resultScreen->vms[15];
         for (i = 0; i < 6; i++, vm++)
         {
-            g_AnmManager->DrawNoRotation(vm);
+            g_AnmManager->Draw2D(vm);
         }
         vm = &resultScreen->vms[21];
         pos = vm->pos;

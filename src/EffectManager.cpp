@@ -113,42 +113,42 @@ EffectCallbackResult Effect_Callback4(Effect *effect)
 
 EffectCallbackResult Effect_Attract(Effect *effect)
 {
-    f32 angle;
+    f32 temp;
 
     if (effect->timer == 0 && effect->timer.HasTicked())
     {
         effect->position = effect->pos1;
 
-        angle = g_Rng.GetRandomF32InRange(ZUN_2PI) - ZUN_PI;
-        effect->pos2.x = cosf(angle);
-        effect->pos2.y = sinf(angle);
-        effect->pos2.z = 0.0;
+        temp = g_Rng.GetRandomF32InRange(ZUN_2PI) - ZUN_PI;
+        effect->pos2.x = cosf(temp);
+        effect->pos2.y = sinf(temp);
+        effect->pos2.z = 0.0f;
     }
 
-    angle = 256.0f - (f32)effect->timer * 256.0f / 60.0f;
+    temp = RAMP_DOWN(256.0f, (f32)effect->timer, 60.0f);
 
-    effect->pos1 = angle * effect->pos2 + effect->position;
+    effect->pos1 = temp * effect->pos2 + effect->position;
 
     return EFFECT_CALLBACK_RESULT_DONE;
 }
 
 EffectCallbackResult Effect_AttractSlow(Effect *effect)
 {
-    f32 angle;
+    f32 temp;
 
     if (effect->timer == 0 && effect->timer.HasTicked())
     {
         effect->position = effect->pos1;
 
-        angle = g_Rng.GetRandomF32InRange(ZUN_2PI) - ZUN_PI;
-        effect->pos2.x = cosf(angle);
-        effect->pos2.y = sinf(angle);
-        effect->pos2.z = 0.0;
+        temp = g_Rng.GetRandomF32InRange(ZUN_2PI) - ZUN_PI;
+        effect->pos2.x = cosf(temp);
+        effect->pos2.y = sinf(temp);
+        effect->pos2.z = 0.0f;
     }
 
-    angle = 256.0f - (f32)effect->timer * 256.0f / 240.0f;
+    temp = RAMP_DOWN(256.0f, (f32)effect->timer, 240.0f);
 
-    effect->pos1 = angle * effect->pos2 + effect->position;
+    effect->pos1 = temp * effect->pos2 + effect->position;
 
     return EFFECT_CALLBACK_RESULT_DONE;
 }
@@ -244,7 +244,7 @@ ChainCallbackResult EffectManager_OnUpdate(EffectManager *mgr)
             effect->inUseFlag = false;
         }
 
-        if (g_AnmManager->ExecuteScript(&effect->vm) != 0)
+        if (g_AnmManager->RunAnm(&effect->vm) != SCRIPT_RUNNING)
         {
             effect->inUseFlag = false;
         }
@@ -266,7 +266,7 @@ ChainCallbackResult EffectManager_OnDraw(EffectManager *mgr)
         }
 
         effect->vm.pos = effect->pos1;
-        g_AnmManager->Draw3(&effect->vm);
+        g_AnmManager->Draw3DRotated(&effect->vm);
     }
 
     return CHAIN_CALLBACK_RESULT_CONTINUE;

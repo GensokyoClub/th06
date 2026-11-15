@@ -192,7 +192,7 @@ ChainCallbackResult Stage_OnUpdate(Stage *stage)
                 stage->spellcardState++; // SPELL_STATE_ACTIVE
             }
             stage->spellcardTicks++;
-            g_AnmManager->ExecuteScript(&stage->spellcardBackground);
+            g_AnmManager->RunAnm(&stage->spellcardBackground);
         }
         return CHAIN_CALLBACK_RESULT_CONTINUE;
     }
@@ -253,7 +253,7 @@ ChainCallbackResult Stage_OnDrawLowPrio(Stage *stage)
         {
             g_AnmManager->SetAndExecuteScriptIdx(&stage->spellcardBackground, ANM_SCRIPT_EFFECTS_SPELLCARD_BACKGROUND);
         }
-        g_AnmManager->Draw(&stage->spellcardBackground);
+        g_AnmManager->Draw2DRotated(&stage->spellcardBackground);
     }
     g_Supervisor.viewport.MinZ = 0.0f;
     g_Supervisor.viewport.MaxZ = 0.5f;
@@ -418,14 +418,14 @@ ZunResult Stage::UpdateObjects()
                 switch (objQuad->type)
                 {
                 case 0:
-                    g_AnmManager->ExecuteScript(vm);
+                    g_AnmManager->RunAnm(vm);
                     break;
                 case 1:
                     // I assume this casts it, but this is all dead code
                     // as the engine doesn't contain any other reference
                     // to type 1 quads.
                     objQuadType1 = objQuad;
-                    g_AnmManager->ExecuteScript(vm);
+                    g_AnmManager->RunAnm(vm);
                     break;
                 }
                 if (vm->currentInstruction != NULL)
@@ -595,11 +595,11 @@ ZunResult Stage::RenderObjects(i32 zLevel)
                     curQuadVm->pos.z = curQuad->position.z + instance->position.z - this->position.z;
                     if (curQuad->size.x != 0.0f)
                     {
-                        curQuadVm->scaleX = curQuad->size.x / curQuadVm->sprite->widthPx;
+                        curQuadVm->scaleX = curQuad->size.x / curQuadVm->sprite->width;
                     }
                     if (curQuad->size.y != 0.0f)
                     {
-                        curQuadVm->scaleY = curQuad->size.y / curQuadVm->sprite->heightPx;
+                        curQuadVm->scaleY = curQuad->size.y / curQuadVm->sprite->height;
                     }
                     if (curQuadVm->autoRotate == AnmAutoRotate_Billboard)
                     {
@@ -610,7 +610,7 @@ ZunResult Stage::RenderObjects(i32 zLevel)
                         }
                         else
                         {
-                            quadWidth = curQuadVm->sprite->widthPx;
+                            quadWidth = curQuadVm->sprite->width;
                         }
                         worldMatrix.m[3][0] = curQuadVm->pos.x;
                         worldMatrix.m[3][1] = -curQuadVm->pos.y;
@@ -622,11 +622,11 @@ ZunResult Stage::RenderObjects(i32 zLevel)
                                         &g_Supervisor.projectionMatrix, &g_Supervisor.viewMatrix, &worldMatrix);
                         curQuadVm->scaleY = curQuadVm->scaleX = (quadScaledPos.x - quadPos.x) / quadWidth;
                         curQuadVm->pos = quadPos;
-                        g_AnmManager->DrawFacingCamera(curQuadVm);
+                        g_AnmManager->Draw2DSmooth(curQuadVm);
                     }
                     else
                     {
-                        g_AnmManager->Draw3(curQuadVm);
+                        g_AnmManager->Draw3DRotated(curQuadVm);
                     }
                     break;
                 }

@@ -20,7 +20,7 @@ struct StageReplayData
     i8 livesRemaining;
     i8 bombsRemaining;
     u8 rank;
-    i8 powerItemCountForScore;
+    i8 fullPowerScoreIdx;
     alignment_padding(0x3);
     ReplayDataInput replayInputs[];
 };

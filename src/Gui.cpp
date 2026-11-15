@@ -832,8 +832,8 @@ ZunResult GuiImpl::DrawDialogue()
     vertices[0].diffuse = vertices[1].diffuse = COLOR_SET_ALPHA(COLOR_BLACK, 0xd0);
     vertices[2].diffuse = vertices[3].diffuse = COLOR_SET_ALPHA(COLOR_BLACK, 0x90);
     vertices[0].position_w = vertices[1].position_w = vertices[2].position_w = vertices[3].position_w = 1.0f;
-    g_AnmManager->DrawNoRotation(&this->msg.portraits[0]);
-    g_AnmManager->DrawNoRotation(&this->msg.portraits[1]);
+    g_AnmManager->Draw2D(&this->msg.portraits[0]);
+    g_AnmManager->Draw2D(&this->msg.portraits[1]);
     if (!g_Supervisor.IsColorCompositingDisabled())
     {
         g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
@@ -858,10 +858,10 @@ ZunResult GuiImpl::DrawDialogue()
     }
     g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
     g_Supervisor.d3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-    g_AnmManager->DrawNoRotation(&this->msg.dialogueLines[0]);
-    g_AnmManager->DrawNoRotation(&this->msg.dialogueLines[1]);
-    g_AnmManager->DrawNoRotation(&this->msg.introLines[0]);
-    g_AnmManager->DrawNoRotation(&this->msg.introLines[1]);
+    g_AnmManager->Draw2D(&this->msg.dialogueLines[0]);
+    g_AnmManager->Draw2D(&this->msg.dialogueLines[1]);
+    g_AnmManager->Draw2D(&this->msg.introLines[0]);
+    g_AnmManager->Draw2D(&this->msg.introLines[1]);
     return ZUN_SUCCESS;
 }
 
@@ -1077,14 +1077,14 @@ void Gui::DrawGameScene()
     if (this->impl->msg.currentMsgId < 0 && (this->bossPresent + this->impl->bossHealthBarState) > 0)
     {
         vm = &this->impl->vms[19];
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
         vm = &this->impl->vms[21];
         vm->flags.anchor = AnmVmAnchor_TopLeft;
         vm->scaleX = (this->bossHealthBarDisplay * 288.0f) / 14.0f;
         vm->pos.x = 96.0f;
         vm->pos.y = 24.0f;
         vm->pos.z = 0.0f;
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
         D3DXVECTOR3 textPos(80.0f, 16.0f, 0.0f);
         g_AsciiManager.SetColor(COLOR_SET_ALPHA(COLOR_LIGHT_YELLOW, this->bossUIAlpha));
         g_AsciiManager.AddFormatText(&textPos, "%d", this->bossLifeCount);
@@ -1131,41 +1131,41 @@ void Gui::DrawGameScene()
         for (yPos = 0.0f; yPos < 464.0f; yPos += 32.0f)
         {
             vm->pos = D3DXVECTOR3(0.0f, yPos, 0.49f);
-            g_AnmManager->DrawNoRotation(vm);
+            g_AnmManager->Draw2D(vm);
         }
         for (xPos = 416.0f; xPos < 624.0f; xPos += 32.0f)
         {
             for (yPos = 0.0f; yPos < 464.0f; yPos += 32.0f)
             {
                 vm->pos = D3DXVECTOR3(xPos, yPos, 0.49f);
-                g_AnmManager->DrawNoRotation(vm);
+                g_AnmManager->Draw2D(vm);
             }
         }
         vm = &this->impl->vms[7];
         for (xPos = 32.0f; xPos < 416.0f; xPos += 32.0f)
         {
             vm->pos = D3DXVECTOR3(xPos, 0.0f, 0.49f);
-            g_AnmManager->DrawNoRotation(vm);
+            g_AnmManager->Draw2D(vm);
         }
         vm = &this->impl->vms[8];
         for (xPos = 32.0f; xPos < 416.0f; xPos += 32.0f)
         {
             vm->pos = D3DXVECTOR3(xPos, 464.0f, 0.49f);
-            g_AnmManager->DrawNoRotation(vm);
+            g_AnmManager->Draw2D(vm);
         }
-        g_AnmManager->Draw(&this->impl->vms[5]);
-        g_AnmManager->Draw(&this->impl->vms[0]);
-        g_AnmManager->Draw(&this->impl->vms[1]);
-        g_AnmManager->Draw(&this->impl->vms[3]);
-        g_AnmManager->Draw(&this->impl->vms[4]);
-        g_AnmManager->Draw(&this->impl->vms[2]);
-        g_AnmManager->DrawNoRotation(&this->impl->vms[9]);
-        g_AnmManager->DrawNoRotation(&this->impl->vms[10]);
-        g_AnmManager->DrawNoRotation(&this->impl->vms[11]);
-        g_AnmManager->DrawNoRotation(&this->impl->vms[12]);
-        g_AnmManager->DrawNoRotation(&this->impl->vms[13]);
-        g_AnmManager->DrawNoRotation(&this->impl->vms[14]);
-        g_AnmManager->DrawNoRotation(&this->impl->vms[15]);
+        g_AnmManager->Draw2DRotated(&this->impl->vms[5]);
+        g_AnmManager->Draw2DRotated(&this->impl->vms[0]);
+        g_AnmManager->Draw2DRotated(&this->impl->vms[1]);
+        g_AnmManager->Draw2DRotated(&this->impl->vms[3]);
+        g_AnmManager->Draw2DRotated(&this->impl->vms[4]);
+        g_AnmManager->Draw2DRotated(&this->impl->vms[2]);
+        g_AnmManager->Draw2D(&this->impl->vms[9]);
+        g_AnmManager->Draw2D(&this->impl->vms[10]);
+        g_AnmManager->Draw2D(&this->impl->vms[11]);
+        g_AnmManager->Draw2D(&this->impl->vms[12]);
+        g_AnmManager->Draw2D(&this->impl->vms[13]);
+        g_AnmManager->Draw2D(&this->impl->vms[14]);
+        g_AnmManager->Draw2D(&this->impl->vms[15]);
         this->redrawFrames.lifeIcons = 2;
         this->redrawFrames.bombIcons = 2;
         this->redrawFrames.grazeCounter = 2;
@@ -1177,38 +1177,38 @@ void Gui::DrawGameScene()
         vm = &this->impl->vms[22];
         xPos = 496.0f;
         vm->pos = D3DXVECTOR3(xPos, 58.0f, 0.49f);
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
         vm->pos = D3DXVECTOR3(xPos, 82.0f, 0.49f);
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
         if (this->redrawFrames.lifeIcons != 0)
         {
             vm->pos = D3DXVECTOR3(xPos, 122.0f, 0.49f);
-            g_AnmManager->DrawNoRotation(vm);
+            g_AnmManager->Draw2D(vm);
         }
         if (this->redrawFrames.bombIcons != 0)
         {
             vm->pos = D3DXVECTOR3(xPos, 146.0f, 0.49f);
-            g_AnmManager->DrawNoRotation(vm);
+            g_AnmManager->Draw2D(vm);
         }
         if (this->redrawFrames.powerGauge != 0)
         {
             vm->pos = D3DXVECTOR3(xPos, 186.0f, 0.49f);
-            g_AnmManager->DrawNoRotation(vm);
+            g_AnmManager->Draw2D(vm);
         }
         if (this->redrawFrames.grazeCounter != 0)
         {
             vm->pos = D3DXVECTOR3(xPos, 206.0f, 0.49f);
-            g_AnmManager->DrawNoRotation(vm);
+            g_AnmManager->Draw2D(vm);
         }
         if (this->redrawFrames.pointItemCounter != 0)
         {
             vm->pos = D3DXVECTOR3(xPos, 226.0f, 0.49f);
-            g_AnmManager->DrawNoRotation(vm);
+            g_AnmManager->Draw2D(vm);
         }
         vm->pos = D3DXVECTOR3(488.0f, 464.0f, 0.49f);
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
         vm->pos = D3DXVECTOR3(0.0f, 464.0f, 0.49f);
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
     }
     if (this->redrawFrames.lifeIcons != 0 || g_Supervisor.IsMinimumGraphicsMode())
     {
@@ -1216,7 +1216,7 @@ void Gui::DrawGameScene()
         for (idx = 0, xPos = 496.0f; idx < g_GameManager.livesRemaining; idx++, xPos += 16.0f)
         {
             vm->pos = D3DXVECTOR3(xPos, 122.0f, 0.49f);
-            g_AnmManager->DrawNoRotation(vm);
+            g_AnmManager->Draw2D(vm);
         }
     }
     if (this->redrawFrames.bombIcons != 0 || g_Supervisor.IsMinimumGraphicsMode())
@@ -1225,7 +1225,7 @@ void Gui::DrawGameScene()
         for (idx = 0, xPos = 496.0f; idx < g_GameManager.GetBombs(); idx++, xPos += 16.0f)
         {
             vm->pos = D3DXVECTOR3(xPos, 146.0f, 0.49f);
-            g_AnmManager->DrawNoRotation(vm);
+            g_AnmManager->Draw2D(vm);
         }
     }
     if (this->redrawFrames.powerGauge != 0 || g_Supervisor.IsMinimumGraphicsMode())
@@ -1272,7 +1272,7 @@ void Gui::DrawGameScene()
             {
                 vm = &this->impl->vms[18];
                 vm->pos = D3DXVECTOR3(496.0f, 186.0f, 0.0f);
-                g_AnmManager->DrawNoRotation(vm);
+                g_AnmManager->Draw2D(vm);
             }
         }
         if (g_GameManager.currentPower < MAX_POWER)
@@ -1326,7 +1326,7 @@ void Gui::DrawStageElements()
 
         if (!g_GameManager.demoMode)
         {
-            g_AnmManager->Draw2(&this->impl->stageNameSprite);
+            g_AnmManager->Draw3D(&this->impl->stageNameSprite);
 
             g_AsciiManager.SetColor(COLOR_COMBINE_ALPHA(COLOR_SUNSHINEYELLOW, this->impl->stageNameSprite.color));
 
@@ -1359,15 +1359,15 @@ void Gui::DrawStageElements()
 
     if (this->impl->songNameSprite.IsVisible() && !g_GameManager.demoMode)
     {
-        g_AnmManager->Draw2(&this->impl->songNameSprite);
+        g_AnmManager->Draw3D(&this->impl->songNameSprite);
     }
     if (this->impl->playerSpellcardPortrait.IsVisible())
     {
-        g_AnmManager->DrawNoRotation(&this->impl->playerSpellcardPortrait);
+        g_AnmManager->Draw2D(&this->impl->playerSpellcardPortrait);
     }
     if (this->impl->enemySpellcardPortrait.IsVisible())
     {
-        g_AnmManager->DrawNoRotation(&this->impl->enemySpellcardPortrait);
+        g_AnmManager->Draw2D(&this->impl->enemySpellcardPortrait);
     }
 
     if (this->impl->bombSpellcardName.IsVisible())
@@ -1375,16 +1375,16 @@ void Gui::DrawStageElements()
         this->impl->bombSpellcardBackground.pos = this->impl->bombSpellcardName.pos;
         this->impl->bombSpellcardBackground.pos.x += this->bombNameBarLength * 16.0f / 15.0f / 2.0f + -128.0f - 16.0f;
         this->impl->bombSpellcardBackground.scaleX = this->bombNameBarLength / 14.0f;
-        g_AnmManager->DrawNoRotation(&this->impl->bombSpellcardBackground);
-        g_AnmManager->DrawNoRotation(&this->impl->bombSpellcardName);
+        g_AnmManager->Draw2D(&this->impl->bombSpellcardBackground);
+        g_AnmManager->Draw2D(&this->impl->bombSpellcardName);
     }
     if (this->impl->enemySpellcardName.IsVisible())
     {
         this->impl->enemySpellcardBackground.pos = this->impl->enemySpellcardName.pos;
         this->impl->enemySpellcardBackground.pos.x += 128.0f - this->spellcardNameBarLength * 16.0f / 15.0f / 2.0f;
         this->impl->enemySpellcardBackground.scaleX = this->spellcardNameBarLength / 14.0f;
-        g_AnmManager->DrawNoRotation(&this->impl->enemySpellcardBackground);
-        g_AnmManager->DrawNoRotation(&this->impl->enemySpellcardName);
+        g_AnmManager->Draw2D(&this->impl->enemySpellcardBackground);
+        g_AnmManager->Draw2D(&this->impl->enemySpellcardName);
     }
     if (this->impl->loadingScreenSprite.activeSpriteIndex >= 0)
     {
@@ -1394,7 +1394,7 @@ void Gui::DrawStageElements()
         g_Supervisor.viewport.Height = g_GameManager.gameRegionSize.y;
 
         g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
-        g_AnmManager->DrawNoRotation(&this->impl->loadingScreenSprite);
+        g_AnmManager->Draw2D(&this->impl->loadingScreenSprite);
     }
 }
 

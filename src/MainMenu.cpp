@@ -2053,7 +2053,7 @@ ChainCallbackResult MainMenu_OnDraw(MainMenu *menu)
         {
             D3DXVECTOR3 posBackup = vm->pos;
             vm->pos += vm->posOffset;
-            g_AnmManager->Draw(vm);
+            g_AnmManager->Draw2DRotated(vm);
             vm->pos = posBackup;
         }
     }

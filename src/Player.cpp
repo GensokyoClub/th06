@@ -308,7 +308,7 @@ static void DrawBullets(Player *p)
         {
             bullet->sprite.rotation.z = RADIANS(90.0f) - ReduceAngleAdd(bullet->angle, RADIANS(180.0f));
         }
-        g_AnmManager->Draw2(&bullet->sprite);
+        g_AnmManager->Draw3D(&bullet->sprite);
     }
 }
 
@@ -328,7 +328,7 @@ static void DrawBulletExplosions(Player *p)
             bullet->sprite.rotation.z = RADIANS(90.0f) - ReduceAngleAdd(bullet->angle, RADIANS(180.0f));
         }
         bullet->sprite.pos[2] = 0.4f;
-        g_AnmManager->Draw2(&bullet->sprite);
+        g_AnmManager->Draw3D(&bullet->sprite);
     }
 }
 
@@ -1211,7 +1211,7 @@ static ChainCallbackResult Player_OnDrawHighPrio(Player *p)
     p->playerSprite.pos.z = 0.49f;
     if (!g_GameManager.isInRetryMenu)
     {
-        g_AnmManager->DrawNoRotation(&p->playerSprite);
+        g_AnmManager->Draw2D(&p->playerSprite);
         if (p->orbState != ORB_HIDDEN &&
             (p->playerState == PLAYER_STATE_ALIVE || p->playerState == PLAYER_STATE_INVULNERABLE))
         {
@@ -1223,8 +1223,8 @@ static ChainCallbackResult Player_OnDrawHighPrio(Player *p)
             p->orbsSprite[1].pos[1] += g_GameManager.gameRegionScreenPos.y;
             p->orbsSprite[0].pos.z = 0.491f;
             p->orbsSprite[1].pos.z = 0.491f;
-            g_AnmManager->Draw(&p->orbsSprite[0]);
-            g_AnmManager->Draw(&p->orbsSprite[1]);
+            g_AnmManager->Draw2DRotated(&p->orbsSprite[0]);
+            g_AnmManager->Draw2DRotated(&p->orbsSprite[1]);
         }
     }
     return CHAIN_CALLBACK_RESULT_CONTINUE;

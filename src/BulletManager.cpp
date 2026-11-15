@@ -1124,7 +1124,7 @@ static void DrawBullet(Bullet *bullet)
         anmVm->rotation.z = ZUN_HALF_PI - bullet->angle;
     }
 
-    g_AnmManager->Draw2(anmVm);
+    g_AnmManager->Draw3D(anmVm);
 }
 
 static void DrawBulletNoHwVertex(Bullet *bullet)
@@ -1160,7 +1160,7 @@ static void DrawBulletNoHwVertex(Bullet *bullet)
         anmVm->rotation.z = ZUN_HALF_PI - bullet->angle;
     }
 
-    g_AnmManager->Draw(anmVm);
+    g_AnmManager->Draw2DRotated(anmVm);
 }
 
 #pragma var_order(idx, sine, curLaser, laserOffset, cosine)
@@ -1186,7 +1186,7 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
         curLaser->vm.pos[1] = sine * laserOffset + curLaser->pos[1];
         curLaser->vm.pos[2] = 0.0f;
         curLaser->color = COLOR_COMBINE_ALPHA(COLOR_WHITE, curLaser->color);
-        g_AnmManager->Draw3(&curLaser->vm);
+        g_AnmManager->Draw3DRotated(&curLaser->vm);
 
         if (curLaser->startOffset < 16.0f || curLaser->speed == 0.0f)
         {
@@ -1204,7 +1204,7 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
                 curLaser->baseGlowVm.scaleY = curLaser->baseGlowVm.scaleX = curLaser->width / 10.0f;
             }
 
-            g_AnmManager->Draw3(&curLaser->baseGlowVm);
+            g_AnmManager->Draw3DRotated(&curLaser->baseGlowVm);
         }
     }
 

@@ -500,7 +500,7 @@ void AnmManager::SetRenderStateForVm(AnmVm *vm)
     }
 }
 
-ZunResult AnmManager::DrawInner(AnmVm *vm, ZunBool roundVertices)
+ZunResult AnmManager::DrawSprite(AnmVm *vm, ZunBool roundVertices)
 {
     static const f32 g_ZeroPointFive = 0.5f;
     if (roundVertices)
@@ -602,7 +602,7 @@ ZunResult AnmManager::DrawInner(AnmVm *vm, ZunBool roundVertices)
 // clang-format on
 
 #pragma var_order(halfWidth, halfHeight)
-ZunResult AnmManager::DrawNoRotation(AnmVm *vm)
+ZunResult AnmManager::Draw2D(AnmVm *vm)
 {
     if (!vm->IsVisible())
     {
@@ -642,7 +642,7 @@ ZunResult AnmManager::DrawNoRotation(AnmVm *vm)
         g_PrimitivesToDrawVertexBuf[2].position.y = g_PrimitivesToDrawVertexBuf[3].position.y =
             vm->pos.y + halfHeight + halfHeight;
     }
-    return this->DrawInner(vm, RENDER_VERTICES_ROUND_INPUTS);
+    return this->DrawSprite(vm, RENDER_VERTICES_ROUND_INPUTS);
 }
 
 void AnmManager::TranslateRotation(VertexTex1Xyzrwh *param_1, f32 x, f32 y, f32 sine, f32 cosine, f32 xOffset,
@@ -653,7 +653,7 @@ void AnmManager::TranslateRotation(VertexTex1Xyzrwh *param_1, f32 x, f32 y, f32 
 }
 
 #pragma var_order(halfWidth, halfHeight, y, x, yOffset, rotation, xOffset)
-ZunResult AnmManager::Draw(AnmVm *vm)
+ZunResult AnmManager::Draw2DRotated(AnmVm *vm)
 {
     f32 yOffset;
     f32 xOffset;
@@ -665,7 +665,7 @@ ZunResult AnmManager::Draw(AnmVm *vm)
 
     if (vm->rotation.z == 0.0f)
     {
-        return this->DrawNoRotation(vm);
+        return this->Draw2D(vm);
     }
     if (!vm->IsVisible())
     {
@@ -711,11 +711,11 @@ ZunResult AnmManager::Draw(AnmVm *vm)
         g_PrimitivesToDrawVertexBuf[2].position.y += halfHeight;
         g_PrimitivesToDrawVertexBuf[3].position.y += halfHeight;
     }
-    return this->DrawInner(vm, RENDER_VERTICES_DEFAULT);
+    return this->DrawSprite(vm, RENDER_VERTICES_DEFAULT);
 }
 
 #pragma var_order(halfWidth, halfHeight)
-ZunResult AnmManager::DrawFacingCamera(AnmVm *vm)
+ZunResult AnmManager::Draw2DSmooth(AnmVm *vm)
 {
     if (!vm->IsVisible())
     {
@@ -754,11 +754,11 @@ ZunResult AnmManager::DrawFacingCamera(AnmVm *vm)
         g_PrimitivesToDrawVertexBuf[0].position.y = g_PrimitivesToDrawVertexBuf[1].position.y = vm->pos.y;
         g_PrimitivesToDrawVertexBuf[2].position.y = g_PrimitivesToDrawVertexBuf[3].position.y = vm->pos.y + halfHeight + halfHeight;
     }
-    return this->DrawInner(vm, RENDER_VERTICES_DEFAULT);
+    return this->DrawSprite(vm, RENDER_VERTICES_DEFAULT);
 }
 
 #pragma var_order(textureMatrix, rotationMatrix, worldTransformMatrix)
-ZunResult AnmManager::Draw3(AnmVm *vm)
+ZunResult AnmManager::Draw3DRotated(AnmVm *vm)
 {
     D3DXMATRIX worldTransformMatrix;
     D3DXMATRIX rotationMatrix;
@@ -879,7 +879,7 @@ ZunResult AnmManager::Draw3(AnmVm *vm)
 // clang-format on
 
 #pragma var_order(textureMatrix, unusedMatrix, worldTransformMatrix)
-ZunResult AnmManager::Draw2(AnmVm *vm)
+ZunResult AnmManager::Draw3D(AnmVm *vm)
 {
     D3DXMATRIX worldTransformMatrix;
     D3DXMATRIX unusedMatrix;
@@ -896,7 +896,7 @@ ZunResult AnmManager::Draw2(AnmVm *vm)
 
     if (vm->rotation.x != 0.0f || vm->rotation.y != 0.0f || vm->rotation.z != 0.0f)
     {
-        return this->Draw3(vm);
+        return this->Draw3DRotated(vm);
     }
 
 #if BUILT_SINCE(102)

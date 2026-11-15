@@ -253,7 +253,7 @@ ChainCallbackResult Stage_OnDrawLowPrio(Stage *stage)
         {
             g_AnmManager->SetAndExecuteScriptIdx(&stage->spellcardBackground, ANM_SCRIPT_EFFECTS_SPELLCARD_BACKGROUND);
         }
-        g_AnmManager->Draw(&stage->spellcardBackground);
+        g_AnmManager->Draw2DRotated(&stage->spellcardBackground);
     }
     g_Supervisor.viewport.MinZ = 0.0f;
     g_Supervisor.viewport.MaxZ = 0.5f;
@@ -622,11 +622,11 @@ ZunResult Stage::RenderObjects(i32 zLevel)
                                         &g_Supervisor.projectionMatrix, &g_Supervisor.viewMatrix, &worldMatrix);
                         curQuadVm->scaleY = curQuadVm->scaleX = (quadScaledPos.x - quadPos.x) / quadWidth;
                         curQuadVm->pos = quadPos;
-                        g_AnmManager->DrawFacingCamera(curQuadVm);
+                        g_AnmManager->Draw2DSmooth(curQuadVm);
                     }
                     else
                     {
-                        g_AnmManager->Draw3(curQuadVm);
+                        g_AnmManager->Draw3DRotated(curQuadVm);
                     }
                     break;
                 }

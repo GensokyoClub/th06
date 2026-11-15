@@ -736,7 +736,7 @@ static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
                 }
                 curEnemyVm->pos = curEnemy->position + curEnemyVm->posOffset;
                 curEnemyVm->pos.z = 0.495f;
-                g_AnmManager->Draw2(curEnemyVm);
+                g_AnmManager->Draw3D(curEnemyVm);
             }
         }
         if (curEnemy->flags.rotateAnm)
@@ -745,7 +745,7 @@ static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
         }
         curEnemy->primaryVm.pos = curEnemy->position + curEnemy->primaryVm.posOffset;
         curEnemy->primaryVm.pos.z = 0.494f;
-        g_AnmManager->Draw2(&curEnemy->primaryVm);
+        g_AnmManager->Draw3D(&curEnemy->primaryVm);
         for (curEnemyVmIdx = ENEMY_ANM_SLOTS / 2; curEnemyVmIdx < ENEMY_ANM_SLOTS; curEnemyVmIdx++, curEnemyVm++)
         {
             if (curEnemyVm->anmFileIndex >= 0)
@@ -756,7 +756,7 @@ static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
                 }
                 curEnemyVm->pos = curEnemy->position + curEnemyVm->posOffset;
                 curEnemyVm->pos.z = 0.495f;
-                g_AnmManager->Draw2(curEnemyVm);
+                g_AnmManager->Draw3D(curEnemyVm);
             }
         }
     }

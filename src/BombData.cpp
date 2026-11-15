@@ -221,28 +221,28 @@ void BombReimuADraw(Player *player)
         vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
         vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
         vm->pos[2] = 0.0f;
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
         vm++;
 
         vm->pos = player->bombInfo.projectilePosition[i] + vm->posOffset;
         vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
         vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
         vm->pos[2] = 0.0f;
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
         vm++;
 
         vm->pos = player->bombInfo.projectilePosition[i] + vm->posOffset;
         vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
         vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
         vm->pos[2] = 0.0f;
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
         vm++;
 
         vm->pos = player->bombInfo.projectilePosition[i] + vm->posOffset;
         vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
         vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
         vm->pos[2] = 0.0f;
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
         vm++;
     }
 }
@@ -337,7 +337,7 @@ void BombReimuBDraw(Player *player)
         vm->pos.x += g_GameManager.gameRegionScreenPos.x;
         vm->pos.y += g_GameManager.gameRegionScreenPos.y;
         vm->pos.z = 0.0f;
-        g_AnmManager->Draw(vm);
+        g_AnmManager->Draw2DRotated(vm);
     }
 }
 
@@ -415,7 +415,7 @@ void BombMarisaADraw(Player *player)
         vm->pos.z = 0.0f;
         vm->scaleX = 3.2f;
         vm->scaleY = 3.2f;
-        g_AnmManager->Draw(vm);
+        g_AnmManager->Draw2DRotated(vm);
 
         vm->pos -= player->bombInfo.projectileVelocity[i] * 6.0f;
         vm->pos.x += -32.0f;
@@ -423,7 +423,7 @@ void BombMarisaADraw(Player *player)
         vm->pos.z = 0.0f;
         vm->scaleX = 2.2f;
         vm->scaleY = 2.2f;
-        g_AnmManager->Draw(vm);
+        g_AnmManager->Draw2DRotated(vm);
 
         vm->pos -= player->bombInfo.projectileVelocity[i] * 2.0f;
         vm->pos.x += 64.0f;
@@ -436,7 +436,7 @@ void BombMarisaADraw(Player *player)
         vm->pos.z = 0.0f;
         vm->scaleX = 1.0f;
         vm->scaleY = 1.0f;
-        g_AnmManager->Draw(vm);
+        g_AnmManager->Draw2DRotated(vm);
         vm++;
     }
 }
@@ -520,7 +520,7 @@ void BombMarisaBDraw(Player *player)
         vm->pos.x += g_GameManager.gameRegionScreenPos.x;
         vm->pos.y += g_GameManager.gameRegionScreenPos.y;
         vm->pos.z = 0.0f;
-        g_AnmManager->Draw(vm);
+        g_AnmManager->Draw2DRotated(vm);
         vm++;
     }
 }

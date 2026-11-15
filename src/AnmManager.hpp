@@ -198,22 +198,15 @@ struct AnmManager
 #define SCRIPT_RUNNING 0
     i32 RunAnm(AnmVm *vm);
 
-    ZunResult Draw(AnmVm *vm);
-
-    void DrawTextToTexture(u32 spriteDstIndex, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontWidth,
-                          i32 fontHeight, ZunColor textColor, ZunColor shadowColor, const char *strToPrint);
     void DrawTextToTextureRight(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
     void DrawTextToTextureCenter(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
     void DrawTextToTextureLeft(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
 
-    ZunResult DrawNoRotation(AnmVm *vm);
-
-#define RENDER_VERTICES_DEFAULT false
-#define RENDER_VERTICES_ROUND_INPUTS true
-    ZunResult DrawInner(AnmVm *vm, ZunBool roundVertices);
-    ZunResult DrawFacingCamera(AnmVm *vm);
-    ZunResult Draw2(AnmVm *vm);
-    ZunResult Draw3(AnmVm *vm);
+    ZunResult Draw2D(AnmVm *vm);
+    ZunResult Draw2DRotated(AnmVm *vm);
+    ZunResult Draw2DSmooth(AnmVm *vm);
+    ZunResult Draw3D(AnmVm *vm);
+    ZunResult Draw3DRotated(AnmVm *vm);
 
     void LoadSprite(u32 spriteIdx, AnmLoadedSprite *sprite);
     ZunResult SetActiveSprite(AnmVm *vm, i32 spriteIdx);
@@ -262,6 +255,13 @@ struct AnmManager
     }
 
   private:
+    void DrawTextToTexture(u32 spriteDstIndex, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontWidth,
+                           i32 fontHeight, ZunColor textColor, ZunColor shadowColor, const char *strToPrint);
+
+#define RENDER_VERTICES_DEFAULT false
+#define RENDER_VERTICES_ROUND_INPUTS true
+    ZunResult DrawSprite(AnmVm *vm, ZunBool roundVertices);
+
     AnmLoadedSprite sprites[MAX_ANM_SPRITES];
     AnmVm virtualMachine;
     LPDIRECT3DTEXTURE8 textures[264];

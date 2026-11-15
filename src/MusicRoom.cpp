@@ -156,7 +156,7 @@ static ChainCallbackResult MusicRoom_OnDraw(MusicRoom *musicRoom)
 
     g_AnmManager->ClearTexture();
     g_AnmManager->CopySurfaceToBackBuffer(0, 0, 0, 0, 0);
-    g_AnmManager->DrawNoRotation(musicRoom->mainVm);
+    g_AnmManager->Draw2D(musicRoom->mainVm);
 
     // Draw the 10 songs in the song select window, and list indices
     for (i = musicRoom->listingOffset; i < musicRoom->listingOffset + 10; i++)
@@ -175,7 +175,7 @@ static ChainCallbackResult MusicRoom_OnDraw(MusicRoom *musicRoom)
         musicRoom->titleSprites[i].pos.x = 93.0f;
         musicRoom->titleSprites[i].pos.y = 104.0f + (((i + 1) - musicRoom->listingOffset) * 18) - 20.0f;
         musicRoom->titleSprites[i].pos.z = 0.0f;
-        g_AnmManager->DrawNoRotation(&musicRoom->titleSprites[i]);
+        g_AnmManager->Draw2D(&musicRoom->titleSprites[i]);
 
         textPos = musicRoom->titleSprites[i].pos;
         textPos.x -= 60.0f;
@@ -193,7 +193,7 @@ static ChainCallbackResult MusicRoom_OnDraw(MusicRoom *musicRoom)
 
     for (i = 0; i < ARRAY_SIZE_SIGNED(musicRoom->descriptionSprites); i++)
     {
-        g_AnmManager->DrawNoRotation(&musicRoom->descriptionSprites[i]);
+        g_AnmManager->Draw2D(&musicRoom->descriptionSprites[i]);
     }
 
     g_AsciiManager.SetColor(COLOR_WHITE);

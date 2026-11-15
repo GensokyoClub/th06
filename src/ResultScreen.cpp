@@ -1741,7 +1741,7 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
     {
         pos = vm->pos;
         vm->pos += vm->posOffset;
-        g_AnmManager->DrawNoRotation(vm);
+        g_AnmManager->Draw2D(vm);
         vm->pos = pos;
     }
     vm = &resultScreen->vms[14];
@@ -1751,12 +1751,12 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
         {
             pos = vm->pos;
             resultScreen->textLineVms->pos = pos;
-            g_AnmManager->DrawNoRotation(&resultScreen->textLineVms[0]);
+            g_AnmManager->Draw2D(&resultScreen->textLineVms[0]);
 
             pos[0] += 320.0f;
 
             resultScreen->textLineVms[1].pos = pos;
-            g_AnmManager->DrawNoRotation(&resultScreen->textLineVms[1]);
+            g_AnmManager->Draw2D(&resultScreen->textLineVms[1]);
 
             pos[0] -= 320.0f;
             pos[1] += 18.0f;
@@ -1897,7 +1897,7 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
 
                 resultScreen->textLineVms[i].pos[0] += 96.0f;
 
-                g_AnmManager->DrawNoRotation(&resultScreen->textLineVms[i]);
+                g_AnmManager->Draw2D(&resultScreen->textLineVms[i]);
 
                 pos[0] += 368.0f;
 
@@ -1974,7 +1974,7 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
         vm = &resultScreen->vms[15];
         for (i = 0; i < 6; i++, vm++)
         {
-            g_AnmManager->DrawNoRotation(vm);
+            g_AnmManager->Draw2D(vm);
         }
         vm = &resultScreen->vms[21];
         pos = vm->pos;

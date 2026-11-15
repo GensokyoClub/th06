@@ -444,7 +444,7 @@ static ChainCallbackResult Ending_OnDraw(Ending *ending)
     {
         if (ending->sprites[idx].anmFileIndex != 0)
         {
-            g_AnmManager->DrawNoRotation(&ending->sprites[idx]);
+            g_AnmManager->Draw2D(&ending->sprites[idx]);
         }
     }
     ending->FadingEffect();

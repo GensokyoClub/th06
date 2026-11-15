@@ -266,7 +266,7 @@ ChainCallbackResult EffectManager_OnDraw(EffectManager *mgr)
         }
 
         effect->vm.pos = effect->pos1;
-        g_AnmManager->Draw3(&effect->vm);
+        g_AnmManager->Draw3DRotated(&effect->vm);
     }
 
     return CHAIN_CALLBACK_RESULT_CONTINUE;

@@ -1069,7 +1069,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
 
         // BUG(?): This is trying to despawn lasers that're completely out of bounds,
         // but the game window width is way bigger than the size of the game region
-        // so it likely never triggers. Maybe ZUN made a type with his macros?
+        // so it likely never triggers. Maybe ZUN made a typo with his macros?
         if (curLaser->startOffset >= GAME_WINDOW_WIDTH)
         {
             curLaser->inUse = false;

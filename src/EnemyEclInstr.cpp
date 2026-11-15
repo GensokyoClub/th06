@@ -29,8 +29,7 @@ void ExInsCirnoRainbowBallJank(Enemy *enemy, EclRawInstr *curInstr)
         }
 
         currentBullet->color = BULLET_WHITE;
-        g_AnmManager->SetActiveSprite(&currentBullet->vm,
-                                      currentBullet->vm.baseSpriteIndex + currentBullet->color);
+        g_AnmManager->SetActiveSprite(&currentBullet->vm, currentBullet->vm.baseSpriteIndex + currentBullet->color);
         switch (effectIndex)
         {
         case 0:
@@ -242,14 +241,12 @@ void ExInsStage56Func4(Enemy *enemy, EclRawInstr *curInstr)
                     continue;
                 }
 
-                if (currentBullet->vm.sprite != NULL &&
-                    currentBullet->vm.sprite->height >= BULLET_SIZE_MEDIUM &&
+                if (currentBullet->vm.sprite != NULL && currentBullet->vm.sprite->height >= BULLET_SIZE_MEDIUM &&
                     currentBullet->color != BULLET_GREEN8 && (g_Rng.GetRandomU16() % 4 == 0))
                 {
                     currentBullet->color = BULLET_GREEN8;
                     g_AnmManager->SetActiveSprite(&currentBullet->vm,
-                                                  currentBullet->vm.baseSpriteIndex +
-                                                      currentBullet->color);
+                                                  currentBullet->vm.baseSpriteIndex + currentBullet->color);
 
                     playerBulletOffsetX = (currentBullet->pos.x) - g_Player.positionCenter.x;
                     playerBulletOffsetY = (currentBullet->pos.y) - g_Player.positionCenter.y;
@@ -283,14 +280,12 @@ void ExInsStage56Func4(Enemy *enemy, EclRawInstr *curInstr)
                     continue;
                 }
 
-                if (currentBullet->vm.sprite != NULL &&
-                    currentBullet->vm.sprite->height >= BULLET_SIZE_MEDIUM &&
+                if (currentBullet->vm.sprite != NULL && currentBullet->vm.sprite->height >= BULLET_SIZE_MEDIUM &&
                     currentBullet->color != BULLET_GREEN8 && (g_Rng.GetRandomU16() % 4 == 0))
                 {
                     currentBullet->color = BULLET_GREEN8;
                     g_AnmManager->SetActiveSprite(&currentBullet->vm,
-                                                  currentBullet->vm.baseSpriteIndex +
-                                                      currentBullet->color);
+                                                  currentBullet->vm.baseSpriteIndex + currentBullet->color);
 
                     playerBulletOffsetX = (currentBullet->pos.x) - g_Player.positionCenter.x;
                     playerBulletOffsetY = (currentBullet->pos.y) - g_Player.positionCenter.y;
@@ -607,8 +602,7 @@ void ExInsStage6Func8(Enemy *enemy, EclRawInstr *curInstr)
             continue;
         }
 
-        if (currentBullet->vm.sprite != NULL &&
-            currentBullet->vm.sprite->height >= BULLET_SIZE_MEDIUM)
+        if (currentBullet->vm.sprite != NULL && currentBullet->vm.sprite->height >= BULLET_SIZE_MEDIUM)
         {
             bulletProps.position = currentBullet->pos;
             bulletProps.sprite = BULLET_BALL;
@@ -650,14 +644,13 @@ void ExInsStage6Func9(Enemy *enemy, EclRawInstr *curInstr)
             continue;
         }
 
-        if (currentBullet->vm.sprite != NULL &&
-            currentBullet->vm.sprite->height < BULLET_SIZE_MEDIUM && currentBullet->speed == 0.0f)
+        if (currentBullet->vm.sprite != NULL && currentBullet->vm.sprite->height < BULLET_SIZE_MEDIUM &&
+            currentBullet->speed == 0.0f)
         {
             currentBullet->exFlags |= EX_ACCELERATION;
 #if BUILT_SINCE(100)
             currentBullet->color = BULLET_RED;
-            g_AnmManager->SetActiveSprite(&currentBullet->vm,
-                                          currentBullet->vm.baseSpriteIndex + currentBullet->color);
+            g_AnmManager->SetActiveSprite(&currentBullet->vm, currentBullet->vm.baseSpriteIndex + currentBullet->color);
 #endif
             currentBullet->speed = 0.01f;
             currentBullet->timer = 0;
@@ -706,14 +699,13 @@ void ExInsStage6Func11(Enemy *enemy, EclRawInstr *curInstr)
             continue;
         }
 
-        if (currentBullet->vm.sprite != NULL &&
-            currentBullet->vm.sprite->height < BULLET_SIZE_MEDIUM && currentBullet->speed == 0.0f)
+        if (currentBullet->vm.sprite != NULL && currentBullet->vm.sprite->height < BULLET_SIZE_MEDIUM &&
+            currentBullet->speed == 0.0f)
         {
             currentBullet->exFlags |= EX_ACCELERATION;
 #if BUILT_SINCE(100)
             currentBullet->color = BULLET_RED;
-            g_AnmManager->SetActiveSprite(&currentBullet->vm,
-                                          currentBullet->vm.baseSpriteIndex + currentBullet->color);
+            g_AnmManager->SetActiveSprite(&currentBullet->vm, currentBullet->vm.baseSpriteIndex + currentBullet->color);
 #endif
             currentBullet->speed = 0.01f;
             currentBullet->timer = 0;
@@ -859,8 +851,7 @@ void ExInsStageXFunc15(Enemy *enemy, EclRawInstr *curInstr)
             continue;
         }
 
-        if (currentBullet->vm.sprite != NULL &&
-            currentBullet->vm.sprite->height >= BULLET_SIZE_MEDIUM)
+        if (currentBullet->vm.sprite != NULL && currentBullet->vm.sprite->height >= BULLET_SIZE_MEDIUM)
         {
             totalIterations++;
             enemyAngle = atan2f(currentBullet->pos.y - enemy->position.y, currentBullet->pos.x - enemy->position.x);
@@ -872,8 +863,7 @@ void ExInsStageXFunc15(Enemy *enemy, EclRawInstr *curInstr)
                     continue;
                 }
 
-                if (innerBullet->vm.sprite != NULL &&
-                    innerBullet->vm.sprite->height < BULLET_SIZE_MEDIUM &&
+                if (innerBullet->vm.sprite != NULL && innerBullet->vm.sprite->height < BULLET_SIZE_MEDIUM &&
                     innerBullet->speed == 0.0f &&
                     (distance = sqrtf(ZUN_SQUARE(innerBullet->pos.x - currentBullet->pos.x) +
                                       ZUN_SQUARE(innerBullet->pos.y - currentBullet->pos.y))) < 64.0f)
@@ -888,8 +878,7 @@ void ExInsStageXFunc15(Enemy *enemy, EclRawInstr *curInstr)
                     sincosmul(&innerBullet->ex4Acceleration, innerBullet->angle, 0.01f);
                     innerBullet->color += 1;
                     g_AnmManager->SetActiveSprite(&innerBullet->vm,
-                                                  innerBullet->vm.baseSpriteIndex +
-                                                      innerBullet->color);
+                                                  innerBullet->vm.baseSpriteIndex + innerBullet->color);
                 }
             }
         }

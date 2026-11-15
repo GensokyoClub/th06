@@ -25,7 +25,7 @@ struct AnmLoadedSprite
     // UV values as fractions of texture size
     ZunVec2 uvStart;
     ZunVec2 uvEnd;
-    
+
     // Size of the sprite itself
     f32 height;
     f32 width;

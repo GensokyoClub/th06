@@ -307,8 +307,8 @@ void Gui::ShowBombNamePortrait(u32 sprite, const char *bombName)
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->playerSpellcardPortrait, ANM_SCRIPT_FACE_BOMB_PORTRAIT);
     g_AnmManager->SetActiveSprite(&this->impl->playerSpellcardPortrait, sprite);
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->bombSpellcardName, ANM_SCRIPT_TEXT_BOMB_NAME);
-    g_AnmManager->DrawTextToTextureLeft(&this->impl->bombSpellcardName, COLOR_RGB(COLOR_BARELY_BLUE), COLOR_RGB(COLOR_BLACK),
-                                bombName);
+    g_AnmManager->DrawTextToTextureLeft(&this->impl->bombSpellcardName, COLOR_RGB(COLOR_BARELY_BLUE),
+                                        COLOR_RGB(COLOR_BLACK), bombName);
     this->bombNameBarLength = strlen(bombName) * DEFAULT_ANM_FONT_SIZE / 2.0f + 16.0f;
 #if BUILT_SINCE(102g)
     g_Supervisor.forceRedrawFrames = 3;
@@ -321,8 +321,8 @@ void Gui::ShowSpellcard(i32 spellcardSprite, const char *spellcardName)
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->enemySpellcardPortrait, ANM_SCRIPT_FACE_ENEMY_SPELLCARD_PORTRAIT);
     g_AnmManager->SetActiveSprite(&this->impl->enemySpellcardPortrait, ANM_SPRITE_FACE_STAGE_START + spellcardSprite);
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->enemySpellcardName, ANM_SCRIPT_TEXT_ENEMY_SPELLCARD_NAME);
-    g_AnmManager->DrawTextToTextureRight(&this->impl->enemySpellcardName, COLOR_RGB(COLOR_BARELY_RED), COLOR_RGB(COLOR_BLACK),
-                                   spellcardName);
+    g_AnmManager->DrawTextToTextureRight(&this->impl->enemySpellcardName, COLOR_RGB(COLOR_BARELY_RED),
+                                         COLOR_RGB(COLOR_BLACK), spellcardName);
     this->spellcardNameBarLength = strlen(spellcardName) * DEFAULT_ANM_FONT_SIZE / 2.0f + 16.0f;
     g_SoundPlayer.PlaySoundByIdx(SOUND_SPELL_START);
 }
@@ -521,12 +521,12 @@ ZunResult Gui::ActualAddedCallback()
     this->impl->enemySpellcardName.fontHeight = DEFAULT_ANM_FONT_SIZE;
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->stageNameSprite, ANM_SCRIPT_TEXT_STAGE_NAME);
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->songNameSprite, ANM_SCRIPT_TEXT_SONG_NAME);
-    g_AnmManager->DrawTextToTextureCenter(&this->impl->stageNameSprite, COLOR_RGB(COLOR_LIGHTCYAN), COLOR_RGB(COLOR_BLACK),
-                                    g_Stage.stdData->stageName);
+    g_AnmManager->DrawTextToTextureCenter(&this->impl->stageNameSprite, COLOR_RGB(COLOR_LIGHTCYAN),
+                                          COLOR_RGB(COLOR_BLACK), g_Stage.stdData->stageName);
     this->impl->songNameSprite.fontWidth = DEFAULT_ANM_FONT_SIZE + 1;
     this->impl->songNameSprite.fontHeight = DEFAULT_ANM_FONT_SIZE + 1;
-    g_AnmManager->DrawTextToTextureRight(&this->impl->songNameSprite, COLOR_RGB(COLOR_LIGHTCYAN), COLOR_RGB(COLOR_BLACK),
-                                   TH_SONG_NAME, g_Stage.stdData->songNames[0]);
+    g_AnmManager->DrawTextToTextureRight(&this->impl->songNameSprite, COLOR_RGB(COLOR_LIGHTCYAN),
+                                         COLOR_RGB(COLOR_BLACK), TH_SONG_NAME, g_Stage.stdData->songNames[0]);
     this->impl->msg.currentMsgId = -1;
     this->impl->finishedStage = FALSE;
     this->impl->bonusScore.isShown = false;
@@ -650,14 +650,15 @@ ZunResult GuiImpl::RunMsg()
             if (SHORT_ARG(1) == 0 && this->msg.dialogueLines[1].anmFileIndex >= 0)
             {
                 g_AnmManager->DrawTextToTextureLeft(&this->msg.dialogueLines[1], this->msg.textColors[SHORT_ARG(0)],
-                                            this->msg.textShadowColors[SHORT_ARG(0)], " ");
+                                                    this->msg.textShadowColors[SHORT_ARG(0)], " ");
             }
             g_AnmManager->SetAndExecuteScriptIdx(&this->msg.dialogueLines[SHORT_ARG(1)],
                                                  ANM_SCRIPT_TEXT_DIALOGUE_LINES + SHORT_ARG(1));
             this->msg.dialogueLines[SHORT_ARG(1)].fontWidth = this->msg.dialogueLines[SHORT_ARG(1)].fontHeight =
                 this->msg.fontSize;
-            g_AnmManager->DrawTextToTextureLeft(&this->msg.dialogueLines[SHORT_ARG(1)], this->msg.textColors[SHORT_ARG(0)],
-                                        this->msg.textShadowColors[SHORT_ARG(0)], STRING_ARG(4));
+            g_AnmManager->DrawTextToTextureLeft(&this->msg.dialogueLines[SHORT_ARG(1)],
+                                                this->msg.textColors[SHORT_ARG(0)],
+                                                this->msg.textShadowColors[SHORT_ARG(0)], STRING_ARG(4));
             this->msg.framesElapsedDuringPause = 0;
             break;
         case MSG_OPCODE_WAIT:
@@ -692,8 +693,9 @@ ZunResult GuiImpl::RunMsg()
             g_AnmManager->SetAndExecuteScriptIdx(&this->songNameSprite, ANM_SCRIPT_TEXT_SONG_NAME);
             this->songNameSprite.fontWidth = DEFAULT_ANM_FONT_SIZE + 1;
             this->songNameSprite.fontHeight = DEFAULT_ANM_FONT_SIZE + 1;
-            g_AnmManager->DrawTextToTextureRight(&this->songNameSprite, COLOR_RGB(COLOR_LIGHTCYAN), COLOR_RGB(COLOR_BLACK),
-                                           TH_SONG_NAME, g_Stage.stdData->songNames[this->msg.currentInstr->args[0]]);
+            g_AnmManager->DrawTextToTextureRight(&this->songNameSprite, COLOR_RGB(COLOR_LIGHTCYAN),
+                                                 COLOR_RGB(COLOR_BLACK), TH_SONG_NAME,
+                                                 g_Stage.stdData->songNames[this->msg.currentInstr->args[0]]);
             if (g_Supervisor.PlayMidiFile(this->msg.currentInstr->args[0]))
             {
                 g_Supervisor.PlayAudio(g_Stage.stdData->songPaths[this->msg.currentInstr->args[0]]);
@@ -703,8 +705,9 @@ ZunResult GuiImpl::RunMsg()
             args = this->msg.currentInstr->args;
             g_AnmManager->SetAndExecuteScriptIdx(&this->msg.introLines[SHORT_ARG(1)],
                                                  ANM_SCRIPT_TEXT_INTRO_LINES + SHORT_ARG(1));
-            g_AnmManager->DrawTextToTextureRight(&this->msg.introLines[SHORT_ARG(1)], this->msg.textColors[SHORT_ARG(0)],
-                                           this->msg.textShadowColors[SHORT_ARG(0)], STRING_ARG(4));
+            g_AnmManager->DrawTextToTextureRight(&this->msg.introLines[SHORT_ARG(1)],
+                                                 this->msg.textColors[SHORT_ARG(0)],
+                                                 this->msg.textShadowColors[SHORT_ARG(0)], STRING_ARG(4));
             this->msg.framesElapsedDuringPause = 0;
             break;
         case MSG_OPCODE_STAGE_RESULTS:

@@ -816,11 +816,11 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
         {
             resultScreen->charUsed = resultScreen->cursor;
             g_AnmManager->DrawTextToTextureCenter(&resultScreen->textLineVms[0], COLOR_RGB(COLOR_WHITE),
-                                            COLOR_RGB(COLOR_BLACK),
-                                            g_CharacterList[SHOTTYPE_ID(resultScreen->charUsed, SHOT_TYPE_A)]);
+                                                  COLOR_RGB(COLOR_BLACK),
+                                                  g_CharacterList[SHOTTYPE_ID(resultScreen->charUsed, SHOT_TYPE_A)]);
             g_AnmManager->DrawTextToTextureCenter(&resultScreen->textLineVms[1], COLOR_RGB(COLOR_WHITE),
-                                            COLOR_RGB(COLOR_BLACK),
-                                            g_CharacterList[SHOTTYPE_ID(resultScreen->charUsed, SHOT_TYPE_B)]);
+                                                  COLOR_RGB(COLOR_BLACK),
+                                                  g_CharacterList[SHOTTYPE_ID(resultScreen->charUsed, SHOT_TYPE_B)]);
         }
         if (resultScreen->frameTimer < 30)
         {
@@ -865,13 +865,15 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
                 }
                 if (g_GameManager.catk[i].attempts == 0)
                 {
-                    g_AnmManager->DrawTextToTextureLeft(&resultScreen->textLineVms[i % SPELLS_PER_PAGE], COLOR_RGB(COLOR_WHITE),
-                                                COLOR_RGB(COLOR_BLACK), TH_UNKNOWN_SPELLCARD);
+                    g_AnmManager->DrawTextToTextureLeft(&resultScreen->textLineVms[i % SPELLS_PER_PAGE],
+                                                        COLOR_RGB(COLOR_WHITE), COLOR_RGB(COLOR_BLACK),
+                                                        TH_UNKNOWN_SPELLCARD);
                 }
                 else
                 {
-                    g_AnmManager->DrawTextToTextureLeft(&resultScreen->textLineVms[i % SPELLS_PER_PAGE], COLOR_RGB(COLOR_WHITE),
-                                                COLOR_RGB(COLOR_BLACK), g_GameManager.catk[i].name);
+                    g_AnmManager->DrawTextToTextureLeft(&resultScreen->textLineVms[i % SPELLS_PER_PAGE],
+                                                        COLOR_RGB(COLOR_WHITE), COLOR_RGB(COLOR_BLACK),
+                                                        g_GameManager.catk[i].name);
                 }
             }
         }
@@ -948,15 +950,17 @@ i32 ResultScreen::HandleResultKeyboard()
             vm->pendingInterrupt = this->diffSelected + 3;
         }
 
-        g_AnmManager->DrawTextToTextureCenter(&this->textLineVms[SHOT_TYPE_A], COLOR_RGB(COLOR_WHITE), COLOR_RGB(COLOR_BLACK),
-                                        g_CharacterList[SHOTTYPE_ID(this->charUsed, SHOT_TYPE_A)]);
+        g_AnmManager->DrawTextToTextureCenter(&this->textLineVms[SHOT_TYPE_A], COLOR_RGB(COLOR_WHITE),
+                                              COLOR_RGB(COLOR_BLACK),
+                                              g_CharacterList[SHOTTYPE_ID(this->charUsed, SHOT_TYPE_A)]);
         if (g_GameManager.shotType != SHOT_TYPE_A)
         {
             this->textLineVms[0].color = COLOR_TRANSPARENT_WHITE;
         }
 
-        g_AnmManager->DrawTextToTextureCenter(&this->textLineVms[SHOT_TYPE_B], COLOR_RGB(COLOR_WHITE), COLOR_RGB(COLOR_BLACK),
-                                        g_CharacterList[SHOTTYPE_ID(this->charUsed, SHOT_TYPE_B)]);
+        g_AnmManager->DrawTextToTextureCenter(&this->textLineVms[SHOT_TYPE_B], COLOR_RGB(COLOR_WHITE),
+                                              COLOR_RGB(COLOR_BLACK),
+                                              g_CharacterList[SHOTTYPE_ID(this->charUsed, SHOT_TYPE_B)]);
         if (g_GameManager.shotType != SHOT_TYPE_B)
         {
             this->textLineVms[1].color = COLOR_TRANSPARENT_WHITE;

@@ -852,7 +852,8 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
 
 #if BUILT_SINCE(102)
             // Before 1.02 the restored cursor is not clamped to the stages cleared.
-            i32 stagesCleared = ZUN_MIN(g_GameManager.clrd[CURRENT_SHOTTYPE()].stagesCleared[g_GameManager.difficulty], 6);
+            i32 stagesCleared =
+                ZUN_MIN(g_GameManager.clrd[CURRENT_SHOTTYPE()].stagesCleared[g_GameManager.difficulty], 6);
             if (g_GameManager.difficulty == EASY && stagesCleared == 6)
             {
                 stagesCleared = 5;

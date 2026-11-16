@@ -411,7 +411,7 @@ void ReplayManager::SaveReplay(const char *replayPath, char *replayName)
                 replayCopy.slowdownRate3 = replayCopy.slowdownRate + 2.34f;
                 mgr->replayData->stageReplayData[g_GameManager.currentStage - 1]->score = g_GameManager.score;
                 std::strcpy(replayCopy.name, replayName);
-                std::sprintf(replayCopy.date, "%02i/%02i/%02i", tm->tm_mon, tm->tm_mday, tm->tm_year % 100);
+                std::sprintf(replayCopy.date, "%02i/%02i/%02i", tm->tm_mon + 1, tm->tm_mday, tm->tm_year % 100);
                 replayCopy.key = g_Rng.GetRandomU16InRange(128) + 64;
                 replayCopy.rngValue3 = g_Rng.GetRandomU16InRange(256);
                 replayCopy.rngValue1 = g_Rng.GetRandomU16InRange(256);

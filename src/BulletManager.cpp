@@ -725,8 +725,8 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                     }
                     else
                     {
-                        curBullet->angle = ReduceAngleAdd(
-                            curBullet->angle, curBullet->exAngularVelocity * g_Supervisor.gameSpeed);
+                        curBullet->angle =
+                            ReduceAngleAdd(curBullet->angle, curBullet->exAngularVelocity * g_Supervisor.gameSpeed);
                         curBullet->speed += curBullet->exVelocity * g_Supervisor.gameSpeed;
                         sincosmul(&curBullet->velocity, curBullet->angle, curBullet->speed);
                     }
@@ -747,8 +747,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                     else
                     {
                         bulletSpeed = RAMP_DOWN(curBullet->speed,
-                                                (f32)curBullet->timer -
-                                                    (curBullet->exInterval * curBullet->exCount),
+                                                (f32)curBullet->timer - (curBullet->exInterval * curBullet->exCount),
                                                 curBullet->exInterval);
                     }
 
@@ -770,8 +769,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                     else
                     {
                         bulletSpeed = RAMP_DOWN(curBullet->speed,
-                                                (f32)curBullet->timer -
-                                                    (curBullet->exInterval * curBullet->exCount),
+                                                (f32)curBullet->timer - (curBullet->exInterval * curBullet->exCount),
                                                 curBullet->exInterval);
                     }
 
@@ -793,8 +791,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                     else
                     {
                         bulletSpeed = RAMP_DOWN(curBullet->speed,
-                                                (f32)curBullet->timer -
-                                                    (curBullet->exInterval * curBullet->exCount),
+                                                (f32)curBullet->timer - (curBullet->exInterval * curBullet->exCount),
                                                 curBullet->exInterval);
                     }
                     sincosmul(&curBullet->velocity, curBullet->angle, bulletSpeed);

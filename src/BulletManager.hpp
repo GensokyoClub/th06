@@ -167,14 +167,14 @@ struct Bullet : BulletBase
     D3DXVECTOR3 exAcceleration; // EX_ACCELERATION
     f32 speed;
     f32 exVelocity; // EX_VELOCITY
-    f32 exSpeed; // EX_ANGLE, EX_BOUNCE
+    f32 exSpeed;    // EX_ANGLE, EX_BOUNCE
     f32 angle;
     f32 exAngularVelocity; // EX_VELOCITY
-    f32 exAngle; // EX_ANGLE
+    f32 exAngle;           // EX_ANGLE
     ZunTimer timer;
     i32 exDuration; // EX_ACCELERATION, EX_VELOCITY
     i32 exInterval; // EX_ANGLE
-    i32 exCount; // EX_ANGLE, EX_BOUNCE
+    i32 exCount;    // EX_ANGLE, EX_BOUNCE
     i32 exCountMax; // EX_ANGLE, EX_BOUNCE
     u16 exFlags;
     i16 color;

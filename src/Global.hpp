@@ -33,7 +33,7 @@ extern DWORD GetDXVersion();
     (p) = NULL
 #define ZUN_DELETE_ARRAY(p)                                                                                            \
     g_ZunMemoryMgr.RemoveFromRegistry((void *)p);                                                                      \
-    delete[](p);                                                                                                       \
+    delete[] (p);                                                                                                      \
     (p) = NULL
 
 // Sometimes this is written manually, pay attention to whether

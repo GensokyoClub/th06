@@ -162,10 +162,8 @@ void BombReimuACalc(Player *player)
                 player->bombInfo.projectileState[i] = 0;
             }
         }
-        player->bombInfo.projectilePosition[i].x +=
-            g_Supervisor.gameSpeed * player->bombInfo.projectileVelocity[i].x;
-        player->bombInfo.projectilePosition[i].y +=
-            g_Supervisor.gameSpeed * player->bombInfo.projectileVelocity[i].y;
+        player->bombInfo.projectilePosition[i].x += g_Supervisor.gameSpeed * player->bombInfo.projectileVelocity[i].x;
+        player->bombInfo.projectilePosition[i].y += g_Supervisor.gameSpeed * player->bombInfo.projectileVelocity[i].y;
 
         g_AnmManager->RunAnm(&player->bombInfo.vms[0][i * 4]);
         g_AnmManager->RunAnm(&player->bombInfo.vms[0][i * 4 + 1]);
@@ -381,8 +379,7 @@ void BombMarisaACalc(Player *player)
     {
         for (i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.vms); i++)
         {
-            player->bombInfo.projectilePosition[i] +=
-                player->bombInfo.projectileVelocity[i] * g_Supervisor.gameSpeed;
+            player->bombInfo.projectilePosition[i] += player->bombInfo.projectileVelocity[i] * g_Supervisor.gameSpeed;
 
             if (player->bombInfo.timer.HasTicked() && !MULTIPLE_OF(player->bombInfo.timer, 3))
             {

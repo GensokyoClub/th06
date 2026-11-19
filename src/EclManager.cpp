@@ -948,7 +948,7 @@ restart_sub_changed:
             break;
         case ECL_OPCODE_EFFECT_PARTICLE:
             g_EffectManager.SpawnParticles(GET_INSTR_INT_ARG(0), &enemy->position, GET_INSTR_INT_ARG(1),
-                                           *(ZunColor*)&GET_INSTR_INT_ARG(2));
+                                           *(ZunColor *)&GET_INSTR_INT_ARG(2));
             break;
         case ECL_OPCODE_DROP_ITEMS: {
             for (i32 i = 0; i < GET_INSTR_INT_ARG(0); i++)

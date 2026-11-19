@@ -73,29 +73,38 @@ struct BulletSpriteInfo
     u32 despawnEffect;
 };
 
-#define ASB3(x) ANM_SCRIPT_BULLET3_##x
-#define ASB4(x) ANM_SCRIPT_BULLET4_##x
+#define BULLET_EFFECT_SCRIPTS(fast, normal, slow, despawn) \
+MACRO_CAT(ANM_SCRIPT_BULLET_SPAWN_,fast),\
+MACRO_CAT(ANM_SCRIPT_BULLET_SPAWN_,normal),\
+MACRO_CAT(ANM_SCRIPT_BULLET_SPAWN_,slow),\
+MACRO_CAT(ANM_SCRIPT_BULLET_DESPAWN_,despawn)
+
+#define BULLET_SCRIPTS_TINY(bullet) \
+MACRO_CAT(ANM_SCRIPT_, bullet), BULLET_EFFECT_SCRIPTS(TINY_FAST, TINY, TINY_SLOW, TINY)
+
+#define BULLET_SCRIPTS_SMALL(bullet) \
+MACRO_CAT(ANM_SCRIPT_, bullet), BULLET_EFFECT_SCRIPTS(SMALL_FAST, SMALL, SMALL_SLOW, SMALL)
+
+#define BULLET_SCRIPTS_MEDIUM(bullet) \
+MACRO_CAT(ANM_SCRIPT_, bullet), BULLET_EFFECT_SCRIPTS(LARGE, LARGE, LARGE, LARGE)
+
+#define BULLET_SCRIPTS_LARGE(bullet) \
+MACRO_CAT(ANM_SCRIPT_, bullet), BULLET_EFFECT_SCRIPTS(LARGE, LARGE, LARGE, LARGE)
+
+#define BULLET_SCRIPTS_HUGE(bullet) \
+MACRO_CAT(ANM_SCRIPT_, bullet), BULLET_EFFECT_SCRIPTS(HUGE, HUGE, HUGE, HUGE)
+
 const BulletSpriteInfo g_BulletAnmScripts[] = {
-    {ASB3(PELLET), ASB3(SPAWN_PELLET_FAST), ASB3(SPAWN_PELLET_NORMAL), ASB3(SPAWN_PELLET_SLOW),
-     ASB3(SPAWN_DONUT_SMALL)},
-    {ASB3(RING_BALL), ASB3(SPAWN_BIG_BALL_FAST), ASB3(SPAWN_BIG_BALL_NORMAL), ASB3(SPAWN_BIG_BALL_SLOW),
-     ASB3(SPAWN_DONUT_MEDIUM)},
-    {ASB3(RICE), ASB3(SPAWN_BIG_BALL_FAST), ASB3(SPAWN_BIG_BALL_NORMAL), ASB3(SPAWN_BIG_BALL_SLOW),
-     ASB3(SPAWN_DONUT_MEDIUM)},
-    {ASB3(BALL), ASB3(SPAWN_BIG_BALL_FAST), ASB3(SPAWN_BIG_BALL_NORMAL), ASB3(SPAWN_BIG_BALL_SLOW),
-     ASB3(SPAWN_DONUT_MEDIUM)},
-    {ASB3(KUNAI), ASB3(SPAWN_BIG_BALL_FAST), ASB3(SPAWN_BIG_BALL_NORMAL), ASB3(SPAWN_BIG_BALL_SLOW),
-     ASB3(SPAWN_DONUT_MEDIUM)},
-    {ASB3(SHARD), ASB3(SPAWN_BIG_BALL_FAST), ASB3(SPAWN_BIG_BALL_NORMAL), ASB3(SPAWN_BIG_BALL_SLOW),
-     ASB3(SPAWN_DONUT_MEDIUM)},
-    {ASB3(BIG_BALL), ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_BIG_BALL_HUGE),
-     ASB3(SPAWN_DONUT_BIG)},
-    {ASB3(FIREBALL), ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_BIG_BALL_HUGE),
-     ASB3(SPAWN_DONUT_BIG)},
-    {ASB3(DAGGER), ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_BIG_BALL_HUGE), ASB3(SPAWN_BIG_BALL_HUGE),
-     ASB3(SPAWN_DONUT_BIG)},
-    {ASB4(BUBBLE), ASB4(SPAWN_BUBBLE_SLOW), ASB4(SPAWN_BUBBLE_SLOW), ASB4(SPAWN_BUBBLE_SLOW),
-     ASB4(SPAWN_BUBBLE_NORMAL)},
+    {BULLET_SCRIPTS_TINY(BULLET_PELLET)},
+    {BULLET_SCRIPTS_SMALL(BULLET_RING_BALL)},
+    {BULLET_SCRIPTS_SMALL(BULLET_RICE)},
+    {BULLET_SCRIPTS_SMALL(BULLET_BALL)},
+    {BULLET_SCRIPTS_SMALL(BULLET_KUNAI)},
+    {BULLET_SCRIPTS_SMALL(BULLET_SHARD)},
+    {BULLET_SCRIPTS_LARGE(BULLET_BIG_BALL)},
+    {BULLET_SCRIPTS_MEDIUM(BULLET_FIREBALL)},
+    {BULLET_SCRIPTS_LARGE(BULLET_DAGGER)},
+    {BULLET_SCRIPTS_HUGE(BULLET_BUBBLE)},
 };
 
 void BulletManager::InitializeToZero()
@@ -228,7 +237,7 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
         }
         else if (bullet->vm.sprite->height <= BULLET_SIZE_LARGE)
         {
-            if (bullet->vm.anmFileIndex != ANM_SCRIPT_BULLET3_FIREBALL)
+            if (bullet->vm.anmFileIndex != ANM_SCRIPT_BULLET_FIREBALL)
             {
                 g_AnmManager->SetActiveSprite(&bullet->spawnEffectFast,
                                               bullet->spawnEffectFast.activeSpriteIndex +
@@ -260,7 +269,7 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
         }
         else if (bullet->vm.sprite->height <= BULLET_SIZE_LARGE)
         {
-            if (bullet->vm.anmFileIndex != ANM_SCRIPT_BULLET3_FIREBALL)
+            if (bullet->vm.anmFileIndex != ANM_SCRIPT_BULLET_FIREBALL)
             {
                 g_AnmManager->SetActiveSprite(&bullet->spawnEffectNormal,
                                               bullet->spawnEffectNormal.activeSpriteIndex +
@@ -290,7 +299,7 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
         }
         else if (bullet->vm.sprite->height <= BULLET_SIZE_LARGE)
         {
-            if (bullet->vm.anmFileIndex != ANM_SCRIPT_BULLET3_FIREBALL)
+            if (bullet->vm.anmFileIndex != ANM_SCRIPT_BULLET_FIREBALL)
             {
                 g_AnmManager->SetActiveSprite(&bullet->spawnEffectSlow,
                                               bullet->spawnEffectSlow.activeSpriteIndex +
@@ -319,7 +328,7 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
     }
     else if (bullet->vm.sprite->height <= BULLET_SIZE_LARGE)
     {
-        if (bullet->vm.anmFileIndex != ANM_SCRIPT_BULLET3_FIREBALL)
+        if (bullet->vm.anmFileIndex != ANM_SCRIPT_BULLET_FIREBALL)
         {
             g_AnmManager->SetActiveSprite(&bullet->despawnEffect, bullet->despawnEffect.activeSpriteIndex +
                                                                       g_BulletSpawnEffects8Colors[bulletProps->color]);
@@ -590,7 +599,7 @@ Laser *BulletManager::SpawnLaserPattern(EnemyShooter *bulletProps)
             continue;
         }
 
-        g_AnmManager->SetAndExecuteScriptIdx(&laser->vm, bulletProps->sprite + ANM_SCRIPT_BULLET3_LINE_LASER);
+        g_AnmManager->SetAndExecuteScriptIdx(&laser->vm, bulletProps->sprite + ANM_SCRIPT_BULLET_LINE_LASER);
         g_AnmManager->SetActiveSprite(&laser->vm, laser->vm.activeSpriteIndex + bulletProps->color);
 
         g_AnmManager->InitializeAndSetSprite(&laser->baseGlowVm, g_BulletSpawnEffects16Colors[bulletProps->color] +
@@ -1222,8 +1231,8 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
                 continue;
             }
 
-            if (curBullet->height == BULLET_SIZE_SMALL && (curBullet->vm.anmFileIndex == ANM_SCRIPT_BULLET3_RING_BALL ||
-                                                           curBullet->vm.anmFileIndex == ANM_SCRIPT_BULLET3_BALL))
+            if (curBullet->height == BULLET_SIZE_SMALL && (curBullet->vm.anmFileIndex == ANM_SCRIPT_BULLET_RING_BALL ||
+                                                           curBullet->vm.anmFileIndex == ANM_SCRIPT_BULLET_BALL))
             {
                 DrawBullet(curBullet);
             }
@@ -1236,8 +1245,8 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
                 continue;
             }
 
-            if (curBullet->height == BULLET_SIZE_SMALL && curBullet->vm.anmFileIndex != ANM_SCRIPT_BULLET3_RING_BALL &&
-                curBullet->vm.anmFileIndex != ANM_SCRIPT_BULLET3_BALL)
+            if (curBullet->height == BULLET_SIZE_SMALL && curBullet->vm.anmFileIndex != ANM_SCRIPT_BULLET_RING_BALL &&
+                curBullet->vm.anmFileIndex != ANM_SCRIPT_BULLET_BALL)
             {
                 DrawBullet(curBullet);
             }
@@ -1279,8 +1288,8 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
                 continue;
             }
 
-            if (curBullet->height == BULLET_SIZE_SMALL && (curBullet->vm.anmFileIndex == ANM_SCRIPT_BULLET3_RING_BALL ||
-                                                           curBullet->vm.anmFileIndex == ANM_SCRIPT_BULLET3_BALL))
+            if (curBullet->height == BULLET_SIZE_SMALL && (curBullet->vm.anmFileIndex == ANM_SCRIPT_BULLET_RING_BALL ||
+                                                           curBullet->vm.anmFileIndex == ANM_SCRIPT_BULLET_BALL))
             {
                 DrawBulletNoHwVertex(curBullet);
             }
@@ -1293,8 +1302,8 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
                 continue;
             }
 
-            if (curBullet->height == BULLET_SIZE_SMALL && curBullet->vm.anmFileIndex != ANM_SCRIPT_BULLET3_RING_BALL &&
-                curBullet->vm.anmFileIndex != ANM_SCRIPT_BULLET3_BALL)
+            if (curBullet->height == BULLET_SIZE_SMALL && curBullet->vm.anmFileIndex != ANM_SCRIPT_BULLET_RING_BALL &&
+                curBullet->vm.anmFileIndex != ANM_SCRIPT_BULLET_BALL)
             {
                 DrawBulletNoHwVertex(curBullet);
             }
@@ -1357,15 +1366,15 @@ static ZunResult BulletManager_AddedCallback(BulletManager *mgr)
         {
             switch (g_BulletAnmScripts[i].bullet)
             {
-            case ANM_SCRIPT_BULLET3_RICE:
+            case ANM_SCRIPT_BULLET_RICE:
                 mgr->bulletTemplates[i].grazeSize.x = 4.0f;
                 mgr->bulletTemplates[i].grazeSize.y = 4.0f;
                 break;
-            case ANM_SCRIPT_BULLET3_KUNAI:
+            case ANM_SCRIPT_BULLET_KUNAI:
                 mgr->bulletTemplates[i].grazeSize.x = 5.0f;
                 mgr->bulletTemplates[i].grazeSize.y = 5.0f;
                 break;
-            case ANM_SCRIPT_BULLET3_SHARD:
+            case ANM_SCRIPT_BULLET_SHARD:
                 mgr->bulletTemplates[i].grazeSize.x = 4.0f;
                 mgr->bulletTemplates[i].grazeSize.y = 4.0f;
                 break;
@@ -1379,15 +1388,15 @@ static ZunResult BulletManager_AddedCallback(BulletManager *mgr)
         {
             switch (g_BulletAnmScripts[i].bullet)
             {
-            case ANM_SCRIPT_BULLET3_FIREBALL:
+            case ANM_SCRIPT_BULLET_FIREBALL:
                 mgr->bulletTemplates[i].grazeSize.x = 11.0f;
                 mgr->bulletTemplates[i].grazeSize.y = 11.0f;
                 break;
-            case ANM_SCRIPT_BULLET3_DAGGER:
+            case ANM_SCRIPT_BULLET_DAGGER:
                 mgr->bulletTemplates[i].grazeSize.x = 9.0f;
                 mgr->bulletTemplates[i].grazeSize.y = 9.0f;
                 break;
-            default: // ANM_SCRIPT_BULLET3_BIG_BALL
+            default: // ANM_SCRIPT_BULLET_BIG_BALL
                 mgr->bulletTemplates[i].grazeSize.x = 16.0f;
                 mgr->bulletTemplates[i].grazeSize.y = 16.0f;
             }

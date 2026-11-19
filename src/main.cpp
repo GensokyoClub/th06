@@ -217,6 +217,10 @@ RenderResult GameWindow::Render()
 
     if (this->curFrame == 0)
     {
+#if !MATCHBUILD
+        // This fixes the frame limiter bug that prevents booting the game
+        g_Supervisor.lastFrameTime = g_LastFrameTime = timeGetTime();
+#endif
     LOOP_USING_GOTO_BECAUSE_WHY_NOT:
         if (g_Supervisor.cfg.frameskipConfig <= this->curFrame)
         {

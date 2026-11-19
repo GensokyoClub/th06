@@ -73,9 +73,12 @@ struct BulletSpriteInfo
     u32 despawnEffect;
 };
 
+// clang-format off
 #define BULLET_EFFECT_SCRIPTS(fast, normal, slow, despawn)                                                             \
-    MACRO_CAT(ANM_SCRIPT_BULLET_SPAWN_, fast), MACRO_CAT(ANM_SCRIPT_BULLET_SPAWN_, normal),                            \
-        MACRO_CAT(ANM_SCRIPT_BULLET_SPAWN_, slow), MACRO_CAT(ANM_SCRIPT_BULLET_DESPAWN_, despawn)
+    MACRO_CAT(ANM_SCRIPT_BULLET_SPAWN_, fast),                                                                         \
+    MACRO_CAT(ANM_SCRIPT_BULLET_SPAWN_, normal),                                                                       \
+    MACRO_CAT(ANM_SCRIPT_BULLET_SPAWN_, slow),                                                                         \
+    MACRO_CAT(ANM_SCRIPT_BULLET_DESPAWN_, despawn)
 
 #define BULLET_SCRIPTS_TINY(bullet)                                                                                    \
     MACRO_CAT(ANM_SCRIPT_, bullet), BULLET_EFFECT_SCRIPTS(TINY_FAST, TINY, TINY_SLOW, TINY)
@@ -83,19 +86,28 @@ struct BulletSpriteInfo
 #define BULLET_SCRIPTS_SMALL(bullet)                                                                                   \
     MACRO_CAT(ANM_SCRIPT_, bullet), BULLET_EFFECT_SCRIPTS(SMALL_FAST, SMALL, SMALL_SLOW, SMALL)
 
-#define BULLET_SCRIPTS_MEDIUM(bullet) MACRO_CAT(ANM_SCRIPT_, bullet), BULLET_EFFECT_SCRIPTS(LARGE, LARGE, LARGE, LARGE)
+#define BULLET_SCRIPTS_MEDIUM(bullet)                                                                                  \
+    MACRO_CAT(ANM_SCRIPT_, bullet), BULLET_EFFECT_SCRIPTS(LARGE, LARGE, LARGE, LARGE)
 
-#define BULLET_SCRIPTS_LARGE(bullet) MACRO_CAT(ANM_SCRIPT_, bullet), BULLET_EFFECT_SCRIPTS(LARGE, LARGE, LARGE, LARGE)
+#define BULLET_SCRIPTS_LARGE(bullet)                                                                                   \
+    MACRO_CAT(ANM_SCRIPT_, bullet), BULLET_EFFECT_SCRIPTS(LARGE, LARGE, LARGE, LARGE)
 
-#define BULLET_SCRIPTS_HUGE(bullet) MACRO_CAT(ANM_SCRIPT_, bullet), BULLET_EFFECT_SCRIPTS(HUGE, HUGE, HUGE, HUGE)
+#define BULLET_SCRIPTS_HUGE(bullet)                                                                                    \
+    MACRO_CAT(ANM_SCRIPT_, bullet), BULLET_EFFECT_SCRIPTS(HUGE, HUGE, HUGE, HUGE)
 
 const BulletSpriteInfo g_BulletAnmScripts[] = {
-    {BULLET_SCRIPTS_TINY(BULLET_PELLET)},    {BULLET_SCRIPTS_SMALL(BULLET_RING_BALL)},
-    {BULLET_SCRIPTS_SMALL(BULLET_RICE)},     {BULLET_SCRIPTS_SMALL(BULLET_BALL)},
-    {BULLET_SCRIPTS_SMALL(BULLET_KUNAI)},    {BULLET_SCRIPTS_SMALL(BULLET_SHARD)},
-    {BULLET_SCRIPTS_LARGE(BULLET_BIG_BALL)}, {BULLET_SCRIPTS_MEDIUM(BULLET_FIREBALL)},
-    {BULLET_SCRIPTS_LARGE(BULLET_DAGGER)},   {BULLET_SCRIPTS_HUGE(BULLET_BUBBLE)},
+    {BULLET_SCRIPTS_TINY(BULLET_PELLET)},
+    {BULLET_SCRIPTS_SMALL(BULLET_RING_BALL)},
+    {BULLET_SCRIPTS_SMALL(BULLET_RICE)},
+    {BULLET_SCRIPTS_SMALL(BULLET_BALL)},
+    {BULLET_SCRIPTS_SMALL(BULLET_KUNAI)},
+    {BULLET_SCRIPTS_SMALL(BULLET_SHARD)},
+    {BULLET_SCRIPTS_LARGE(BULLET_BIG_BALL)},
+    {BULLET_SCRIPTS_MEDIUM(BULLET_FIREBALL)},
+    {BULLET_SCRIPTS_LARGE(BULLET_DAGGER)},
+    {BULLET_SCRIPTS_HUGE(BULLET_BUBBLE)},
 };
+// clang-format on
 
 void BulletManager::InitializeToZero()
 {

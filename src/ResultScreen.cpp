@@ -889,7 +889,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
             g_SoundPlayer.PlaySoundByIdx(SOUND_SELECT);
             this->replayNumber = this->cursor;
             this->frameTimer = 0;
-            sprintf(this->defaultReplay.date, "%02i/%02i/%02i", tm->tm_mon, tm->tm_mday, tm->tm_year % 100);
+            sprintf(this->defaultReplay.date, "%02i/%02i/%02i", tm->tm_mon + 1, tm->tm_mday, tm->tm_year % 100);
             (this->defaultReplay).score = g_GameManager.score;
             if (*(i32 *)&this->replays[this->cursor].magic != *(i32 *)&"T6RP" ||
                 this->replays[this->cursor].version != GAME_VERSION)
@@ -1213,7 +1213,8 @@ u32 ResultScreen::DrawFinalStats() const
         g_AsciiManager.color = color;
         unknownFloat = 0.0;
 
-        completion = g_GameManager.difficulty < 4 ? g_GameManager.counat / 39600.0f : g_GameManager.counat / 89500.0f;
+        completion =
+            g_GameManager.difficulty < EXTRA ? g_GameManager.counat / 89500.0f : g_GameManager.counat / 39600.0f;
         strPos = viewport->pos;
         strPos.x += 224.0f;
         strPos.y += 32.0f;

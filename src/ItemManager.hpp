@@ -43,6 +43,9 @@ ZUN_ASSERT_TYPE(Item, 0x144, 4);
 
 #define MAX_ITEMS 512
 
+// Max distance items can spawn with ECL_OPCODE_DROP_ITEMS
+#define ITEM_DROP_RANGE 144.0f
+
 struct ItemManager
 {
     void SpawnItem(D3DXVECTOR3 *position, ItemType type, ItemState state);

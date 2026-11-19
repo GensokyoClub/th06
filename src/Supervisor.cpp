@@ -539,7 +539,7 @@ void ZunTimer::Increment(i32 value)
     }
 
     this->previous = this->current;
-    this->subFrame += g_Supervisor.effectiveFramerateMultiplier * (float)value;
+    this->subFrame += g_Supervisor.gameSpeed * (float)value;
 
     while (this->subFrame >= 1.0f)
     {
@@ -565,7 +565,7 @@ void ZunTimer::Decrement(i32 value)
     }
 
     this->previous = this->current;
-    this->subFrame -= g_Supervisor.effectiveFramerateMultiplier * (float)value;
+    this->subFrame -= g_Supervisor.gameSpeed * (float)value;
 
     while (this->subFrame < 0.0f)
     {
@@ -578,7 +578,7 @@ void Supervisor::TickTimer(i32 *frames, f32 *subframes)
 {
     if (this->framerateMultiplier <= 0.99f)
     {
-        *subframes += this->effectiveFramerateMultiplier;
+        *subframes += this->gameSpeed;
         if (*subframes >= 1.0f)
         {
             *frames += 1;
@@ -916,19 +916,19 @@ ZunResult Supervisor::FadeOutMusic(f32 fadeOutSeconds)
     {
         if (g_Supervisor.GetMusicMode() == WAV)
         {
-            if (this->effectiveFramerateMultiplier == 0.0f)
+            if (this->gameSpeed == 0.0f)
             {
                 g_SoundPlayer.FadeOut(fadeOutSeconds);
             }
             else
             {
-                if (this->effectiveFramerateMultiplier > 1.0f)
+                if (this->gameSpeed > 1.0f)
                 {
                     g_SoundPlayer.FadeOut(fadeOutSeconds);
                 }
                 else
                 {
-                    g_SoundPlayer.FadeOut(fadeOutSeconds / this->effectiveFramerateMultiplier);
+                    g_SoundPlayer.FadeOut(fadeOutSeconds / this->gameSpeed);
                 }
             }
         }

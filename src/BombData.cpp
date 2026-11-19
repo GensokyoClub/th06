@@ -68,7 +68,7 @@ void BombReimuACalc(Player *player)
                 {
                     g_AnmManager->ExecuteAnmIdx(vm, ANM_SCRIPT_PLAYER_REIMU_A_BOMB_ARRAY + bombIdx);
                 }
-                g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB_REIMU_A);
+                g_SoundPlayer.PlaySoundId(SOUND_BOMB_REIMU_A);
             }
         }
     }
@@ -150,7 +150,7 @@ void BombReimuACalc(Player *player)
 
                     player->bombInfo.projectileVelocity[i] / 8.0f; // ZUN moment
 
-                    g_SoundPlayer.PlaySoundByIdx(SOUND_15);
+                    g_SoundPlayer.PlaySoundId(SOUND_15);
                     ScreenEffect_RegisterChain(SCREEN_EFFECT_SHAKE, 16, 8, 0, 0);
                 }
             }
@@ -162,10 +162,8 @@ void BombReimuACalc(Player *player)
                 player->bombInfo.projectileState[i] = 0;
             }
         }
-        player->bombInfo.projectilePosition[i].x +=
-            g_Supervisor.effectiveFramerateMultiplier * player->bombInfo.projectileVelocity[i].x;
-        player->bombInfo.projectilePosition[i].y +=
-            g_Supervisor.effectiveFramerateMultiplier * player->bombInfo.projectileVelocity[i].y;
+        player->bombInfo.projectilePosition[i].x += g_Supervisor.gameSpeed * player->bombInfo.projectileVelocity[i].x;
+        player->bombInfo.projectilePosition[i].y += g_Supervisor.gameSpeed * player->bombInfo.projectileVelocity[i].y;
 
         g_AnmManager->RunAnm(&player->bombInfo.vms[0][i * 4]);
         g_AnmManager->RunAnm(&player->bombInfo.vms[0][i * 4 + 1]);
@@ -274,7 +272,7 @@ void BombReimuBCalc(Player *player)
             g_AnmManager->ExecuteAnmIdx(vm, ANM_SCRIPT_PLAYER_REIMU_B_BOMB_ARRAY + i);
         }
 
-        g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB_REIMARI);
+        g_SoundPlayer.PlaySoundId(SOUND_BOMB_REIMARI);
         player->bombInfo.projectilePosition[0].x = player->positionCenter.x;
         player->bombInfo.projectilePosition[0].y = GAME_REGION_CENTER_Y;
         player->bombInfo.projectilePosition[0].z = 0.42f;
@@ -374,15 +372,14 @@ void BombMarisaACalc(Player *player)
             player->bombInfo.projectileVelocity[i].y = sinf(starAngle) * 2.0f;
             player->bombInfo.projectileVelocity[i].z = 0.0f;
         }
-        g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB_REIMARI);
+        g_SoundPlayer.PlaySoundId(SOUND_BOMB_REIMARI);
         ScreenEffect_RegisterChain(SCREEN_EFFECT_SHAKE, 120, 4, 1, 0);
     }
     else
     {
         for (i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.vms); i++)
         {
-            player->bombInfo.projectilePosition[i] +=
-                player->bombInfo.projectileVelocity[i] * g_Supervisor.effectiveFramerateMultiplier;
+            player->bombInfo.projectilePosition[i] += player->bombInfo.projectileVelocity[i] * g_Supervisor.gameSpeed;
 
             if (player->bombInfo.timer.HasTicked() && !MULTIPLE_OF(player->bombInfo.timer, 3))
             {
@@ -468,7 +465,7 @@ void BombMarisaBCalc(Player *player)
             g_AnmManager->ExecuteAnmIdx(vm, ANM_SCRIPT_PLAYER_MARISA_B_MASTER_SPARK + i);
             player->bombInfo.projectilePosition[i] = player->positionCenter;
         }
-        g_SoundPlayer.PlaySoundByIdx(SOUND_BOMB_MARISA_B);
+        g_SoundPlayer.PlaySoundId(SOUND_BOMB_MARISA_B);
         player->speedMultiplierDuringBomb.x = player->speedMultiplierDuringBomb.y = 0.3f;
     }
     else

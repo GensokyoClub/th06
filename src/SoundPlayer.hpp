@@ -45,6 +45,8 @@ enum SoundIdx
     SOUND_POWERUP,
 };
 
+#define IS_VALID_SFX(sfx) ((sfx) >= 0)
+
 struct SoundEffectData
 {
     i32 bufferIdx;
@@ -89,7 +91,7 @@ struct SoundPlayer
 #if BUILT_SINCE(100)
     void PlaySounds();
 #endif
-    void PlaySoundByIdx(SoundIdx idx, i32 unused = 0);
+    void PlaySoundId(i32 sound, i32 unused = 0);
     ZunResult PlayBGM(BOOL isLooping);
     void StopBGM();
     void UpdateFades()

@@ -272,7 +272,7 @@ struct Supervisor
     ZunBool vsyncEnabled;
 #endif
     i32 lastFrameTime;
-    f32 effectiveFramerateMultiplier;
+    f32 gameSpeed;
     f32 framerateMultiplier;
 
     MidiOutput *midiOutput;

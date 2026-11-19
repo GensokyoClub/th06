@@ -29,7 +29,7 @@ ChainCallbackResult Stage_OnUpdate(Stage *stage)
     D3DXVECTOR3 pos;
     StdRawInstr *curInstr;
 
-    if (stage->stdData == NULL)
+    if (stage->stdFile == NULL)
     {
         return CHAIN_CALLBACK_RESULT_CONTINUE;
     }
@@ -240,7 +240,7 @@ ChainCallbackResult Stage_OnDrawLowPrio(Stage *stage)
                 gameRegion.top = GAME_REGION_POS_Y;
                 gameRegion.right = GAME_REGION_POS_RIGHT;
                 gameRegion.bottom = GAME_REGION_POS_BOTTOM;
-                spellBackgroundAlpha = (stage->spellcardTicks * 255) / SPELL_BACKGROUND_FADE_IN_DURATION;
+                spellBackgroundAlpha = RAMP_UP(255, stage->spellcardTicks, SPELL_BACKGROUND_FADE_IN_DURATION);
                 ScreenEffect_DrawSquare(&gameRegion, COLOR_SET_ALPHA(COLOR_BLACK, spellBackgroundAlpha));
             }
         }
@@ -269,7 +269,7 @@ ChainCallbackResult Stage_OnDrawLowPrio(Stage *stage)
 
 ZunResult Stage_AddedCallback(Stage *stage)
 {
-    static StageFile g_StageFiles[] = {
+    static StageFiles g_StageFiles[] = {
         {"dummy", "dummy"},
         {"data/stg1bg.anm", "data/stage1.std"},
         {"data/stg2bg.anm", "data/stage2.std"},
@@ -315,9 +315,9 @@ ZunResult Stage_RegisterChain(u32 stage)
     Stage *stg = &g_Stage;
 
     memset(stg, 0, sizeof(Stage));
-    stg->stdData = NULL;
+    stg->stdFile = NULL;
 
-    stg->timer = 0;
+    stg->tickCount = 0;
 
     stg->stage = stage;
     g_StageCalcChain.SetCallback((ChainCallback)Stage_OnUpdate);
@@ -343,7 +343,7 @@ ZunResult Stage_DeletedCallback(Stage *s)
 {
     g_AnmManager->ReleaseAnm(ANM_FILE_STAGEBG);
     ZUN_SAFE_FREE(s->quadVms);
-    ZUN_SAFE_FREE(s->stdData);
+    ZUN_SAFE_FREE(s->stdFile);
     return ZUN_SUCCESS;
 }
 
@@ -357,8 +357,8 @@ void Stage_CutChain()
 #pragma var_order(vmIdx, idx, curObj, curQuad)
 ZunResult Stage::LoadStageData(const char *anmpath, const char *stdpath)
 {
-    RawStageObject *curObj;
-    RawStageQuadBasic *curQuad;
+    StdRawObject *curObj;
+    StdRawQuadBasic *curQuad;
     i32 idx;
     i32 vmIdx;
 
@@ -366,52 +366,52 @@ ZunResult Stage::LoadStageData(const char *anmpath, const char *stdpath)
     {
         return ZUN_ERROR;
     }
-    this->stdData = (RawStageHeader *)FileSystem::OpenPath(stdpath);
-    if (this->stdData == NULL)
+    this->stdFile = (StdRawHeader *)FileSystem::OpenPath(stdpath);
+    if (this->stdFile == NULL)
     {
         g_GameErrorContext.Log(TH_ERR_STAGE_DATA_CORRUPTED);
         return ZUN_ERROR;
     }
-    this->objectsCount = this->stdData->nbObjects;
-    this->quadCount = this->stdData->nbFaces;
-    this->objectInstances = (RawStageObjectInstance *)(this->stdData->facesOffset + (u32)this->stdData);
-    this->beginningOfScript = (StdRawInstr *)(this->stdData->scriptOffset + (u32)this->stdData);
-    this->objects = (RawStageObject **)(this->stdData + 1);
-    for (idx = 0; idx < this->objectsCount; idx++)
+    this->objectCount = this->stdFile->numObjects;
+    this->quadCount = this->stdFile->numQuads;
+    this->instances = (StdRawInstance *)(this->stdFile->instancesOffset + (u32)this->stdFile);
+    this->beginningOfScript = (StdRawInstr *)(this->stdFile->scriptOffset + (u32)this->stdFile);
+    this->objects = (StdRawObject **)(this->stdFile + 1);
+    for (idx = 0; idx < this->objectCount; idx++)
     {
-        this->objects[idx] = (RawStageObject *)((u32)this->objects[idx] + (u32)this->stdData);
+        this->objects[idx] = (StdRawObject *)((u32)this->objects[idx] + (u32)this->stdFile);
     }
     this->quadVms = ZUN_ALLOC_ARRAY(AnmVm, this->quadCount);
-    for (idx = 0, vmIdx = 0; idx < this->objectsCount; idx++)
+    for (idx = 0, vmIdx = 0; idx < this->objectCount; idx++)
     {
         curObj = this->objects[idx];
-        curObj->flags = 1;
+        curObj->flags = STD_OBJECT_RUN_ANMS;
         curQuad = curObj->quads;
         while (curQuad->type >= 0)
         {
             g_AnmManager->ExecuteAnmIdx(&this->quadVms[vmIdx], curQuad->anmScript + ANM_OFFSET_STAGEBG);
             curQuad->vmIdx = vmIdx++;
-            curQuad = (RawStageQuadBasic *)((u8 *)curQuad + curQuad->byteSize);
+            curQuad = (StdRawQuadBasic *)((u8 *)curQuad + curQuad->byteSize);
         }
     }
     return ZUN_SUCCESS;
 }
 
-#pragma var_order(objQuadType1, vmsNotFinished, objIdx, vm)
+#pragma var_order(objQuadType1, vmsRunning, objIdx, vm)
 ZunResult Stage::UpdateObjects()
 {
     AnmVm *vm;
-    RawStageQuadBasic *objQuadType1;
+    StdRawQuadBasic *objQuadType1;
     i32 objIdx;
-    i32 vmsNotFinished;
+    i32 vmsRunning;
 
-    for (objIdx = 0; objIdx < this->objectsCount; objIdx++)
+    for (objIdx = 0; objIdx < this->objectCount; objIdx++)
     {
-        RawStageObject *obj = this->objects[objIdx];
-        if (obj->flags & 1)
+        StdRawObject *obj = this->objects[objIdx];
+        if (obj->flags & STD_OBJECT_RUN_ANMS)
         {
-            vmsNotFinished = 0;
-            RawStageQuadBasic *objQuad = obj->quads;
+            vmsRunning = 0;
+            StdRawQuadBasic *objQuad = obj->quads;
             while (objQuad->type >= 0)
             {
                 vm = &this->quadVms[objQuad->vmIdx];
@@ -430,11 +430,11 @@ ZunResult Stage::UpdateObjects()
                 }
                 if (vm->currentInstruction != NULL)
                 {
-                    vmsNotFinished++;
+                    vmsRunning++;
                 }
-                objQuad = (RawStageQuadBasic *)((i32)&objQuad->type + objQuad->byteSize);
+                objQuad = (StdRawQuadBasic *)((i32)&objQuad->type + objQuad->byteSize);
             }
-            if (vmsNotFinished == 0)
+            if (vmsRunning == 0)
             {
                 obj->flags &= ~1;
             }
@@ -445,21 +445,21 @@ ZunResult Stage::UpdateObjects()
 
 #pragma var_order(unk8, curQuadVm, instancesDrawn, instance, worldMatrix, obj, quadScaledPos, quadPos, curQuad,        \
                   didDraw, projectSrc)
-ZunResult Stage::RenderObjects(i32 zLevel)
+ZunResult Stage::RenderObjects(i32 layer)
 {
     D3DXVECTOR3 projectSrc;
     ZunBool didDraw;
-    RawStageQuadBasic *curQuad;
+    StdRawQuadBasic *curQuad;
     D3DXVECTOR3 quadPos;
     D3DXVECTOR3 quadScaledPos;
-    RawStageObject *obj;
+    StdRawObject *obj;
     D3DXMATRIX worldMatrix;
-    RawStageObjectInstance *instance;
+    StdRawInstance *instance;
     i32 instancesDrawn;
     AnmVm *curQuadVm;
     i32 unk8;
 
-    instance = &this->objectInstances[0];
+    instance = &this->instances[0];
     instancesDrawn = 0;
     didDraw = false;
     projectSrc.x = 0.0f;
@@ -469,7 +469,7 @@ ZunResult Stage::RenderObjects(i32 zLevel)
     while (instance->id >= 0)
     {
         obj = this->objects[instance->id];
-        if (obj->zLevel == zLevel)
+        if (obj->layer == layer)
         {
             curQuad = obj->quads;
             unk8 = 0;
@@ -630,7 +630,7 @@ ZunResult Stage::RenderObjects(i32 zLevel)
                     }
                     break;
                 }
-                curQuad = (RawStageQuadBasic *)((i32)&curQuad->type + curQuad->byteSize);
+                curQuad = (StdRawQuadBasic *)((i32)&curQuad->type + curQuad->byteSize);
             }
             instancesDrawn++;
         }

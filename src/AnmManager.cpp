@@ -1187,15 +1187,15 @@ i32 AnmManager::RunAnm(AnmVm *vm)
 break_parser:
     if (vm->angleVel.x != 0.0f)
     {
-        vm->rotation.x = ReduceAngleAdd(vm->rotation.x, g_Supervisor.effectiveFramerateMultiplier * vm->angleVel.x);
+        vm->rotation.x = ReduceAngleAdd(vm->rotation.x, g_Supervisor.gameSpeed * vm->angleVel.x);
     }
     if (vm->angleVel.y != 0.0f)
     {
-        vm->rotation.y = ReduceAngleAdd(vm->rotation.y, g_Supervisor.effectiveFramerateMultiplier * vm->angleVel.y);
+        vm->rotation.y = ReduceAngleAdd(vm->rotation.y, g_Supervisor.gameSpeed * vm->angleVel.y);
     }
     if (vm->angleVel.z != 0.0f)
     {
-        vm->rotation.z = ReduceAngleAdd(vm->rotation.z, g_Supervisor.effectiveFramerateMultiplier * vm->angleVel.z);
+        vm->rotation.z = ReduceAngleAdd(vm->rotation.z, g_Supervisor.gameSpeed * vm->angleVel.z);
     }
     if (vm->scaleInterpDuration > 0)
     {
@@ -1226,8 +1226,8 @@ break_parser:
     }
     else
     {
-        vm->scaleY = g_Supervisor.effectiveFramerateMultiplier * vm->scaleInterpFinalY + vm->scaleY;
-        vm->scaleX = g_Supervisor.effectiveFramerateMultiplier * vm->scaleInterpFinalX + vm->scaleX;
+        vm->scaleY = g_Supervisor.gameSpeed * vm->scaleInterpFinalY + vm->scaleY;
+        vm->scaleX = g_Supervisor.gameSpeed * vm->scaleInterpFinalX + vm->scaleX;
     }
 
 #pragma var_order(colors, interpRatio, colorInterp)

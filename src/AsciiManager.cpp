@@ -27,7 +27,7 @@ ChainCallbackResult AsciiManager_OnUpdate(AsciiManager *mgr)
                 continue;
             }
 
-            curPopup->position.y -= 0.5f * g_Supervisor.effectiveFramerateMultiplier;
+            curPopup->position.y -= 0.5f * g_Supervisor.gameSpeed;
             curPopup->timer++;
             if (curPopup->timer > 60)
             {

@@ -149,7 +149,7 @@ void ItemManager::OnUpdate()
                 }
             }
         }
-        curItem->currentPosition += curItem->startPositionVelocity * g_Supervisor.effectiveFramerateMultiplier;
+        curItem->currentPosition += curItem->startPositionVelocity * g_Supervisor.gameSpeed;
         if (g_GameManager.gameRegionSize.y + ITEM_SIZE <= curItem->currentPosition.y)
         {
             curItem->isInUse = false;
@@ -158,7 +158,7 @@ void ItemManager::OnUpdate()
         }
         if (curItem->startPositionVelocity.y < 3.0f)
         {
-            curItem->startPositionVelocity.y += 0.03f * g_Supervisor.effectiveFramerateMultiplier;
+            curItem->startPositionVelocity.y += 0.03f * g_Supervisor.gameSpeed;
         }
         else
         {
@@ -208,7 +208,7 @@ void ItemManager::OnUpdate()
                     if (powerLevel != prevPowerLevel)
                     {
                         g_AsciiManager.CreatePopup1(&curItem->currentPosition, -1, COLOR_BABY_BLUE);
-                        g_SoundPlayer.PlaySoundByIdx(SOUND_POWERUP);
+                        g_SoundPlayer.PlaySoundId(SOUND_POWERUP);
                     }
                     else
                     {
@@ -294,7 +294,7 @@ void ItemManager::OnUpdate()
                     if (powerLevel != prevPowerLevel)
                     {
                         g_AsciiManager.CreatePopup1(&curItem->currentPosition, -1, COLOR_BABY_BLUE);
-                        g_SoundPlayer.PlaySoundByIdx(SOUND_POWERUP);
+                        g_SoundPlayer.PlaySoundId(SOUND_POWERUP);
                     }
                     else
                     {
@@ -317,14 +317,14 @@ void ItemManager::OnUpdate()
                     g_Gui.redrawFrames.lifeIcons = 2;
                 }
                 g_GameManager.IncreaseSubrank(200);
-                g_SoundPlayer.PlaySoundByIdx(SOUND_1UP);
+                g_SoundPlayer.PlaySoundId(SOUND_1UP);
                 break;
             case ITEM_FULL_POWER:
                 if (g_GameManager.currentPower < MAX_POWER)
                 {
                     g_BulletManager.CancelAllBullets();
                     g_Gui.ShowFullPowerMode(0);
-                    g_SoundPlayer.PlaySoundByIdx(SOUND_POWERUP);
+                    g_SoundPlayer.PlaySoundId(SOUND_POWERUP);
                     g_AsciiManager.CreatePopup1(&curItem->currentPosition, -1, COLOR_BABY_BLUE);
                 }
                 g_GameManager.currentPower = MAX_POWER;
@@ -351,7 +351,7 @@ void ItemManager::OnUpdate()
     }
     if (itemAcquired)
     {
-        g_SoundPlayer.PlaySoundByIdx(SOUND_21);
+        g_SoundPlayer.PlaySoundId(SOUND_21);
     }
 }
 

@@ -104,6 +104,22 @@ typedef short i16;
 typedef unsigned short u16;
 typedef int i32;
 typedef unsigned int u32;
+#if _MSC_VER >= 1310
+typedef long long i64;
+typedef unsigned long long u64;
+#else
+typedef __int64 i64;
+typedef unsigned __int64 u64;
+#endif
+#if _WIN64
+typedef i64 sptr;
+typedef u64 uptr;
+#else
+typedef i32 sptr;
+typedef u32 uptr;
+#endif
+#define OFFSET_PTR(type, ptr, offset) (T)((uptr)(ptr) + (uptr)(offset))
+
 typedef float f32;
 typedef double f64;
 

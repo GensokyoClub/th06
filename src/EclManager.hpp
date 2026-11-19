@@ -90,7 +90,7 @@ struct EclRawInstrLaserArgs
     f32 speed;
     f32 startOffset;
     f32 endOffset;
-    f32 startLength;
+    f32 length;
     f32 width;
     i32 startTime;
     i32 duration;

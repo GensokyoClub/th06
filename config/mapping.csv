@@ -385,7 +385,7 @@ th06::SoundPlayer::LoadPos,0x430e10,0xad,__thiscall,,ZunResult,SoundPlayer*,char
 th06::SoundPlayer::PlayBGM,0x430ec0,0xbe,__thiscall,,u32,SoundPlayer*,u32
 th06::SoundPlayer::StopBGM,0x430f80,0xfc,__thiscall,,void,SoundPlayer*
 th06::SoundPlayer::InitSoundBuffers,0x431080,0x156,__thiscall,,ZunResult,SoundPlayer*
-th06::SoundPlayer::PlaySoundByIdx,0x4311e0,0x85,__thiscall,,void,SoundPlayer*,SoundIdx,i32
+th06::SoundPlayer::PlaySoundId,0x4311e0,0x85,__thiscall,,void,SoundPlayer*,SoundIdx,i32
 th06::SoundPlayer::PlaySounds,0x431270,0x100,__thiscall,,void,SoundPlayer*
 th06::SoundPlayer_BackgroundMusicPlayerThread,0x431370,0xb0,__stdcall,,unsigned long,void*
 th06::SoundPlayer::SoundPlayer,0x431420,0x4c,__thiscall,,u32*,SoundPlayer*

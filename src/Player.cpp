@@ -38,9 +38,9 @@ static FireBulletResult FireSingleBullet(Player *player, PlayerBullet *bullet, i
     if (bulletData->bulletType == PLAYER_LASER)
     {
         bulletFrame = bulletData->bulletFrame;
-        if ((i32)player->laserTimer[bulletFrame] == 0)
+        if ((i32)player->shotTimer[bulletFrame] == 0)
         {
-            player->laserTimer[bulletFrame] = bulletData->waitBetweenBullets;
+            player->shotTimer[bulletFrame] = bulletData->waitBetweenBullets;
 
             bullet->bulletFrame = bulletFrame;
             bullet->spawnPositionIdx = bulletData->spawnPositionIdx;
@@ -80,9 +80,9 @@ static FireBulletResult FireSingleBullet(Player *player, PlayerBullet *bullet, i
 
         bullet->bulletType = bulletData->bulletType;
         bullet->damage = bulletData->damage;
-        if (bulletData->bulletSoundIdx >= 0)
+        if (IS_VALID_SFX(bulletData->bulletSoundIdx))
         {
-            g_SoundPlayer.PlaySoundByIdx((SoundIdx)bulletData->bulletSoundIdx);
+            g_SoundPlayer.PlaySoundId(bulletData->bulletSoundIdx);
         }
 
         return bulletIdx >= powerData->numBullets - 1;
@@ -182,11 +182,11 @@ static void UpdatePlayerBullets(Player *player)
     f32 vecLength;
     i32 idx;
 
-    for (idx = 0; idx < PLAYER_LASER_TIMER_COUNT; idx++)
+    for (idx = 0; idx < PLAYER_SHOT_TIMER_COUNT; idx++)
     {
-        if ((i32)player->laserTimer[idx] != 0)
+        if ((i32)player->shotTimer[idx] != 0)
         {
-            player->laserTimer[idx]--;
+            player->shotTimer[idx]--;
         }
     }
     bullet = &player->bullets[0];
@@ -253,11 +253,11 @@ static void UpdatePlayerBullets(Player *player)
             break;
         case PLAYER_LASER:
 
-            if (player->laserTimer[bullet->bulletFrame] == 70)
+            if (player->shotTimer[bullet->bulletFrame] == 70)
             {
                 bullet->sprite.pendingInterrupt = 1;
             }
-            else if (player->laserTimer[bullet->bulletFrame] == 1)
+            else if (player->shotTimer[bullet->bulletFrame] == 1)
             {
                 bullet->sprite.pendingInterrupt = 1;
             }
@@ -274,8 +274,8 @@ static void UpdatePlayerBullets(Player *player)
             break;
         }
 
-        bullet->sprite.pos.x = bullet->position[0] += bullet->velocity.x * g_Supervisor.effectiveFramerateMultiplier;
-        bullet->sprite.pos.y = bullet->position[1] += bullet->velocity.y * g_Supervisor.effectiveFramerateMultiplier;
+        bullet->sprite.pos.x = bullet->position[0] += bullet->velocity.x * g_Supervisor.gameSpeed;
+        bullet->sprite.pos.y = bullet->position[1] += bullet->velocity.y * g_Supervisor.gameSpeed;
         bullet->sprite.pos.z = bullet->position.z;
 
         if (bullet->bulletType != PLAYER_LASER &&
@@ -684,7 +684,7 @@ void Player::ScoreGraze(D3DXVECTOR3 *center)
     g_GameManager.AddScore(500);
     g_GameManager.IncreaseSubrank(6);
     g_Gui.redrawFrames.grazeCounter = 2;
-    g_SoundPlayer.PlaySoundByIdx(SOUND_GRAZE);
+    g_SoundPlayer.PlaySoundId(SOUND_GRAZE);
 }
 
 void Player::Die()
@@ -694,11 +694,11 @@ void Player::Die()
     g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_6, &this->positionCenter, 16, COLOR_WHITE);
     this->playerState = PLAYER_STATE_DEAD;
     this->stateTimer = 0;
-    g_SoundPlayer.PlaySoundByIdx(SOUND_PICHUN);
+    g_SoundPlayer.PlaySoundId(SOUND_PICHUN);
     g_GameManager.deaths++;
-    for (i32 i = 0; i < PLAYER_LASER_TIMER_COUNT; i++)
+    for (i32 i = 0; i < PLAYER_SHOT_TIMER_COUNT; i++)
     {
-        this->laserTimer[i] = 2;
+        this->shotTimer[i] = 2;
     }
 }
 
@@ -877,8 +877,8 @@ ZunResult Player::HandlePlayerInputs()
     this->previousSpeed.x = speedX;
     this->previousSpeed.y = speedY;
 
-    this->positionCenter[0] += speedX * this->speedMultiplierDuringBomb.x * g_Supervisor.effectiveFramerateMultiplier;
-    this->positionCenter[1] += speedY * this->speedMultiplierDuringBomb.y * g_Supervisor.effectiveFramerateMultiplier;
+    this->positionCenter[0] += speedX * this->speedMultiplierDuringBomb.x * g_Supervisor.gameSpeed;
+    this->positionCenter[1] += speedY * this->speedMultiplierDuringBomb.y * g_Supervisor.gameSpeed;
 
     if (this->positionCenter[0] < g_GameManager.playerMovementAreaTopLeftPos.x)
     {
@@ -1322,9 +1322,9 @@ static ZunResult Player_AddedCallback(Player *p)
     p->bombInfo.calc = g_BombData[CURRENT_SHOTTYPE()].calc;
     p->bombInfo.draw = g_BombData[CURRENT_SHOTTYPE()].draw;
     p->bombInfo.isInUse = false;
-    for (idx = 0; idx < PLAYER_LASER_TIMER_COUNT; idx++)
+    for (idx = 0; idx < PLAYER_SHOT_TIMER_COUNT; idx++)
     {
-        p->laserTimer[idx] = 0;
+        p->shotTimer[idx] = 0;
     }
     p->speedMultiplierDuringBomb.x = p->speedMultiplierDuringBomb.y = 1.0f;
     p->respawnTimer = 8;

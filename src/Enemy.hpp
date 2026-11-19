@@ -39,7 +39,7 @@ struct EnemyShooter
         {
             f32 startOffset;
             f32 endOffset;
-            f32 startLength;
+            f32 length;
             f32 width;
         };
     };
@@ -59,7 +59,7 @@ struct EnemyShooter
     u16 aimMode;
     u16 unk_4a;
     u32 flags;
-    SoundIdx sfx;
+    i32 shootSfx;
 };
 ZUN_ASSERT_TYPE(EnemyShooter, 0x54, 4);
 
@@ -166,14 +166,14 @@ struct Enemy
     {
         if (!this->flags.mirrored)
         {
-            this->position.x += g_Supervisor.effectiveFramerateMultiplier * this->axisSpeed.x;
+            this->position.x += g_Supervisor.gameSpeed * this->axisSpeed.x;
         }
         else
         {
-            this->position.x -= g_Supervisor.effectiveFramerateMultiplier * this->axisSpeed.x;
+            this->position.x -= g_Supervisor.gameSpeed * this->axisSpeed.x;
         }
-        this->position.y += g_Supervisor.effectiveFramerateMultiplier * this->axisSpeed.y;
-        this->position.z += g_Supervisor.effectiveFramerateMultiplier * this->axisSpeed.z;
+        this->position.y += g_Supervisor.gameSpeed * this->axisSpeed.y;
+        this->position.z += g_Supervisor.gameSpeed * this->axisSpeed.z;
     }
 
     void ClampPos();

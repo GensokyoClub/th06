@@ -500,20 +500,20 @@ ZunResult SoundPlayer::InitSoundBuffers()
 }
 
 #pragma var_order(i, SFXToPlay)
-void SoundPlayer::PlaySoundByIdx(SoundIdx idx, i32 unused)
+void SoundPlayer::PlaySoundId(i32 sound, i32 unused)
 {
 #if BUILT_SINCE(100)
     i32 SFXToPlay;
     i32 i;
 
-    SFXToPlay = g_SoundBufferIdxVol[idx].unk;
+    SFXToPlay = g_SoundBufferIdxVol[sound].unk;
     for (i = 0; i < SFX_QUEUE_LENGTH; i++)
     {
-        if (this->soundBuffersToPlay[i] < 0)
+        if (!IS_VALID_SFX(this->soundBuffersToPlay[i]))
         {
             break;
         }
-        if (this->soundBuffersToPlay[i] == idx)
+        if (this->soundBuffersToPlay[i] == sound)
         {
             return;
         }
@@ -522,14 +522,14 @@ void SoundPlayer::PlaySoundByIdx(SoundIdx idx, i32 unused)
     {
         return;
     }
-    this->soundBuffersToPlay[i] = idx;
-    this->unk408[idx] = SFXToPlay;
+    this->soundBuffersToPlay[i] = sound;
+    this->unk408[sound] = SFXToPlay;
 #else
     if (this->manager == NULL)
     {
         return;
     }
-    if (this->duplicateSoundBuffers[idx] == NULL)
+    if (this->duplicateSoundBuffers[sound] == NULL)
     {
         return;
     }
@@ -537,18 +537,16 @@ void SoundPlayer::PlaySoundByIdx(SoundIdx idx, i32 unused)
     {
         return;
     }
-    this->unk408[idx] = g_SoundBufferIdxVol[idx].unk;
-    this->duplicateSoundBuffers[idx]->Stop();
-    this->duplicateSoundBuffers[idx]->SetCurrentPosition(0);
-    this->duplicateSoundBuffers[idx]->Play(0, 0, 0);
+    this->unk408[sound] = g_SoundBufferIdxVol[sound].unk;
+    this->duplicateSoundBuffers[sound]->Stop();
+    this->duplicateSoundBuffers[sound]->SetCurrentPosition(0);
+    this->duplicateSoundBuffers[sound]->Play(0, 0, 0);
 #endif
 }
 
 #if BUILT_SINCE(100)
 void SoundPlayer::PlaySounds()
 {
-    i32 idx;
-
     if (this->manager == NULL)
     {
         return;
@@ -557,14 +555,14 @@ void SoundPlayer::PlaySounds()
     {
         return;
     }
-    for (idx = 0; idx < SFX_QUEUE_LENGTH; idx++)
+    for (i32 i = 0; i < SFX_QUEUE_LENGTH; i++)
     {
-        if (this->soundBuffersToPlay[idx] < 0)
+        if (!IS_VALID_SFX(this->soundBuffersToPlay[i]))
         {
             break;
         }
-        i32 sndBufIdx = this->soundBuffersToPlay[idx];
-        this->soundBuffersToPlay[idx] = -1;
+        i32 sndBufIdx = this->soundBuffersToPlay[i];
+        this->soundBuffersToPlay[i] = NO_SOUND;
         if (this->duplicateSoundBuffers[sndBufIdx] == NULL)
         {
             continue;

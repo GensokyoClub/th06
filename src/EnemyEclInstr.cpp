@@ -40,7 +40,7 @@ void ExInsCirnoRainbowBallJank(Enemy *enemy, EclRawInstr *curInstr)
             currentBullet->exFlags |= EX_ACCELERATION;
             currentBullet->exDuration = 220;
             currentBullet->timer = 0;
-            sincosmul(&currentBullet->ex4Acceleration, g_Rng.GetRandomF32InRange(ZUN_2PI) - ZUN_PI, 0.01f);
+            sincosmul(&currentBullet->exAcceleration, g_Rng.GetRandomF32InRange(ZUN_2PI) - ZUN_PI, 0.01f);
             break;
         }
     }
@@ -123,7 +123,7 @@ void ExInsShootStarPattern(Enemy *enemy, EclRawInstr *curInstr)
             enemy->bulletProps.speed1 = propsSpeedBackup;
             enemy->bulletProps.angle1 -= (ZUN_PI / 6.0f) * patternPosition;
         }
-        g_SoundPlayer.PlaySoundByIdx(SOUND_22);
+        g_SoundPlayer.PlaySoundId(SOUND_22);
     }
     enemy->currentContext.int2++;
 #undef ENEMY_POS
@@ -390,7 +390,7 @@ void ExInsStage5Func5(Enemy *enemy, EclRawInstr *curInstr)
             bulletProps.color = BULLET_BLUE8;
             g_BulletManager.SpawnBulletPattern(&bulletProps);
         }
-        g_SoundPlayer.PlaySoundByIdx(SOUND_7);
+        g_SoundPlayer.PlaySoundId(SOUND_7);
     }
     enemy->currentContext.int2++;
 }
@@ -539,12 +539,12 @@ void ExInsStage6Func7(Enemy *enemy, EclRawInstr *curInstr)
                     if (g_GameManager.difficulty <= NORMAL)
                     {
                         laserProps.endOffset = lengthMultiplier;
-                        laserProps.startLength = lengthMultiplier;
+                        laserProps.length = lengthMultiplier;
                     }
                     else
                     {
                         laserProps.endOffset = 440.0f;
-                        laserProps.startLength = 440.0f;
+                        laserProps.length = 440.0f;
                     }
                     if (g_GameManager.difficulty <= NORMAL)
                     {
@@ -667,10 +667,10 @@ void ExInsStage6Func9(Enemy *enemy, EclRawInstr *curInstr)
                 distance = 0.0f;
             }
 
-            sincosmul(&currentBullet->ex4Acceleration, (distance * ZUN_PI) / 256.0f + randomAngleModifier, 0.01f);
+            sincosmul(&currentBullet->exAcceleration, (distance * ZUN_PI) / 256.0f + randomAngleModifier, 0.01f);
 #else
             // Builds before 2002-08-25 take the square root of any distance, including zero.
-            sincosmul(&currentBullet->ex4Acceleration,
+            sincosmul(&currentBullet->exAcceleration,
                       (sqrtf(ZUN_SQUARE(enemy->position.x - currentBullet->pos.x) +
                              ZUN_SQUARE(enemy->position.y - currentBullet->pos.y)) *
                        ZUN_PI) /
@@ -711,7 +711,7 @@ void ExInsStage6Func11(Enemy *enemy, EclRawInstr *curInstr)
             currentBullet->timer = 0;
             currentBullet->exDuration = 120;
 
-            sincosmul(&currentBullet->ex4Acceleration, g_Rng.GetRandomF32InRange(ZUN_2PI) - ZUN_PI, 0.01f);
+            sincosmul(&currentBullet->exAcceleration, g_Rng.GetRandomF32InRange(ZUN_2PI) - ZUN_PI, 0.01f);
         }
     }
 }
@@ -875,7 +875,7 @@ void ExInsStageXFunc15(Enemy *enemy, EclRawInstr *curInstr)
                     bulletsAngle =
                         atan2f(innerBullet->pos.y - enemy->position.y, innerBullet->pos.x - enemy->position.x);
                     innerBullet->angle = (bulletsAngle - enemyAngle) * 2.2f + enemyAngle;
-                    sincosmul(&innerBullet->ex4Acceleration, innerBullet->angle, 0.01f);
+                    sincosmul(&innerBullet->exAcceleration, innerBullet->angle, 0.01f);
                     innerBullet->color += 1;
                     g_AnmManager->SetActiveSprite(&innerBullet->vm,
                                                   innerBullet->vm.baseSpriteIndex + innerBullet->color);

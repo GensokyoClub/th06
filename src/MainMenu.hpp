@@ -14,7 +14,7 @@
 namespace th06
 {
 ZunResult MainMenu_RegisterChain(ZunBool isDemo);
-enum GameState
+enum MenuState
 {
     STATE_STARTUP,
     STATE_PRE_INPUT,
@@ -65,7 +65,7 @@ struct MainMenu
     u32 unk_81e4;
     i32 chosenReplay;
     i32 replayFilesNum;
-    GameState gameState;
+    i32 gameState;
     i32 stateTimer;
     i32 idleFrames;
     D3DCOLOR minimumOpacity;
@@ -85,7 +85,7 @@ struct MainMenu
     ChainElem *chainCalc;
     ChainElem *chainDraw;
     char replayFilePaths[TOTAL_REPLAY_COUNT][512];
-    char replayFileName[TOTAL_REPLAY_COUNT][8];
+    char replayNames[TOTAL_REPLAY_COUNT][8];
     ReplayData replayFileData[TOTAL_REPLAY_COUNT];
     ReplayData *currentReplay;
     i32 timeRelatedArrSize;

@@ -313,7 +313,7 @@ void Gui::ShowBombNamePortrait(u32 sprite, const char *bombName)
 #if BUILT_SINCE(102g)
     g_Supervisor.forceRedrawFrames = 3;
 #endif
-    g_SoundPlayer.PlaySoundByIdx(SOUND_SPELL_START);
+    g_SoundPlayer.PlaySoundId(SOUND_SPELL_START);
 }
 
 void Gui::ShowSpellcard(i32 spellcardSprite, const char *spellcardName)
@@ -324,7 +324,7 @@ void Gui::ShowSpellcard(i32 spellcardSprite, const char *spellcardName)
     g_AnmManager->DrawTextToTextureRight(&this->impl->enemySpellcardName, COLOR_RGB(COLOR_BARELY_RED),
                                          COLOR_RGB(COLOR_BLACK), spellcardName);
     this->spellcardNameBarLength = strlen(spellcardName) * DEFAULT_ANM_FONT_SIZE / 2.0f + 16.0f;
-    g_SoundPlayer.PlaySoundByIdx(SOUND_SPELL_START);
+    g_SoundPlayer.PlaySoundId(SOUND_SPELL_START);
 }
 
 ZunResult Gui::ActualAddedCallback()
@@ -522,11 +522,11 @@ ZunResult Gui::ActualAddedCallback()
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->stageNameSprite, ANM_SCRIPT_TEXT_STAGE_NAME);
     g_AnmManager->SetAndExecuteScriptIdx(&this->impl->songNameSprite, ANM_SCRIPT_TEXT_SONG_NAME);
     g_AnmManager->DrawTextToTextureCenter(&this->impl->stageNameSprite, COLOR_RGB(COLOR_LIGHTCYAN),
-                                          COLOR_RGB(COLOR_BLACK), g_Stage.stdData->stageName);
+                                          COLOR_RGB(COLOR_BLACK), g_Stage.stdFile->stageName);
     this->impl->songNameSprite.fontWidth = DEFAULT_ANM_FONT_SIZE + 1;
     this->impl->songNameSprite.fontHeight = DEFAULT_ANM_FONT_SIZE + 1;
     g_AnmManager->DrawTextToTextureRight(&this->impl->songNameSprite, COLOR_RGB(COLOR_LIGHTCYAN),
-                                         COLOR_RGB(COLOR_BLACK), TH_SONG_NAME, g_Stage.stdData->songNames[0]);
+                                         COLOR_RGB(COLOR_BLACK), TH_SONG_NAME, g_Stage.stdFile->songNames[0]);
     this->impl->msg.currentMsgId = -1;
     this->impl->finishedStage = FALSE;
     this->impl->bonusScore.isShown = false;
@@ -695,10 +695,10 @@ ZunResult GuiImpl::RunMsg()
             this->songNameSprite.fontHeight = DEFAULT_ANM_FONT_SIZE + 1;
             g_AnmManager->DrawTextToTextureRight(&this->songNameSprite, COLOR_RGB(COLOR_LIGHTCYAN),
                                                  COLOR_RGB(COLOR_BLACK), TH_SONG_NAME,
-                                                 g_Stage.stdData->songNames[this->msg.currentInstr->args[0]]);
+                                                 g_Stage.stdFile->songNames[this->msg.currentInstr->args[0]]);
             if (g_Supervisor.PlayMidiFile(this->msg.currentInstr->args[0]))
             {
-                g_Supervisor.PlayAudio(g_Stage.stdData->songPaths[this->msg.currentInstr->args[0]]);
+                g_Supervisor.PlayAudio(g_Stage.stdFile->songPaths[this->msg.currentInstr->args[0]]);
             }
             break;
         case MSG_OPCODE_TEXT_INTRO:
@@ -1115,7 +1115,7 @@ void Gui::DrawGameScene()
         if (cappedSpellcardSecondsRemaining < 10 &&
             this->lastSpellcardSecondsRemaining != this->spellcardSecondsRemaining)
         {
-            g_SoundPlayer.PlaySoundByIdx(SOUND_29);
+            g_SoundPlayer.PlaySoundId(SOUND_29);
         }
         g_AsciiManager.AddFormatText(&textPos, "%.2d", cappedSpellcardSecondsRemaining);
         g_AsciiManager.SetColor(COLOR_WHITE);

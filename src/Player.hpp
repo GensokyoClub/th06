@@ -168,7 +168,7 @@ ZUN_ASSERT_TYPE(CharacterPowerData, 0xc, 4);
 #define MAX_PLAYER_BULLETS 80
 #define MAX_DAMAGE_REGION_COUNT 32
 #define MAX_CANCEL_REGION_COUNT 16
-#define PLAYER_LASER_TIMER_COUNT 2
+#define PLAYER_SHOT_TIMER_COUNT 2
 
 struct Player
 {
@@ -201,7 +201,7 @@ struct Player
     i32 damageRegionDamage[MAX_DAMAGE_REGION_COUNT];
     i32 damageRegionDamageDealt[MAX_DAMAGE_REGION_COUNT];
     PlayerRect cancelRegions[MAX_CANCEL_REGION_COUNT];
-    ZunTimer laserTimer[PLAYER_LASER_TIMER_COUNT];
+    ZunTimer shotTimer[PLAYER_SHOT_TIMER_COUNT];
     ZunVec2 speedMultiplierDuringBomb;
     i32 respawnTimer;
     i32 bulletGracePeriod;

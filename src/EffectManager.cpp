@@ -25,8 +25,8 @@ EffectCallbackResult Effect_RandomSplash(Effect *effect)
         effect->unk_128 = -effect->unk_11c / 19.0f;
     }
 
-    effect->pos1 += effect->unk_11c * g_Supervisor.effectiveFramerateMultiplier;
-    effect->unk_11c += effect->unk_128 * g_Supervisor.effectiveFramerateMultiplier;
+    effect->pos1 += effect->unk_11c * g_Supervisor.gameSpeed;
+    effect->unk_11c += effect->unk_128 * g_Supervisor.gameSpeed;
 
     return EFFECT_CALLBACK_RESULT_DONE;
 }
@@ -42,16 +42,16 @@ EffectCallbackResult Effect_RandomSplashBig(Effect *effect)
         effect->unk_128 = -effect->unk_11c / 20.0f;
     }
 
-    effect->pos1 += effect->unk_11c * g_Supervisor.effectiveFramerateMultiplier;
-    effect->unk_11c += effect->unk_128 * g_Supervisor.effectiveFramerateMultiplier;
+    effect->pos1 += effect->unk_11c * g_Supervisor.gameSpeed;
+    effect->unk_11c += effect->unk_128 * g_Supervisor.gameSpeed;
 
     return EFFECT_CALLBACK_RESULT_DONE;
 }
 
 EffectCallbackResult Effect_Still(Effect *effect)
 {
-    effect->pos1 += effect->unk_11c * g_Supervisor.effectiveFramerateMultiplier;
-    effect->unk_11c += effect->unk_128 * g_Supervisor.effectiveFramerateMultiplier;
+    effect->pos1 += effect->unk_11c * g_Supervisor.gameSpeed;
+    effect->unk_11c += effect->unk_128 * g_Supervisor.gameSpeed;
 
     return EFFECT_CALLBACK_RESULT_DONE;
 }

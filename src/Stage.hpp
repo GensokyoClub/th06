@@ -7,20 +7,20 @@
 
 namespace th06
 {
-struct RawStageHeader
+struct StdRawHeader
 {
-    i16 nbObjects;
-    i16 nbFaces;
-    i32 facesOffset;
+    i16 numObjects;
+    i16 numQuads;
+    i32 instancesOffset;
     i32 scriptOffset;
     unreferenced_fields(0x4);
     char stageName[128];
     char songNames[4][128];
     char songPaths[4][128];
 };
-ZUN_ASSERT_TYPE(RawStageHeader, 0x490, 4);
+ZUN_ASSERT_TYPE(StdRawHeader, 0x490, 4);
 
-struct RawStageQuadBasic
+struct StdRawQuadBasic
 {
     i16 type;
     i16 byteSize;
@@ -29,27 +29,32 @@ struct RawStageQuadBasic
     D3DXVECTOR3 position;
     ZunVec2 size;
 };
-ZUN_ASSERT_TYPE(RawStageQuadBasic, 0x1c, 4);
+ZUN_ASSERT_TYPE(StdRawQuadBasic, 0x1c, 4);
 
-struct RawStageObject
+struct StdRawObject
 {
     i16 id;
-    i8 zLevel;
+    i8 layer;
     i8 flags;
     D3DXVECTOR3 position;
     D3DXVECTOR3 size;
     // Records end at a negative type and are stepped by byteSize.
-    RawStageQuadBasic quads[];
+    StdRawQuadBasic quads[];
 };
-ZUN_ASSERT_TYPE(RawStageObject, 0x1c, 4);
+ZUN_ASSERT_TYPE(StdRawObject, 0x1c, 4);
 
-struct RawStageObjectInstance
+enum StdObjectFlags
+{
+    STD_OBJECT_RUN_ANMS = 0x1
+};
+
+struct StdRawInstance
 {
     i16 id;
     alignment_padding(0x2);
     D3DXVECTOR3 position;
 };
-ZUN_ASSERT_TYPE(RawStageObjectInstance, 0x10, 4);
+ZUN_ASSERT_TYPE(StdRawInstance, 0x10, 4);
 
 struct StdRawInstr
 {
@@ -77,12 +82,12 @@ enum SpellcardState
 
 #define SPELL_BACKGROUND_FADE_IN_DURATION 60
 
-struct StageFile
+struct StageFiles
 {
     const char *anmFile;
     const char *stdFile;
 };
-ZUN_ASSERT_TYPE(StageFile, 0x8, 4);
+ZUN_ASSERT_TYPE(StageFiles, 0x8, 4);
 
 enum StdOpcode
 {
@@ -98,18 +103,18 @@ struct Stage
 {
     ZunResult LoadStageData(const char *anmpath, const char *stdpath);
     ZunResult UpdateObjects();
-    ZunResult RenderObjects(i32 zLevel);
+    ZunResult RenderObjects(i32 layer);
 
     AnmVm *quadVms;
-    RawStageHeader *stdData;
+    StdRawHeader *stdFile;
     i32 quadCount;
-    i32 objectsCount;
-    RawStageObject **objects;
-    RawStageObjectInstance *objectInstances;
+    i32 objectCount;
+    StdRawObject **objects;
+    StdRawInstance *instances;
     StdRawInstr *beginningOfScript;
     ZunTimer scriptTime;
     i32 instructionIndex;
-    ZunTimer timer;
+    ZunTimer tickCount; // Not really used, changes to i32 when used later in PCB
     u32 stage;
     D3DXVECTOR3 position;
     StageSky sky;

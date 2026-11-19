@@ -371,7 +371,7 @@ th06::SoundPlayer::PlayBGM
 th06::SoundPlayer::StopBGM
 th06::SoundPlayer::FadeOut
 th06::SoundPlayer::PlaySounds
-th06::SoundPlayer::PlaySoundByIdx
+th06::SoundPlayer::PlaySoundId
 th06::SoundPlayer::BackgroundMusicPlayerThread
 th06::SoundPlayer::InitSoundBuffers
 th06::MusicRoom::MusicRoom

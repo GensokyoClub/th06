@@ -164,18 +164,18 @@ struct Bullet : BulletBase
 {
     D3DXVECTOR3 pos;
     D3DXVECTOR3 velocity;
-    D3DXVECTOR3 ex4Acceleration;
+    D3DXVECTOR3 exAcceleration; // EX_ACCELERATION
     f32 speed;
-    f32 exVelSpeed;
-    f32 dirChangeSpeed;
+    f32 exVelocity; // EX_VELOCITY
+    f32 exSpeed; // EX_ANGLE, EX_BOUNCE
     f32 angle;
-    f32 exVelAngle;
-    f32 dirChangeRotation;
+    f32 exAngularVelocity; // EX_VELOCITY
+    f32 exAngle; // EX_ANGLE
     ZunTimer timer;
-    i32 exDuration;
-    i32 dirChangeInterval;
-    i32 dirChangeNumTimes;
-    i32 dirChangeMaxTimes;
+    i32 exDuration; // EX_ACCELERATION, EX_VELOCITY
+    i32 exInterval; // EX_ANGLE
+    i32 exCount; // EX_ANGLE, EX_BOUNCE
+    i32 exCountMax; // EX_ANGLE, EX_BOUNCE
     u16 exFlags;
     i16 color;
     unreferenced_fields(0x2);
@@ -194,7 +194,7 @@ struct Laser
     f32 angle;
     f32 startOffset;
     f32 endOffset;
-    f32 startLength;
+    f32 length;
     f32 width;
     f32 speed;
     i32 startTime;

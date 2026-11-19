@@ -340,11 +340,11 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
     {
         if (bulletProps->exFloats[1] <= -999.0f)
         {
-            sincosmul(&bullet->ex4Acceleration, bulletAngle, bulletProps->exFloats[0]);
+            sincosmul(&bullet->exAcceleration, bulletAngle, bulletProps->exFloats[0]);
         }
         else
         {
-            sincosmul(&bullet->ex4Acceleration, bulletProps->exFloats[1], bulletProps->exFloats[0]);
+            sincosmul(&bullet->exAcceleration, bulletProps->exFloats[1], bulletProps->exFloats[0]);
         }
 
         if (bulletProps->exInts[0] > 0)
@@ -356,46 +356,46 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
             bullet->exDuration = 99999;
         }
 
-        bullet->ex4Acceleration.z = 0.0f;
+        bullet->exAcceleration.z = 0.0f;
     }
     else if (bullet->exFlags & EX_VELOCITY)
     {
-        bullet->exVelSpeed = bulletProps->exFloats[0];
-        bullet->exVelAngle = bulletProps->exFloats[1];
+        bullet->exVelocity = bulletProps->exFloats[0];
+        bullet->exAngularVelocity = bulletProps->exFloats[1];
         bullet->exDuration = bulletProps->exInts[0];
     }
 
     if (bullet->exFlags & EX_ANGLE)
     {
-        bullet->dirChangeRotation = bulletProps->exFloats[0];
+        bullet->exAngle = bulletProps->exFloats[0];
 
         if (bulletProps->exFloats[1] >= 0.0f)
         {
-            bullet->dirChangeSpeed = bulletProps->exFloats[1];
+            bullet->exSpeed = bulletProps->exFloats[1];
         }
         else
         {
-            bullet->dirChangeSpeed = bulletSpeed;
+            bullet->exSpeed = bulletSpeed;
         }
 
-        bullet->dirChangeInterval = bulletProps->exInts[0];
-        bullet->dirChangeMaxTimes = bulletProps->exInts[1];
-        bullet->dirChangeNumTimes = 0;
+        bullet->exInterval = bulletProps->exInts[0];
+        bullet->exCountMax = bulletProps->exInts[1];
+        bullet->exCount = 0;
     }
 
     if (bullet->exFlags & EX_BOUNCE)
     {
         if (bulletProps->exFloats[0] >= 0.0f)
         {
-            bullet->dirChangeSpeed = bulletProps->exFloats[0];
+            bullet->exSpeed = bulletProps->exFloats[0];
         }
         else
         {
-            bullet->dirChangeSpeed = bulletSpeed;
+            bullet->exSpeed = bulletSpeed;
         }
 
-        bullet->dirChangeMaxTimes = bulletProps->exInts[0];
-        bullet->dirChangeNumTimes = 0;
+        bullet->exCountMax = bulletProps->exInts[0];
+        bullet->exCount = 0;
     }
     return 0;
 }
@@ -572,7 +572,7 @@ ZunResult BulletManager::SpawnBulletPattern(EnemyShooter *bulletProps)
 out:
     if (bulletProps->flags & EX_SPAWN_SOUND)
     {
-        g_SoundPlayer.PlaySoundByIdx(bulletProps->sfx);
+        g_SoundPlayer.PlaySoundId(bulletProps->shootSfx);
     }
     return ZUN_SUCCESS;
 }
@@ -611,7 +611,7 @@ Laser *BulletManager::SpawnLaserPattern(EnemyShooter *bulletProps)
         laser->timer = 0;
         laser->startOffset = bulletProps->startOffset;
         laser->endOffset = bulletProps->endOffset;
-        laser->startLength = bulletProps->startLength;
+        laser->length = bulletProps->length;
         laser->width = bulletProps->width;
         laser->speed = bulletProps->speed1;
         laser->startTime = bulletProps->startTime;
@@ -664,7 +664,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
         switch (curBullet->state)
         {
         case BULLET_STATE_SPAWNING_FAST:
-            curBullet->pos += curBullet->velocity / 2.0f * g_Supervisor.effectiveFramerateMultiplier;
+            curBullet->pos += curBullet->velocity / 2.0f * g_Supervisor.gameSpeed;
 
             if (g_AnmManager->RunAnm(&curBullet->spawnEffectFast) == SCRIPT_RUNNING)
             {
@@ -672,7 +672,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
             }
             goto spawn_animation_done;
         case BULLET_STATE_SPAWNING_NORMAL:
-            curBullet->pos += curBullet->velocity / 2.5f * g_Supervisor.effectiveFramerateMultiplier;
+            curBullet->pos += curBullet->velocity / 2.5f * g_Supervisor.gameSpeed;
 
             if (g_AnmManager->RunAnm(&curBullet->spawnEffectNormal) == SCRIPT_RUNNING)
             {
@@ -680,7 +680,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
             }
             goto spawn_animation_done;
         case BULLET_STATE_SPAWNING_SLOW:
-            curBullet->pos += curBullet->velocity / 3.0f * g_Supervisor.effectiveFramerateMultiplier;
+            curBullet->pos += curBullet->velocity / 3.0f * g_Supervisor.gameSpeed;
 
             if (g_AnmManager->RunAnm(&curBullet->spawnEffectSlow) == SCRIPT_RUNNING)
             {
@@ -713,7 +713,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                     }
                     else
                     {
-                        curBullet->velocity += curBullet->ex4Acceleration * g_Supervisor.effectiveFramerateMultiplier;
+                        curBullet->velocity += curBullet->exAcceleration * g_Supervisor.gameSpeed;
                         curBullet->angle = atan2f(curBullet->velocity.y, curBullet->velocity.x);
                     }
                 }
@@ -726,76 +726,76 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                     else
                     {
                         curBullet->angle = ReduceAngleAdd(
-                            curBullet->angle, curBullet->exVelAngle * g_Supervisor.effectiveFramerateMultiplier);
-                        curBullet->speed += curBullet->exVelSpeed * g_Supervisor.effectiveFramerateMultiplier;
+                            curBullet->angle, curBullet->exAngularVelocity * g_Supervisor.gameSpeed);
+                        curBullet->speed += curBullet->exVelocity * g_Supervisor.gameSpeed;
                         sincosmul(&curBullet->velocity, curBullet->angle, curBullet->speed);
                     }
                 }
                 if (curBullet->exFlags & EX_ANGLE_ADD)
                 {
-                    if (curBullet->timer >= curBullet->dirChangeInterval * (curBullet->dirChangeNumTimes + 1))
+                    if (curBullet->timer >= curBullet->exInterval * (curBullet->exCount + 1))
                     {
-                        if (++curBullet->dirChangeNumTimes >= curBullet->dirChangeMaxTimes)
+                        if (++curBullet->exCount >= curBullet->exCountMax)
                         {
                             curBullet->exFlags &= ~EX_ANGLE_ADD;
                         }
 
-                        curBullet->angle = curBullet->angle + curBullet->dirChangeRotation;
-                        curBullet->speed = curBullet->dirChangeSpeed;
+                        curBullet->angle = curBullet->angle + curBullet->exAngle;
+                        curBullet->speed = curBullet->exSpeed;
                         bulletSpeed = curBullet->speed;
                     }
                     else
                     {
                         bulletSpeed = RAMP_DOWN(curBullet->speed,
                                                 (f32)curBullet->timer -
-                                                    (curBullet->dirChangeInterval * curBullet->dirChangeNumTimes),
-                                                curBullet->dirChangeInterval);
+                                                    (curBullet->exInterval * curBullet->exCount),
+                                                curBullet->exInterval);
                     }
 
                     sincosmul(&curBullet->velocity, curBullet->angle, bulletSpeed);
                 }
                 else if (curBullet->exFlags & EX_ANGLE_SET)
                 {
-                    if (curBullet->timer >= curBullet->dirChangeInterval * (curBullet->dirChangeNumTimes + 1))
+                    if (curBullet->timer >= curBullet->exInterval * (curBullet->exCount + 1))
                     {
-                        if (++curBullet->dirChangeNumTimes >= curBullet->dirChangeMaxTimes)
+                        if (++curBullet->exCount >= curBullet->exCountMax)
                         {
                             curBullet->exFlags &= ~EX_ANGLE_SET;
                         }
 
-                        curBullet->angle = curBullet->dirChangeRotation;
-                        curBullet->speed = curBullet->dirChangeSpeed;
+                        curBullet->angle = curBullet->exAngle;
+                        curBullet->speed = curBullet->exSpeed;
                         bulletSpeed = curBullet->speed;
                     }
                     else
                     {
                         bulletSpeed = RAMP_DOWN(curBullet->speed,
                                                 (f32)curBullet->timer -
-                                                    (curBullet->dirChangeInterval * curBullet->dirChangeNumTimes),
-                                                curBullet->dirChangeInterval);
+                                                    (curBullet->exInterval * curBullet->exCount),
+                                                curBullet->exInterval);
                     }
 
                     sincosmul(&curBullet->velocity, curBullet->angle, bulletSpeed);
                 }
                 else if (curBullet->exFlags & EX_ANGLE_PLAYER)
                 {
-                    if (curBullet->timer >= curBullet->dirChangeInterval * (curBullet->dirChangeNumTimes + 1))
+                    if (curBullet->timer >= curBullet->exInterval * (curBullet->exCount + 1))
                     {
-                        if (++curBullet->dirChangeNumTimes >= curBullet->dirChangeMaxTimes)
+                        if (++curBullet->exCount >= curBullet->exCountMax)
                         {
                             curBullet->exFlags &= ~EX_ANGLE_PLAYER;
                         }
 
-                        curBullet->angle = g_Player.AngleToPlayer(&curBullet->pos) + curBullet->dirChangeRotation;
-                        curBullet->speed = curBullet->dirChangeSpeed;
+                        curBullet->angle = g_Player.AngleToPlayer(&curBullet->pos) + curBullet->exAngle;
+                        curBullet->speed = curBullet->exSpeed;
                         bulletSpeed = curBullet->speed;
                     }
                     else
                     {
                         bulletSpeed = RAMP_DOWN(curBullet->speed,
                                                 (f32)curBullet->timer -
-                                                    (curBullet->dirChangeInterval * curBullet->dirChangeNumTimes),
-                                                curBullet->dirChangeInterval);
+                                                    (curBullet->exInterval * curBullet->exCount),
+                                                curBullet->exInterval);
                     }
                     sincosmul(&curBullet->velocity, curBullet->angle, bulletSpeed);
                 }
@@ -815,11 +815,11 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                             curBullet->angle = -curBullet->angle;
                         }
 
-                        curBullet->speed = curBullet->dirChangeSpeed;
+                        curBullet->speed = curBullet->exSpeed;
                         bulletSpeed = curBullet->speed;
                         sincosmul(&curBullet->velocity, curBullet->angle, bulletSpeed);
 
-                        if (++curBullet->dirChangeNumTimes >= curBullet->dirChangeMaxTimes)
+                        if (++curBullet->exCount >= curBullet->exCountMax)
                         {
                             curBullet->exFlags &= ~EX_BOUNCE_TBLR;
                         }
@@ -841,11 +841,11 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                             curBullet->angle = -curBullet->angle;
                         }
 
-                        curBullet->speed = curBullet->dirChangeSpeed;
+                        curBullet->speed = curBullet->exSpeed;
                         bulletSpeed = curBullet->speed;
                         sincosmul(&curBullet->velocity, curBullet->angle, bulletSpeed);
 
-                        if (++curBullet->dirChangeNumTimes >= curBullet->dirChangeMaxTimes)
+                        if (++curBullet->exCount >= curBullet->exCountMax)
                         {
                             curBullet->exFlags &= ~EX_BOUNCE_TLR;
                         }
@@ -853,7 +853,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                 }
             }
 
-            curBullet->pos += curBullet->velocity * g_Supervisor.effectiveFramerateMultiplier;
+            curBullet->pos += curBullet->velocity * g_Supervisor.gameSpeed;
             if (!g_GameManager.IsInBounds(curBullet->pos[0], curBullet->pos[1], curBullet->vm.sprite->width,
                                           curBullet->vm.sprite->height))
             {
@@ -909,7 +909,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
             g_AnmManager->RunAnm(&curBullet->vm);
             break;
         case BULLET_STATE_DESPAWNING:
-            curBullet->pos += curBullet->velocity / 2.0f * g_Supervisor.effectiveFramerateMultiplier;
+            curBullet->pos += curBullet->velocity / 2.0f * g_Supervisor.gameSpeed;
             if (g_AnmManager->RunAnm(&curBullet->despawnEffect) != SCRIPT_RUNNING)
             {
                 memset(curBullet, 0, sizeof(Bullet));
@@ -936,11 +936,11 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
             continue;
         }
 
-        curLaser->endOffset += curLaser->speed * g_Supervisor.effectiveFramerateMultiplier;
+        curLaser->endOffset += curLaser->speed * g_Supervisor.gameSpeed;
 
-        if (curLaser->startLength < curLaser->endOffset - curLaser->startOffset)
+        if (curLaser->length < curLaser->endOffset - curLaser->startOffset)
         {
-            curLaser->startOffset = curLaser->endOffset - curLaser->startLength;
+            curLaser->startOffset = curLaser->endOffset - curLaser->length;
         }
 
         if (curLaser->startOffset < 0.0f)

@@ -383,6 +383,7 @@ finishMusiccmtRead:
 
 static ZunResult MusicRoom_DeletedCallback(MusicRoom *musicRoom)
 {
+    // BUG: Should be ZUN_DELETE_ARRAY
     ZUN_DELETE(musicRoom->trackDescriptors);
 
     g_AnmManager->ReleaseSurface(0);

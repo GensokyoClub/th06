@@ -149,7 +149,7 @@ ChainCallbackResult GameManager_OnUpdate(GameManager *gameManager)
             if (gameManager->livesRemaining < MAX_LIVES)
             {
                 gameManager->livesRemaining++;
-                g_SoundPlayer.PlaySoundByIdx(SOUND_1UP);
+                g_SoundPlayer.PlaySoundId(SOUND_1UP);
             }
             g_Gui.redrawFrames.lifeIcons = 2;
             gameManager->livesEarned++;
@@ -393,9 +393,9 @@ static ZunResult GameManager_AddedCallback(GameManager *mgr)
     if (!g_GameManager.demoMode)
     {
         // Read boss battle, and store it for use when boss is started.
-        g_Supervisor.ReadMidiFile(1, g_Stage.stdData->songPaths[1]);
+        g_Supervisor.ReadMidiFile(1, g_Stage.stdFile->songPaths[1]);
         // Immediately start playing this level's theme.
-        g_Supervisor.PlayAudio(g_Stage.stdData->songPaths[0]);
+        g_Supervisor.PlayAudio(g_Stage.stdFile->songPaths[0]);
     }
     mgr->isInRetryMenu = false;
     mgr->isInMenu = true;

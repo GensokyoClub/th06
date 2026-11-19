@@ -335,7 +335,7 @@ RenderResult GameWindow::Render()
                 {
                     delta = 0.5;
                 }
-                g_Supervisor.effectiveFramerateMultiplier = delta;
+                g_Supervisor.gameSpeed = delta;
                 g_Supervisor.lastFrameTime = curtime;
                 timeEndPeriod(1);
                 g_TickCountToEffectiveFramerate = 0;
@@ -343,7 +343,7 @@ RenderResult GameWindow::Render()
         }
         else
         {
-            g_Supervisor.effectiveFramerateMultiplier = g_Supervisor.framerateMultiplier;
+            g_Supervisor.gameSpeed = g_Supervisor.framerateMultiplier;
         }
         this->curFrame = 0;
         g_TickCountToEffectiveFramerate++;

@@ -606,7 +606,7 @@ restart_sub_changed:
             shooter->speed1 = *EclGetVarFloat(enemy, &args->speed, NULL);
             shooter->startOffset = *EclGetVarFloat(enemy, &args->startOffset, NULL);
             shooter->endOffset = *EclGetVarFloat(enemy, &args->endOffset, NULL);
-            shooter->startLength = *EclGetVarFloat(enemy, &args->startLength, NULL);
+            shooter->length = *EclGetVarFloat(enemy, &args->length, NULL);
             shooter->width = args->width;
             shooter->startTime = args->startTime;
             shooter->duration = args->duration;
@@ -821,7 +821,7 @@ restart_sub_changed:
             enemy->flags.isDamageable = GET_INSTR_INT_ARG(0);
             break;
         case ECL_OPCODE_EFFECT_SOUND:
-            g_SoundPlayer.PlaySoundByIdx(GET_INSTR_ARG(SoundIdx, 0));
+            g_SoundPlayer.PlaySoundId(GET_INSTR_INT_ARG(0));
             break;
         case ECL_OPCODE_ENEMY_FLAGS_DEATH:
             enemy->flags.deathMode = GET_INSTR_INT_ARG(0);
@@ -948,18 +948,17 @@ restart_sub_changed:
             break;
         case ECL_OPCODE_EFFECT_PARTICLE:
             g_EffectManager.SpawnParticles(GET_INSTR_INT_ARG(0), &enemy->position, GET_INSTR_INT_ARG(1),
-                                           GET_INSTR_ARG(ZunColor, 2));
+                                           *(ZunColor*)&GET_INSTR_INT_ARG(2));
             break;
         case ECL_OPCODE_DROP_ITEMS: {
-            for (i32 idx = 0; idx < GET_INSTR_INT_ARG(0); idx++)
+            for (i32 i = 0; i < GET_INSTR_INT_ARG(0); i++)
             {
                 D3DXVECTOR3 pos = enemy->position;
-
-                pos[0] += g_Rng.GetRandomF32InRange(144.0f) - 72.0f;
-                pos[1] += g_Rng.GetRandomF32InRange(144.0f) - 72.0f;
+                pos[0] += g_Rng.GetRandomF32InRange(ITEM_DROP_RANGE) - (ITEM_DROP_RANGE / 2.0f);
+                pos[1] += g_Rng.GetRandomF32InRange(ITEM_DROP_RANGE) - (ITEM_DROP_RANGE / 2.0f);
                 if (g_GameManager.currentPower < MAX_POWER)
                 {
-                    g_ItemManager.SpawnItem(&pos, idx == 0 ? ITEM_POWER_BIG : ITEM_POWER_SMALL, ITEM_STATE_FALLING);
+                    g_ItemManager.SpawnItem(&pos, i == 0 ? ITEM_POWER_BIG : ITEM_POWER_SMALL, ITEM_STATE_FALLING);
                 }
                 else
                 {
@@ -1038,9 +1037,9 @@ restart_sub_changed:
             g_BulletManager.CancelAllBullets();
             break;
         case ECL_OPCODE_BULLET_SOUND:
-            if (GET_INSTR_ARG(SoundIdx, 0) >= 0)
+            if (IS_VALID_SFX(GET_INSTR_INT_ARG(0)))
             {
-                enemy->bulletProps.sfx = GET_INSTR_ARG(SoundIdx, 0);
+                enemy->bulletProps.shootSfx = GET_INSTR_INT_ARG(0);
                 enemy->bulletProps.flags |= EX_SPAWN_SOUND;
             }
             else
@@ -1077,12 +1076,13 @@ restart_sub_changed:
     }
     switch (enemy->flags.movementMode)
     {
-    case EnemyMove_Velocity:
-        enemy->angle = ReduceAngleAdd(enemy->angle, g_Supervisor.effectiveFramerateMultiplier * enemy->angularVelocity);
-        enemy->speed = g_Supervisor.effectiveFramerateMultiplier * enemy->acceleration + enemy->speed;
+    case EnemyMove_Velocity: {
+        enemy->angle = ReduceAngleAdd(enemy->angle, g_Supervisor.gameSpeed * enemy->angularVelocity);
+        enemy->speed += g_Supervisor.gameSpeed * enemy->acceleration;
         sincosmul(&enemy->axisSpeed, enemy->angle, enemy->speed);
         enemy->axisSpeed[2] = 0.0f;
         break;
+    }
     case EnemyMove_Interp: {
         enemy->moveInterpTime--;
         f32 interpVal = (f32)enemy->moveInterpTime / enemy->moveInterpDuration;

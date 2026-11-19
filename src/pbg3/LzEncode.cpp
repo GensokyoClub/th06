@@ -58,15 +58,15 @@ BOOL LzEncode::Close()
     }
     this->writer->SeekToNextByte();
     u32 tableOffset = this->writer->Tell();
-    LzEncodeEntry entry;
+    Pbg3Entry entry;
     for (u32 i = 0; i < this->entryCount; ++i)
     {
         this->entries->Pop(entry);
         this->writer->WriteVarInt(entry.lastWriteTime.dwHighDateTime);
         this->writer->WriteVarInt(entry.lastWriteTime.dwLowDateTime);
         this->writer->WriteVarInt(entry.checksum);
-        this->writer->WriteVarInt(entry.offset);
-        this->writer->WriteVarInt(entry.size);
+        this->writer->WriteVarInt(entry.dataOffset);
+        this->writer->WriteVarInt(entry.uncompressedSize);
         this->writer->IPbg3Writer::WriteString(entry.filename);
     }
     this->writer->SeekToOffset(4);
@@ -94,8 +94,8 @@ BOOL LzEncode::Encode(IPbg3Reader *input, const char *name)
     {
         return FALSE;
     }
-    LzEncodeEntry entry;
-    entry.offset = this->writer->Tell();
+    Pbg3Entry entry;
+    entry.dataOffset = this->writer->Tell();
     if (input->SeekToOffset(0) == FALSE)
     {
         return FALSE;
@@ -171,7 +171,7 @@ BOOL LzEncode::Encode(IPbg3Reader *input, const char *name)
         return FALSE;
     }
     entry.checksum = this->writer->GetChecksum();
-    entry.size = input->GetSize();
+    entry.uncompressedSize = input->GetSize();
     input->GetLastWriteTime(&entry.lastWriteTime);
 
     // NOTE: Very different strcpy codegen

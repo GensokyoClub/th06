@@ -274,8 +274,8 @@ BOOL Pbg3Archive::ParseHeader()
 
     for (u32 idx = 0; idx < this->numOfEntries; idx++)
     {
-        this->entries[idx].unk2 = this->reader->ReadVarInt();
-        this->entries[idx].unk1 = this->reader->ReadVarInt();
+        this->entries[idx].lastWriteTime.dwHighDateTime = this->reader->ReadVarInt();
+        this->entries[idx].lastWriteTime.dwLowDateTime = this->reader->ReadVarInt();
         this->entries[idx].checksum = this->reader->ReadVarInt();
         this->entries[idx].dataOffset = this->reader->ReadVarInt();
         this->entries[idx].uncompressedSize = this->reader->ReadVarInt();
@@ -321,8 +321,6 @@ u32 Pbg3Archive::GetEntrySize(u32 entryIdx)
 
     return this->entries[entryIdx].uncompressedSize;
 }
-
-// Dead KOG code
 
 u8 *Pbg3Archive::ReadEntryRaw(u32 *outSize, u32 *outChecksum, i32 entryIdx)
 {

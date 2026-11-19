@@ -7,6 +7,7 @@
 
 namespace th06
 {
+static const f32 descriptionColumnWidth = 248.0f;
 
 ZunResult MusicRoom::CheckInputEnable()
 {
@@ -93,7 +94,7 @@ ZunBool MusicRoom::ProcessInput()
                 this->descriptionSprites[i].flags.isVisibleOverride = false;
             }
 
-            this->descriptionSprites[i].pos.x = (i % 2) * 248.0f + 96.0f;
+            this->descriptionSprites[i].pos.x = (i % 2) * descriptionColumnWidth + 96.0f;
             this->descriptionSprites[i].pos.y = 320.0f + ((i / 2) << 4);
             this->descriptionSprites[i].pos.z = 0.0f;
             this->descriptionSprites[i].flags.anchor = AnmVmAnchor_TopLeft;
@@ -369,7 +370,7 @@ finishMusiccmtRead:
             musicRoom->descriptionSprites[i].flags.isVisibleOverride = false;
         }
 
-        musicRoom->descriptionSprites[i].pos.x = (i % 2) * 248.0f + 96.0f;
+        musicRoom->descriptionSprites[i].pos.x = (i % 2) * descriptionColumnWidth + 96.0f;
         musicRoom->descriptionSprites[i].pos.y = 320.0f + ((i / 2) << 4);
         musicRoom->descriptionSprites[i].pos.z = 0.0f;
         musicRoom->descriptionSprites[i].flags.anchor = AnmVmAnchor_TopLeft;

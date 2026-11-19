@@ -2,25 +2,16 @@
 #include "decomp.hpp"
 #include "pbg3/IPbg3Reader.hpp"
 #include "pbg3/LzssTree.hpp"
+#include "pbg3/Pbg3Entry.hpp"
 #include "pbg3/Pbg3Writer.hpp"
 
 namespace th06
 {
-struct LzEncodeEntry
-{
-    FILETIME lastWriteTime;
-    u32 size;
-    u32 offset;
-    u32 checksum;
-    char filename[256];
-};
-ZUN_ASSERT_SIZE(LzEncodeEntry, 0x114);
-
 class LzEncodeQueue
 {
     struct Node
     {
-        LzEncodeEntry entry;
+        Pbg3Entry entry;
         Node *next;
     };
     typedef ZUN_ASSERT_SIZE(Node, 0x118) NodeSizeCheck;
@@ -44,7 +35,7 @@ class LzEncodeQueue
             }
         }
     }
-    void Push(const LzEncodeEntry &entry)
+    void Push(const Pbg3Entry &entry)
     {
         Node *node = new Node;
         if (node != NULL)
@@ -63,7 +54,7 @@ class LzEncodeQueue
             ++this->count;
         }
     }
-    void Pop(LzEncodeEntry &entry)
+    void Pop(Pbg3Entry &entry)
     {
         if (this->count == 0)
         {

@@ -14,8 +14,8 @@
 #include <windows.h>
 
 #include "AnmManager.hpp"
-#include "Enemy.hpp"
 #include "GameManager.hpp"
+#include "Enemy.hpp"
 #include "Global.hpp"
 #include "Gui.hpp"
 #include "Player.hpp"

@@ -1,20 +1,10 @@
 #pragma once
 #include "decomp.hpp"
+#include "pbg3/Pbg3Entry.hpp"
 #include "pbg3/Pbg3Reader.hpp"
 
 namespace th06
 {
-struct Pbg3Entry
-{
-    u32 unk1;
-    u32 unk2;
-    u32 uncompressedSize;
-    u32 dataOffset;
-    u32 checksum;
-    char filename[256];
-};
-ZUN_ASSERT_SIZE(Pbg3Entry, 0x114);
-
 class Pbg3Archive
 {
   public:

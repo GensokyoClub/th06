@@ -3,6 +3,16 @@
 
 namespace th06
 {
+BOOL MemoryPbg3Reader::GetLastWriteTime(LPFILETIME time)
+{
+    if (time == NULL)
+    {
+        return FALSE;
+    }
+    *time = this->lastWriteTime;
+    return TRUE;
+}
+
 MemoryPbg3Reader::MemoryPbg3Reader() : IPbg3Reader()
 {
     this->data = NULL;
@@ -167,15 +177,5 @@ BOOL MemoryPbg3Reader::Read(void *out, DWORD length)
     memcpy(out, this->data + this->offset, copied);
     this->offset += copied;
     return length == copied;
-}
-
-BOOL MemoryPbg3Reader::GetLastWriteTime(LPFILETIME time)
-{
-    if (time == NULL)
-    {
-        return FALSE;
-    }
-    *time = this->lastWriteTime;
-    return TRUE;
 }
 } // namespace th06

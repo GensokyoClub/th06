@@ -121,5 +121,6 @@ invaluable contributions:
 
 - @EstexNT for porting the [`var_order` pragma](scripts/pragma_var_order.cpp) to
   MSVC7.
+- @Dazegambler ([@ArtsDazegambler](https://x.com/ArtsDazegambler)) for providing the project's logo.
 
 [th06-re]: https://github.com/happyhavoc/th06-re

@@ -203,7 +203,7 @@ ChainCallbackResult Gui_OnDraw(Gui *gui)
         {
             stringPos.y += 16.0f;
             g_AsciiManager.SetColor(COLOR_LIGHT_YELLOW);
-            g_AsciiManager.AddFormatText(&stringPos, "Player    = %8d\n", g_GameManager.livesRemaining * 3000000);
+            g_AsciiManager.AddFormatText(&stringPos, "Player    = %8d\n", g_GameManager.GetLives() * 3000000);
             stringPos.y += 16.0f;
             g_AsciiManager.AddFormatText(&stringPos, "Bomb      = %8d\n", g_GameManager.GetBombs() * 1000000);
         }
@@ -1020,7 +1020,7 @@ void Gui::UpdateStageElements()
         stageScore *= g_GameManager.pointItemsCollectedInStage;
         if (g_GameManager.currentStage >= Stage6)
         {
-            stageScore += g_GameManager.livesRemaining * 3000000;
+            stageScore += g_GameManager.GetLives() * 3000000;
             stageScore += g_GameManager.GetBombs() * 1000000;
         }
         switch (g_GameManager.difficulty)
@@ -1216,7 +1216,7 @@ void Gui::DrawGameScene()
     if (this->redrawFrames.lifeIcons != 0 || g_Supervisor.IsMinimumGraphicsMode())
     {
         vm = &this->impl->vms[16];
-        for (idx = 0, xPos = 496.0f; idx < g_GameManager.livesRemaining; idx++, xPos += 16.0f)
+        for (idx = 0, xPos = 496.0f; idx < g_GameManager.GetLives(); idx++, xPos += 16.0f)
         {
             vm->pos = D3DXVECTOR3(xPos, 122.0f, 0.49f);
             g_AnmManager->Draw2D(vm);

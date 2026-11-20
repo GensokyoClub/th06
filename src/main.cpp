@@ -217,7 +217,7 @@ RenderResult GameWindow::Render()
 
     if (this->curFrame == 0)
     {
-#if !MATCHBUILD
+#ifndef BINARYMATCHBUILD
         // This fixes the frame limiter bug that prevents booting the game
         g_Supervisor.lastFrameTime = g_LastFrameTime = timeGetTime();
 #endif

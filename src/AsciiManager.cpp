@@ -254,36 +254,33 @@ void AsciiManager::DrawStrings()
     }
 }
 
-void AsciiManager::CreatePopup1(D3DXVECTOR3 *position, i32 value, D3DCOLOR color)
+void AsciiManager::CreateScorePopup(D3DXVECTOR3 *position, i32 score, D3DCOLOR color)
 {
-    if (this->nextPopupIndex1 >= ASCII_SCORE_POPUPS_COUNT)
+    if (this->nextScorePopup >= ASCII_SCORE_POPUPS_COUNT)
     {
-        this->nextPopupIndex1 = 0;
+        this->nextScorePopup = 0;
     }
 
-    AsciiManagerPopup *popup = &this->popups[ASCII_SCORE_POPUPS_START + this->nextPopupIndex1];
+    AsciiManagerPopup *popup = &this->popups[ASCII_SCORE_POPUPS_START + this->nextScorePopup];
     popup->inUse = true;
     i32 characterCount = 0;
 
 #if BUILT_SINCE(100)
-    if (value >= 0)
+    // Negative "scores" display "PowerUp" instead
+    if (score >= 0)
+#endif
     {
-        while (value)
+        while (score != 0)
         {
-            popup->digits[characterCount++] = (char)(value % 10);
+            popup->digits[characterCount++] = score % 10;
 
-            value /= 10;
+            score /= 10;
         }
     }
+#if BUILT_SINCE(100)
     else
     {
-        popup->digits[characterCount++] = '\n';
-    }
-#else
-    while (value)
-    {
-        popup->digits[characterCount++] = (char)(value % 10);
-        value /= 10;
+        popup->digits[characterCount++] = POWER_UP_DIGIT_HACK;
     }
 #endif
 
@@ -305,39 +302,36 @@ void AsciiManager::CreatePopup1(D3DXVECTOR3 *position, i32 value, D3DCOLOR color
     }
 #endif
 
-    this->nextPopupIndex1++;
+    this->nextScorePopup++;
 }
 
-void AsciiManager::CreatePopup2(D3DXVECTOR3 *position, i32 value, D3DCOLOR color)
+void AsciiManager::CreateStarPopup(D3DXVECTOR3 *position, i32 score, D3DCOLOR color)
 {
-    if (this->nextPopupIndex2 >= ASCII_PLAYER_POPUPS_COUNT)
+    if (this->nextStarPopup >= ASCII_STAR_POPUPS_COUNT)
     {
-        this->nextPopupIndex2 = 0;
+        this->nextStarPopup = 0;
     }
 
-    AsciiManagerPopup *popup = &this->popups[ASCII_PLAYER_POPUPS_START + this->nextPopupIndex2];
+    AsciiManagerPopup *popup = &this->popups[ASCII_STAR_POPUPS_START + this->nextStarPopup];
     popup->inUse = true;
     i32 characterCount = 0;
 
 #if BUILT_SINCE(100)
-    if (value >= 0)
+    // Negative "scores" display "PowerUp" instead
+    if (score >= 0)
+#endif
     {
-        while (value)
+        while (score != 0)
         {
-            popup->digits[characterCount++] = (char)(value % 10);
+            popup->digits[characterCount++] = score % 10;
 
-            value /= 10;
+            score /= 10;
         }
     }
+#if BUILT_SINCE(100)
     else
     {
-        popup->digits[characterCount++] = '\n';
-    }
-#else
-    while (value)
-    {
-        popup->digits[characterCount++] = (char)(value % 10);
-        value /= 10;
+        popup->digits[characterCount++] = POWER_UP_DIGIT_HACK;
     }
 #endif
 
@@ -359,7 +353,7 @@ void AsciiManager::CreatePopup2(D3DXVECTOR3 *position, i32 value, D3DCOLOR color
     }
 #endif
 
-    this->nextPopupIndex2++;
+    this->nextStarPopup++;
 }
 
 enum UpdateGameMenuState
@@ -441,10 +435,8 @@ i32 StageMenu::OnUpdateGameMenu()
     case GAME_MENU_PAUSE_CURSOR_UNPAUSE:
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].color = COLOR_LIGHT_RED;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleY = 1.7f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleX = 1.7f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleY = 1.5f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleX = 1.5f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleY = 1.7f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleY = 1.5f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         if (this->numFrames >= 4)
@@ -468,10 +460,8 @@ i32 StageMenu::OnUpdateGameMenu()
     case GAME_MENU_PAUSE_CURSOR_QUIT:
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].color = COLOR_LIGHT_RED;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleY = 1.5f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleX = 1.5f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleY = 1.7f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleX = 1.7f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleY = 1.5f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleY = 1.7f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
         if (this->numFrames >= 4)
@@ -510,10 +500,8 @@ i32 StageMenu::OnUpdateGameMenu()
     case GAME_MENU_QUIT_CURSOR_YES:
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].color = COLOR_LIGHT_RED;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleY = 1.7f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleX = 1.7f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleY = 1.5f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleX = 1.5f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleY = 1.7f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleY = 1.5f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         if (this->numFrames >= 4)
@@ -536,10 +524,8 @@ i32 StageMenu::OnUpdateGameMenu()
     case GAME_MENU_QUIT_CURSOR_NO:
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].color = COLOR_LIGHT_RED;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleY = 1.5f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleX = 1.5f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleY = 1.7f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleX = 1.7f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleY = 1.5f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleY = 1.7f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
         if (this->numFrames >= 4)
@@ -698,10 +684,8 @@ i32 StageMenu::OnUpdateRetryMenu()
     case RETRY_MENU_CURSOR_YES:
         this->menuSprites[RETRY_MENU_SPRITE_YES].color = COLOR_LIGHT_RED;
         this->menuSprites[RETRY_MENU_SPRITE_NO].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
-        this->menuSprites[RETRY_MENU_SPRITE_YES].scaleY = 1.7f;
-        this->menuSprites[RETRY_MENU_SPRITE_YES].scaleX = 1.7f;
-        this->menuSprites[RETRY_MENU_SPRITE_NO].scaleY = 1.5f;
-        this->menuSprites[RETRY_MENU_SPRITE_NO].scaleX = 1.5f;
+        this->menuSprites[RETRY_MENU_SPRITE_YES].scaleX = this->menuSprites[RETRY_MENU_SPRITE_YES].scaleY = 1.7f;
+        this->menuSprites[RETRY_MENU_SPRITE_NO].scaleX = this->menuSprites[RETRY_MENU_SPRITE_NO].scaleY = 1.5f;
         this->menuSprites[RETRY_MENU_SPRITE_YES].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
         this->menuSprites[RETRY_MENU_SPRITE_NO].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         if (this->numFrames >= 4)
@@ -725,10 +709,8 @@ i32 StageMenu::OnUpdateRetryMenu()
     case RETRY_MENU_CURSOR_NO:
         this->menuSprites[RETRY_MENU_SPRITE_NO].color = COLOR_LIGHT_RED;
         this->menuSprites[RETRY_MENU_SPRITE_YES].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
-        this->menuSprites[RETRY_MENU_SPRITE_YES].scaleY = 1.5f;
-        this->menuSprites[RETRY_MENU_SPRITE_YES].scaleX = 1.5f;
-        this->menuSprites[RETRY_MENU_SPRITE_NO].scaleY = 1.7f;
-        this->menuSprites[RETRY_MENU_SPRITE_NO].scaleX = 1.7f;
+        this->menuSprites[RETRY_MENU_SPRITE_YES].scaleX = this->menuSprites[RETRY_MENU_SPRITE_YES].scaleY = 1.5f;
+        this->menuSprites[RETRY_MENU_SPRITE_NO].scaleX = this->menuSprites[RETRY_MENU_SPRITE_NO].scaleY = 1.7f;
         this->menuSprites[RETRY_MENU_SPRITE_NO].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
         this->menuSprites[RETRY_MENU_SPRITE_YES].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         if (this->numFrames >= 30)
@@ -863,33 +845,32 @@ void AsciiManager::DrawPopupsWithHwVertexProcessing()
             continue;
         }
 
-        this->scorePopupVm.pos.x = currentPopup->position.x - (currentPopup->characterCount * 4);
-        this->scorePopupVm.pos.y = currentPopup->position.y;
-        this->scorePopupVm.color = currentPopup->color;
+        this->popupVm.pos.x = currentPopup->position.x - currentPopup->characterCount * 4;
+        this->popupVm.pos.y = currentPopup->position.y;
+        this->popupVm.color = currentPopup->color;
 
         currentDigit = (u8 *)currentPopup->digits + currentPopup->characterCount - 1;
         for (j = currentPopup->characterCount; j > 0; j--)
         {
-            this->scorePopupVm.sprite = g_AnmManager->GetSprite(*currentDigit);
+            this->popupVm.sprite = g_AnmManager->GetSprite(*currentDigit);
 #if BUILT_SINCE(100)
-            if (*currentDigit >= '\n')
+            if (*currentDigit >= POWER_UP_DIGIT_HACK)
             {
-                // TODO: explain these values
-                this->scorePopupVm.matrix.m[0][0] = 0.1875f;
-                this->scorePopupVm.matrix.m[1][1] = 0.03125f;
-                g_AnmManager->Draw3D(&this->scorePopupVm);
-                this->scorePopupVm.matrix.m[0][0] = 0.03125f;
-                this->scorePopupVm.matrix.m[1][1] = 0.03125f;
+                // Dimensions of the "Power Up" text
+                this->popupVm.matrix.m[0][0] = 48.0f / 256.0f;
+                this->popupVm.matrix.m[1][1] = 8.0f / 256.0f;
+                g_AnmManager->Draw3D(&this->popupVm);
+                // Dimensions of normal popup text
+                this->popupVm.matrix.m[0][0] = 8.0f / 256.0f;
+                this->popupVm.matrix.m[1][1] = 8.0f / 256.0f;
             }
             else
-            {
-                g_AnmManager->Draw3D(&this->scorePopupVm);
-            }
-#else
-            g_AnmManager->Draw3D(&this->scorePopupVm);
 #endif
+            {
+                g_AnmManager->Draw3D(&this->popupVm);
+            }
 
-            this->scorePopupVm.pos.x += 8.0f;
+            this->popupVm.pos.x += 8.0f;
             currentDigit--;
         }
     }
@@ -917,33 +898,32 @@ void AsciiManager::DrawPopupsWithoutHwVertexProcessing()
             continue;
         }
 
-        this->scorePopupVm.pos.x = currentPopup->position.x - (currentPopup->characterCount * 4);
-        this->scorePopupVm.pos.y = currentPopup->position.y;
-        this->scorePopupVm.color = currentPopup->color;
+        this->popupVm.pos.x = currentPopup->position.x - currentPopup->characterCount * 4;
+        this->popupVm.pos.y = currentPopup->position.y;
+        this->popupVm.color = currentPopup->color;
 
         currentDigit = (u8 *)currentPopup->digits + currentPopup->characterCount - 1;
         for (j = currentPopup->characterCount; j > 0; j--)
         {
-            this->scorePopupVm.sprite = g_AnmManager->GetSprite(*currentDigit + ANM_SPRITE_SCORE_TEXT);
+            this->popupVm.sprite = g_AnmManager->GetSprite(*currentDigit + ANM_SPRITE_SCORE_TEXT);
 #if BUILT_SINCE(100)
-            if (*currentDigit >= '\n')
+            if (*currentDigit >= POWER_UP_DIGIT_HACK)
             {
-                // TODO: explain these values
-                this->scorePopupVm.matrix.m[0][0] = 0.1875f;
-                this->scorePopupVm.matrix.m[1][1] = 0.03125f;
-                g_AnmManager->Draw2D(&this->scorePopupVm);
-                this->scorePopupVm.matrix.m[0][0] = 0.03125f;
-                this->scorePopupVm.matrix.m[1][1] = 0.03125f;
+                // Dimensions of the "Power Up" text
+                this->popupVm.matrix.m[0][0] = 48.0f / 256.0f;
+                this->popupVm.matrix.m[1][1] = 8.0f / 256.0f;
+                g_AnmManager->Draw2D(&this->popupVm);
+                // Dimensions of normal popup text
+                this->popupVm.matrix.m[0][0] = 8.0f / 256.0f;
+                this->popupVm.matrix.m[1][1] = 8.0f / 256.0f;
             }
             else
-            {
-                g_AnmManager->Draw3D(&this->scorePopupVm);
-            }
-#else
-            g_AnmManager->Draw2D(&this->scorePopupVm);
 #endif
+            {
+                g_AnmManager->Draw3D(&this->popupVm);
+            }
 
-            this->scorePopupVm.pos.x += 8.0f;
+            this->popupVm.pos.x += 8.0f;
             currentDigit--;
         }
     }

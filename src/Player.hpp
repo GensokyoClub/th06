@@ -187,7 +187,7 @@ struct Player
 
     AnmVm playerSprite;
     AnmVm orbsSprite[3]; // why is this 3?
-    D3DXVECTOR3 positionCenter;
+    D3DXVECTOR3 position;
     unused_field(D3DXVECTOR3);
     D3DXVECTOR3 hitboxTopLeft;
     D3DXVECTOR3 hitboxBottomRight;

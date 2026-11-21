@@ -56,7 +56,7 @@ static FireBulletResult FireSingleBullet(Player *player, PlayerBullet *bullet, i
         g_AnmManager->SetAndExecuteScriptIdx(&bullet->sprite, bulletData->anmFileIdx);
         if (!bulletData->spawnPositionIdx)
         {
-            bullet->position = player->positionCenter;
+            bullet->position = player->position;
         }
         else
         {
@@ -354,13 +354,13 @@ static ZunResult UpdateFireBulletsTimer(Player *p)
     return ZUN_SUCCESS;
 }
 
-#pragma var_order(bullet, idx, enemyBottomRight, bulletBottomRight, enemyTopLeft, damage, bulletTopLeft)
+#pragma var_order(bullet, i, enemyBottomRight, bulletBottomRight, enemyTopLeft, damage, bulletTopLeft)
 i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPos, D3DXVECTOR3 *enemyHitboxSize, ZunBool *hitByBomb)
 {
     D3DXVECTOR3 bulletTopLeft;
     i32 damage;
     D3DXVECTOR3 enemyTopLeft;
-    i32 idx;
+    i32 i;
     PlayerBullet *bullet;
 
     D3DXVECTOR3 bulletBottomRight;
@@ -374,7 +374,7 @@ i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPos, D3DXVECTOR3 *enemyHitboxSiz
     {
         *hitByBomb = false;
     }
-    for (idx = 0; idx < MAX_PLAYER_BULLETS; idx++, bullet++)
+    for (i = 0; i < MAX_PLAYER_BULLETS; i++, bullet++)
     {
         if (bullet->bulletState == PLAYER_BULLET_STATE_INACTIVE ||
             bullet->bulletState != PLAYER_BULLET_STATE_FIRED && bullet->bulletType != PLAYER_BULLET_TYPE_2)
@@ -389,7 +389,7 @@ i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPos, D3DXVECTOR3 *enemyHitboxSiz
         {
             continue;
         }
-        /* Bullet is hitting the enemy */
+        // Bullet is hitting the enemy
         if (!this->bombInfo.isInUse)
         {
             damage += bullet->damage;
@@ -426,7 +426,7 @@ i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPos, D3DXVECTOR3 *enemyHitboxSiz
             }
             if (MULTIPLE_OF(bullet->lifetime, 6))
             {
-                g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_5, &bullet->position, 1, COLOR_WHITE);
+                g_EffectManager.SpawnParticles(PARTICLE_SPARK_RED, &bullet->position);
             }
         }
 
@@ -434,8 +434,9 @@ i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPos, D3DXVECTOR3 *enemyHitboxSiz
         {
             if (bullet->bulletState == PLAYER_BULLET_STATE_FIRED)
             {
+                // TODO: Name this raw 32 constant
                 g_AnmManager->SetAndExecuteScriptIdx(&bullet->sprite, bullet->sprite.anmFileIndex + 32);
-                g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_5, &bullet->position, 1, COLOR_WHITE);
+                g_EffectManager.SpawnParticles(PARTICLE_SPARK_RED, &bullet->position);
                 bullet->position[2] = 0.1f;
             }
             bullet->bulletState = PLAYER_BULLET_STATE_COLLIDED;
@@ -444,36 +445,34 @@ i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPos, D3DXVECTOR3 *enemyHitboxSiz
         }
         else
         {
-            this->particleTimer++;
-            if (this->particleTimer % 8 == 0)
+            if (++this->particleTimer % 8 == 0)
             {
                 bulletTopLeft = *enemyPos;
                 bulletTopLeft.x = bullet->position.x;
 
-                g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_5, &bulletTopLeft, 1, COLOR_WHITE);
+                g_EffectManager.SpawnParticles(PARTICLE_SPARK_RED, &bulletTopLeft);
             }
         }
     }
-    for (idx = 0; idx < MAX_DAMAGE_REGION_COUNT; idx++)
+    for (i = 0; i < MAX_DAMAGE_REGION_COUNT; i++)
     {
-        if (this->damageRegionSize[idx].x <= 0.0f)
+        if (this->damageRegionSize[i].x <= 0.0f)
         {
             continue;
         }
 
-        bulletTopLeft = this->damageRegionPosition[idx] - this->damageRegionSize[idx] / 2.0f;
-        bulletBottomRight = this->damageRegionPosition[idx] + this->damageRegionSize[idx] / 2.0f;
+        bulletTopLeft = this->damageRegionPosition[i] - this->damageRegionSize[i] / 2.0f;
+        bulletBottomRight = this->damageRegionPosition[i] + this->damageRegionSize[i] / 2.0f;
         if (bulletTopLeft.x > enemyBottomRight.x || bulletBottomRight.x < enemyTopLeft.x ||
             bulletTopLeft.y > enemyBottomRight.y || bulletBottomRight.y < enemyTopLeft.y)
         {
             continue;
         }
-        damage += this->damageRegionDamage[idx];
-        this->damageRegionDamageDealt[idx] += this->damageRegionDamage[idx];
-        this->particleTimer++;
-        if (this->particleTimer % 4 == 0)
+        damage += this->damageRegionDamage[i];
+        this->damageRegionDamageDealt[i] += this->damageRegionDamage[i];
+        if (++this->particleTimer % 4 == 0)
         {
-            g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_3, enemyPos, 1, COLOR_WHITE);
+            g_EffectManager.SpawnParticles(PARTICLE_BOMB_FLASH, enemyPos);
         }
         if (this->bombInfo.isInUse && hitByBomb)
         {
@@ -612,7 +611,7 @@ i32 Player::CalcLaserHitbox(D3DXVECTOR3 *laserCenter, D3DXVECTOR3 *laserSize, D3
     D3DXVECTOR3 playerRelativeTopLeft;
     D3DXVECTOR3 playerRelativeBottomRight;
 
-    laserTopLeft = this->positionCenter - *rotation;
+    laserTopLeft = this->position - *rotation;
     RotatePoint(&laserBottomRight, &laserTopLeft, angle);
     laserBottomRight.z = 0.0f;
     laserTopLeft = laserBottomRight + *rotation;
@@ -647,7 +646,7 @@ i32 Player::CalcLaserHitbox(D3DXVECTOR3 *laserCenter, D3DXVECTOR3 *laserSize, D3
         return COLLISION_NONE;
     }
 
-    this->ScoreGraze(&this->positionCenter);
+    this->ScoreGraze(&this->position);
     return COLLISION_GRAZE;
 
 LASER_COLLISION:
@@ -664,11 +663,11 @@ void Player::ScoreGraze(D3DXVECTOR3 *center)
 {
     D3DXVECTOR3 particlePosition;
 
+    // Until 1.02b graze also counts while a bomb is active.
 #if BUILT_SINCE(102b)
     if (!g_Player.bombInfo.isInUse)
 #endif
     {
-        // Until 1.02b graze also counts while a bomb is active.
         if (g_GameManager.grazeInStage < 9999)
         {
             g_GameManager.grazeInStage++;
@@ -679,8 +678,8 @@ void Player::ScoreGraze(D3DXVECTOR3 *center)
         }
     }
 
-    particlePosition = (this->positionCenter + *center) / 2.0f;
-    g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_8, &particlePosition, 1, COLOR_WHITE);
+    particlePosition = (this->position + *center) / 2.0f;
+    g_EffectManager.SpawnParticles(PARTICLE_SPARK_SMALL, &particlePosition);
     g_GameManager.AddScore(500);
     g_GameManager.IncreaseSubrank(6);
     g_Gui.redrawFrames.grazeCounter = 2;
@@ -690,8 +689,8 @@ void Player::ScoreGraze(D3DXVECTOR3 *center)
 void Player::Die()
 {
     g_EnemyManager.spellcardInfo.isCapturing = false;
-    g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &this->positionCenter, 1, COLOR_NEONBLUE);
-    g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_6, &this->positionCenter, 16, COLOR_WHITE);
+    g_EffectManager.SpawnParticles(PARTICLE_FLASH, &this->position, 1, COLOR_NEONBLUE);
+    g_EffectManager.SpawnParticles(PARTICLE_SPARK_GREEN, &this->position, 16);
     this->playerState = PLAYER_STATE_DEAD;
     this->stateTimer = 0;
     g_SoundPlayer.PlaySoundId(SOUND_PICHUN);
@@ -877,39 +876,39 @@ ZunResult Player::HandlePlayerInputs()
     this->previousSpeed.x = speedX;
     this->previousSpeed.y = speedY;
 
-    this->positionCenter[0] += speedX * this->speedMultiplierDuringBomb.x * g_Supervisor.gameSpeed;
-    this->positionCenter[1] += speedY * this->speedMultiplierDuringBomb.y * g_Supervisor.gameSpeed;
+    this->position[0] += speedX * this->speedMultiplierDuringBomb.x * g_Supervisor.gameSpeed;
+    this->position[1] += speedY * this->speedMultiplierDuringBomb.y * g_Supervisor.gameSpeed;
 
-    if (this->positionCenter[0] < g_GameManager.playerMovementAreaTopLeftPos.x)
+    if (this->position[0] < g_GameManager.playerMovementAreaTopLeftPos.x)
     {
-        this->positionCenter[0] = g_GameManager.playerMovementAreaTopLeftPos.x;
+        this->position[0] = g_GameManager.playerMovementAreaTopLeftPos.x;
     }
-    else if (this->positionCenter[0] >
+    else if (this->position[0] >
              g_GameManager.playerMovementAreaTopLeftPos.x + g_GameManager.playerMovementAreaSize.x)
     {
-        this->positionCenter[0] = g_GameManager.playerMovementAreaTopLeftPos.x + g_GameManager.playerMovementAreaSize.x;
+        this->position[0] = g_GameManager.playerMovementAreaTopLeftPos.x + g_GameManager.playerMovementAreaSize.x;
     }
 
-    if (this->positionCenter[1] < g_GameManager.playerMovementAreaTopLeftPos.y)
+    if (this->position[1] < g_GameManager.playerMovementAreaTopLeftPos.y)
     {
-        this->positionCenter[1] = g_GameManager.playerMovementAreaTopLeftPos.y;
+        this->position[1] = g_GameManager.playerMovementAreaTopLeftPos.y;
     }
-    else if (this->positionCenter[1] >
+    else if (this->position[1] >
              g_GameManager.playerMovementAreaTopLeftPos.y + g_GameManager.playerMovementAreaSize.y)
     {
-        this->positionCenter[1] = g_GameManager.playerMovementAreaTopLeftPos.y + g_GameManager.playerMovementAreaSize.y;
+        this->position[1] = g_GameManager.playerMovementAreaTopLeftPos.y + g_GameManager.playerMovementAreaSize.y;
     }
 
-    this->hitboxTopLeft = this->positionCenter - this->hitboxSize;
+    this->hitboxTopLeft = this->position - this->hitboxSize;
 
-    this->hitboxBottomRight = this->positionCenter + this->hitboxSize;
+    this->hitboxBottomRight = this->position + this->hitboxSize;
 
-    this->grabItemTopLeft = this->positionCenter - this->grabItemSize;
+    this->grabItemTopLeft = this->position - this->grabItemSize;
 
-    this->grabItemBottomRight = this->positionCenter + this->grabItemSize;
+    this->grabItemBottomRight = this->position + this->grabItemSize;
 
-    this->orbsPosition[0] = this->positionCenter;
-    this->orbsPosition[1] = this->positionCenter;
+    this->orbsPosition[0] = this->position;
+    this->orbsPosition[1] = this->position;
 
     orbOffsetX = orbOffsetY = 0.0f;
 
@@ -1057,12 +1056,12 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
                 g_GameManager.fullPowerScoreIdx = 0;
                 if (g_GameManager.livesRemaining > 0)
                 {
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_BIG, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->position, ITEM_POWER_BIG, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->position, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->position, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->position, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->position, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->position, ITEM_POWER_SMALL, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
                     if (g_GameManager.currentPower <= POWER_PER_LEVEL)
                     {
                         g_GameManager.currentPower = 0;
@@ -1075,11 +1074,11 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
                 }
                 else
                 {
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
-                    g_ItemManager.SpawnItem(&p->positionCenter, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->position, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->position, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->position, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->position, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
+                    g_ItemManager.SpawnItem(&p->position, ITEM_FULL_POWER, ITEM_STATE_SPAWNED_BY_PLAYER_DEATH);
                     g_GameManager.currentPower = 0;
                     g_Gui.redrawFrames.powerGauge = 2;
                     // Disable earning lives from score if a continue is used
@@ -1100,9 +1099,9 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
             if ((i32)p->stateTimer >= 30)
             {
                 p->playerState = PLAYER_STATE_SPAWNING;
-                p->positionCenter[0] = g_GameManager.gameRegionSize.x / 2.0f;
-                p->positionCenter[1] = g_GameManager.gameRegionSize.y - 64.0f;
-                p->positionCenter[2] = 0.2f;
+                p->position[0] = g_GameManager.gameRegionSize.x / 2.0f;
+                p->position[1] = g_GameManager.gameRegionSize.y - 64.0f;
+                p->position[2] = 0.2f;
                 p->stateTimer = 0;
                 p->playerSprite.scaleY = p->playerSprite.scaleX = 3.0f;
                 g_AnmManager->SetAndExecuteScriptIdx(&p->playerSprite, ANM_SCRIPT_PLAYER_IDLE);
@@ -1206,8 +1205,8 @@ static ChainCallbackResult Player_OnDrawHighPrio(Player *p)
     {
         p->bombInfo.draw(p);
     }
-    p->playerSprite.pos.x = g_GameManager.gameRegionScreenPos.x + p->positionCenter.x;
-    p->playerSprite.pos.y = g_GameManager.gameRegionScreenPos.y + p->positionCenter.y;
+    p->playerSprite.pos.x = g_GameManager.gameRegionScreenPos.x + p->position.x;
+    p->playerSprite.pos.y = g_GameManager.gameRegionScreenPos.y + p->position.y;
     p->playerSprite.pos.z = 0.49f;
     if (!g_GameManager.isInRetryMenu)
     {
@@ -1240,8 +1239,8 @@ static ChainCallbackResult Player_OnDrawLowPrio(Player *p)
 f32 Player::AngleFromPlayer(D3DXVECTOR3 *pos)
 {
     // NOTE: This is *not* a ZunVec2
-    float relX = pos->x - this->positionCenter.x;
-    float relY = pos->y - this->positionCenter.y;
+    float relX = pos->x - this->position.x;
+    float relY = pos->y - this->position.y;
     if (relY == 0.0f && relX == 0.0f)
     {
         return RADIANS(90.0f);
@@ -1253,8 +1252,8 @@ f32 Player::AngleFromPlayer(D3DXVECTOR3 *pos)
 f32 Player::AngleToPlayer(D3DXVECTOR3 *pos)
 {
     // NOTE: This is *not* a ZunVec2
-    float relX = this->positionCenter[0] - pos->x;
-    float relY = this->positionCenter[1] - pos->y;
+    float relX = this->position[0] - pos->x;
+    float relY = this->position[1] - pos->y;
     if (relY == 0.0f && relX == 0.0f)
     {
         // Shoot down. An angle of 0 means to the right, and the angle goes
@@ -1288,9 +1287,9 @@ static ZunResult Player_AddedCallback(Player *p)
         g_AnmManager->SetAndExecuteScriptIdx(&p->playerSprite, ANM_SCRIPT_PLAYER_IDLE);
         break;
     }
-    p->positionCenter[0] = g_GameManager.gameRegionSize.x / 2.0f;
-    p->positionCenter[1] = g_GameManager.gameRegionSize.y - 64.0f;
-    p->positionCenter[2] = 0.49f;
+    p->position[0] = g_GameManager.gameRegionSize.x / 2.0f;
+    p->position[1] = g_GameManager.gameRegionSize.y - 64.0f;
+    p->position[2] = 0.49f;
     p->orbsPosition[0].z = 0.49f;
     p->orbsPosition[1].z = 0.49f;
     for (idx = 0; idx < MAX_DAMAGE_REGION_COUNT; idx++)

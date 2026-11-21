@@ -156,8 +156,8 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
         bulletProps->speed1 - (bulletProps->speed1 - bulletProps->speed2) * bulletIdx2 / bulletProps->count2;
     switch (bulletProps->aimMode)
     {
-    case FAN_AIMED:
-    case FAN:
+    case BULLET_FAN_AIMED:
+    case BULLET_FAN:
         if (bulletProps->count1 & 1)
         {
             bulletAngle += ((bulletIdx1 + 1) / 2) * bulletProps->angle2;
@@ -172,37 +172,37 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
             bulletAngle *= -1.0f;
         }
 
-        if (bulletProps->aimMode == FAN_AIMED)
+        if (bulletProps->aimMode == BULLET_FAN_AIMED)
         {
             bulletAngle += angle;
         }
 
         bulletAngle += bulletProps->angle1;
         break;
-    case CIRCLE_AIMED:
+    case BULLET_CIRCLE_AIMED:
         bulletAngle += angle;
         // fallthrough
-    case CIRCLE:
+    case BULLET_CIRCLE:
         bulletAngle += bulletIdx1 * ZUN_2PI / bulletProps->count1;
         bulletAngle += bulletIdx2 * bulletProps->angle2 + bulletProps->angle1;
         break;
-    case OFFSET_CIRCLE_AIMED:
+    case BULLET_OFFSET_CIRCLE_AIMED:
         bulletAngle += angle;
         // fallthrough
-    case OFFSET_CIRCLE:
+    case BULLET_OFFSET_CIRCLE:
         bulletAngle += ZUN_PI / bulletProps->count1;
         bulletAngle += bulletIdx1 * ZUN_2PI / bulletProps->count1;
         bulletAngle += bulletProps->angle1;
         break;
-    case RANDOM_ANGLE:
+    case BULLET_RANDOM_ANGLE:
         bulletAngle = g_Rng.GetRandomF32InRange(bulletProps->angle1 - bulletProps->angle2) + bulletProps->angle2;
         break;
-    case RANDOM_SPEED:
+    case BULLET_RANDOM_SPEED:
         bulletSpeed = g_Rng.GetRandomF32InRange(bulletProps->speed1 - bulletProps->speed2) + bulletProps->speed2;
         bulletAngle += bulletIdx1 * ZUN_2PI / bulletProps->count1;
         bulletAngle += bulletIdx2 * bulletProps->angle2 + bulletProps->angle1;
         break;
-    case RANDOM:
+    case BULLET_RANDOM:
         bulletAngle = g_Rng.GetRandomF32InRange(bulletProps->angle1 - bulletProps->angle2) + bulletProps->angle2;
         bulletSpeed = g_Rng.GetRandomF32InRange(bulletProps->speed1 - bulletProps->speed2) + bulletProps->speed2;
     }
@@ -501,7 +501,7 @@ i32 BulletManager::DespawnBulletsForScore(i32 maxBonusScore, ZunBool spawnCancel
             g_ItemManager.SpawnItem(&bullet->pos, ITEM_STAR, ITEM_STATE_MAGNETED);
         }
 
-        g_AsciiManager.CreatePopup1(&bullet->pos, bulletScore,
+        g_AsciiManager.CreateScorePopup(&bullet->pos, bulletScore,
                                     bulletScore >= maxBonusScore ? COLOR_YELLOW : COLOR_WHITE);
 
         totalBonusScore += bulletScore;
@@ -980,7 +980,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                 // BUG: This is meant to only set the alpha value,
                 // but overwrites the entire color with black.
                 // The fading flag is unused, so this doesn't matter.
-                curLaser->vm.color = laserAlpha << 24;
+                curLaser->vm.color = laserAlpha << COLOR_ALPHA_SHIFT;
             }
             else
             {
@@ -1047,7 +1047,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                 // BUG: This is meant to only set the alpha value,
                 // but overwrites the entire color with black.
                 // The fading flag is unused, so this doesn't matter.
-                curLaser->vm.color = laserAlpha << 24;
+                curLaser->vm.color = laserAlpha << COLOR_ALPHA_SHIFT;
             }
             else if (curLaser->despawnDuration > 0)
             {

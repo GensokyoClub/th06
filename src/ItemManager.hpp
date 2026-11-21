@@ -48,7 +48,7 @@ ZUN_ASSERT_TYPE(Item, 0x144, 4);
 
 struct ItemManager
 {
-    void SpawnItem(D3DXVECTOR3 *position, ItemType type, ItemState state);
+    void SpawnItem(D3DXVECTOR3 *position, i32 type, i32 state);
     void OnUpdate();
     void OnDraw();
     void MagnetAllItems();

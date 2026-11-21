@@ -37,16 +37,16 @@ void ScreenEffect_SetViewport(D3DCOLOR color)
 
 ChainCallbackResult ScreenEffect_CalcFadeIn(ScreenEffect *effect)
 {
-    if (effect->effectLength != 0)
+    if (effect->duration != 0)
     {
-        effect->fadeAlpha = RAMP_DOWN(255.0f, (f32)effect->timer, effect->effectLength);
+        effect->fadeAlpha = RAMP_DOWN(255.0f, (f32)effect->timer, effect->duration);
         if (effect->fadeAlpha < 0)
         {
             effect->fadeAlpha = 0;
         }
     }
 
-    if (effect->timer >= effect->effectLength)
+    if (effect->timer >= effect->duration)
     {
         return CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB;
     }
@@ -101,16 +101,16 @@ void ScreenEffect_DrawSquare(ZunRect *rect, D3DCOLOR rectColor)
 
 ChainCallbackResult ScreenEffect_CalcFadeOut(ScreenEffect *effect)
 {
-    if (effect->effectLength != 0)
+    if (effect->duration != 0)
     {
-        effect->fadeAlpha = RAMP_UP(255.0f, (f32)effect->timer, effect->effectLength);
+        effect->fadeAlpha = RAMP_UP(255.0f, (f32)effect->timer, effect->duration);
         if (effect->fadeAlpha < 0)
         {
             effect->fadeAlpha = 0;
         }
     }
 
-    if (effect->timer >= effect->effectLength)
+    if (effect->timer >= effect->duration)
     {
         return CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB;
     }
@@ -132,7 +132,7 @@ static ChainCallbackResult ScreenEffect_DrawFadeIn(ScreenEffect *effect)
     g_Supervisor.viewport.Width = GAME_WINDOW_WIDTH;
     g_Supervisor.viewport.Height = GAME_WINDOW_HEIGHT;
     g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
-    ScreenEffect_DrawSquare(&fadeRect, (effect->fadeAlpha << 24) | effect->genericParam);
+    ScreenEffect_DrawSquare(&fadeRect, COLOR_SET_UNMASKED(effect->genericParam, effect->fadeAlpha));
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
@@ -143,7 +143,7 @@ static ChainCallbackResult ScreenEffect_DrawFadeOut(ScreenEffect *effect)
     fadeRect.top = GAME_REGION_POS_Y;
     fadeRect.right = GAME_REGION_POS_RIGHT;
     fadeRect.bottom = GAME_REGION_POS_BOTTOM;
-    ScreenEffect_DrawSquare(&fadeRect, (effect->fadeAlpha << 24) | effect->genericParam);
+    ScreenEffect_DrawSquare(&fadeRect, COLOR_SET_UNMASKED(effect->genericParam, effect->fadeAlpha));
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
@@ -159,7 +159,7 @@ static ChainCallbackResult ScreenEffect_ShakeScreen(ScreenEffect *effect)
     }
 
     effect->timer++;
-    if (effect->timer >= effect->effectLength)
+    if (effect->timer >= effect->duration)
     {
         g_GameManager.gameRegionScreenPos.x = GAME_REGION_POS_X;
         g_GameManager.gameRegionScreenPos.y = GAME_REGION_POS_Y;
@@ -167,8 +167,8 @@ static ChainCallbackResult ScreenEffect_ShakeScreen(ScreenEffect *effect)
         g_GameManager.gameRegionSize.y = GAME_REGION_HEIGHT;
         return CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB;
     }
-
-    f32 screenOffset = (((f32)effect->timer * (effect->shakinessParam - effect->genericParam)) / effect->effectLength) +
+    
+    f32 screenOffset = (((f32)effect->timer * (effect->shakinessParam - effect->genericParam)) / effect->duration) +
                        effect->genericParam;
 
     switch (g_Rng.GetRandomU32InRange(3))
@@ -223,7 +223,7 @@ static ZunResult ScreenEffect_DeletedCallback(ScreenEffect *effect)
 }
 
 #pragma var_order(calcChainElem, drawChainElem, createdEffect)
-ScreenEffect *ScreenEffect_RegisterChain(i32 effect, u32 ticks, u32 effectParam1, u32 effectParam2,
+ScreenEffect *ScreenEffect_RegisterChain(i32 type, u32 duration, u32 effectParam1, u32 effectParam2,
                                          u32 unusedEffectParam)
 {
     ChainElem *calcChainElem = NULL;
@@ -238,7 +238,7 @@ ScreenEffect *ScreenEffect_RegisterChain(i32 effect, u32 ticks, u32 effectParam1
 
     memset(createdEffect, 0, sizeof(*createdEffect));
 
-    switch (effect)
+    switch (type)
     {
     case SCREEN_EFFECT_FADE_IN:
         calcChainElem = g_FuncChain.CreateElem((ChainCallback)ScreenEffect_CalcFadeIn);
@@ -255,8 +255,8 @@ ScreenEffect *ScreenEffect_RegisterChain(i32 effect, u32 ticks, u32 effectParam1
     calcChainElem->addedCallback = (ChainAddedCallback)ScreenEffect_AddedCallback;
     calcChainElem->deletedCallback = (ChainAddedCallback)ScreenEffect_DeletedCallback;
     calcChainElem->arg = createdEffect;
-    createdEffect->usedEffect = (ScreenEffects)effect;
-    createdEffect->effectLength = ticks;
+    createdEffect->type = type;
+    createdEffect->duration = duration;
     createdEffect->genericParam = effectParam1;
     createdEffect->shakinessParam = effectParam2;
     createdEffect->unusedParam = unusedEffectParam;

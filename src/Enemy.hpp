@@ -156,7 +156,7 @@ enum EnemyPose
 
 #define ENEMY_ANM_SLOTS 8
 #define ENEMY_INTERRUPT_SLOTS 8
-#define MAX_ENEMY_EFFECTS 12
+#define MAX_ENEMY_SPELL_EFFECTS 12
 #define MAX_ECL_STACK_DEPTH 7
 #define MAX_LASERS_PER_ENEMY 32
 
@@ -234,9 +234,9 @@ struct Enemy
     EnemyShooter laserProps;
     Laser *lasers[MAX_LASERS_PER_ENEMY];
     i32 laserStore;
-    u8 deathParticle1;
-    u8 deathParticle2;
-    u8 deathParticle3;
+    u8 deathParticle;
+    u8 deathSparkParticle;
+    u8 unkParticle;
     i8 itemDrop;
     u8 bossId;
     u8 hitEffectDelay;
@@ -256,9 +256,9 @@ struct Enemy
 #endif
     ZunVec2 lowerMoveLimit;
     ZunVec2 upperMoveLimit;
-    Effect *effectArray[MAX_ENEMY_EFFECTS];
-    i32 effectCount;
-    f32 effectDistance;
+    Effect *spellEffects[MAX_ENEMY_SPELL_EFFECTS];
+    i32 spellEffectCount;
+    f32 spellEffectRadius;
     i32 lifeCallbackThreshold;
     i32 lifeCallbackSub;
     i32 timerCallbackThreshold;
@@ -276,6 +276,6 @@ ZUN_ASSERT_TYPE(Enemy, 0xec8, 4);
 ZUN_ASSERT_TYPE(Enemy, 0xeb0, 4);
 #endif
 
-void Enemy_ResetEffectArray(Enemy *enemy);
+void ResetSpellEffects(Enemy *enemy);
 
 } // namespace th06

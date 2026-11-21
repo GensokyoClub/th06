@@ -11,8 +11,8 @@ th06::AsciiManager_CutChain,0x401500,0x23,__stdcall,,void
 th06::AsciiManager::AddString,0x401530,0x115,__thiscall,,void,AsciiManager*,D3DXVECTOR3*,char*
 th06::AsciiManager::AddFormatText,0x401650,0x5a,__stdcall,varargs,void,AsciiManager*,D3DXVECTOR3*,char*
 th06::AsciiManager::DrawStrings,0x4016b0,0x281,__thiscall,,void,AsciiManager*
-th06::AsciiManager::CreatePopup1,0x401940,0x11c,__thiscall,,void,AsciiManager*,D3DXVECTOR3*,i32,unsigned long
-th06::AsciiManager::CreatePopup2,0x401a60,0x11e,__thiscall,,void,AsciiManager*,D3DXVECTOR3*,i32,unsigned long
+th06::AsciiManager::CreateScorePopup,0x401940,0x11c,__thiscall,,void,AsciiManager*,D3DXVECTOR3*,i32,unsigned long
+th06::AsciiManager::CreateStarPopup,0x401a60,0x11e,__thiscall,,void,AsciiManager*,D3DXVECTOR3*,i32,unsigned long
 th06::StageMenu::OnUpdateGameMenu,0x401b80,0xb9d,__thiscall,,i32,StageMenu*
 th06::StageMenu::OnDrawGameMenu,0x402740,0x126,__thiscall,,void,StageMenu*
 th06::StageMenu::OnUpdateRetryMenu,0x402870,0x7ce,__thiscall,,i32,StageMenu*
@@ -71,7 +71,7 @@ th06::ExInsStage6Func7,0x40d040,0x3bb,default,,void,Enemy*,EclRawInstr*
 th06::ExInsStage6Func8,0x40d400,0x125,default,,void,Enemy*,EclRawInstr*
 th06::ExInsStage6Func9,0x40d530,0x238,default,,void,Enemy*,EclRawInstr*
 th06::ExInsStage6Func11,0x40d770,0x1b6,default,,void,Enemy*,EclRawInstr*
-th06::ExInsHandleBatTransformation,0x40d930,0x164,default,,void,Enemy*,EclRawInstr*
+th06::ExInsBatTransformation,0x40d930,0x164,default,,void,Enemy*,EclRawInstr*
 th06::ExInsStage4Func12,0x40daa0,0x114,default,,void,Enemy*,EclRawInstr*
 th06::ExInsStageXFunc13,0x40dbc0,0xf2,default,,void,Enemy*,EclRawInstr*
 th06::ExInsStageXFunc14,0x40dcc0,0x139,default,,void,Enemy*,EclRawInstr*
@@ -79,12 +79,12 @@ th06::ExInsStageXFunc15,0x40de00,0x3ae,default,,void,Enemy*,EclRawInstr*
 th06::ExInsFlandreFinalContextUpdate,0x40e1b0,0x114,default,,void,Enemy*,EclRawInstr*
 th06::EffectManager::EffectManager,0x40e2d0,0x65,__thiscall,,u32*,EffectManager*
 th06::EffectManager::Reset,0x40e340,0x19,__thiscall,,void,EffectManager*
-th06::Effect_RandomSplash,0x40e360,0x24d,default,,i32,Effect*
-th06::Effect_RandomSplashBig,0x40e5b0,0x259,default,,i32,Effect*
-th06::Effect_Still,0x40e810,0x10f,default,,i32,Effect*
-th06::Effect_Callback4,0x40e920,0x2e1,default,,i32,Effect*
-th06::Effect_Attract,0x40ec10,0x1a0,default,,i32,Effect*
-th06::Effect_AttractSlow,0x40edb0,0x1a0,default,,i32,Effect*
+th06::Effect_RandomSpray,0x40e360,0x24d,default,,i32,Effect*
+th06::Effect_RandomSprayLarge,0x40e5b0,0x259,default,,i32,Effect*
+th06::Effect_Move,0x40e810,0x10f,default,,i32,Effect*
+th06::Effect_SpellOrbit,0x40e920,0x2e1,default,,i32,Effect*
+th06::Effect_RandomAttract,0x40ec10,0x1a0,default,,i32,Effect*
+th06::Effect_RandomAttractSlow,0x40edb0,0x1a0,default,,i32,Effect*
 th06::EffectManager::SpawnParticles,0x40ef50,0x1ae,__thiscall,,Effect*,EffectManager*,i32,D3DXVECTOR3*,i32,ZunColor
 th06::EffectManager_OnUpdate,0x40f100,0xe6,default,,ChainCallbackResult,EffectManager*
 th06::EffectManager_OnDraw,0x40f1f0,0x81,default,,ChainCallbackResult,EffectManager*
@@ -106,7 +106,7 @@ th06::EnemyManager::Initialize,0x410e30,0x35b,__thiscall,,void,EnemyManager*
 th06::EnemyManager::EnemyManager,0x411190,0xaa,__thiscall,,EnemyManager*,EnemyManager*
 th06::Enemy::Enemy,0x411240,0x147,__thiscall,,AnmVm*,Enemy*
 th06::EnemyManager::SpawnEnemy,0x411390,0x122,__thiscall,,Enemy*,EnemyManager*,i32,D3DXVECTOR3*,i16,i16,i32
-th06::Enemy_ResetEffectArray,0x4114c0,0x6e,default,,void,Enemy*
+th06::ResetSpellEffects,0x4114c0,0x6e,default,,void,Enemy*
 th06::EnemyManager::RunEclTimeline,0x411530,0x833,__thiscall,,void,EnemyManager*
 th06::Enemy::HandleLifeCallback,0x411da0,0x19c,__thiscall,,i32,Enemy*
 th06::Enemy::HandleTimerCallback,0x411f40,0x26f,__thiscall,,i32,Enemy*
@@ -114,7 +114,7 @@ th06::Enemy::Despawn,0x4121b0,0x84,__thiscall,,void,Enemy*
 th06::Enemy::ClampPos,0x412240,0xd9,__thiscall,,void,Enemy*
 th06::EnemyManager_RegisterChain,0x412320,0xc0,default,,ZunResult,char*,char*
 th06::EnemyManager_OnUpdate,0x4123e0,0xa5f,default,,ChainCallbackResult,EnemyManager*
-th06::UpdateEffects,0x412e50,0xbd,default,,void,Enemy*
+th06::UpdateSpellEffects,0x412e50,0xbd,default,,void,Enemy*
 th06::EnemyManager_OnDraw,0x412f10,0x304,default,,ChainCallbackResult,EnemyManager*
 th06::EnemyManager_AddedCallback,0x413220,0xff,__stdcall,,ZunResult,EnemyManager*
 th06::EnemyManager_DeletedCallback,0x413320,0x21,default,,ZunResult,EnemyManager*

@@ -58,7 +58,7 @@ ExInsn g_EclExInsn[] = {
     ExInsStage6Func7,
     ExInsStage6Func8,
     ExInsStage6Func9,
-    ExInsHandleBatTransformation,
+    ExInsBatTransformation,
     ExInsStage6Func11,
     ExInsStage4Func12,
 #if BUILT_SINCE(100)
@@ -560,9 +560,9 @@ restart_sub_changed:
             break;
         case ECL_OPCODE_ANM_DEATH_EFFECTS: {
             EclRawInstrAnmSetDeathArgs *args = &GET_INSTR_ARG(EclRawInstrAnmSetDeathArgs, 0);
-            enemy->deathParticle1 = args->deathParticle1;
-            enemy->deathParticle2 = args->deathParticle2;
-            enemy->deathParticle3 = args->deathParticle3;
+            enemy->deathParticle = args->deathParticle;
+            enemy->deathSparkParticle = args->deathSparkParticle;
+            enemy->unkParticle = args->unkParticle;
             break;
         }
         case ECL_OPCODE_SHOOT_INTERVAL:
@@ -694,11 +694,11 @@ restart_sub_changed:
             break;
         case ECL_OPCODE_SPELLCARD_EFFECT: {
             EclRawInstrSpellcardEffectArgs *args = &GET_INSTR_ARG(EclRawInstrSpellcardEffectArgs, 0);
-            enemy->effectArray[enemy->effectCount] = g_EffectManager.SpawnParticles(
-                PARTICLE_EFFECT_UNK_13, &enemy->position, 1, g_EffectsColor[args->effectColorId]);
-            enemy->effectArray[enemy->effectCount]->pos2 = args->pos;
-            enemy->effectDistance = args->effectDistance;
-            enemy->effectCount++;
+            enemy->spellEffects[enemy->spellEffectCount] = g_EffectManager.SpawnParticles(
+                PARTICLE_SPELL_ORBIT, &enemy->position, 1, g_EffectsColor[args->colorId]);
+            enemy->spellEffects[enemy->spellEffectCount]->direction = args->direction;
+            enemy->spellEffectRadius = args->radius;
+            enemy->spellEffectCount++;
             break;
         }
         case ECL_OPCODE_MOVE_VELOCITY_INTERP_DECELERATE:
@@ -987,7 +987,7 @@ restart_sub_changed:
             enemy->currentContext.time += *EclGetVar(enemy, &GET_INSTR_VAR_ARG(0), NULL);
             break;
         case ECL_OPCODE_DROP_ITEM_ID:
-            g_ItemManager.SpawnItem(&enemy->position, GET_INSTR_ARG(ItemType, 0), ITEM_STATE_FALLING);
+            g_ItemManager.SpawnItem(&enemy->position, GET_INSTR_INT_ARG(0), ITEM_STATE_FALLING);
             break;
         case ECL_OPCODE_STD_UNPAUSE:
             g_Stage.unpauseFlag = 1;
@@ -1285,17 +1285,17 @@ static i32 *EclGetVar(Enemy *enemy, EclVarId *eclVarId, EclValueType *valueType)
     case ECL_VAR_PLAYER_POS_X:
         if (valueType != NULL)
             *valueType = ECL_VALUE_TYPE_READONLY;
-        return (i32 *)&g_Player.positionCenter.x;
+        return (i32 *)&g_Player.position.x;
 
     case ECL_VAR_PLAYER_POS_Y:
         if (valueType != NULL)
             *valueType = ECL_VALUE_TYPE_READONLY;
-        return (i32 *)&g_Player.positionCenter.y;
+        return (i32 *)&g_Player.position.y;
 
     case ECL_VAR_PLAYER_POS_Z:
         if (valueType != NULL)
             *valueType = ECL_VALUE_TYPE_READONLY;
-        return (i32 *)&g_Player.positionCenter.z;
+        return (i32 *)&g_Player.position.z;
 
     case ECL_VAR_PLAYER_ANGLE: {
         static f32 g_PlayerAngle;
@@ -1312,7 +1312,7 @@ static i32 *EclGetVar(Enemy *enemy, EclVarId *eclVarId, EclValueType *valueType)
 
     case ECL_VAR_PLAYER_DISTANCE: {
         static f32 g_PlayerDistance;
-        D3DXVECTOR3 distance = g_Player.positionCenter - enemy->position;
+        D3DXVECTOR3 distance = g_Player.position - enemy->position;
         g_PlayerDistance = D3DXVec3Length(&distance);
         if (valueType != NULL)
             *valueType = ECL_VALUE_TYPE_READONLY;

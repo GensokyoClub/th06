@@ -62,9 +62,9 @@ ZUN_ASSERT_TYPE(TimelineInstr, 0x8, 4);
 
 struct EclRawInstrAnmSetDeathArgs
 {
-    i8 deathParticle1;
-    i8 deathParticle2;
-    i8 deathParticle3;
+    i8 deathParticle;
+    i8 deathSparkParticle;
+    i8 unkParticle;
 };
 ZUN_ASSERT_TYPE(EclRawInstrAnmSetDeathArgs, 0x3, 1);
 
@@ -103,9 +103,9 @@ ZUN_ASSERT_TYPE(EclRawInstrLaserArgs, 0x34, 4);
 
 struct EclRawInstrSpellcardEffectArgs
 {
-    i32 effectColorId;
-    D3DXVECTOR3 pos;
-    f32 effectDistance;
+    i32 colorId;
+    D3DXVECTOR3 direction;
+    f32 radius;
 };
 ZUN_ASSERT_TYPE(EclRawInstrSpellcardEffectArgs, 0x14, 4);
 

@@ -59,9 +59,9 @@ void EnemyManager::Initialize()
     enemy->stackDepth = 0;
     enemy->life = 1;
     enemy->score = 100;
-    enemy->deathParticle1 = PARTICLE_EFFECT_UNK_0;
-    enemy->deathParticle2 = 0;
-    enemy->deathParticle3 = 0;
+    enemy->deathParticle = PARTICLE_DEATH_POP;
+    enemy->deathSparkParticle = SPARK_TYPE_WHITE;
+    enemy->unkParticle = 0;
     enemy->shootInterval = 0;
     enemy->shootIntervalTimer = 0;
     enemy->shootOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -72,7 +72,7 @@ void EnemyManager::Initialize()
     enemy->flags.deathMode = EnemyDeath_DespawnNoCallback;
     enemy->deathCallbackSub = -1;
     enemy->flags.hasMovementBounds = false;
-    enemy->effectCount = 0;
+    enemy->spellEffectCount = 0;
     enemy->runInterrupt = -1;
     enemy->lifeCallbackThreshold = -1;
     enemy->timerCallbackThreshold = -1;
@@ -122,39 +122,39 @@ Enemy *EnemyManager::SpawnEnemy(i32 eclSubId, D3DXVECTOR3 *pos, i16 life, i16 it
     return newEnemy;
 }
 
-static void UpdateEffects(Enemy *enemy)
+static void UpdateSpellEffects(Enemy *enemy)
 {
     Effect *effect;
-    for (i32 i = 0; i < enemy->effectCount; i++)
+    for (i32 i = 0; i < enemy->spellEffectCount; i++)
     {
-        effect = enemy->effectArray[i];
+        effect = enemy->spellEffects[i];
         if (!effect)
         {
             continue;
         }
 
-        effect->position = enemy->position;
-        if (effect->distance < enemy->effectDistance)
+        effect->offset = enemy->position;
+        if (effect->radius < enemy->spellEffectRadius)
         {
-            effect->distance += 0.3f;
+            effect->radius += 0.3f;
         }
 
-        effect->angleRelated = ReduceAngleAdd(effect->angleRelated, ZUN_PI / 100.0f);
+        effect->angle = ReduceAngleAdd(effect->angle, ZUN_PI / 100.0f);
     }
 }
 
-void Enemy_ResetEffectArray(Enemy *enemy)
+void ResetSpellEffects(Enemy *enemy)
 {
-    for (i32 i = 0; i < enemy->effectCount; i++)
+    for (i32 i = 0; i < enemy->spellEffectCount; i++)
     {
-        if (!enemy->effectArray[i])
+        if (!enemy->spellEffects[i])
         {
             continue;
         }
-        enemy->effectArray[i]->flag_17a = true;
-        enemy->effectArray[i] = NULL;
+        enemy->spellEffects[i]->isFadingOut = true;
+        enemy->spellEffects[i] = NULL;
     }
-    enemy->effectCount = 0;
+    enemy->spellEffectCount = 0;
 }
 
 void EnemyManager::RunEclTimeline()
@@ -449,9 +449,9 @@ void Enemy::Despawn()
     {
         g_Gui.SetBossPresent(false);
     }
-    if (this->effectCount != 0)
+    if (this->spellEffectCount != 0)
     {
-        Enemy_ResetEffectArray(this);
+        ResetSpellEffects(this);
     }
 }
 
@@ -615,9 +615,11 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                     curEnemy->flags.isDamageable = false;
                     curEnemy->flags.deathMode = EnemyDeath_DespawnNoCallback;
                     g_Gui.SetBossPresent(false);
-                    g_EffectManager.SpawnParticles(curEnemy->deathParticle1, &curEnemy->position, 1, COLOR_WHITE);
-                    g_EffectManager.SpawnParticles(curEnemy->deathParticle1, &curEnemy->position, 1, COLOR_WHITE);
-                    g_EffectManager.SpawnParticles(curEnemy->deathParticle1, &curEnemy->position, 1, COLOR_WHITE);
+                    // NOTE: SpawnParticles has a count argument, which could've
+                    // been used here instead of repeating the call 3 times.
+                    g_EffectManager.SpawnParticles(curEnemy->deathParticle, &curEnemy->position);
+                    g_EffectManager.SpawnParticles(curEnemy->deathParticle, &curEnemy->position);
+                    g_EffectManager.SpawnParticles(curEnemy->deathParticle, &curEnemy->position);
                     break;
                 case EnemyDeath_DisableInteraction:
                     g_GameManager.AddScore(curEnemy->score);
@@ -630,26 +632,21 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                     if (curEnemy->flags.isBoss)
                     {
                         g_Gui.SetBossPresent(false);
-                        Enemy_ResetEffectArray(curEnemy);
+                        ResetSpellEffects(curEnemy);
                     }
                     // fallthrough
                 case EnemyDeath_DropItemsOnly:
                     if (curEnemy->itemDrop >= 0)
                     {
-                        g_EffectManager.SpawnParticles(curEnemy->deathParticle2 + 4, &curEnemy->position, 3,
-                                                       COLOR_WHITE);
-                        g_ItemManager.SpawnItem(&curEnemy->position, (ItemType)curEnemy->itemDrop,
-                                                (ItemState)hitByBomb);
+                        g_EffectManager.SpawnParticles(curEnemy->deathSparkParticle + PARTICLE_SPARK, &curEnemy->position, 3);
+                        g_ItemManager.SpawnItem(&curEnemy->position, curEnemy->itemDrop, hitByBomb);
                     }
                     else if (curEnemy->itemDrop == ITEM_RANDOM_ITEM)
                     {
                         if (mgr->randomItemSpawnIndex % ITEM_SPAWNS == 0)
                         {
-                            g_EffectManager.SpawnParticles(curEnemy->deathParticle2 + 4, &curEnemy->position, 6,
-                                                           COLOR_WHITE);
-                            g_ItemManager.SpawnItem(&curEnemy->position,
-                                                    (ItemType)g_RandomItems[mgr->randomItemTableIndex],
-                                                    (ItemState)hitByBomb);
+                            g_EffectManager.SpawnParticles(curEnemy->deathSparkParticle + PARTICLE_SPARK, &curEnemy->position, 6);
+                            g_ItemManager.SpawnItem(&curEnemy->position, g_RandomItems[mgr->randomItemTableIndex], hitByBomb);
                             if (++mgr->randomItemTableIndex >= ARRAY_SIZE_SIGNED(g_RandomItems))
                             {
                                 mgr->randomItemTableIndex = 0;
@@ -665,8 +662,8 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                     break;
                 }
                 g_SoundPlayer.PlaySoundId((enemyIdx % 2) + SOUND_2);
-                g_EffectManager.SpawnParticles(curEnemy->deathParticle1, &curEnemy->position, 1, COLOR_WHITE);
-                g_EffectManager.SpawnParticles(curEnemy->deathParticle2 + 4, &curEnemy->position, 4, COLOR_WHITE);
+                g_EffectManager.SpawnParticles(curEnemy->deathParticle, &curEnemy->position);
+                g_EffectManager.SpawnParticles(curEnemy->deathSparkParticle + PARTICLE_SPARK, &curEnemy->position, 4);
                 if (curEnemy->deathCallbackSub >= 0)
                 {
                     curEnemy->ResetRank();
@@ -695,7 +692,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                 curEnemy->primaryVm.flags.colorOp = AnmColorOp_Modulate;
             }
         }
-        UpdateEffects(curEnemy);
+        UpdateSpellEffects(curEnemy);
         if (!g_GameManager.isTimeStopped)
         {
             curEnemy->phaseTimer++;

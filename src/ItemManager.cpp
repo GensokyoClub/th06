@@ -10,7 +10,7 @@ ItemManager g_ItemManager;
 ChainElem g_ItemManagerCalcChain; // unused
 ChainElem g_ItemMgrOnDrawElem;    // unused
 
-void ItemManager::SpawnItem(D3DXVECTOR3 *position, ItemType itemType, ItemState state)
+void ItemManager::SpawnItem(D3DXVECTOR3 *position, i32 itemType, i32 state)
 {
     Item *item;
     i32 idx;
@@ -133,7 +133,7 @@ void ItemManager::OnUpdate()
         else
         {
             if (curItem->state == ITEM_STATE_MAGNETED ||
-                (g_GameManager.currentPower >= MAX_POWER && g_Player.positionCenter.y < PIV_LINE))
+                (g_GameManager.currentPower >= MAX_POWER && g_Player.position.y < PIV_LINE))
             {
                 playerAngle = g_Player.AngleToPlayer(&curItem->currentPosition);
                 sincosmul(&curItem->startPositionVelocity, playerAngle, 8.0f);
@@ -179,7 +179,7 @@ void ItemManager::OnUpdate()
                     }
                     itemScore = g_PowerItemScore[g_GameManager.fullPowerScoreIdx];
                     g_GameManager.AddScore(itemScore);
-                    g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore,
+                    g_AsciiManager.CreateScorePopup(&curItem->currentPosition, itemScore,
                                                 itemScore >= 12800 ? COLOR_YELLOW : COLOR_WHITE);
                 }
                 else
@@ -207,12 +207,12 @@ void ItemManager::OnUpdate()
                     }
                     if (powerLevel != prevPowerLevel)
                     {
-                        g_AsciiManager.CreatePopup1(&curItem->currentPosition, -1, COLOR_BABY_BLUE);
+                        g_AsciiManager.CreatePowerUpPopup(&curItem->currentPosition, COLOR_BABY_BLUE);
                         g_SoundPlayer.PlaySoundId(SOUND_POWERUP);
                     }
                     else
                     {
-                        g_AsciiManager.CreatePopup1(&curItem->currentPosition, 10, COLOR_WHITE);
+                        g_AsciiManager.CreateScorePopup(&curItem->currentPosition, 10, COLOR_WHITE);
                     }
                 }
                 g_GameManager.IncreaseSubrank(1);
@@ -223,22 +223,22 @@ void ItemManager::OnUpdate()
                 case EASY:
                 case NORMAL:
                     itemScore = CALCULATE_POINT_SCORE(curItem, 100000, 60000, 100);
-                    g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore,
+                    g_AsciiManager.CreateScorePopup(&curItem->currentPosition, itemScore,
                                                 itemScore >= 100000 ? COLOR_YELLOW : COLOR_WHITE);
                     break;
                 case HARD:
                     itemScore = CALCULATE_POINT_SCORE(curItem, 150000, 100000, 180);
-                    g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore,
+                    g_AsciiManager.CreateScorePopup(&curItem->currentPosition, itemScore,
                                                 itemScore >= 150000 ? COLOR_YELLOW : COLOR_WHITE);
                     break;
                 case LUNATIC:
                     itemScore = CALCULATE_POINT_SCORE(curItem, 200000, 150000, 270);
-                    g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore,
+                    g_AsciiManager.CreateScorePopup(&curItem->currentPosition, itemScore,
                                                 itemScore >= 200000 ? COLOR_YELLOW : COLOR_WHITE);
                     break;
                 case EXTRA:
                     itemScore = CALCULATE_POINT_SCORE(curItem, 300000, 200000, 400);
-                    g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore,
+                    g_AsciiManager.CreateScorePopup(&curItem->currentPosition, itemScore,
                                                 itemScore >= 300000 ? COLOR_YELLOW : COLOR_WHITE);
                     break;
                 }
@@ -265,7 +265,7 @@ void ItemManager::OnUpdate()
                     }
                     itemScore = g_PowerItemScore[g_GameManager.fullPowerScoreIdx];
                     g_GameManager.AddScore(itemScore);
-                    g_AsciiManager.CreatePopup1(&curItem->currentPosition, itemScore,
+                    g_AsciiManager.CreateScorePopup(&curItem->currentPosition, itemScore,
                                                 itemScore >= 12800 ? COLOR_YELLOW : COLOR_WHITE);
                 }
                 else
@@ -293,12 +293,12 @@ void ItemManager::OnUpdate()
                     }
                     if (powerLevel != prevPowerLevel)
                     {
-                        g_AsciiManager.CreatePopup1(&curItem->currentPosition, -1, COLOR_BABY_BLUE);
+                        g_AsciiManager.CreatePowerUpPopup(&curItem->currentPosition, COLOR_BABY_BLUE);
                         g_SoundPlayer.PlaySoundId(SOUND_POWERUP);
                     }
                     else
                     {
-                        g_AsciiManager.CreatePopup1(&curItem->currentPosition, 10, COLOR_WHITE);
+                        g_AsciiManager.CreateScorePopup(&curItem->currentPosition, 10, COLOR_WHITE);
                     }
                 }
                 break;
@@ -325,11 +325,11 @@ void ItemManager::OnUpdate()
                     g_BulletManager.CancelAllBullets();
                     g_Gui.ShowFullPowerMode(0);
                     g_SoundPlayer.PlaySoundId(SOUND_POWERUP);
-                    g_AsciiManager.CreatePopup1(&curItem->currentPosition, -1, COLOR_BABY_BLUE);
+                    g_AsciiManager.CreatePowerUpPopup(&curItem->currentPosition, COLOR_BABY_BLUE);
                 }
                 g_GameManager.currentPower = MAX_POWER;
                 g_GameManager.AddScore(1000);
-                g_AsciiManager.CreatePopup1(&curItem->currentPosition, 1000, COLOR_WHITE);
+                g_AsciiManager.CreateScorePopup(&curItem->currentPosition, 1000, COLOR_WHITE);
                 g_Gui.redrawFrames.powerGauge = 2;
                 break;
             case ITEM_STAR:
@@ -339,7 +339,7 @@ void ItemManager::OnUpdate()
                     itemScore = 100;
                 }
                 g_GameManager.AddScore(itemScore);
-                g_AsciiManager.CreatePopup2(&curItem->currentPosition, itemScore, COLOR_WHITE);
+                g_AsciiManager.CreateStarPopup(&curItem->currentPosition, itemScore, COLOR_WHITE);
                 break;
             }
             curItem->isInUse = false;
@@ -395,12 +395,12 @@ void ItemManager::OnDraw()
                 g_AnmManager->SetActiveSprite(&curItem->sprite, curItem->itemType + ANM_SPRITE_ITEM_INDICATORS_START);
                 curItem->isIndicatorHidden = false;
             }
-            itemAlpha = 255 - (i32)((((ITEM_SIZE / 2.0f) - curItem->currentPosition[1]) * 255.0f) / 128.0f);
+            itemAlpha = 255 - (i32)RAMP_UP(255.0f, (ITEM_SIZE / 2.0f) - curItem->currentPosition[1], 128.0f);
             if (itemAlpha < 0x40)
             {
                 itemAlpha = 0x40;
             }
-            curItem->sprite.color = COLOR_SET_ALPHA3(curItem->sprite.color, itemAlpha);
+            curItem->sprite.color = COLOR_SET_ALPHA2(curItem->sprite.color, itemAlpha);
         }
         else
         {

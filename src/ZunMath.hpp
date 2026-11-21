@@ -18,6 +18,15 @@ struct ZunVec3
 };
 ZUN_ASSERT_SIZE(ZunVec3, 0xC);
 
+struct ZunRect
+{
+    f32 left;
+    f32 top;
+    f32 right;
+    f32 bottom;
+};
+ZUN_ASSERT_SIZE(ZunRect, 0x10);
+
 // The argument is evaluated twice.
 #define ZUN_SQUARE(x) ((x) * (x))
 

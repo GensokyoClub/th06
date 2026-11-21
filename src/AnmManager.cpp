@@ -1059,7 +1059,7 @@ i32 AnmManager::RunAnm(AnmVm *vm)
         case ANM_OPCODE_ALPHA_INTERP_LINEAR: {
             u32 *alphaInterpVals = (u32 *)curInstr->args;
             vm->alphaInterpInitial = vm->color;
-            vm->alphaInterpFinal = COLOR_SET_ALPHA2(vm->color, alphaInterpVals[0]);
+            vm->alphaInterpFinal = COLOR_SET_ALPHA2(vm->color, alphaInterpVals[0] & 0xff);
             vm->alphaInterpDuration = alphaInterpVals[1];
             vm->alphaInterpTime = 0;
             break;

@@ -37,10 +37,10 @@ void BombReimuACalc(Player *player)
             player->bombInfo.projectileState[i] = 0;
         }
         g_ItemManager.MagnetAllItems();
-        g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &player->positionCenter, 1, COLOR_NEONBLUE);
+        g_EffectManager.SpawnParticles(PARTICLE_FLASH, &player->position, 1, COLOR_NEONBLUE);
 
-        player->cancelRegions[8].pos.x = player->positionCenter.x;
-        player->cancelRegions[8].pos.y = player->positionCenter.y;
+        player->cancelRegions[8].pos.x = player->position.x;
+        player->cancelRegions[8].pos.y = player->position.y;
 
         player->cancelRegions[8].size.x = 256.0f;
         player->cancelRegions[8].size.y = 256.0f;
@@ -54,7 +54,7 @@ void BombReimuACalc(Player *player)
             {
                 player->bombInfo.projectileState[i] = 1;
                 player->bombInfo.projectileCustom[i] = 4.0f;
-                player->bombInfo.projectilePosition[i] = player->positionCenter;
+                player->bombInfo.projectilePosition[i] = player->position;
 
                 angleX = g_Rng.GetRandomF32InRange(ZUN_2PI) - ZUN_PI;
 
@@ -89,7 +89,7 @@ void BombReimuACalc(Player *player)
                 }
                 else
                 {
-                    bombPivot = player->positionCenter;
+                    bombPivot = player->position;
                 }
                 angleX = bombPivot.x - player->bombInfo.projectilePosition[i].x;
                 angleY = bombPivot.y - player->bombInfo.projectilePosition[i].y;
@@ -129,9 +129,8 @@ void BombReimuACalc(Player *player)
                 if (player->damageRegionDamageDealt[i] >= 100 ||
                     player->bombInfo.timer >= player->bombInfo.duration - 30)
                 {
-                    g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_6, &player->bombInfo.projectilePosition[i], 8,
-                                                   COLOR_WHITE);
-                    g_EffectManager.SpawnParticles(PARTICLE_EFFECT_UNK_12, &player->bombInfo.projectilePosition[i], 1,
+                    g_EffectManager.SpawnParticles(PARTICLE_SPARK_GREEN, &player->bombInfo.projectilePosition[i], 8);
+                    g_EffectManager.SpawnParticles(PARTICLE_FLASH, &player->bombInfo.projectilePosition[i], 1,
                                                    COLOR_NEONBLUE);
                     player->bombInfo.projectileState[i] = 2;
 
@@ -273,17 +272,17 @@ void BombReimuBCalc(Player *player)
         }
 
         g_SoundPlayer.PlaySoundId(SOUND_BOMB_REIMARI);
-        player->bombInfo.projectilePosition[0].x = player->positionCenter.x;
+        player->bombInfo.projectilePosition[0].x = player->position.x;
         player->bombInfo.projectilePosition[0].y = GAME_REGION_CENTER_Y;
         player->bombInfo.projectilePosition[0].z = 0.42f;
         player->bombInfo.projectilePosition[1].x = GAME_REGION_CENTER_X;
-        player->bombInfo.projectilePosition[1].y = player->positionCenter.y;
+        player->bombInfo.projectilePosition[1].y = player->position.y;
         player->bombInfo.projectilePosition[1].z = 0.415f;
-        player->bombInfo.projectilePosition[2].x = player->positionCenter.x;
+        player->bombInfo.projectilePosition[2].x = player->position.x;
         player->bombInfo.projectilePosition[2].y = GAME_REGION_CENTER_Y;
         player->bombInfo.projectilePosition[2].z = 0.41f;
         player->bombInfo.projectilePosition[3].x = GAME_REGION_CENTER_X;
-        player->bombInfo.projectilePosition[3].y = player->positionCenter.y;
+        player->bombInfo.projectilePosition[3].y = player->position.y;
         player->bombInfo.projectilePosition[3].z = 0.405f;
         ScreenEffect_RegisterChain(SCREEN_EFFECT_SHAKE, 60, 2, 6, 0);
     }
@@ -364,7 +363,7 @@ void BombMarisaACalc(Player *player)
         for (i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.vms); i++, starSprite++)
         {
             g_AnmManager->ExecuteAnmIdx(starSprite, ANM_SCRIPT_PLAYER_MARISA_A_BLUE_STAR + i % 3);
-            player->bombInfo.projectilePosition[i] = player->positionCenter;
+            player->bombInfo.projectilePosition[i] = player->position;
 
             float starAngle = i * ZUN_2PI / 8.0f;
 
@@ -463,7 +462,7 @@ void BombMarisaBCalc(Player *player)
         for (i = 0; i < 4; i++, vm++)
         {
             g_AnmManager->ExecuteAnmIdx(vm, ANM_SCRIPT_PLAYER_MARISA_B_MASTER_SPARK + i);
-            player->bombInfo.projectilePosition[i] = player->positionCenter;
+            player->bombInfo.projectilePosition[i] = player->position;
         }
         g_SoundPlayer.PlaySoundId(SOUND_BOMB_MARISA_B);
         player->speedMultiplierDuringBomb.x = player->speedMultiplierDuringBomb.y = 0.3f;
@@ -482,11 +481,11 @@ void BombMarisaBCalc(Player *player)
         if (player->bombInfo.timer.HasTicked() && !MULTIPLE_OF(player->bombInfo.timer, 4))
         {
             player->cancelRegions[0].pos.x = GAME_REGION_CENTER_X;
-            player->cancelRegions[0].pos.y = player->positionCenter.y / 2.0f;
+            player->cancelRegions[0].pos.y = player->position.y / 2.0f;
             player->cancelRegions[0].size.x = GAME_REGION_WIDTH;
-            player->cancelRegions[0].size.y = player->positionCenter.y;
+            player->cancelRegions[0].size.y = player->position.y;
             player->damageRegionSize[0].x = GAME_REGION_WIDTH;
-            player->damageRegionSize[0].y = player->positionCenter.y;
+            player->damageRegionSize[0].y = player->position.y;
             player->damageRegionPosition[0].x = player->cancelRegions[0].pos.x;
             player->damageRegionPosition[0].y = player->cancelRegions[0].pos.y;
             player->damageRegionDamage[0] = 12;
@@ -509,7 +508,7 @@ void BombMarisaBDraw(Player *player)
     for (i32 i = 0; i < 4; i++)
     {
         float spriteAngle = (((ZUN_PI / 5.0f) * i) / 3.0f - ZUN_PI) + (ZUN_2PI / 5.0f);
-        vm->pos = player->positionCenter;
+        vm->pos = player->position;
         vm->pos.x += (cosf(spriteAngle) * vm->sprite->height * vm->scaleY) / 2.0f;
         vm->pos.y += (sinf(spriteAngle) * vm->sprite->height * vm->scaleY) / 2.0f;
         spriteAngle = ZUN_HALF_PI - spriteAngle;

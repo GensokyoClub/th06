@@ -4,12 +4,13 @@
 // COLORS
 #define COLOR_RGB_MASK 0x00ffffff
 #define COLOR_ALPHA_MASK 0xff000000
+#define COLOR_ALPHA_SHIFT 24
 #define COLOR_RGB(color) ((color) & COLOR_RGB_MASK)
-#define COLOR_ALPHA(color) (((color) & COLOR_ALPHA_MASK) >> 24)
-#define COLOR_SET_ALPHA(color, alpha) (((alpha) << 24) | COLOR_RGB(color))
-#define COLOR_SET_ALPHA2(color, alpha) (COLOR_RGB(color) | (((alpha) & 0xff) << 24))
-#define COLOR_SET_ALPHA3(color, alpha) (COLOR_RGB(color) | ((alpha) << 24))
+#define COLOR_ALPHA(color) (((color) & COLOR_ALPHA_MASK) >> COLOR_ALPHA_SHIFT)
+#define COLOR_SET_ALPHA(color, alpha) (((alpha) << COLOR_ALPHA_SHIFT) | COLOR_RGB(color))
+#define COLOR_SET_ALPHA2(color, alpha) (COLOR_RGB(color) | ((alpha) << COLOR_ALPHA_SHIFT))
 #define COLOR_COMBINE_ALPHA(color, alpha) (((alpha) & COLOR_ALPHA_MASK) | COLOR_RGB(color))
+#define COLOR_SET_UNMASKED(color, alpha) ((alpha) << COLOR_ALPHA_SHIFT | (color))
 
 #define COLOR_GREYSCALE(shade) (COLOR_ALPHA_MASK | (shade) << 16 | (shade) << 8 | (shade))
 

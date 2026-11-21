@@ -14,175 +14,174 @@ void EffectManager::Reset()
     memset(this, 0, sizeof(*this));
 }
 
-EffectCallbackResult Effect_RandomSplash(Effect *effect)
+EffectCallbackResult Effect_RandomSpray(Effect *effect)
 {
     if (effect->timer == 0 && effect->timer.HasTicked())
     {
-        effect->unk_11c[0] = (g_Rng.GetRandomF32InRange(256.0f) - 128.0f) / 12.0f;
-        effect->unk_11c[1] = (g_Rng.GetRandomF32InRange(256.0f) - 128.0f) / 12.0f;
-        effect->unk_11c[2] = 0.0f;
+        effect->velocity[0] = (g_Rng.GetRandomF32InRange(256.0f) - 128.0f) / 12.0f;
+        effect->velocity[1] = (g_Rng.GetRandomF32InRange(256.0f) - 128.0f) / 12.0f;
+        effect->velocity[2] = 0.0f;
 
-        effect->unk_128 = -effect->unk_11c / 19.0f;
+        effect->acceleration = -effect->velocity / 19.0f;
     }
 
-    effect->pos1 += effect->unk_11c * g_Supervisor.gameSpeed;
-    effect->unk_11c += effect->unk_128 * g_Supervisor.gameSpeed;
+    effect->position += effect->velocity * g_Supervisor.gameSpeed;
+    effect->velocity += effect->acceleration * g_Supervisor.gameSpeed;
 
     return EFFECT_CALLBACK_RESULT_DONE;
 }
 
-EffectCallbackResult Effect_RandomSplashBig(Effect *effect)
+EffectCallbackResult Effect_RandomSprayLarge(Effect *effect)
 {
     if (effect->timer == 0 && effect->timer.HasTicked())
     {
-        effect->unk_11c[0] = (g_Rng.GetRandomF32InRange(256.0f) - 128.0f) * 4.0f / 33.0f;
-        effect->unk_11c[1] = (g_Rng.GetRandomF32InRange(256.0f) - 128.0f) * 4.0f / 33.0f;
-        effect->unk_11c[2] = 0.0f;
+        effect->velocity[0] = (g_Rng.GetRandomF32InRange(256.0f) - 128.0f) * 4.0f / 33.0f;
+        effect->velocity[1] = (g_Rng.GetRandomF32InRange(256.0f) - 128.0f) * 4.0f / 33.0f;
+        effect->velocity[2] = 0.0f;
 
-        effect->unk_128 = -effect->unk_11c / 20.0f;
+        effect->acceleration = -effect->velocity / 20.0f;
     }
 
-    effect->pos1 += effect->unk_11c * g_Supervisor.gameSpeed;
-    effect->unk_11c += effect->unk_128 * g_Supervisor.gameSpeed;
+    effect->position += effect->velocity * g_Supervisor.gameSpeed;
+    effect->velocity += effect->acceleration * g_Supervisor.gameSpeed;
 
     return EFFECT_CALLBACK_RESULT_DONE;
 }
 
-EffectCallbackResult Effect_Still(Effect *effect)
+EffectCallbackResult Effect_Move(Effect *effect)
 {
-    effect->pos1 += effect->unk_11c * g_Supervisor.gameSpeed;
-    effect->unk_11c += effect->unk_128 * g_Supervisor.gameSpeed;
+    effect->position += effect->velocity * g_Supervisor.gameSpeed;
+    effect->velocity += effect->acceleration * g_Supervisor.gameSpeed;
 
     return EFFECT_CALLBACK_RESULT_DONE;
 }
 
-#pragma var_order(posOffset, verticalAngle, matrix, horizontalAngle, normalizedPos)
-EffectCallbackResult Effect_Callback4(Effect *effect)
+#pragma var_order(orbit, sine, rotationMatrix, cosine, orbitAxis)
+EffectCallbackResult Effect_SpellOrbit(Effect *effect)
 {
-    D3DXVECTOR3 posOffset;
-    f32 verticalAngle;
-    D3DXMATRIX matrix;
-    f32 horizontalAngle;
-    D3DXVECTOR3 normalizedPos;
+    D3DXVECTOR3 orbit;
+    f32 sine;
+    D3DXMATRIX rotationMatrix;
+    f32 cosine;
+    D3DXVECTOR3 orbitAxis;
 
-    D3DXVec3Normalize(&normalizedPos, &effect->pos2);
+    D3DXVec3Normalize(&orbitAxis, &effect->direction);
 
-    verticalAngle = sinf(effect->angleRelated);
-    horizontalAngle = cosf(effect->angleRelated);
+    sine = sinf(effect->angle);
+    cosine = cosf(effect->angle);
 
-    effect->quaternion.x = normalizedPos.x * verticalAngle;
-    effect->quaternion.y = normalizedPos.y * verticalAngle;
-    effect->quaternion.z = normalizedPos.z * verticalAngle;
-    effect->quaternion.w = horizontalAngle;
-    D3DXMatrixRotationQuaternion(&matrix, &effect->quaternion);
+    effect->quaternion.x = orbitAxis.x * sine;
+    effect->quaternion.y = orbitAxis.y * sine;
+    effect->quaternion.z = orbitAxis.z * sine;
+    effect->quaternion.w = cosine;
+    D3DXMatrixRotationQuaternion(&rotationMatrix, &effect->quaternion);
 
-    posOffset.x = normalizedPos.y * 1.0f - normalizedPos.z * 0.0f;
-    posOffset.y = normalizedPos.z * 0.0f - normalizedPos.x * 1.0f;
-    posOffset.z = normalizedPos.x * 0.0f - normalizedPos.y * 0.0f;
+    orbit.x = orbitAxis.y * 1.0f - orbitAxis.z * 0.0f;
+    orbit.y = orbitAxis.z * 0.0f - orbitAxis.x * 1.0f;
+    orbit.z = orbitAxis.x * 0.0f - orbitAxis.y * 0.0f;
 
-    if (D3DXVec3LengthSq(&posOffset) < 0.00001f)
+    if (D3DXVec3LengthSq(&orbit) < 0.00001f)
     {
-        normalizedPos = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
+        // BUG: This should be setting orbit instead of orbitAxis
+        orbitAxis = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
     }
     else
     {
-        D3DXVec3Normalize(&posOffset, &posOffset);
+        D3DXVec3Normalize(&orbit, &orbit);
     }
 
-    posOffset *= effect->distance;
-    D3DXVec3TransformCoord(&posOffset, &posOffset, &matrix);
-    posOffset.z *= 6.0f;
+    orbit *= effect->radius;
+    D3DXVec3TransformCoord(&orbit, &orbit, &rotationMatrix);
+    orbit.z *= 6.0f;
 
-    effect->pos1 = posOffset + effect->position;
+    effect->position = orbit + effect->offset;
 
-    if (effect->flag_17a)
+    if (effect->isFadingOut)
     {
-        if (++effect->counter_17b >= 16)
+        if (++effect->fadeOutTimer >= 16)
         {
             return EFFECT_CALLBACK_RESULT_STOP;
         }
 
-        float alpha = 1.0f - effect->counter_17b / 16.0f;
-        effect->vm.color = COLOR_SET_ALPHA3(effect->vm.color, (i32)(alpha * 255.0f));
-
-        effect->vm.scaleX = effect->vm.scaleY = 2.0f - alpha;
+        float fade = 1.0f - effect->fadeOutTimer / 16.0f;
+        effect->vm.color = COLOR_SET_ALPHA2(effect->vm.color, (i32)(fade * 255.0f));
+        effect->vm.scaleX = effect->vm.scaleY = 2.0f - fade;
     }
 
     return EFFECT_CALLBACK_RESULT_DONE;
 }
 
-EffectCallbackResult Effect_Attract(Effect *effect)
+EffectCallbackResult Effect_RandomAttract(Effect *effect)
 {
     f32 temp;
 
     if (effect->timer == 0 && effect->timer.HasTicked())
     {
-        effect->position = effect->pos1;
+        effect->offset = effect->position;
 
         temp = g_Rng.GetRandomF32InRange(ZUN_2PI) - ZUN_PI;
-        effect->pos2.x = cosf(temp);
-        effect->pos2.y = sinf(temp);
-        effect->pos2.z = 0.0f;
+        effect->direction.x = cosf(temp);
+        effect->direction.y = sinf(temp);
+        effect->direction.z = 0.0f;
     }
 
     temp = RAMP_DOWN(256.0f, (f32)effect->timer, 60.0f);
 
-    effect->pos1 = temp * effect->pos2 + effect->position;
+    effect->position = temp * effect->direction + effect->offset;
 
     return EFFECT_CALLBACK_RESULT_DONE;
 }
 
-EffectCallbackResult Effect_AttractSlow(Effect *effect)
+EffectCallbackResult Effect_RandomAttractSlow(Effect *effect)
 {
     f32 temp;
 
     if (effect->timer == 0 && effect->timer.HasTicked())
     {
-        effect->position = effect->pos1;
+        effect->offset = effect->position;
 
         temp = g_Rng.GetRandomF32InRange(ZUN_2PI) - ZUN_PI;
-        effect->pos2.x = cosf(temp);
-        effect->pos2.y = sinf(temp);
-        effect->pos2.z = 0.0f;
+        effect->direction.x = cosf(temp);
+        effect->direction.y = sinf(temp);
+        effect->direction.z = 0.0f;
     }
 
     temp = RAMP_DOWN(256.0f, (f32)effect->timer, 240.0f);
 
-    effect->pos1 = temp * effect->pos2 + effect->position;
+    effect->position = temp * effect->direction + effect->offset;
 
     return EFFECT_CALLBACK_RESULT_DONE;
 }
 
 EffectInfo g_Effects[] = {
-    {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_SMALL, NULL},
-    {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_SPIRAL, NULL},
-    {ANM_SCRIPT_BULLET4_SPAWN_BUBBLE_EXPLOSION_NORMAL, NULL},
-    {ANM_SCRIPT_BULLET4_SPAWN_GLOW_1, Effect_RandomSplashBig},
-    {ANM_SCRIPT_BULLET4_SPAWN_WHITE_PARTICLE, Effect_RandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_RED_PARTICLE, Effect_RandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_GREEN_PARTICLE, Effect_RandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_BLUE_PARTICLE, Effect_RandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_WHITE_PARTICLE_SMALL, Effect_RandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_RED_PARTICLE_SMALL, Effect_RandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_GREEN_PARTICLE_SMALL, Effect_RandomSplash},
-    {ANM_SCRIPT_BULLET4_SPAWN_BLUE_PARTICLE_SMALL, Effect_RandomSplash},
-    {ANM_SCRIPT_BULLET4_SCRIPT_17, NULL},
-    {ANM_SCRIPT_BULLET4_SCRIPT_18, Effect_Callback4},
-    {ANM_SCRIPT_BULLET4_SCRIPT_18, Effect_Callback4},
-    {ANM_SCRIPT_BULLET4_SCRIPT_18, Effect_Callback4},
+    {ANM_SCRIPT_BULLET4_DEATH_POP, NULL},
+    {ANM_SCRIPT_BULLET4_DEATH_SWIRL, NULL},
+    {ANM_SCRIPT_BULLET4_DEATH_BIG_POP, NULL},
+    {ANM_SCRIPT_BULLET4_FLASH_BIG, Effect_RandomSprayLarge},
+    {ANM_SCRIPT_BULLET4_SPARK, Effect_RandomSpray},
+    {ANM_SCRIPT_BULLET4_SPARK_RED, Effect_RandomSpray},
+    {ANM_SCRIPT_BULLET4_SPARK_GREEN, Effect_RandomSpray},
+    {ANM_SCRIPT_BULLET4_SPARK_BLUE, Effect_RandomSpray},
+    {ANM_SCRIPT_BULLET4_SMALL_SPARK, Effect_RandomSpray},
+    {ANM_SCRIPT_BULLET4_SMALL_SPARK_RED, Effect_RandomSpray},
+    {ANM_SCRIPT_BULLET4_SMALL_SPARK_GREEN, Effect_RandomSpray},
+    {ANM_SCRIPT_BULLET4_SMALL_SPARK_BLUE, Effect_RandomSpray},
+    {ANM_SCRIPT_BULLET4_FLASH, NULL},
+    {ANM_SCRIPT_BULLET4_SPELL_ORBIT, Effect_SpellOrbit},
+    {ANM_SCRIPT_BULLET4_SPELL_ORBIT, Effect_SpellOrbit},
+    {ANM_SCRIPT_BULLET4_SPELL_ORBIT, Effect_SpellOrbit},
     {ANM_SCRIPT_EFFECTS_SPELLCARD_BACKGROUND, NULL},
-    {ANM_SCRIPT_BULLET4_SPAWN_GLOW_2, Effect_Attract},
-    {ANM_SCRIPT_BULLET4_SPAWN_GLOW_3, Effect_AttractSlow},
-    {ANM_SCRIPT_BULLET4_SCRIPT_19, Effect_Still},
+    {ANM_SCRIPT_BULLET4_GLOW, Effect_RandomAttract},
+    {ANM_SCRIPT_BULLET4_DIM_GLOW, Effect_RandomAttractSlow},
+    {ANM_SCRIPT_BULLET4_DIM_SPARK, Effect_Move},
 };
 
-Effect *EffectManager::SpawnParticles(i32 effectIdx, D3DXVECTOR3 *pos, i32 count, ZunColor color)
+Effect *EffectManager::SpawnParticles(i32 effectId, D3DXVECTOR3 *pos, i32 count, ZunColor tint)
 {
     Effect *effect = &this->effects[this->nextIndex];
     for (i32 i = 0; i < MAX_EFFECT_COUNT; i++)
     {
-        this->nextIndex++;
-        if (this->nextIndex >= MAX_EFFECT_COUNT)
+        if (++this->nextIndex >= MAX_EFFECT_COUNT)
         {
             this->nextIndex = 0;
         }
@@ -200,16 +199,16 @@ Effect *EffectManager::SpawnParticles(i32 effectIdx, D3DXVECTOR3 *pos, i32 count
         }
 
         effect->inUseFlag = true;
-        effect->effectId = effectIdx;
-        effect->pos1 = *pos;
+        effect->effectId = effectId;
+        effect->position = *pos;
 
-        g_AnmManager->SetAndExecuteScriptIdx(&effect->vm, g_Effects[effectIdx].anmIdx);
+        g_AnmManager->SetAndExecuteScriptIdx(&effect->vm, g_Effects[effectId].anmScript);
 
-        effect->vm.color = color;
-        effect->updateCallback = g_Effects[effectIdx].updateCallback;
+        effect->vm.color = tint;
+        effect->updateCallback = g_Effects[effectId].updateCallback;
         effect->timer = 0;
-        effect->flag_17a = false;
-        effect->counter_17b = 0;
+        effect->isFadingOut = false;
+        effect->fadeOutTimer = 0;
 
         if (--count == 0)
             break;
@@ -265,7 +264,7 @@ ChainCallbackResult EffectManager_OnDraw(EffectManager *mgr)
             continue;
         }
 
-        effect->vm.pos = effect->pos1;
+        effect->vm.pos = effect->position;
         g_AnmManager->Draw3DRotated(&effect->vm);
     }
 

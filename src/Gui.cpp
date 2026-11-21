@@ -1110,7 +1110,7 @@ void Gui::DrawGameScene()
             bossLivesColor = COLOR4;
         }
 
-        g_AsciiManager.SetColor(this->bossUIAlpha << 24 | bossLivesColor);
+        g_AsciiManager.SetColor(COLOR_SET_UNMASKED(bossLivesColor, this->bossUIAlpha));
         i32 cappedSpellcardSecondsRemaining = ZUN_MIN(this->spellcardSecondsRemaining, 99);
         if (cappedSpellcardSecondsRemaining < 10 &&
             this->lastSpellcardSecondsRemaining != this->spellcardSecondsRemaining)

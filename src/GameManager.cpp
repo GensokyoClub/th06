@@ -67,7 +67,7 @@ ChainCallbackResult GameManager_OnUpdate(GameManager *gameManager)
         gameManager->demoFrames++;
         if (gameManager->demoFrames == DEMO_FADEOUT_FRAMES)
         {
-            ScreenEffect_RegisterChain(SCREEN_EFFECT_FADE_OUT, 120, 0x000000, 0, 0);
+            SCREEN_EFFECT_FADE_OUT(120, COLOR_BLACK);
         }
         if (gameManager->demoFrames >= DEMO_FRAMES)
         {

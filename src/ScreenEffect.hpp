@@ -10,15 +10,7 @@
 
 namespace th06
 {
-struct ZunRect
-{
-    f32 left;
-    f32 top;
-    f32 right;
-    f32 bottom;
-};
-
-enum ScreenEffects
+enum ScreenEffectType
 {
     SCREEN_EFFECT_FADE_IN,
     SCREEN_EFFECT_SHAKE,
@@ -27,12 +19,12 @@ enum ScreenEffects
 
 struct ScreenEffect
 {
-    ScreenEffects usedEffect;
+    i32 type;
     ChainElem *calcChainElement;
     ChainElem *drawChainElement;
     unreferenced_fields(0x4);
     i32 fadeAlpha;
-    i32 effectLength;
+    i32 duration;
     i32 genericParam;   // effectParam1
     i32 shakinessParam; // effectParam2
     i32 unusedParam;
@@ -43,8 +35,15 @@ ZUN_ASSERT_TYPE(ScreenEffect, 0x30, 4);
 // In fade effects, effectParam1 is an RGB color to fade to
 // In shake effects, effectParam1 controls the "base" view offset, and effectParam2 controls the shakiness
 // multiplier over time
-ScreenEffect *ScreenEffect_RegisterChain(i32 effect, u32 ticks, u32 effectParam1, u32 effectParam2,
+ScreenEffect *ScreenEffect_RegisterChain(i32 type, u32 duration, u32 effectParam1, u32 effectParam2,
                                          u32 unusedEffectParam);
+
+#define SCREEN_EFFECT_FADE_OUT(duration, color)                                                                        \
+    ScreenEffect_RegisterChain(SCREEN_EFFECT_FADE_OUT, duration, COLOR_RGB(color), 0, 0)
+#define SCREEN_EFFECT_FADE_IN(duration, color)                                                                         \
+    ScreenEffect_RegisterChain(SCREEN_EFFECT_FADE_IN, duration, COLOR_RGB(color), 0, 0)
+
+// TODO: Come up with a sane way of writing a macro for shake effects
 
 void ScreenEffect_DrawSquare(ZunRect *rect, D3DCOLOR rectColor);
 void ScreenEffect_Clear(D3DCOLOR color);

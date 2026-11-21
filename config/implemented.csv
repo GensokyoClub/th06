@@ -9,8 +9,8 @@ th06::AsciiManager::DeletedCallback
 th06::AsciiManager::CutChain
 th06::AsciiManager::AddString
 th06::AsciiManager::AddFormatText
-th06::AsciiManager::CreatePopup1
-th06::AsciiManager::CreatePopup2
+th06::AsciiManager::CreateScorePopup
+th06::AsciiManager::CreateStarPopup
 th06::AsciiManager::DrawStrings
 th06::AsciiManager::DrawPopupsWithHwVertexProcessing
 th06::AsciiManager::DrawPopupsWithoutHwVertexProcessing
@@ -117,12 +117,12 @@ th06::EffectManager::CutChain
 th06::EffectManager::OnUpdate
 th06::EffectManager::OnDraw
 th06::EffectManager::SpawnParticles
-th06::Effect_RandomSplash
-th06::Effect_RandomSplashBig
-th06::Effect_Still
-th06::Effect_Callback4
-th06::Effect_Attract
-th06::Effect_AttractSlow
+th06::Effect_RandomSpray
+th06::Effect_RandomSprayLarge
+th06::Effect_Move
+th06::Effect_SpellOrbit
+th06::Effect_RandomAttract
+th06::Effect_RandomAttractSlow
 th06::EnemyManager::Initialize
 th06::EnemyManager::EnemyManager
 th06::EnemyManager::RegisterChain
@@ -156,7 +156,7 @@ th06::EnemyEclInstr::ExInsStage6Func7
 th06::EnemyEclInstr::ExInsStage6Func8
 th06::EnemyEclInstr::ExInsStage6Func9
 th06::EnemyEclInstr::ExInsStage6Func11
-th06::EnemyEclInstr::ExInsHandleBatTransformation
+th06::EnemyEclInstr::ExInsBatTransformation
 th06::EnemyEclInstr::ExInsStage4Func12
 th06::EnemyEclInstr::ExInsStageXFunc13
 th06::EnemyEclInstr::ExInsStageXFunc14
@@ -169,7 +169,7 @@ th06::Enemy::HandleLifeCallback
 th06::Enemy::HandleTimerCallback
 th06::Enemy::Despawn
 th06::Enemy::ResetEffectArray
-th06::UpdateEffects
+th06::UpdateSpellEffects
 th06::GameErrorContext::Fatal
 th06::GameErrorContext::Log
 th06::GameErrorContext::Flush

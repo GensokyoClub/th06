@@ -34,11 +34,11 @@ ZUN_ASSERT_TYPE(StageMenu, 0x778, 4);
 #define TEXT_RIGHT_ARROW 0x7f
 
 #define ASCII_SCORE_POPUPS_COUNT 512
-#define ASCII_PLAYER_POPUPS_COUNT 3
-#define ASCII_TOTAL_POPUPS_COUNT (ASCII_SCORE_POPUPS_COUNT + ASCII_PLAYER_POPUPS_COUNT)
+#define ASCII_STAR_POPUPS_COUNT 3
+#define ASCII_TOTAL_POPUPS_COUNT (ASCII_SCORE_POPUPS_COUNT + ASCII_STAR_POPUPS_COUNT)
 
 #define ASCII_SCORE_POPUPS_START 0
-#define ASCII_PLAYER_POPUPS_START ASCII_SCORE_POPUPS_COUNT
+#define ASCII_STAR_POPUPS_START ASCII_SCORE_POPUPS_COUNT
 
 #define ASCII_STRING_COUNT 256
 
@@ -84,13 +84,13 @@ struct AsciiManager
         this->scale.x = 1.0f;
         this->scale.y = 1.0f;
 
-        this->scorePopupVm.flags.anchor = AnmVmAnchor_TopLeft;
+        this->popupVm.flags.anchor = AnmVmAnchor_TopLeft;
 
-        g_AnmManager->InitializeAndSetSprite(&this->scorePopupVm, 0);
+        g_AnmManager->InitializeAndSetSprite(&this->popupVm, 0);
         // BUG: That's not how your sprite numbers work ZUN
         g_AnmManager->InitializeAndSetSprite(&this->fontVm, ' ');
 
-        this->scorePopupVm.pos.z = 0.1f;
+        this->popupVm.pos.z = 0.1f;
         this->isSelected = false;
     }
 
@@ -100,8 +100,16 @@ struct AsciiManager
 
     void AddString(D3DXVECTOR3 *position, const char *text);
     void AddFormatText(D3DXVECTOR3 *position, const char *fmt, ...);
-    void CreatePopup1(D3DXVECTOR3 *position, i32 value, D3DCOLOR color);
-    void CreatePopup2(D3DXVECTOR3 *position, i32 value, D3DCOLOR color);
+    void CreateScorePopup(D3DXVECTOR3 *position, i32 score, D3DCOLOR color);
+    void CreateStarPopup(D3DXVECTOR3 *position, i32 score, D3DCOLOR color);
+
+    // Popups use 10 as a "digit" to offset the texture UV onto the correct
+    // part of the texture. Since 10 is a valid score any negative args
+    // passed to CreateScorePopup generate the powerup text instead.
+    // ZUN probably should've made a dedicated function for this.
+
+#define POWER_UP_DIGIT_HACK 10
+#define CreatePowerUpPopup(position, color) CreateScorePopup(position, -1, color)
 
     void ResetStrings()
     {
@@ -130,7 +138,7 @@ struct AsciiManager
     }
 
     AnmVm fontVm;
-    AnmVm scorePopupVm;
+    AnmVm popupVm;
     AsciiManagerString strings[ASCII_STRING_COUNT];
     i32 numStrings;
     D3DCOLOR color;
@@ -140,8 +148,8 @@ struct AsciiManager
     // If true, we are drawing the currently selected element of the MainMenu
     // class.
     ZunBool isSelected;
-    i32 nextPopupIndex1;
-    i32 nextPopupIndex2;
+    i32 nextScorePopup;
+    i32 nextStarPopup;
     unreferenced_fields(0x4);
     // Menu that shows up when the player presses the menu button while in-game.
     StageMenu gameMenu;

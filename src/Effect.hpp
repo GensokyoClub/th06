@@ -17,27 +17,27 @@ typedef EffectCallbackResult (*EffectUpdateCallback)(Effect *);
 struct Effect
 {
     AnmVm vm;
-    D3DXVECTOR3 pos1;
-    D3DXVECTOR3 unk_11c;
-    D3DXVECTOR3 unk_128;
     D3DXVECTOR3 position;
-    D3DXVECTOR3 pos2;
+    D3DXVECTOR3 velocity;
+    D3DXVECTOR3 acceleration;
+    D3DXVECTOR3 offset;
+    D3DXVECTOR3 direction;
     D3DXQUATERNION quaternion;
-    f32 distance;
-    f32 angleRelated;
+    f32 radius;
+    f32 angle;
     ZunTimer timer;
     unreferenced_fields(0x4);
     EffectUpdateCallback updateCallback;
     i8 inUseFlag;
     i8 effectId;
-    i8 flag_17a;
-    i8 counter_17b;
+    i8 isFadingOut;
+    i8 fadeOutTimer;
 };
 ZUN_ASSERT_TYPE(Effect, 0x17c, 4);
 
 struct EffectInfo
 {
-    i32 anmIdx;
+    i32 anmScript;
     EffectUpdateCallback updateCallback;
 };
 ZUN_ASSERT_TYPE(EffectInfo, 0x8, 4);

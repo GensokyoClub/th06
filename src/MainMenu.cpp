@@ -1990,11 +1990,11 @@ ZunResult MainMenu::ChoosePracticeLevel()
         {
             if (i == this->cursor)
             {
-                g_AsciiManager.color = alpha << 24 | 0x00C0F0F0;
+                g_AsciiManager.color = COLOR_SET_ALPHA(0x00C0F0F0, alpha);
             }
             else
             {
-                g_AsciiManager.color = (alpha >> 1) << 24 | 0x0080C0C0;
+                g_AsciiManager.color = COLOR_SET_ALPHA(0x0080C0C0, alpha >> 1);
             }
             g_AsciiManager.AddFormatText(&textPos, "STAGE %d  %.9d", i + 1,
                                          g_GameManager.pscr[shottype][i][g_GameManager.difficulty].score);
@@ -2294,11 +2294,11 @@ static ZunResult MainMenu_AddedCallback(MainMenu *menu)
         if (g_Supervisor.startupTimeBeforeMenuMusic == 0)
         {
             g_Supervisor.PlayAudio("bgm/th06_01.mid");
-            ScreenEffect_RegisterChain(SCREEN_EFFECT_FADE_IN, 120, 0xffffff, 0, 0);
+            SCREEN_EFFECT_FADE_IN(120, COLOR_WHITE);
         }
         else
         {
-            ScreenEffect_RegisterChain(SCREEN_EFFECT_FADE_IN, 200, 0xffffff, 0, 0);
+            SCREEN_EFFECT_FADE_IN(200, COLOR_WHITE);
         }
     }
     g_GameManager.demoMode = false;

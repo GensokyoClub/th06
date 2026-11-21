@@ -45,17 +45,29 @@ i32 g_SpellcardScore[] = {
     500000, 300000, 300000, 300000, 300000, 300000, 400000, 400000, 400000, 400000, 400000,
 #endif
 };
-// clang-format on
 
 ExInsn g_EclExInsn[] = {
-    ExInsCirnoRainbowBallJank, ExInsShootAtRandomArea, ExInsShootStarPattern,  ExInsPatchouliShottypeSetVars,
-    ExInsStage56Func4,         ExInsStage5Func5,       ExInsBatWingEffect,     ExInsStage6Func7,
-    ExInsStage6Func8,          ExInsStage6Func9,       ExInsBatTransformation, ExInsStage6Func11,
+    ExInsCirnoRainbowBallJank,
+    ExInsShootAtRandomArea,
+    ExInsShootStarPattern,
+    ExInsPatchouliShottypeSetVars,
+    ExInsStage56Func4,
+    ExInsStage5Func5,
+    ExInsBatWingEffect,
+    ExInsStage6Func7,
+    ExInsStage6Func8,
+    ExInsStage6Func9,
+    ExInsBatTransformation,
+    ExInsStage6Func11,
     ExInsStage4Func12,
 #if BUILT_SINCE(100)
-    ExInsStageXFunc13,         ExInsStageXFunc14,      ExInsStageXFunc15,      ExInsFlandreFinalContextUpdate,
+    ExInsStageXFunc13,
+    ExInsStageXFunc14,
+    ExInsStageXFunc15,
+    ExInsFlandreFinalContextUpdate,
 #endif
 };
+// clang-format on
 
 ChainElem g_EclManagerCalcChain; // unused
 EclManager g_EclManager;

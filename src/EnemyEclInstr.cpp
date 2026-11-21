@@ -672,9 +672,8 @@ void ExInsStage6Func9(Enemy *enemy, EclRawInstr *curInstr)
             // Builds before 2002-08-25 take the square root of any distance, including zero.
             sincosmul(&currentBullet->exAcceleration,
                       sqrtf(ZUN_SQUARE(enemy->position.x - currentBullet->pos.x) +
-                             ZUN_SQUARE(enemy->position.y - currentBullet->pos.y)) *
-                       ZUN_PI /
-                              256.0f +
+                            ZUN_SQUARE(enemy->position.y - currentBullet->pos.y)) *
+                              ZUN_PI / 256.0f +
                           randomAngleModifier,
                       0.01f);
 #endif

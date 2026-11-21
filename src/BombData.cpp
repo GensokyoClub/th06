@@ -130,7 +130,8 @@ void BombReimuACalc(Player *player)
                     player->bombInfo.timer >= player->bombInfo.duration - 30)
                 {
                     g_EffectManager.SpawnParticles(PARTICLE_SPARK_GREEN, &player->bombInfo.projectilePosition[i], 8);
-                    g_EffectManager.SpawnParticles(PARTICLE_FLASH, &player->bombInfo.projectilePosition[i], 1, COLOR_NEONBLUE);
+                    g_EffectManager.SpawnParticles(PARTICLE_FLASH, &player->bombInfo.projectilePosition[i], 1,
+                                                   COLOR_NEONBLUE);
                     player->bombInfo.projectileState[i] = 2;
 
                     player->bombInfo.vms[0][i * 4].pendingInterrupt = 1;

@@ -167,7 +167,7 @@ static ChainCallbackResult ScreenEffect_ShakeScreen(ScreenEffect *effect)
         g_GameManager.gameRegionSize.y = GAME_REGION_HEIGHT;
         return CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB;
     }
-    
+
     f32 screenOffset = (((f32)effect->timer * (effect->shakinessParam - effect->genericParam)) / effect->duration) +
                        effect->genericParam;
 

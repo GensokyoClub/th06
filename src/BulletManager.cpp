@@ -502,7 +502,7 @@ i32 BulletManager::DespawnBulletsForScore(i32 maxBonusScore, ZunBool spawnCancel
         }
 
         g_AsciiManager.CreateScorePopup(&bullet->pos, bulletScore,
-                                    bulletScore >= maxBonusScore ? COLOR_YELLOW : COLOR_WHITE);
+                                        bulletScore >= maxBonusScore ? COLOR_YELLOW : COLOR_WHITE);
 
         totalBonusScore += bulletScore;
         awardedBullets++;

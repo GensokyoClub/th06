@@ -435,8 +435,10 @@ i32 StageMenu::OnUpdateGameMenu()
     case GAME_MENU_PAUSE_CURSOR_UNPAUSE:
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].color = COLOR_LIGHT_RED;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleY = 1.7f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleY = 1.5f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleX =
+            this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleY = 1.7f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleX =
+            this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleY = 1.5f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         if (this->numFrames >= 4)
@@ -460,8 +462,10 @@ i32 StageMenu::OnUpdateGameMenu()
     case GAME_MENU_PAUSE_CURSOR_QUIT:
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].color = COLOR_LIGHT_RED;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleY = 1.5f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleY = 1.7f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleX =
+            this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleY = 1.5f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleX =
+            this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleY = 1.7f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
         if (this->numFrames >= 4)
@@ -500,8 +504,10 @@ i32 StageMenu::OnUpdateGameMenu()
     case GAME_MENU_QUIT_CURSOR_YES:
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].color = COLOR_LIGHT_RED;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleY = 1.7f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleY = 1.5f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleY =
+            1.7f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleY =
+            1.5f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         if (this->numFrames >= 4)
@@ -524,8 +530,10 @@ i32 StageMenu::OnUpdateGameMenu()
     case GAME_MENU_QUIT_CURSOR_NO:
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].color = COLOR_LIGHT_RED;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleY = 1.5f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleY = 1.7f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].scaleY =
+            1.5f;
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleY =
+            1.7f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
         if (this->numFrames >= 4)

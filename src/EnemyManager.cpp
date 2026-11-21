@@ -638,15 +638,18 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                 case EnemyDeath_DropItemsOnly:
                     if (curEnemy->itemDrop >= 0)
                     {
-                        g_EffectManager.SpawnParticles(curEnemy->deathSparkParticle + PARTICLE_SPARK, &curEnemy->position, 3);
+                        g_EffectManager.SpawnParticles(curEnemy->deathSparkParticle + PARTICLE_SPARK,
+                                                       &curEnemy->position, 3);
                         g_ItemManager.SpawnItem(&curEnemy->position, curEnemy->itemDrop, hitByBomb);
                     }
                     else if (curEnemy->itemDrop == ITEM_RANDOM_ITEM)
                     {
                         if (mgr->randomItemSpawnIndex % ITEM_SPAWNS == 0)
                         {
-                            g_EffectManager.SpawnParticles(curEnemy->deathSparkParticle + PARTICLE_SPARK, &curEnemy->position, 6);
-                            g_ItemManager.SpawnItem(&curEnemy->position, g_RandomItems[mgr->randomItemTableIndex], hitByBomb);
+                            g_EffectManager.SpawnParticles(curEnemy->deathSparkParticle + PARTICLE_SPARK,
+                                                           &curEnemy->position, 6);
+                            g_ItemManager.SpawnItem(&curEnemy->position, g_RandomItems[mgr->randomItemTableIndex],
+                                                    hitByBomb);
                             if (++mgr->randomItemTableIndex >= ARRAY_SIZE_SIGNED(g_RandomItems))
                             {
                                 mgr->randomItemTableIndex = 0;

@@ -180,7 +180,7 @@ void ItemManager::OnUpdate()
                     itemScore = g_PowerItemScore[g_GameManager.fullPowerScoreIdx];
                     g_GameManager.AddScore(itemScore);
                     g_AsciiManager.CreateScorePopup(&curItem->currentPosition, itemScore,
-                                                itemScore >= 12800 ? COLOR_YELLOW : COLOR_WHITE);
+                                                    itemScore >= 12800 ? COLOR_YELLOW : COLOR_WHITE);
                 }
                 else
 #pragma var_order(powerLevel, prevPowerLevel)
@@ -224,22 +224,22 @@ void ItemManager::OnUpdate()
                 case NORMAL:
                     itemScore = CALCULATE_POINT_SCORE(curItem, 100000, 60000, 100);
                     g_AsciiManager.CreateScorePopup(&curItem->currentPosition, itemScore,
-                                                itemScore >= 100000 ? COLOR_YELLOW : COLOR_WHITE);
+                                                    itemScore >= 100000 ? COLOR_YELLOW : COLOR_WHITE);
                     break;
                 case HARD:
                     itemScore = CALCULATE_POINT_SCORE(curItem, 150000, 100000, 180);
                     g_AsciiManager.CreateScorePopup(&curItem->currentPosition, itemScore,
-                                                itemScore >= 150000 ? COLOR_YELLOW : COLOR_WHITE);
+                                                    itemScore >= 150000 ? COLOR_YELLOW : COLOR_WHITE);
                     break;
                 case LUNATIC:
                     itemScore = CALCULATE_POINT_SCORE(curItem, 200000, 150000, 270);
                     g_AsciiManager.CreateScorePopup(&curItem->currentPosition, itemScore,
-                                                itemScore >= 200000 ? COLOR_YELLOW : COLOR_WHITE);
+                                                    itemScore >= 200000 ? COLOR_YELLOW : COLOR_WHITE);
                     break;
                 case EXTRA:
                     itemScore = CALCULATE_POINT_SCORE(curItem, 300000, 200000, 400);
                     g_AsciiManager.CreateScorePopup(&curItem->currentPosition, itemScore,
-                                                itemScore >= 300000 ? COLOR_YELLOW : COLOR_WHITE);
+                                                    itemScore >= 300000 ? COLOR_YELLOW : COLOR_WHITE);
                     break;
                 }
                 g_GameManager.AddScore(itemScore);
@@ -266,7 +266,7 @@ void ItemManager::OnUpdate()
                     itemScore = g_PowerItemScore[g_GameManager.fullPowerScoreIdx];
                     g_GameManager.AddScore(itemScore);
                     g_AsciiManager.CreateScorePopup(&curItem->currentPosition, itemScore,
-                                                itemScore >= 12800 ? COLOR_YELLOW : COLOR_WHITE);
+                                                    itemScore >= 12800 ? COLOR_YELLOW : COLOR_WHITE);
                 }
                 else
 #pragma var_order(powerLevel, prevPowerLevel)

@@ -883,8 +883,7 @@ ZunResult Player::HandlePlayerInputs()
     {
         this->position[0] = g_GameManager.playerMovementAreaTopLeftPos.x;
     }
-    else if (this->position[0] >
-             g_GameManager.playerMovementAreaTopLeftPos.x + g_GameManager.playerMovementAreaSize.x)
+    else if (this->position[0] > g_GameManager.playerMovementAreaTopLeftPos.x + g_GameManager.playerMovementAreaSize.x)
     {
         this->position[0] = g_GameManager.playerMovementAreaTopLeftPos.x + g_GameManager.playerMovementAreaSize.x;
     }
@@ -893,8 +892,7 @@ ZunResult Player::HandlePlayerInputs()
     {
         this->position[1] = g_GameManager.playerMovementAreaTopLeftPos.y;
     }
-    else if (this->position[1] >
-             g_GameManager.playerMovementAreaTopLeftPos.y + g_GameManager.playerMovementAreaSize.y)
+    else if (this->position[1] > g_GameManager.playerMovementAreaTopLeftPos.y + g_GameManager.playerMovementAreaSize.y)
     {
         this->position[1] = g_GameManager.playerMovementAreaTopLeftPos.y + g_GameManager.playerMovementAreaSize.y;
     }

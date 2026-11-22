@@ -85,7 +85,7 @@ th06::Effect_Move,0x40e810,0x10f,default,,i32,Effect*
 th06::Effect_SpellOrbit,0x40e920,0x2e1,default,,i32,Effect*
 th06::Effect_RandomAttract,0x40ec10,0x1a0,default,,i32,Effect*
 th06::Effect_RandomAttractSlow,0x40edb0,0x1a0,default,,i32,Effect*
-th06::EffectManager::SpawnParticles,0x40ef50,0x1ae,__thiscall,,Effect*,EffectManager*,i32,D3DXVECTOR3*,i32,ZunColor
+th06::EffectManager::SpawnParticles,0x40ef50,0x1ae,__thiscall,,Effect*,EffectManager*,i32,D3DXVECTOR3*,i32,D3DCOLOR
 th06::EffectManager_OnUpdate,0x40f100,0xe6,default,,ChainCallbackResult,EffectManager*
 th06::EffectManager_OnDraw,0x40f1f0,0x81,default,,ChainCallbackResult,EffectManager*
 th06::EffectManager_AddedCallback,0x40f280,0x12c,__stdcall,,ZunResult,EffectManager*
@@ -221,7 +221,7 @@ th06::TextHelper::InvertAlpha,0x41ec72,0x29f,__thiscall,,bool,TextHelper*,i32,i3
 th06::TextHelper::CopyTextToSurface,0x41ef11,0xf7,__thiscall,,bool,TextHelper*,IDirect3DSurface8*
 th06::TextHelper_CreateTextBuffer,0x41f008,0x23,default,,void
 th06::TextHelper_ReleaseTextBuffer,0x41f02b,0x25,__cdecl,,void
-th06::TextHelper_RenderTextToTexture,0x41f050,0x1e0,default,,void,i32,i32,i32,i32,i32,i32,ZunColor,ZunColor,char*,IDirect3DTexture8*
+th06::TextHelper_RenderTextToTexture,0x41f050,0x1e0,default,,void,i32,i32,i32,i32,i32,i32,D3DCOLOR,D3DCOLOR,char*,IDirect3DTexture8*
 th06::ItemManager::ItemManager,0x41f230,0x5a,__thiscall,,ItemManager*,ItemManager*
 th06::ItemManager::SpawnItem,0x41f290,0x205,__thiscall,,void,ItemManager*,D3DXVECTOR3*,ItemType,i32
 th06::ItemManager::OnUpdate,0x41f4a0,0xc58,__thiscall,,void,ItemManager*
@@ -368,7 +368,7 @@ th06::DebugPrint,0x42f6c4,0x5,__stdcall,varargs,void,char*
 th06::ScreenEffect_Clear,0x42f6d0,0xb8,unknown,,u8,u32
 th06::ScreenEffect_SetViewport,0x42f790,0x66,default,,void,unsigned long
 th06::ScreenEffect_CalcFadeIn,0x42f800,0xae,default,,ChainCallbackResult,ScreenEffect*
-th06::ScreenEffect_DrawSquare,0x42f8b0,0x3c8,default,,void,ZunRect*,unsigned long
+th06::ScreenEffect_DrawSquare,0x42f8b0,0x3c8,default,,void,FloatRect*,unsigned long
 th06::ScreenEffect_CalcFadeOut,0x42fc80,0xa8,default,,ChainCallbackResult,ScreenEffect*
 th06::ScreenEffect_RegisterChain,0x42fd30,0x1ac,default,,ScreenEffect*,i32,u32,u32,u32,u32
 th06::ScreenEffect_DrawFadeIn,0x42fee0,0x88,default,,ChainCallbackResult,ScreenEffect*
@@ -409,10 +409,10 @@ th06::AnmManager::Draw2DSmooth,0x432fa0,0x1af,__thiscall,,ZunResult,AnmManager*,
 th06::AnmManager::Draw3DRotated,0x433150,0x43e,__thiscall,,ZunResult,AnmManager*,AnmVm*
 th06::AnmManager::Draw3D,0x433590,0x3cf,__thiscall,,ZunResult,AnmManager*,AnmVm*
 th06::AnmManager::RunAnm,0x433960,0x1103,__thiscall,,i32,AnmManager*,AnmVm*
-th06::AnmManager::DrawTextToTexture,0x434af0,0x61,__thiscall,,void,AnmManager*,u32,i32,i32,i32,i32,i32,i32,ZunColor,ZunColor,char*
-th06::AnmManager::DrawTextToTextureLeft,0x434b60,0xdb,default,varargs,void,AnmManager*,AnmVm*,ZunColor,ZunColor,char*
-th06::AnmManager::DrawTextToTextureRight,0x434c40,0x1dc,default,varargs,void,AnmManager*,AnmVm*,ZunColor,ZunColor,char*
-th06::AnmManager::DrawTextToTextureCenter,0x434e20,0x1e2,default,varargs,void,AnmManager*,AnmVm*,ZunColor,ZunColor,char*
+th06::AnmManager::DrawTextToTexture,0x434af0,0x61,__thiscall,,void,AnmManager*,u32,i32,i32,i32,i32,i32,i32,D3DCOLOR,D3DCOLOR,char*
+th06::AnmManager::DrawTextToTextureLeft,0x434b60,0xdb,default,varargs,void,AnmManager*,AnmVm*,D3DCOLOR,D3DCOLOR,char*
+th06::AnmManager::DrawTextToTextureRight,0x434c40,0x1dc,default,varargs,void,AnmManager*,AnmVm*,D3DCOLOR,D3DCOLOR,char*
+th06::AnmManager::DrawTextToTextureCenter,0x434e20,0x1e2,default,varargs,void,AnmManager*,AnmVm*,D3DCOLOR,D3DCOLOR,char*
 th06::AnmManager::LoadSurface,0x435010,0x25b,__thiscall,,ZunResult,AnmManager*,u32,char*
 th06::AnmManager::ReleaseSurface,0x435270,0x8f,__thiscall,,void,AnmManager*,i32
 th06::AnmManager::CopySurfaceToBackBuffer,0x435300,0x1bd,__thiscall,,void,AnmManager*,i32,long,long,long,long

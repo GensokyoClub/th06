@@ -3,29 +3,29 @@
 #include <Windows.h>
 #include <d3dx8math.h>
 
-struct ZunVec2
+struct Float2
 {
     f32 x;
     f32 y;
 };
-ZUN_ASSERT_SIZE(ZunVec2, 0x8);
+ZUN_ASSERT_SIZE(Float2, 0x8);
 
-struct ZunVec3
+struct Float3
 {
     f32 x;
     f32 y;
     f32 z;
 };
-ZUN_ASSERT_SIZE(ZunVec3, 0xC);
+ZUN_ASSERT_SIZE(Float3, 0xC);
 
-struct ZunRect
+struct FloatRect
 {
     f32 left;
     f32 top;
     f32 right;
     f32 bottom;
 };
-ZUN_ASSERT_SIZE(ZunRect, 0x10);
+ZUN_ASSERT_SIZE(FloatRect, 0x10);
 
 // The argument is evaluated twice.
 #define ZUN_SQUARE(x) ((x) * (x))

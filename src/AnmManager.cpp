@@ -1303,7 +1303,7 @@ break_parser:
 }
 
 void AnmManager::DrawTextToTexture(u32 textureDstIdx, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight,
-                                   i32 fontWidth, i32 fontHeight, ZunColor textColor, ZunColor shadowColor,
+                                   i32 fontWidth, i32 fontHeight, D3DCOLOR textColor, D3DCOLOR shadowColor,
                                    const char *strToPrint)
 {
     if (fontWidth <= 0)
@@ -1319,7 +1319,7 @@ void AnmManager::DrawTextToTexture(u32 textureDstIdx, i32 xPos, i32 yPos, i32 sp
 }
 
 #pragma var_order(args, buffer, fontWidth)
-void AnmManager::DrawTextToTextureLeft(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
+void AnmManager::DrawTextToTextureLeft(AnmVm *vm, D3DCOLOR textColor, D3DCOLOR shadowColor, const char *fmt, ...)
 {
     char buffer[64];
     va_list args;
@@ -1335,7 +1335,7 @@ void AnmManager::DrawTextToTextureLeft(AnmVm *vm, ZunColor textColor, ZunColor s
 }
 
 #pragma var_order(args, secondPartStartX, buffer, fontWidth)
-void AnmManager::DrawTextToTextureRight(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
+void AnmManager::DrawTextToTextureRight(AnmVm *vm, D3DCOLOR textColor, D3DCOLOR shadowColor, const char *fmt, ...)
 {
     char buffer[64];
     va_list args;
@@ -1358,7 +1358,7 @@ void AnmManager::DrawTextToTextureRight(AnmVm *vm, ZunColor textColor, ZunColor 
 }
 
 #pragma var_order(args, secondPartStartX, buffer, fontWidth)
-void AnmManager::DrawTextToTextureCenter(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...)
+void AnmManager::DrawTextToTextureCenter(AnmVm *vm, D3DCOLOR textColor, D3DCOLOR shadowColor, const char *fmt, ...)
 {
     char buffer[64];
     va_list args;

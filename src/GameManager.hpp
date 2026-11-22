@@ -143,10 +143,10 @@ struct GameManager
     u32 gameFrames;
     i32 currentStage;
     u32 menuCursorBackup;
-    ZunVec2 gameRegionScreenPos;
-    ZunVec2 gameRegionSize;
-    ZunVec2 playerMovementAreaTopLeftPos;
-    ZunVec2 playerMovementAreaSize;
+    Float2 gameRegionScreenPos;
+    Float2 gameRegionSize;
+    Float2 playerMovementAreaTopLeftPos;
+    Float2 playerMovementAreaSize;
     f32 cameraDistance;
     D3DXVECTOR3 stageCameraFacingDir;
     i32 gameplayTicks;

@@ -84,8 +84,8 @@ enum GrazeResult
 
 struct PlayerRect
 {
-    ZunVec2 pos;
-    ZunVec2 size;
+    Float2 pos;
+    Float2 size;
 };
 ZUN_ASSERT_TYPE(PlayerRect, 0x10, 4);
 
@@ -94,8 +94,8 @@ struct PlayerBullet
     AnmVm sprite;
     D3DXVECTOR3 position;
     D3DXVECTOR3 size;
-    ZunVec2 velocity;
-    ZunVec2 motion;
+    Float2 velocity;
+    Float2 motion;
     f32 speed;
     f32 angle;
     ZunTimer lifetime;
@@ -145,8 +145,8 @@ struct CharacterPowerBulletData
 {
     i16 waitBetweenBullets;
     i16 bulletFrame;
-    ZunVec2 motion;
-    ZunVec2 size;
+    Float2 motion;
+    Float2 size;
     f32 direction;
     f32 velocity;
     u16 damage;
@@ -202,7 +202,7 @@ struct Player
     i32 damageRegionDamageDealt[MAX_DAMAGE_REGION_COUNT];
     PlayerRect cancelRegions[MAX_CANCEL_REGION_COUNT];
     ZunTimer shotTimer[PLAYER_SHOT_TIMER_COUNT];
-    ZunVec2 speedMultiplierDuringBomb;
+    Float2 speedMultiplierDuringBomb;
     i32 respawnTimer;
     i32 bulletGracePeriod;
     i8 playerState;
@@ -214,7 +214,7 @@ struct Player
     ZunTimer focusMovementTimer;
     CharacterData characterData;
     PlayerDirection playerDirection;
-    ZunVec2 previousSpeed;
+    Float2 previousSpeed;
     i16 previousFrameInput;
     alignment_padding(0x2);
     D3DXVECTOR3 positionOfLastEnemyHit;

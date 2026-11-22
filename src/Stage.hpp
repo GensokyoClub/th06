@@ -27,7 +27,7 @@ struct StdRawQuadBasic
     i16 anmScript;
     i16 vmIdx;
     D3DXVECTOR3 position;
-    ZunVec2 size;
+    Float2 size;
 };
 ZUN_ASSERT_TYPE(StdRawQuadBasic, 0x1c, 4);
 

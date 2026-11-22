@@ -1,6 +1,5 @@
 #include "stdafx.h"
 
-#include "ChainPriorities.hpp"
 #include "EffectManager.hpp"
 
 namespace th06
@@ -176,7 +175,7 @@ EffectInfo g_Effects[] = {
     {ANM_SCRIPT_BULLET4_DIM_SPARK, Effect_Move},
 };
 
-Effect *EffectManager::SpawnParticles(i32 effectId, D3DXVECTOR3 *pos, i32 count, ZunColor tint)
+Effect *EffectManager::SpawnParticles(i32 effectId, D3DXVECTOR3 *pos, i32 count, D3DCOLOR tint)
 {
     Effect *effect = &this->effects[this->nextIndex];
     for (i32 i = 0; i < MAX_EFFECT_COUNT; i++)

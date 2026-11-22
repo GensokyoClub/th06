@@ -1,5 +1,4 @@
 #pragma once
-
 #include "BuildVersion.hpp"
 
 #define TH_CHAIN_PRIO_CALC_SUPERVISOR 0

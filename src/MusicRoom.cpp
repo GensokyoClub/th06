@@ -3,7 +3,6 @@
 #include "MusicRoom.hpp"
 
 #include "AsciiManager.hpp"
-#include "ChainPriorities.hpp"
 
 namespace th06
 {

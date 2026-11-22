@@ -61,8 +61,8 @@ ZUN_ASSERT_TYPE(RenderVertexInfo, 0x14, 4);
 struct AnmRawSprite
 {
     u32 id;
-    ZunVec2 offset;
-    ZunVec2 size;
+    Float2 offset;
+    Float2 size;
 };
 ZUN_ASSERT_TYPE(AnmRawSprite, 0x14, 4);
 
@@ -198,9 +198,9 @@ struct AnmManager
 #define SCRIPT_RUNNING 0
     i32 RunAnm(AnmVm *vm);
 
-    void DrawTextToTextureRight(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
-    void DrawTextToTextureCenter(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
-    void DrawTextToTextureLeft(AnmVm *vm, ZunColor textColor, ZunColor shadowColor, const char *fmt, ...);
+    void DrawTextToTextureRight(AnmVm *vm, D3DCOLOR textColor, D3DCOLOR shadowColor, const char *fmt, ...);
+    void DrawTextToTextureCenter(AnmVm *vm, D3DCOLOR textColor, D3DCOLOR shadowColor, const char *fmt, ...);
+    void DrawTextToTextureLeft(AnmVm *vm, D3DCOLOR textColor, D3DCOLOR shadowColor, const char *fmt, ...);
 
     ZunResult Draw2D(AnmVm *vm);
     ZunResult Draw2DRotated(AnmVm *vm);
@@ -256,7 +256,7 @@ struct AnmManager
 
   private:
     void DrawTextToTexture(u32 spriteDstIndex, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontWidth,
-                           i32 fontHeight, ZunColor textColor, ZunColor shadowColor, const char *strToPrint);
+                           i32 fontHeight, D3DCOLOR textColor, D3DCOLOR shadowColor, const char *strToPrint);
 
 #define RENDER_VERTICES_DEFAULT false
 #define RENDER_VERTICES_ROUND_INPUTS true

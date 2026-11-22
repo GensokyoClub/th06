@@ -76,5 +76,3 @@
 #define GREEN(color) COLOR_CHANNEL((color), COLOR_GREEN_BYTE_IDX)
 #define RED(color) COLOR_CHANNEL((color), COLOR_RED_BYTE_IDX)
 #define ALPHA(color) COLOR_CHANNEL((color), COLOR_ALPHA_BYTE_IDX)
-
-typedef u32 ZunColor;

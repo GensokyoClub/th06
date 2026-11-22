@@ -1,6 +1,5 @@
 #include "stdafx.h"
 
-#include "ChainPriorities.hpp"
 #include "ScreenEffect.hpp"
 
 namespace th06
@@ -55,7 +54,7 @@ ChainCallbackResult ScreenEffect_CalcFadeIn(ScreenEffect *effect)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-void ScreenEffect_DrawSquare(ZunRect *rect, D3DCOLOR rectColor)
+void ScreenEffect_DrawSquare(FloatRect *rect, D3DCOLOR rectColor)
 {
     VertexDiffuseXyzrwh vertices[4];
 
@@ -121,7 +120,7 @@ ChainCallbackResult ScreenEffect_CalcFadeOut(ScreenEffect *effect)
 
 static ChainCallbackResult ScreenEffect_DrawFadeIn(ScreenEffect *effect)
 {
-    ZunRect fadeRect;
+    FloatRect fadeRect;
 
     fadeRect.left = 0.0f;
     fadeRect.top = 0.0f;
@@ -138,7 +137,7 @@ static ChainCallbackResult ScreenEffect_DrawFadeIn(ScreenEffect *effect)
 
 static ChainCallbackResult ScreenEffect_DrawFadeOut(ScreenEffect *effect)
 {
-    ZunRect fadeRect;
+    FloatRect fadeRect;
     fadeRect.left = GAME_REGION_POS_X;
     fadeRect.top = GAME_REGION_POS_Y;
     fadeRect.right = GAME_REGION_POS_RIGHT;

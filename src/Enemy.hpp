@@ -227,7 +227,7 @@ struct Enemy
     i32 maxLife;
     i32 score;
     ZunTimer phaseTimer;
-    ZunColor color;
+    D3DCOLOR color;
     EnemyShooter bulletProps;
     i32 shootInterval;
     ZunTimer shootIntervalTimer;
@@ -254,8 +254,8 @@ struct Enemy
 #if BUILT_BEFORE(100)
     alignment_padding(0x2);
 #endif
-    ZunVec2 lowerMoveLimit;
-    ZunVec2 upperMoveLimit;
+    Float2 lowerMoveLimit;
+    Float2 upperMoveLimit;
     Effect *spellEffects[MAX_ENEMY_SPELL_EFFECTS];
     i32 spellEffectCount;
     f32 spellEffectRadius;

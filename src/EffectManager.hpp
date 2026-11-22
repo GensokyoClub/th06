@@ -54,7 +54,7 @@ struct EffectManager
     }
 
     void Reset();
-    Effect *SpawnParticles(i32 effectId, D3DXVECTOR3 *pos, i32 count = 1, ZunColor tint = COLOR_WHITE);
+    Effect *SpawnParticles(i32 effectId, D3DXVECTOR3 *pos, i32 count = 1, D3DCOLOR tint = COLOR_WHITE);
 
     i32 nextIndex;
     i32 activeEffects;

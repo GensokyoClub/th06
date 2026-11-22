@@ -45,7 +45,7 @@ ScreenEffect *ScreenEffect_RegisterChain(i32 type, u32 duration, u32 effectParam
 
 // TODO: Come up with a sane way of writing a macro for shake effects
 
-void ScreenEffect_DrawSquare(ZunRect *rect, D3DCOLOR rectColor);
+void ScreenEffect_DrawSquare(FloatRect *rect, D3DCOLOR rectColor);
 void ScreenEffect_Clear(D3DCOLOR color);
 void ScreenEffect_SetViewport(D3DCOLOR color);
 

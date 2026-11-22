@@ -418,8 +418,7 @@ ZunResult MidiOutput::UnprepareHeader(LPMIDIHDR pmh)
         DebugPrint("error :\n");
     }
 
-    i32 i;
-    for (i = 0; i < ARRAY_SIZE_SIGNED(this->midiHeaders); i++)
+    for (i32 i = 0; i < ARRAY_SIZE_SIGNED(this->midiHeaders); i++)
     {
         if (this->midiHeaders[i] == pmh)
         {
@@ -456,7 +455,7 @@ u32 MidiOutput::SetFadeOut(u32 ms)
 #pragma var_order(trackIndex, now, trackLoaded)
 void MidiOutput::OnTimerElapsed()
 {
-    ULONGLONG now;
+    u64 now;
     i32 trackIndex;
     BOOL trackLoaded;
 

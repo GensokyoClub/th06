@@ -15,16 +15,16 @@ struct AnmLoadedSprite
     i32 sourceFileIndex;
 
     // Positions of the sprite's corners, inclusive
-    ZunVec2 startPixel;
-    ZunVec2 endPixel;
+    Float2 startPixel;
+    Float2 endPixel;
 
     // Size of the entire texture
     f32 textureHeight;
     f32 textureWidth;
 
     // UV values as fractions of texture size
-    ZunVec2 uvStart;
-    ZunVec2 uvEnd;
+    Float2 uvStart;
+    Float2 uvEnd;
 
     // Size of the sprite itself
     f32 height;
@@ -195,16 +195,16 @@ struct AnmVmBase
         this->scriptTime.Initialize();
     }
 
-    ZunVec3 rotation;
-    ZunVec3 angleVel;
+    Float3 rotation;
+    Float3 angleVel;
     f32 scaleY;
     f32 scaleX;
     f32 scaleInterpFinalY;
     f32 scaleInterpFinalX;
-    ZunVec2 uvScrollPos;
+    Float2 uvScrollPos;
     ZunTimer scriptTime;
     D3DXMATRIX matrix;
-    ZunColor color;
+    D3DCOLOR color;
     AnmVmFlags flags;
     i16 alphaInterpDuration;
     i16 scaleInterpDuration;

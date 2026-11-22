@@ -3,7 +3,6 @@
 #include "Gui.hpp"
 
 #include "AsciiManager.hpp"
-#include "ChainPriorities.hpp"
 #include "Stage.hpp"
 
 namespace th06
@@ -1063,10 +1062,10 @@ void Gui::UpdateStageElements()
     }
 }
 
-static ZunColor COLOR1 = 0xa0d0ff;
-static ZunColor COLOR2 = 0xa080ff;
-static ZunColor COLOR3 = 0xe080c0;
-static ZunColor COLOR4 = 0xff4040;
+static D3DCOLOR COLOR1 = 0xa0d0ff;
+static D3DCOLOR COLOR2 = 0xa080ff;
+static D3DCOLOR COLOR3 = 0xe080c0;
+static D3DCOLOR COLOR4 = 0xff4040;
 
 #pragma var_order(yPos, xPos, idx, vm)
 void Gui::DrawGameScene()

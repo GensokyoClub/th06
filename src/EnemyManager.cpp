@@ -1,6 +1,5 @@
 #include "stdafx.h"
 
-#include "ChainPriorities.hpp"
 #include "EffectManager.hpp"
 #include "EnemyManager.hpp"
 #include "ItemManager.hpp"

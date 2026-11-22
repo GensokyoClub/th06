@@ -66,7 +66,7 @@ struct Ending
 
     ChainElem *calcChain;
     ChainElem *drawChain;
-    ZunVec2 backgroundPos;
+    Float2 backgroundPos;
     f32 backgroundScrollSpeed;
     AnmVm sprites[END_SPRITE_COUNT];
     u8 *endFileData;
@@ -80,8 +80,8 @@ struct Ending
     i32 shortDelay;
     unreferenced_fields(0x4);
     i32 textLine;
-    ZunColor textColor;
-    ZunColor fadeColor;
+    D3DCOLOR textColor;
+    D3DCOLOR fadeColor;
     i32 fadeTimer;
     i32 fadeDuration;
     EndingFadeType fadeType;

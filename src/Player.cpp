@@ -4,7 +4,6 @@
 
 #include "BombData.hpp"
 #include "BulletData.hpp"
-#include "ChainPriorities.hpp"
 #include "EffectManager.hpp"
 #include "EnemyManager.hpp"
 #include "ItemManager.hpp"
@@ -1236,7 +1235,7 @@ static ChainCallbackResult Player_OnDrawLowPrio(Player *p)
 #pragma var_order(relY, relX)
 f32 Player::AngleFromPlayer(D3DXVECTOR3 *pos)
 {
-    // NOTE: This is *not* a ZunVec2
+    // NOTE: This is *not* a Float2
     float relX = pos->x - this->position.x;
     float relY = pos->y - this->position.y;
     if (relY == 0.0f && relX == 0.0f)
@@ -1249,7 +1248,7 @@ f32 Player::AngleFromPlayer(D3DXVECTOR3 *pos)
 #pragma var_order(relY, relX)
 f32 Player::AngleToPlayer(D3DXVECTOR3 *pos)
 {
-    // NOTE: This is *not* a ZunVec2
+    // NOTE: This is *not* a Float2
     float relX = this->position[0] - pos->x;
     float relY = this->position[1] - pos->y;
     if (relY == 0.0f && relX == 0.0f)

@@ -4,7 +4,6 @@
 #include "AsciiManager.hpp"
 #include "BulletManager.hpp"
 #include "Chain.hpp"
-#include "ChainPriorities.hpp"
 #include "EclManager.hpp"
 #include "Effect.hpp"
 #include "EffectManager.hpp"

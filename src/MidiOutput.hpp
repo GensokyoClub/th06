@@ -107,8 +107,8 @@ class MidiOutput : MidiTimer
     i32 timebase;
     i32 tempo;
     alignment_padding(0x4);
-    ULONGLONG playcount1;
-    LONGLONG playcount2;
+    u64 playcount1;
+    i64 playcount2;
     MidiTrack *tracks;
     MidiDevice midiOutDev;
     unreferenced_fields(0x10);
@@ -125,8 +125,8 @@ class MidiOutput : MidiTimer
     i32 fadeOutInterval;
     i32 fadeOutElapsedMS;
     i32 loopTempo;
-    ULONGLONG loopPlaycount1;
-    ULONGLONG loopPlaycount2;
+    u64 loopPlaycount1;
+    u64 loopPlaycount2;
 };
 ZUN_ASSERT_TYPE(MidiOutput, 0x300, 8);
 } // namespace th06

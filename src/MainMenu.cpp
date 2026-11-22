@@ -2010,7 +2010,7 @@ ChainCallbackResult MainMenu_OnDraw(MainMenu *menu)
 {
     AnmVm *vm;
     i32 i;
-    ZunRect window;
+    FloatRect window;
     i32 targetOpacity;
 
     vm = menu->vm;

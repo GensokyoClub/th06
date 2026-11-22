@@ -175,7 +175,7 @@ void BombReimuACalc(Player *player)
 #pragma var_order(darknessLevel, viewport, darkeningTimeLeft)
 static void DarkenViewport(Player *player)
 {
-    ZunRect viewport;
+    FloatRect viewport;
     f32 darkeningTimeLeft;
     i32 darknessLevel; // Controls alpha level of black rectangle drawn over view
 

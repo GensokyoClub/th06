@@ -1,6 +1,5 @@
 #include "stdafx.h"
 
-#include "ChainPriorities.hpp"
 #include "ScreenEffect.hpp"
 #include "Stage.hpp"
 
@@ -235,7 +234,7 @@ ChainCallbackResult Stage_OnDrawLowPrio(Stage *stage)
             i32 spellBackgroundAlpha;
             if (stage->spellcardState == SPELL_STATE_FADING_IN)
             {
-                ZunRect gameRegion;
+                FloatRect gameRegion;
                 gameRegion.left = GAME_REGION_POS_X;
                 gameRegion.top = GAME_REGION_POS_Y;
                 gameRegion.right = GAME_REGION_POS_RIGHT;

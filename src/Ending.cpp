@@ -1,6 +1,5 @@
 #include "stdafx.h"
 
-#include "ChainPriorities.hpp"
 #include "Ending.hpp"
 #include "ScreenEffect.hpp"
 
@@ -23,7 +22,7 @@ i32 Ending::ReadEndFileParameter()
 
 void Ending::FadingEffect()
 {
-    ZunRect endingRect;
+    FloatRect endingRect;
 
     endingRect.left = 0.0f;
     endingRect.top = 0.0f;

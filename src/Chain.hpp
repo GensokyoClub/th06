@@ -1,4 +1,5 @@
 #pragma once
+#include "ChainPriorities.hpp"
 #include "ZunResult.hpp"
 #include "decomp.hpp"
 

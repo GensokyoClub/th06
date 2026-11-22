@@ -2,7 +2,6 @@
 
 #include "AsciiManager.hpp"
 
-#include "ChainPriorities.hpp"
 #include "EffectManager.hpp"
 
 namespace th06

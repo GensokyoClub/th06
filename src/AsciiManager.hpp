@@ -47,7 +47,7 @@ struct AsciiManagerString
     char text[64];
     D3DXVECTOR3 position;
     D3DCOLOR color;
-    ZunVec2 scale;
+    Float2 scale;
     // If true, we are drawing the currently selected element of the MainMenu
     // class.
     ZunBool isSelected;
@@ -116,7 +116,7 @@ struct AsciiManager
         this->numStrings = 0;
     }
 
-    void SetColor(ZunColor color)
+    void SetColor(D3DCOLOR color)
     {
         this->color = color;
     }
@@ -142,7 +142,7 @@ struct AsciiManager
     AsciiManagerString strings[ASCII_STRING_COUNT];
     i32 numStrings;
     D3DCOLOR color;
-    ZunVec2 scale;
+    Float2 scale;
     // If true, we are drawing an element of the Gui class.
     ZunBool isGui;
     // If true, we are drawing the currently selected element of the MainMenu

@@ -217,7 +217,7 @@ ZunResult EclManager::RunEcl(Enemy *enemy)
 {
     EclRawInstr *curInstr;
     void *args;
-    ZunVec3 genericFloat3;
+    Float3 genericFloat3;
     i32 genericInt;
     f32 genericFloat;
 
@@ -459,33 +459,33 @@ restart_sub_changed:
             break;
         case ECL_OPCODE_MOVE_VELOCITY:
             // BUG: This instruction is encoded with 2 floats, not 3
-            genericFloat3 = GET_INSTR_ARG(ZunVec3, 0);
+            genericFloat3 = GET_INSTR_ARG(Float3, 0);
             enemy->angle = *EclGetVarFloat(enemy, &genericFloat3.x, NULL);
             enemy->speed = *EclGetVarFloat(enemy, &genericFloat3.y, NULL);
             enemy->flags.movementMode = EnemyMove_Velocity;
             break;
         case ECL_OPCODE_MOVE_ANGULAR_VELOCITY:
             // BUG: This instruction is encoded with 1 float, not 3
-            genericFloat3 = GET_INSTR_ARG(ZunVec3, 0);
+            genericFloat3 = GET_INSTR_ARG(Float3, 0);
             enemy->angularVelocity = *EclGetVarFloat(enemy, &genericFloat3.x, NULL);
             enemy->flags.movementMode = EnemyMove_Velocity;
             break;
         case ECL_OPCODE_MOVE_TOWARDS_PLAYER:
             // BUG: This instruction is encoded with 2 floats, not 3
-            genericFloat3 = GET_INSTR_ARG(ZunVec3, 0);
+            genericFloat3 = GET_INSTR_ARG(Float3, 0);
             enemy->angle = g_Player.AngleToPlayer(&enemy->position) + genericFloat3.x;
             enemy->speed = *EclGetVarFloat(enemy, &genericFloat3.y, NULL);
             enemy->flags.movementMode = EnemyMove_Velocity;
             break;
         case ECL_OPCODE_MOVE_SPEED:
             // BUG: This instruction is encoded with 1 float, not 3
-            genericFloat3 = GET_INSTR_ARG(ZunVec3, 0);
+            genericFloat3 = GET_INSTR_ARG(Float3, 0);
             enemy->speed = *EclGetVarFloat(enemy, &genericFloat3.x, NULL);
             enemy->flags.movementMode = EnemyMove_Velocity;
             break;
         case ECL_OPCODE_MOVE_ACCELERATION:
             // BUG: This instruction is encoded with 1 float, not 3
-            genericFloat3 = GET_INSTR_ARG(ZunVec3, 0);
+            genericFloat3 = GET_INSTR_ARG(Float3, 0);
             enemy->acceleration = *EclGetVarFloat(enemy, &genericFloat3.x, NULL);
             enemy->flags.movementMode = EnemyMove_Velocity;
             break;
@@ -764,11 +764,11 @@ restart_sub_changed:
             enemy->flags.hasMovementBounds = false;
             break;
         case ECL_OPCODE_MOVE_RAND:
-            genericFloat3 = GET_INSTR_ARG(ZunVec3, 0);
+            genericFloat3 = GET_INSTR_ARG(Float3, 0);
             enemy->angle = g_Rng.GetRandomF32InRange(genericFloat3.y - genericFloat3.x) + genericFloat3.x;
             break;
         case ECL_OPCODE_MOVE_RAND_IN_BOUNDS:
-            genericFloat3 = GET_INSTR_ARG(ZunVec3, 0);
+            genericFloat3 = GET_INSTR_ARG(Float3, 0);
             enemy->angle = g_Rng.GetRandomF32InRange(genericFloat3.y - genericFloat3.x) + genericFloat3.x;
             if (enemy->position.x < enemy->lowerMoveLimit.x + 96.0f)
             {
@@ -948,7 +948,7 @@ restart_sub_changed:
             break;
         case ECL_OPCODE_EFFECT_PARTICLE:
             g_EffectManager.SpawnParticles(GET_INSTR_INT_ARG(0), &enemy->position, GET_INSTR_INT_ARG(1),
-                                           *(ZunColor *)&GET_INSTR_INT_ARG(2));
+                                           *(D3DCOLOR *)&GET_INSTR_INT_ARG(2));
             break;
         case ECL_OPCODE_DROP_ITEMS: {
             for (i32 i = 0; i < GET_INSTR_INT_ARG(0); i++)

@@ -232,15 +232,15 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
 
         if (bullet->vm.sprite->height <= BULLET_SIZE_SMALL)
         {
-            g_AnmManager->SetSprite(&bullet->spawnEffectFast, bullet->spawnEffectFast.spriteId +
-                                                                  g_BulletSpawnEffects16Colors[bulletProps->color]);
+            g_AnmManager->SetSprite(&bullet->spawnEffectFast,
+                                    bullet->spawnEffectFast.spriteId + g_BulletSpawnEffects16Colors[bulletProps->color]);
         }
         else if (bullet->vm.sprite->height <= BULLET_SIZE_LARGE)
         {
             if (bullet->vm.scriptId != ANM_SCRIPT_BULLET_FIREBALL)
             {
-                g_AnmManager->SetSprite(&bullet->spawnEffectFast, bullet->spawnEffectFast.spriteId +
-                                                                      g_BulletSpawnEffects8Colors[bulletProps->color]);
+                g_AnmManager->SetSprite(&bullet->spawnEffectFast,
+                                        bullet->spawnEffectFast.spriteId + g_BulletSpawnEffects8Colors[bulletProps->color]);
             }
             else
             {
@@ -260,16 +260,15 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
 
         if (bullet->vm.sprite->height <= BULLET_SIZE_SMALL)
         {
-            g_AnmManager->SetSprite(&bullet->spawnEffectNormal, bullet->spawnEffectNormal.spriteId +
-                                                                    g_BulletSpawnEffects16Colors[bulletProps->color]);
+            g_AnmManager->SetSprite(&bullet->spawnEffectNormal,
+                                    bullet->spawnEffectNormal.spriteId + g_BulletSpawnEffects16Colors[bulletProps->color]);
         }
         else if (bullet->vm.sprite->height <= BULLET_SIZE_LARGE)
         {
             if (bullet->vm.scriptId != ANM_SCRIPT_BULLET_FIREBALL)
             {
                 g_AnmManager->SetSprite(&bullet->spawnEffectNormal,
-                                        bullet->spawnEffectNormal.spriteId +
-                                            g_BulletSpawnEffects8Colors[bulletProps->color]);
+                                        bullet->spawnEffectNormal.spriteId + g_BulletSpawnEffects8Colors[bulletProps->color]);
             }
             else
             {
@@ -289,15 +288,15 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
         bullet->spawnEffectSlow = this->bulletTemplates[bulletProps->sprite].spawnEffectSlow;
         if (bullet->vm.sprite->height <= BULLET_SIZE_SMALL)
         {
-            g_AnmManager->SetSprite(&bullet->spawnEffectSlow, bullet->spawnEffectSlow.spriteId +
-                                                                  g_BulletSpawnEffects16Colors[bulletProps->color]);
+            g_AnmManager->SetSprite(&bullet->spawnEffectSlow,
+                                    bullet->spawnEffectSlow.spriteId + g_BulletSpawnEffects16Colors[bulletProps->color]);
         }
         else if (bullet->vm.sprite->height <= BULLET_SIZE_LARGE)
         {
             if (bullet->vm.scriptId != ANM_SCRIPT_BULLET_FIREBALL)
             {
-                g_AnmManager->SetSprite(&bullet->spawnEffectSlow, bullet->spawnEffectSlow.spriteId +
-                                                                      g_BulletSpawnEffects8Colors[bulletProps->color]);
+                g_AnmManager->SetSprite(&bullet->spawnEffectSlow,
+                                        bullet->spawnEffectSlow.spriteId + g_BulletSpawnEffects8Colors[bulletProps->color]);
             }
             else
             {
@@ -592,8 +591,8 @@ Laser *BulletManager::SpawnLaserPattern(EnemyShooter *bulletProps)
         g_AnmManager->SetScript(&laser->vm, bulletProps->sprite + ANM_SCRIPT_BULLET_LINE_LASER);
         g_AnmManager->SetSprite(&laser->vm, laser->vm.spriteId + bulletProps->color);
 
-        g_AnmManager->SetNewSprite(&laser->baseGlowVm, g_BulletSpawnEffects16Colors[bulletProps->color] +
-                                                           ANM_SPRITE_BULLET3_SPAWN_BIG_BALL);
+        g_AnmManager->SetNewSprite(&laser->baseGlowVm,
+                                   g_BulletSpawnEffects16Colors[bulletProps->color] + ANM_SPRITE_BULLET3_SPAWN_BIG_BALL);
 
         laser->baseGlowVm.flags.blendMode = AnmBlendMode_Additive;
         laser->pos = bulletProps->position;

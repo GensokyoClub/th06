@@ -322,9 +322,9 @@ ZunResult Ending::ParseEndFile()
             // When encountered a breakline or null byte, display the text already loaded in textBuffer
             if (charactersRead != 0)
             {
-                g_AnmManager->SetScript(
-                    &this->vms[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP],
-                    ANM_SCRIPT_TEXT_ENDING_TEXT + firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP);
+                g_AnmManager->SetScript(&this->vms[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP],
+                                        ANM_SCRIPT_TEXT_ENDING_TEXT + firstLineDisplayed +
+                                            this->textLine * SPRITES_PER_LINE_GROUP);
                 g_AnmManager->DrawTextToTextureLeft(
                     &this->vms[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP], this->textColor,
                     COLOR_END_TEXT_SHADOW, textBuffer);
@@ -358,9 +358,9 @@ ZunResult Ending::ParseEndFile()
             // When reached the character limit, display the text now
             if (charactersRead >= 32)
             {
-                g_AnmManager->SetScript(
-                    &this->vms[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP],
-                    ANM_SCRIPT_TEXT_ENDING_TEXT + firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP);
+                g_AnmManager->SetScript(&this->vms[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP],
+                                        ANM_SCRIPT_TEXT_ENDING_TEXT + firstLineDisplayed +
+                                            this->textLine * SPRITES_PER_LINE_GROUP);
                 g_AnmManager->DrawTextToTextureLeft(
                     &this->vms[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP], this->textColor,
                     COLOR_END_TEXT_SHADOW, textBuffer);

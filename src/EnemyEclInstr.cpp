@@ -245,8 +245,7 @@ void ExInsStage56Func4(Enemy *enemy, EclRawInstr *curInstr)
                     currentBullet->color != BULLET_GREEN8 && (g_Rng.GetRandomU16() % 4 == 0))
                 {
                     currentBullet->color = BULLET_GREEN8;
-                    g_AnmManager->SetSprite(&currentBullet->vm,
-                                                  currentBullet->vm.baseSpriteId + currentBullet->color);
+                    g_AnmManager->SetSprite(&currentBullet->vm, currentBullet->vm.baseSpriteId + currentBullet->color);
 
                     playerBulletOffsetX = currentBullet->pos.x - g_Player.position.x;
                     playerBulletOffsetY = currentBullet->pos.y - g_Player.position.y;
@@ -284,8 +283,7 @@ void ExInsStage56Func4(Enemy *enemy, EclRawInstr *curInstr)
                     currentBullet->color != BULLET_GREEN8 && (g_Rng.GetRandomU16() % 4 == 0))
                 {
                     currentBullet->color = BULLET_GREEN8;
-                    g_AnmManager->SetSprite(&currentBullet->vm,
-                                                  currentBullet->vm.baseSpriteId + currentBullet->color);
+                    g_AnmManager->SetSprite(&currentBullet->vm, currentBullet->vm.baseSpriteId + currentBullet->color);
 
                     playerBulletOffsetX = currentBullet->pos.x - g_Player.position.x;
                     playerBulletOffsetY = currentBullet->pos.y - g_Player.position.y;
@@ -876,8 +874,7 @@ void ExInsStageXFunc15(Enemy *enemy, EclRawInstr *curInstr)
                     innerBullet->angle = (bulletsAngle - enemyAngle) * 2.2f + enemyAngle;
                     sincosmul(&innerBullet->exAcceleration, innerBullet->angle, 0.01f);
                     innerBullet->color += 1;
-                    g_AnmManager->SetSprite(&innerBullet->vm,
-                                                  innerBullet->vm.baseSpriteId + innerBullet->color);
+                    g_AnmManager->SetSprite(&innerBullet->vm, innerBullet->vm.baseSpriteId + innerBullet->color);
                 }
             }
         }

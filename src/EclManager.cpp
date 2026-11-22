@@ -440,8 +440,7 @@ restart_sub_changed:
                 ReportEclError("error : sub anim overflow\n");
             }
 #endif
-            g_AnmManager->SetScript(&enemy->vms[GET_INSTR_INT_ARG(0)],
-                                                 GET_INT_ARG(1) + ANM_SCRIPT_ENEMY_START);
+            g_AnmManager->SetScript(&enemy->vms[GET_INSTR_INT_ARG(0)], GET_INT_ARG(1) + ANM_SCRIPT_ENEMY_START);
             break;
         case ECL_OPCODE_MOVE_POSITION:
             enemy->position = GET_INSTR_ARG(D3DXVECTOR3, 0);
@@ -1150,18 +1149,15 @@ restart_sub_changed:
                 case EnemyPose_Neutral:
                     if (enemy->anmPoseCurrent == EnemyPose_Default)
                     {
-                        g_AnmManager->SetScript(&enemy->primaryVm,
-                                                             enemy->anmPoseDefault + ANM_OFFSET_ENEMY);
+                        g_AnmManager->SetScript(&enemy->primaryVm, enemy->anmPoseDefault + ANM_OFFSET_ENEMY);
                     }
                     else if (enemy->anmPoseCurrent == EnemyPose_Left)
                     {
-                        g_AnmManager->SetScript(&enemy->primaryVm,
-                                                             enemy->anmPoseNeutralFromLeft + ANM_OFFSET_ENEMY);
+                        g_AnmManager->SetScript(&enemy->primaryVm, enemy->anmPoseNeutralFromLeft + ANM_OFFSET_ENEMY);
                     }
                     else // EnemyPose_Right
                     {
-                        g_AnmManager->SetScript(&enemy->primaryVm,
-                                                             enemy->anmPoseNeutralFromRight + ANM_OFFSET_ENEMY);
+                        g_AnmManager->SetScript(&enemy->primaryVm, enemy->anmPoseNeutralFromRight + ANM_OFFSET_ENEMY);
                     }
                     break;
                 case EnemyPose_Left:

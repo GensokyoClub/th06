@@ -137,8 +137,8 @@ ZunResult AnmManager::LoadTexture(i32 textureId, const char *textureName, i32 te
         }
     }
 
-    if (D3DXCreateTextureFromFileInMemoryEx(g_Supervisor.d3dDevice, this->textureFiles[textureId], g_ReadFileSize, 0,
-                                            0, 0, 0, g_TextureFormatD3D8Mapping[textureFormat], D3DPOOL_MANAGED,
+    if (D3DXCreateTextureFromFileInMemoryEx(g_Supervisor.d3dDevice, this->textureFiles[textureId], g_ReadFileSize, 0, 0,
+                                            0, 0, g_TextureFormatD3D8Mapping[textureFormat], D3DPOOL_MANAGED,
                                             D3DX_FILTER_NONE | D3DX_FILTER_POINT, D3DX_DEFAULT, colorKey, NULL, NULL,
                                             &this->textures[textureId]) != D3D_OK)
     {
@@ -307,7 +307,8 @@ ZunResult AnmManager::LoadAnm(i32 anmIdx, const char *path, i32 idOffset)
     if (anmEntry->alphaNameOffset != 0)
     {
         anmName = OFFSET_PTR(char *, anmEntry, anmEntry->alphaNameOffset);
-        if (this->LoadTextureAlphaChannel(anmEntry->textureId, anmName, anmEntry->format, anmEntry->colorKey) != ZUN_SUCCESS)
+        if (this->LoadTextureAlphaChannel(anmEntry->textureId, anmName, anmEntry->format, anmEntry->colorKey) !=
+            ZUN_SUCCESS)
         {
             g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, anmName);
             return ZUN_ERROR;
@@ -639,8 +640,7 @@ ZunResult AnmManager::Draw2D(AnmVm *vm)
     return this->DrawSprite(vm, RENDER_VERTICES_ROUND_INPUTS);
 }
 
-void AnmManager::TranslateRotation(D3DXVECTOR3 *coord, f32 x, f32 y, f32 sine, f32 cosine, f32 xOffset,
-                                   f32 yOffset)
+void AnmManager::TranslateRotation(D3DXVECTOR3 *coord, f32 x, f32 y, f32 sine, f32 cosine, f32 xOffset, f32 yOffset)
 {
     coord->x = x * cosine + y * sine + xOffset;
     coord->y = -x * sine + y * cosine + yOffset;
@@ -1299,9 +1299,8 @@ break_parser:
     return SCRIPT_RUNNING;
 }
 
-void AnmManager::DrawTextToTexture(u32 textureId, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight,
-                                   i32 fontWidth, i32 fontHeight, D3DCOLOR textColor, D3DCOLOR shadowColor,
-                                   const char *strToPrint)
+void AnmManager::DrawTextToTexture(u32 textureId, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontWidth,
+                                   i32 fontHeight, D3DCOLOR textColor, D3DCOLOR shadowColor, const char *strToPrint)
 {
     if (fontWidth <= 0)
     {
@@ -1348,9 +1347,8 @@ void AnmManager::DrawTextToTextureRight(AnmVm *vm, D3DCOLOR textColor, D3DCOLOR 
     // to get the correct starting pixel for right aligned text within the texture.
     i32 secondPartStartX =
         vm->sprite->bounds.left + vm->sprite->textureWidth - ANM_TEXT_SIZE(buffer, fontWidth + 1) / 2.0f;
-    this->DrawTextToTexture(vm->sprite->textureId, secondPartStartX, vm->sprite->bounds.top,
-                            vm->sprite->textureWidth, vm->sprite->textureHeight, fontWidth, vm->fontHeight, textColor,
-                            shadowColor, buffer);
+    this->DrawTextToTexture(vm->sprite->textureId, secondPartStartX, vm->sprite->bounds.top, vm->sprite->textureWidth,
+                            vm->sprite->textureHeight, fontWidth, vm->fontHeight, textColor, shadowColor, buffer);
     vm->flags.isVisible = true;
 }
 
@@ -1371,9 +1369,8 @@ void AnmManager::DrawTextToTextureCenter(AnmVm *vm, D3DCOLOR textColor, D3DCOLOR
     // to get the correct starting pixel for center aligned text within the texture.
     i32 secondPartStartX =
         vm->sprite->bounds.left + vm->sprite->textureWidth / 2.0f - ANM_TEXT_SIZE(buffer, fontWidth + 1) / 4.0f;
-    this->DrawTextToTexture(vm->sprite->textureId, secondPartStartX, vm->sprite->bounds.top,
-                            vm->sprite->textureWidth, vm->sprite->textureHeight, fontWidth, vm->fontHeight, textColor,
-                            shadowColor, buffer);
+    this->DrawTextToTexture(vm->sprite->textureId, secondPartStartX, vm->sprite->bounds.top, vm->sprite->textureWidth,
+                            vm->sprite->textureHeight, fontWidth, vm->fontHeight, textColor, shadowColor, buffer);
     vm->flags.isVisible = true;
 }
 

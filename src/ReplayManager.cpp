@@ -202,7 +202,8 @@ static ZunResult ReplayManager_AddedCallbackDemo(ReplayManager *mgr)
         {
             if (mgr->replayData->stageReplayData[i] != NULL)
             {
-                mgr->replayData->stageReplayData[i] = OFFSET_PTR(StageReplayData *, mgr->replayData->stageReplayData[i], mgr->replayData);
+                mgr->replayData->stageReplayData[i] =
+                    OFFSET_PTR(StageReplayData *, mgr->replayData->stageReplayData[i], mgr->replayData);
             }
         }
     }
@@ -361,7 +362,8 @@ void SaveReplay(const char *replayPath, const char *replayName)
                     if (mgr->replayData->stageReplayData[i] != NULL)
                     {
                         replayCopy.stageReplayData[i] = (StageReplayData *)stageReplayPos;
-                        stageReplayPos += (sptr)mgr->replayInputStageBookmarks[i] - (sptr)mgr->replayData->stageReplayData[i];
+                        stageReplayPos +=
+                            (sptr)mgr->replayInputStageBookmarks[i] - (sptr)mgr->replayData->stageReplayData[i];
                     }
                 }
                 DebugPrint("%s write ...\n", replayPath);
@@ -411,8 +413,7 @@ void SaveReplay(const char *replayPath, const char *replayName)
                 // Obfuscate the data.
                 obfuscateCursor = (u8 *)&replayCopy.rngValue3;
                 obfOffset = replayCopy.key;
-                for (i = 0; i < sizeof(ReplayData) - offsetof(ReplayData, rngValue3);
-                     i++, obfuscateCursor++)
+                for (i = 0; i < sizeof(ReplayData) - offsetof(ReplayData, rngValue3); i++, obfuscateCursor++)
                 {
                     *obfuscateCursor += obfOffset;
                     obfOffset += 7;
@@ -440,8 +441,7 @@ void SaveReplay(const char *replayPath, const char *replayName)
                     if (mgr->replayData->stageReplayData[i] != NULL)
                     {
                         fwrite(mgr->replayData->stageReplayData[i], 1,
-                               (sptr)mgr->replayInputStageBookmarks[i] -
-                                   (sptr)mgr->replayData->stageReplayData[i],
+                               (sptr)mgr->replayInputStageBookmarks[i] - (sptr)mgr->replayData->stageReplayData[i],
                                file);
                     }
                 }
@@ -451,8 +451,8 @@ void SaveReplay(const char *replayPath, const char *replayName)
             {
                 if (g_ReplayManager->replayData->stageReplayData[i] != NULL)
                 {
-                    DebugPrint("Replay Size %d\n", (sptr)mgr->replayInputStageBookmarks[i] -
-                                                       (sptr)mgr->replayData->stageReplayData[i]);
+                    DebugPrint("Replay Size %d\n",
+                               (sptr)mgr->replayInputStageBookmarks[i] - (sptr)mgr->replayData->stageReplayData[i]);
                     ZUN_FREE(g_ReplayManager->replayData->stageReplayData[i]);
                 }
             }

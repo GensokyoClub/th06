@@ -1446,7 +1446,8 @@ ZunBool MainMenu::ReplayHandling()
                 {
                     if (this->currentReplay->stageReplayData[i] != NULL)
                     {
-                        this->currentReplay->stageReplayData[i] = OFFSET_PTR(StageReplayData *, this->currentReplay, this->currentReplay->stageReplayData[i]);
+                        this->currentReplay->stageReplayData[i] =
+                            OFFSET_PTR(StageReplayData *, this->currentReplay, this->currentReplay->stageReplayData[i]);
                     }
                 }
 
@@ -2034,19 +2035,17 @@ ChainCallbackResult MainMenu_OnDraw(MainMenu *menu)
             menu->numFramesSinceActive++;
         }
         targetOpacity = COLOR_ALPHA(menu->menuTextColor) - COLOR_ALPHA(menu->minimumOpacity);
-        ScreenEffect_DrawRect(
-            &window,
-            COLOR_SET_ALPHA(menu->menuTextColor, targetOpacity * menu->numFramesSinceActive / menu->framesActive +
-                                                     COLOR_ALPHA(menu->minimumOpacity)));
+        ScreenEffect_DrawRect(&window, COLOR_SET_ALPHA(menu->menuTextColor,
+                                                       targetOpacity * menu->numFramesSinceActive / menu->framesActive +
+                                                           COLOR_ALPHA(menu->minimumOpacity)));
     }
     else if (menu->numFramesSinceActive != 0)
     {
         menu->numFramesSinceActive--;
         targetOpacity = COLOR_ALPHA(menu->menuTextColor) - COLOR_ALPHA(menu->minimumOpacity);
-        ScreenEffect_DrawRect(
-            &window,
-            COLOR_SET_ALPHA(menu->menuTextColor, targetOpacity * menu->numFramesSinceActive / menu->framesInactive +
-                                                     COLOR_ALPHA(menu->minimumOpacity)));
+        ScreenEffect_DrawRect(&window, COLOR_SET_ALPHA(menu->menuTextColor, targetOpacity * menu->numFramesSinceActive /
+                                                                                    menu->framesInactive +
+                                                                                COLOR_ALPHA(menu->minimumOpacity)));
     }
     for (i = 0; i < MENU_VMS_REPLAY + 2; i++, vm++)
     {

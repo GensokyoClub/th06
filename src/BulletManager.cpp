@@ -232,28 +232,24 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
 
         if (bullet->vm.sprite->height <= BULLET_SIZE_SMALL)
         {
-            g_AnmManager->SetSprite(&bullet->spawnEffectFast,
-                                          bullet->spawnEffectFast.spriteId +
-                                              g_BulletSpawnEffects16Colors[bulletProps->color]);
+            g_AnmManager->SetSprite(&bullet->spawnEffectFast, bullet->spawnEffectFast.spriteId +
+                                                                  g_BulletSpawnEffects16Colors[bulletProps->color]);
         }
         else if (bullet->vm.sprite->height <= BULLET_SIZE_LARGE)
         {
             if (bullet->vm.scriptId != ANM_SCRIPT_BULLET_FIREBALL)
             {
-                g_AnmManager->SetSprite(&bullet->spawnEffectFast,
-                                              bullet->spawnEffectFast.spriteId +
-                                                  g_BulletSpawnEffects8Colors[bulletProps->color]);
+                g_AnmManager->SetSprite(&bullet->spawnEffectFast, bullet->spawnEffectFast.spriteId +
+                                                                      g_BulletSpawnEffects8Colors[bulletProps->color]);
             }
             else
             {
-                g_AnmManager->SetSprite(&bullet->spawnEffectFast,
-                                              bullet->spawnEffectFast.spriteId + SPAWN_EFFECT_RED);
+                g_AnmManager->SetSprite(&bullet->spawnEffectFast, bullet->spawnEffectFast.spriteId + SPAWN_EFFECT_RED);
             }
         }
         else // BULLET_SIZE_HUGE
         {
-            g_AnmManager->SetSprite(&bullet->spawnEffectFast,
-                                          bullet->spawnEffectFast.spriteId + bulletProps->color);
+            g_AnmManager->SetSprite(&bullet->spawnEffectFast, bullet->spawnEffectFast.spriteId + bulletProps->color);
         }
 
         bullet->state = BULLET_STATE_SPAWNING_FAST;
@@ -264,28 +260,27 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
 
         if (bullet->vm.sprite->height <= BULLET_SIZE_SMALL)
         {
-            g_AnmManager->SetSprite(&bullet->spawnEffectNormal,
-                                          bullet->spawnEffectNormal.spriteId +
-                                              g_BulletSpawnEffects16Colors[bulletProps->color]);
+            g_AnmManager->SetSprite(&bullet->spawnEffectNormal, bullet->spawnEffectNormal.spriteId +
+                                                                    g_BulletSpawnEffects16Colors[bulletProps->color]);
         }
         else if (bullet->vm.sprite->height <= BULLET_SIZE_LARGE)
         {
             if (bullet->vm.scriptId != ANM_SCRIPT_BULLET_FIREBALL)
             {
                 g_AnmManager->SetSprite(&bullet->spawnEffectNormal,
-                                              bullet->spawnEffectNormal.spriteId +
-                                                  g_BulletSpawnEffects8Colors[bulletProps->color]);
+                                        bullet->spawnEffectNormal.spriteId +
+                                            g_BulletSpawnEffects8Colors[bulletProps->color]);
             }
             else
             {
                 g_AnmManager->SetSprite(&bullet->spawnEffectNormal,
-                                              bullet->spawnEffectNormal.spriteId + SPAWN_EFFECT_RED);
+                                        bullet->spawnEffectNormal.spriteId + SPAWN_EFFECT_RED);
             }
         }
         else // BULLET_SIZE_HUGE
         {
             g_AnmManager->SetSprite(&bullet->spawnEffectNormal,
-                                          bullet->spawnEffectNormal.spriteId + bulletProps->color);
+                                    bullet->spawnEffectNormal.spriteId + bulletProps->color);
         }
         bullet->state = BULLET_STATE_SPAWNING_NORMAL;
     }
@@ -294,28 +289,24 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
         bullet->spawnEffectSlow = this->bulletTemplates[bulletProps->sprite].spawnEffectSlow;
         if (bullet->vm.sprite->height <= BULLET_SIZE_SMALL)
         {
-            g_AnmManager->SetSprite(&bullet->spawnEffectSlow,
-                                          bullet->spawnEffectSlow.spriteId +
-                                              g_BulletSpawnEffects16Colors[bulletProps->color]);
+            g_AnmManager->SetSprite(&bullet->spawnEffectSlow, bullet->spawnEffectSlow.spriteId +
+                                                                  g_BulletSpawnEffects16Colors[bulletProps->color]);
         }
         else if (bullet->vm.sprite->height <= BULLET_SIZE_LARGE)
         {
             if (bullet->vm.scriptId != ANM_SCRIPT_BULLET_FIREBALL)
             {
-                g_AnmManager->SetSprite(&bullet->spawnEffectSlow,
-                                              bullet->spawnEffectSlow.spriteId +
-                                                  g_BulletSpawnEffects8Colors[bulletProps->color]);
+                g_AnmManager->SetSprite(&bullet->spawnEffectSlow, bullet->spawnEffectSlow.spriteId +
+                                                                      g_BulletSpawnEffects8Colors[bulletProps->color]);
             }
             else
             {
-                g_AnmManager->SetSprite(&bullet->spawnEffectSlow,
-                                              bullet->spawnEffectSlow.spriteId + SPAWN_EFFECT_RED);
+                g_AnmManager->SetSprite(&bullet->spawnEffectSlow, bullet->spawnEffectSlow.spriteId + SPAWN_EFFECT_RED);
             }
         }
         else // BULLET_SIZE_HUGE
         {
-            g_AnmManager->SetSprite(&bullet->spawnEffectSlow,
-                                          bullet->spawnEffectSlow.spriteId + bulletProps->color);
+            g_AnmManager->SetSprite(&bullet->spawnEffectSlow, bullet->spawnEffectSlow.spriteId + bulletProps->color);
         }
 
         bullet->state = BULLET_STATE_SPAWNING_SLOW;
@@ -324,26 +315,24 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
 
     if (bullet->vm.sprite->height <= BULLET_SIZE_SMALL)
     {
-        g_AnmManager->SetSprite(&bullet->despawnEffect, bullet->despawnEffect.spriteId +
-                                                                  g_BulletSpawnEffects16Colors[bulletProps->color]);
+        g_AnmManager->SetSprite(&bullet->despawnEffect,
+                                bullet->despawnEffect.spriteId + g_BulletSpawnEffects16Colors[bulletProps->color]);
     }
     else if (bullet->vm.sprite->height <= BULLET_SIZE_LARGE)
     {
         if (bullet->vm.scriptId != ANM_SCRIPT_BULLET_FIREBALL)
         {
-            g_AnmManager->SetSprite(&bullet->despawnEffect, bullet->despawnEffect.spriteId +
-                                                                      g_BulletSpawnEffects8Colors[bulletProps->color]);
+            g_AnmManager->SetSprite(&bullet->despawnEffect,
+                                    bullet->despawnEffect.spriteId + g_BulletSpawnEffects8Colors[bulletProps->color]);
         }
         else
         {
-            g_AnmManager->SetSprite(&bullet->despawnEffect,
-                                          bullet->despawnEffect.spriteId + SPAWN_EFFECT_RED);
+            g_AnmManager->SetSprite(&bullet->despawnEffect, bullet->despawnEffect.spriteId + SPAWN_EFFECT_RED);
         }
     }
     else // BULLET_SIZE_HUGE
     {
-        g_AnmManager->SetSprite(&bullet->despawnEffect,
-                                      bullet->despawnEffect.spriteId + bulletProps->color);
+        g_AnmManager->SetSprite(&bullet->despawnEffect, bullet->despawnEffect.spriteId + bulletProps->color);
     }
 
     if (bullet->exFlags & EX_ACCELERATION)
@@ -604,7 +593,7 @@ Laser *BulletManager::SpawnLaserPattern(EnemyShooter *bulletProps)
         g_AnmManager->SetSprite(&laser->vm, laser->vm.spriteId + bulletProps->color);
 
         g_AnmManager->SetNewSprite(&laser->baseGlowVm, g_BulletSpawnEffects16Colors[bulletProps->color] +
-                                                                     ANM_SPRITE_BULLET3_SPAWN_BIG_BALL);
+                                                           ANM_SPRITE_BULLET3_SPAWN_BIG_BALL);
 
         laser->baseGlowVm.flags.blendMode = AnmBlendMode_Additive;
         laser->pos = bulletProps->position;
@@ -1354,14 +1343,10 @@ static ZunResult BulletManager_AddedCallback(BulletManager *mgr)
     for (u32 i = 0; i < ENUM_VALUE_COUNT(BulletType); i++)
     {
         g_AnmManager->SetScript(&mgr->bulletTemplates[i].vm, g_BulletAnmScripts[i].bullet);
-        g_AnmManager->SetScript(&mgr->bulletTemplates[i].spawnEffectFast,
-                                             g_BulletAnmScripts[i].spawnEffectFast);
-        g_AnmManager->SetScript(&mgr->bulletTemplates[i].spawnEffectNormal,
-                                             g_BulletAnmScripts[i].spawnEffectNormal);
-        g_AnmManager->SetScript(&mgr->bulletTemplates[i].spawnEffectSlow,
-                                             g_BulletAnmScripts[i].spawnEffectSlow);
-        g_AnmManager->SetScript(&mgr->bulletTemplates[i].despawnEffect,
-                                             g_BulletAnmScripts[i].despawnEffect);
+        g_AnmManager->SetScript(&mgr->bulletTemplates[i].spawnEffectFast, g_BulletAnmScripts[i].spawnEffectFast);
+        g_AnmManager->SetScript(&mgr->bulletTemplates[i].spawnEffectNormal, g_BulletAnmScripts[i].spawnEffectNormal);
+        g_AnmManager->SetScript(&mgr->bulletTemplates[i].spawnEffectSlow, g_BulletAnmScripts[i].spawnEffectSlow);
+        g_AnmManager->SetScript(&mgr->bulletTemplates[i].despawnEffect, g_BulletAnmScripts[i].despawnEffect);
         mgr->bulletTemplates[i].vm.baseSpriteId = mgr->bulletTemplates[i].vm.spriteId;
         mgr->bulletTemplates[i].height = mgr->bulletTemplates[i].vm.sprite->height;
 

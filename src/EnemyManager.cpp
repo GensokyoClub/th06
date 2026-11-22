@@ -542,8 +542,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
         curEnemy->color = curEnemy->primaryVm.color;
         for (j = 0; j < ENEMY_ANM_SLOTS; j++)
         {
-            if (curEnemy->vms[j].scriptId >= 0 &&
-                g_AnmManager->RunAnm(&curEnemy->vms[j]) != SCRIPT_RUNNING)
+            if (curEnemy->vms[j].scriptId >= 0 && g_AnmManager->RunAnm(&curEnemy->vms[j]) != SCRIPT_RUNNING)
             {
                 curEnemy->vms[j].scriptId = -1;
             }

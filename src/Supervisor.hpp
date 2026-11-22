@@ -152,7 +152,6 @@ struct Supervisor
 
     void TickTimer(i32 *frames, f32 *subframes);
 
-
     ZunBool IsForced60Fps()
     {
         return this->cfg.opts.force60Fps;

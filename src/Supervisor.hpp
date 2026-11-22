@@ -152,10 +152,6 @@ struct Supervisor
 
     void TickTimer(i32 *frames, f32 *subframes);
 
-    i32 GetMusicMode()
-    {
-        return this->cfg.musicMode;
-    }
 
     ZunBool IsForced60Fps()
     {

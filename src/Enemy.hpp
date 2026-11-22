@@ -227,7 +227,7 @@ struct Enemy
     i32 maxLife;
     i32 score;
     ZunTimer phaseTimer;
-    ZunColor color;
+    D3DCOLOR color;
     EnemyShooter bulletProps;
     i32 shootInterval;
     ZunTimer shootIntervalTimer;

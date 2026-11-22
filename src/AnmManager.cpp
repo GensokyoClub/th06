@@ -276,7 +276,7 @@ ZunResult AnmManager::CreateEmptyTexture(i32 textureId, u32 width, u32 height, i
     return ZUN_SUCCESS;
 }
 
-#pragma var_order(anmEntry, anmName, rawSprite, i, curOffset)
+#pragma var_order(anmEntry, texturePath, rawSprite, i, curOffset)
 ZunResult AnmManager::LoadAnm(i32 anmIdx, const char *path, i32 idOffset)
 {
     this->ReleaseAnm(anmIdx);
@@ -292,25 +292,25 @@ ZunResult AnmManager::LoadAnm(i32 anmIdx, const char *path, i32 idOffset)
 
     anmEntry->textureId = anmIdx;
 
-    const char *anmName = OFFSET_PTR(char *, anmEntry, anmEntry->nameOffset);
+    const char *texturePath = OFFSET_PTR(char *, anmEntry, anmEntry->texturePathOffset);
 
-    if (*anmName == '@')
+    if (*texturePath == '@')
     {
         this->CreateEmptyTexture(anmEntry->textureId, anmEntry->width, anmEntry->height, anmEntry->format);
     }
-    else if (this->LoadTexture(anmEntry->textureId, anmName, anmEntry->format, anmEntry->colorKey) != ZUN_SUCCESS)
+    else if (this->LoadTexture(anmEntry->textureId, texturePath, anmEntry->format, anmEntry->colorKey) != ZUN_SUCCESS)
     {
-        g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, anmName);
+        g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, texturePath);
         return ZUN_ERROR;
     }
 
-    if (anmEntry->alphaNameOffset != 0)
+    if (anmEntry->alphaTexturePathOffset != 0)
     {
-        anmName = OFFSET_PTR(char *, anmEntry, anmEntry->alphaNameOffset);
-        if (this->LoadTextureAlphaChannel(anmEntry->textureId, anmName, anmEntry->format, anmEntry->colorKey) !=
+        texturePath = OFFSET_PTR(char *, anmEntry, anmEntry->alphaTexturePathOffset);
+        if (this->LoadTextureAlphaChannel(anmEntry->textureId, texturePath, anmEntry->format, anmEntry->colorKey) !=
             ZUN_SUCCESS)
         {
-            g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, anmName);
+            g_GameErrorContext.Fatal(TH_ERR_ANMMANAGER_TEXTURE_CORRUPTED, texturePath);
             return ZUN_ERROR;
         }
     }

@@ -82,9 +82,9 @@ struct AnmRawEntry
     i32 height;
     u32 format;
     u32 colorKey;
-    u32 nameOffset;
+    u32 texturePathOffset;
     u32 idOffset;
-    u32 alphaNameOffset;
+    u32 alphaTexturePathOffset;
     u32 version;
     unreferenced_fields(0x4);
     u32 textureOffset;

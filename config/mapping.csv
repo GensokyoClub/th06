@@ -33,7 +33,7 @@ th06::Stage_CutChain,0x404650,0x32,default,,void
 th06::Stage::LoadStageData,0x404690,0x1c1,__thiscall,,ZunResult,Stage*,char*,char*
 th06::Stage::UpdateObjects,0x404860,0x101,__thiscall,,ZunResult,Stage*
 th06::Stage::RenderObjects,0x404970,0x83d,__thiscall,,ZunResult,Stage*,i32
-th06::AnmManager::ExecuteAnmIdx,0x4051b0,0xa9,__thiscall,,void,AnmManager*,AnmVm*,i32
+th06::AnmManager::SetNewScript,0x4051b0,0xa9,__thiscall,,void,AnmManager*,AnmVm*,i32
 th06::BombReimuACalc,0x405260,0x9a4,default,,void,Player*
 th06::BombReimuADraw,0x405c10,0x410,default,,void,Player*
 th06::DarkenViewport,0x406020,0x137,default,,void,Player*
@@ -45,7 +45,7 @@ th06::BombMarisaBCalc,0x406e70,0x33e,default,,void,Player*
 th06::BombMarisaBDraw,0x4071b0,0x185,default,,void,Player*
 th06::EclManager::Load,0x407340,0xb2,__thiscall,,ZunResult,EclManager*,char*
 th06::EclManager::Unload,0x407400,0x32,__thiscall,,void,EclManager*
-th06::EclManager::CallEclSub,0x407440,0x54,__thiscall,,ZunResult,EclManager*,EnemyEclContext*,i16
+th06::EclManager::CallEclSub,0x407440,0x54,__thiscall,,ZunResult,EclManager*,EclContext*,i16
 th06::EclManager::RunEcl,0x4074a0,0x3504,__thiscall,,ZunResult,EclManager*,Enemy*
 th06::EclMoveDirTime,0x40abe0,0x123,default,,void,Enemy*,EclRawInstr*
 th06::EclMovePosTime,0x40ad10,0x166,default,,void,Enemy*,EclRawInstr*
@@ -368,7 +368,7 @@ th06::DebugPrint,0x42f6c4,0x5,__stdcall,varargs,void,char*
 th06::ScreenEffect_Clear,0x42f6d0,0xb8,unknown,,u8,u32
 th06::ScreenEffect_SetViewport,0x42f790,0x66,default,,void,unsigned long
 th06::ScreenEffect_CalcFadeIn,0x42f800,0xae,default,,ChainCallbackResult,ScreenEffect*
-th06::ScreenEffect_DrawSquare,0x42f8b0,0x3c8,default,,void,FloatRect*,unsigned long
+th06::ScreenEffect_DrawRect,0x42f8b0,0x3c8,default,,void,FloatRect*,unsigned long
 th06::ScreenEffect_CalcFadeOut,0x42fc80,0xa8,default,,ChainCallbackResult,ScreenEffect*
 th06::ScreenEffect_RegisterChain,0x42fd30,0x1ac,default,,ScreenEffect*,i32,u32,u32,u32,u32
 th06::ScreenEffect_DrawFadeIn,0x42fee0,0x88,default,,ChainCallbackResult,ScreenEffect*
@@ -398,7 +398,7 @@ th06::AnmManager::LoadAnm,0x431dc0,0x270,__thiscall,,ZunResult,AnmManager*,i32,c
 th06::AnmManager::ReleaseAnm,0x432030,0x1a2,__thiscall,,void,AnmManager*,i32
 th06::AnmManager::ReleaseTexture,0x4321e0,0x7d,__thiscall,,void,AnmManager*,i32
 th06::AnmManager::LoadSprite,0x432260,0x13b,__thiscall,,void,AnmManager*,u32,AnmLoadedSprite*
-th06::AnmManager::SetActiveSprite,0x4323a0,0x90,__thiscall,,ZunResult,AnmManager*,AnmVm*,i32
+th06::AnmManager::SetSprite,0x4323a0,0x90,__thiscall,,ZunResult,AnmManager*,AnmVm*,i32
 th06::AnmManager::SetAndExecuteScript,0x432430,0x97,__thiscall,,void,AnmManager*,AnmVm*,AnmRawInstr*
 th06::AnmManager::SetRenderStateForVm,0x4324d0,0x256,__thiscall,,void,AnmManager*,AnmVm*
 th06::AnmManager::DrawSprite,0x432730,0x393,__thiscall,,i32,AnmManager*,AnmVm*,i32

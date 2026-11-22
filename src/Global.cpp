@@ -929,9 +929,9 @@ void Controller::ResetKeyboard()
     u8 key_states[256];
 
     GetKeyboardState(key_states);
-    for (i32 idx = 0; idx < 256; idx++)
+    for (i32 i = 0; i < 256; i++)
     {
-        *(key_states + idx) &= 0x7f;
+        key_states[i] &= 0x7f;
     }
     SetKeyboardState(key_states);
 }

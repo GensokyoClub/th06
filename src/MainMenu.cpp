@@ -43,7 +43,7 @@ ZunResult LoadDiffCharSelect(MainMenu *s);
 static CursorMovement MoveCursor(MainMenu *menu, i32 menuLength);
 static void SwapMapping(MainMenu *menu, ControllerButton btnPressed, ControllerButton oldMapping, ZunBool unk);
 static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor, D3DCOLOR activeItemColor, D3DCOLOR inactiveItemColor,
-                         i32 spriteIdx /* I think*/);
+                         i32 sprite);
 
 MainMenu g_MainMenu;
 
@@ -234,13 +234,13 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
 #endif
             if (i % 2 == 0)
             {
-                g_AnmManager->SetActiveSprite(vmList, mapping / 10 + ANM_SPRITE_TITLE01_START);
+                g_AnmManager->SetSprite(vmList, mapping / 10 + ANM_SPRITE_TITLE01_START);
             }
             else
             {
-                g_AnmManager->SetActiveSprite(vmList, mapping % 10 + ANM_SPRITE_TITLE01_START);
+                g_AnmManager->SetSprite(vmList, mapping % 10 + ANM_SPRITE_TITLE01_START);
             }
-            vmList->baseSpriteIndex = vmList->activeSpriteIndex;
+            vmList->baseSpriteId = vmList->spriteId;
             DrawMenuItem(vmList, i / 2, menu->cursor, menu->selectedColor, menu->unselectedColor,
                          ARRAY_SIZE_SIGNED(menu->vm));
         }
@@ -430,7 +430,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                         vmList->color = 0x60ffffff;
                     }
                     vmList->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-                    vmList->alphaInterpDuration = 0;
+                    vmList->colorInterpDuration = 0;
                 }
                 else
                 {
@@ -1026,8 +1026,8 @@ static void SwapMapping(MainMenu *menu, ControllerButton btnPressed, ControllerB
 #endif
 }
 
-static void DrawMenuItem(AnmVm *vm, int itemNumber, int cursor, D3DCOLOR currentItemColor, D3DCOLOR otherItemColor,
-                         int vm_amount)
+static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor, D3DCOLOR currentItemColor, D3DCOLOR otherItemColor,
+                         i32 sprite)
 {
     if (itemNumber == cursor)
     {
@@ -1037,7 +1037,7 @@ static void DrawMenuItem(AnmVm *vm, int itemNumber, int cursor, D3DCOLOR current
         }
         else
         {
-            g_AnmManager->SetActiveSprite(vm, vm->baseSpriteIndex + vm_amount);
+            g_AnmManager->SetSprite(vm, vm->baseSpriteId + sprite);
             vm->color = COLOR_COMBINE_ALPHA(COLOR_WHITE, currentItemColor);
         }
         vm->posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
@@ -1050,7 +1050,7 @@ static void DrawMenuItem(AnmVm *vm, int itemNumber, int cursor, D3DCOLOR current
         }
         else
         {
-            g_AnmManager->SetActiveSprite(vm, vm->baseSpriteIndex);
+            g_AnmManager->SetSprite(vm, vm->baseSpriteId);
             vm->color = COLOR_COMBINE_ALPHA(COLOR_WHITE, otherItemColor);
         }
         vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -1313,11 +1313,11 @@ ZunResult MainMenu::DrawStartMenu()
     return ZUN_SUCCESS;
 }
 
-#pragma var_order(anmVm, cur, replayFileHandle, replayFileIdx, replayData, replayFilePath, replayFileInfo)
+#pragma var_order(anmVm, i, replayFileHandle, replayFileIdx, replayData, replayFilePath, replayFileInfo)
 ZunBool MainMenu::ReplayHandling()
 {
     AnmVm *anmVm;
-    i32 cur;
+    i32 i;
     HANDLE replayFileHandle;
     u32 replayFileIdx;
     ReplayData *replayData;
@@ -1338,9 +1338,9 @@ ZunBool MainMenu::ReplayHandling()
             else
             {
                 replayFileIdx = 0;
-                for (cur = 0; cur < REPLAYS_PER_PAGE; cur++)
+                for (i = 0; i < REPLAYS_PER_PAGE; i++)
                 {
-                    sprintf(replayFilePath, "./replay/th6_%.2d.rpy", cur + 1);
+                    sprintf(replayFilePath, "./replay/th6_%.2d.rpy", i + 1);
 #if BUILT_SINCE(100)
                     replayData = (ReplayData *)FileSystem::OpenPath(replayFilePath, EXTERNAL_FILE);
 #else
@@ -1354,7 +1354,7 @@ ZunBool MainMenu::ReplayHandling()
                     {
                         this->replayFileData[replayFileIdx] = *replayData;
                         strcpy(this->replayFilePaths[replayFileIdx], replayFilePath);
-                        sprintf(this->replayNames[replayFileIdx], "No.%.2d", cur + 1);
+                        sprintf(this->replayNames[replayFileIdx], "No.%.2d", i + 1);
                         replayFileIdx++;
                     }
                     ZUN_FREE(replayData);
@@ -1364,7 +1364,7 @@ ZunBool MainMenu::ReplayHandling()
                 replayFileHandle = FindFirstFile("th6_ud????.rpy", &replayFileInfo);
                 if (replayFileHandle != INVALID_HANDLE_VALUE)
                 {
-                    for (cur = 0; cur < USER_REPLAY_COUNT; cur++)
+                    for (i = 0; i < USER_REPLAY_COUNT; i++)
                     {
 #if BUILT_SINCE(100)
                         replayData = (ReplayData *)FileSystem::OpenPath(replayFileInfo.cFileName, EXTERNAL_FILE);
@@ -1384,7 +1384,9 @@ ZunBool MainMenu::ReplayHandling()
                         }
                         ZUN_FREE(replayData);
                         if (!FindNextFile(replayFileHandle, &replayFileInfo))
+                        {
                             break;
+                        }
                     }
                 }
                 FindClose(replayFileHandle);
@@ -1395,7 +1397,7 @@ ZunBool MainMenu::ReplayHandling()
                 this->framesActive = 0;
                 this->gameState = STATE_REPLAY_ANIM;
                 anmVm = this->vm;
-                for (cur = 0; cur < ARRAY_SIZE_SIGNED(this->vm); cur++, anmVm++)
+                for (i = 0; i < ARRAY_SIZE_SIGNED(this->vm); i++, anmVm++)
                 {
                     anmVm->pendingInterrupt = 15;
                 }
@@ -1424,7 +1426,7 @@ ZunBool MainMenu::ReplayHandling()
             {
                 this->gameState = STATE_REPLAY_SELECT;
                 anmVm = &(this->vm[MENU_VMS_REPLAY + 1]);
-                for (cur = 0; cur < 25; cur++, anmVm++)
+                for (i = 0; i < 25; i++, anmVm++)
                 {
                     anmVm->pendingInterrupt = 17;
                 }
@@ -1440,13 +1442,11 @@ ZunBool MainMenu::ReplayHandling()
                     (ReplayData *)FileSystem::OpenPath(this->replayFilePaths[this->chosenReplay]);
 #endif
                 ValidateReplayData(this->currentReplay, g_ReadFileSize);
-                for (cur = 0; cur < ARRAY_SIZE_SIGNED(this->currentReplay->stageReplayData); cur++)
+                for (i = 0; i < ARRAY_SIZE_SIGNED(this->currentReplay->stageReplayData); i++)
                 {
-                    if (this->currentReplay->stageReplayData[cur] != NULL)
+                    if (this->currentReplay->stageReplayData[i] != NULL)
                     {
-                        this->currentReplay->stageReplayData[cur] =
-                            (StageReplayData *)((u32)this->currentReplay +
-                                                (u32)this->currentReplay->stageReplayData[cur]);
+                        this->currentReplay->stageReplayData[i] = OFFSET_PTR(StageReplayData *, this->currentReplay, this->currentReplay->stageReplayData[i]);
                     }
                 }
 
@@ -1463,9 +1463,9 @@ ZunBool MainMenu::ReplayHandling()
         {
             this->gameState = STATE_REPLAY_UNLOAD;
             this->stateTimer = 0;
-            for (cur = 0; cur < ARRAY_SIZE_SIGNED(this->vm); cur++)
+            for (i = 0; i < ARRAY_SIZE_SIGNED(this->vm); i++)
             {
-                this->vm[cur].pendingInterrupt = 4;
+                this->vm[i].pendingInterrupt = 4;
             }
             g_SoundPlayer.PlaySoundId(SOUND_BACK);
             this->cursor = TITLE_CURSOR_START;
@@ -1477,8 +1477,8 @@ ZunBool MainMenu::ReplayHandling()
         {
             break;
         }
-        cur = MoveCursor(this, 7);
-        if (cur < 0)
+        i = MoveCursor(this, 7);
+        if (i < 0)
         {
             while (this->replayFileData[this->chosenReplay].stageReplayData[this->cursor] == NULL)
             {
@@ -1488,7 +1488,7 @@ ZunBool MainMenu::ReplayHandling()
                 }
             }
         }
-        else if (cur > 0)
+        else if (i > 0)
         {
             while (this->replayFileData[this->chosenReplay].stageReplayData[this->cursor] == NULL)
             {
@@ -1511,13 +1511,13 @@ ZunBool MainMenu::ReplayHandling()
             g_GameManager.character = this->currentReplay->shottypeChara / SHOTTYPES_PER_CHARACTER;
             g_GameManager.shotType = this->currentReplay->shottypeChara % SHOTTYPES_PER_CHARACTER;
 #if BUILT_SINCE(102g)
-            cur = 0;
-            while (this->currentReplay->stageReplayData[cur] == NULL)
+            i = 0;
+            while (this->currentReplay->stageReplayData[i] == NULL)
             {
-                cur++;
+                i++;
             }
-            g_GameManager.livesRemaining = this->currentReplay->stageReplayData[cur]->livesRemaining;
-            g_GameManager.bombsRemaining = this->currentReplay->stageReplayData[cur]->bombsRemaining;
+            g_GameManager.livesRemaining = this->currentReplay->stageReplayData[i]->livesRemaining;
+            g_GameManager.bombsRemaining = this->currentReplay->stageReplayData[i]->bombsRemaining;
 #endif
             ZUN_FREE(this->currentReplay);
             this->currentReplay = NULL;
@@ -1531,14 +1531,14 @@ ZunBool MainMenu::ReplayHandling()
             this->currentReplay = NULL;
             this->gameState = STATE_REPLAY_ANIM;
             this->stateTimer = 0;
-            for (cur = 0; cur < ARRAY_SIZE_SIGNED(this->vm); cur++)
+            for (i = 0; i < ARRAY_SIZE_SIGNED(this->vm); i++)
             {
-                this->vm[cur].pendingInterrupt = 4;
+                this->vm[i].pendingInterrupt = 4;
             }
             g_SoundPlayer.PlaySoundId(SOUND_BACK);
             this->gameState = STATE_REPLAY_ANIM;
             anmVm = this->vm;
-            for (cur = 0; cur < ARRAY_SIZE_SIGNED(this->vm); cur++, anmVm++)
+            for (i = 0; i < ARRAY_SIZE_SIGNED(this->vm); i++, anmVm++)
             {
                 anmVm->pendingInterrupt = 15;
             }
@@ -1671,7 +1671,7 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelect
         }
         else
         {
-            g_AnmManager->SetActiveSprite(vm, vm->baseSpriteIndex);
+            g_AnmManager->SetSprite(vm, vm->baseSpriteId);
         }
         vm->scaleX = 1.0f;
         vm->scaleY = 1.0f;
@@ -1683,13 +1683,13 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelect
         {
             vm->color = COLOR_MENU_ITEM_HIGHLIGHT;
         }
-        else if (vm->baseSpriteIndex < ANM_OFFSET_TITLE04)
+        else if (vm->baseSpriteId < ANM_OFFSET_TITLE04)
         {
-            g_AnmManager->SetActiveSprite(vm, vm->baseSpriteIndex + (ANM_OFFSET_TITLE01S - ANM_OFFSET_TITLE01));
+            g_AnmManager->SetSprite(vm, vm->baseSpriteId + (ANM_OFFSET_TITLE01S - ANM_OFFSET_TITLE01));
         }
         else
         {
-            g_AnmManager->SetActiveSprite(vm, vm->baseSpriteIndex + (ANM_OFFSET_TITLE04S - ANM_OFFSET_TITLE04));
+            g_AnmManager->SetSprite(vm, vm->baseSpriteId + (ANM_OFFSET_TITLE04S - ANM_OFFSET_TITLE04));
         }
         vm->posOffset = D3DXVECTOR3(-2.0f, -2.0f, 0.0f);
     }
@@ -2034,7 +2034,7 @@ ChainCallbackResult MainMenu_OnDraw(MainMenu *menu)
             menu->numFramesSinceActive++;
         }
         targetOpacity = COLOR_ALPHA(menu->menuTextColor) - COLOR_ALPHA(menu->minimumOpacity);
-        ScreenEffect_DrawSquare(
+        ScreenEffect_DrawRect(
             &window,
             COLOR_SET_ALPHA(menu->menuTextColor, targetOpacity * menu->numFramesSinceActive / menu->framesActive +
                                                      COLOR_ALPHA(menu->minimumOpacity)));
@@ -2043,7 +2043,7 @@ ChainCallbackResult MainMenu_OnDraw(MainMenu *menu)
     {
         menu->numFramesSinceActive--;
         targetOpacity = COLOR_ALPHA(menu->menuTextColor) - COLOR_ALPHA(menu->minimumOpacity);
-        ScreenEffect_DrawSquare(
+        ScreenEffect_DrawRect(
             &window,
             COLOR_SET_ALPHA(menu->menuTextColor, targetOpacity * menu->numFramesSinceActive / menu->framesInactive +
                                                      COLOR_ALPHA(menu->minimumOpacity)));
@@ -2106,9 +2106,9 @@ ZunResult LoadTitleAnm(MainMenu *menu)
 
     for (i = 0; i < MENU_VMS_TITLE_COUNT; i++)
     {
-        g_AnmManager->ExecuteAnmIdx(&menu->vm[i], ANM_SCRIPT_TITLE01_START + i);
+        g_AnmManager->SetNewScript(&menu->vm[i], ANM_SCRIPT_TITLE01_START + i);
         menu->vm[i].flags.isVisible = false;
-        menu->vm[i].baseSpriteIndex = menu->vm[i].activeSpriteIndex;
+        menu->vm[i].baseSpriteId = menu->vm[i].spriteId;
         menu->vm[i].flags.zWriteDisable = true;
     }
 
@@ -2171,7 +2171,7 @@ ZunResult LoadDiffCharSelect(MainMenu *menu)
     }
     for (vm = &menu->vm[MENU_VMS_TITLE_COUNT], i = ANM_SCRIPT_SELECT01_START; i <= ANM_SCRIPT_SELECT01_END; i++, vm++)
     {
-        g_AnmManager->ExecuteAnmIdx(vm, i);
+        g_AnmManager->SetNewScript(vm, i);
         vm->flags.isVisible = false;
         vm->flags.colorOp = AnmColorOp_Add;
         if (!g_Supervisor.IsHardwareBlendingDisabled())
@@ -2183,7 +2183,7 @@ ZunResult LoadDiffCharSelect(MainMenu *menu)
             vm->color = COLOR_WHITE;
         }
         vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-        vm->baseSpriteIndex = vm->activeSpriteIndex;
+        vm->baseSpriteId = vm->spriteId;
         vm->flags.zWriteDisable = true;
     }
     return ZUN_SUCCESS;
@@ -2213,7 +2213,7 @@ ZunResult LoadReplayMenu(MainMenu *menu)
     vm = &menu->vm[MENU_VMS_REPLAY];
     for (i = ANM_SCRIPT_REPLAY_START; i <= ANM_SCRIPT_REPLAY_END; i++, vm++)
     {
-        g_AnmManager->ExecuteAnmIdx(vm, i);
+        g_AnmManager->SetNewScript(vm, i);
         vm->flags.isVisible = false;
         vm->flags.colorOp = AnmColorOp_Add;
 
@@ -2226,7 +2226,7 @@ ZunResult LoadReplayMenu(MainMenu *menu)
             vm->color = COLOR_WHITE;
         }
         vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-        vm->baseSpriteIndex = vm->activeSpriteIndex;
+        vm->baseSpriteId = vm->spriteId;
         vm->flags.zWriteDisable = true;
     }
     return ZUN_SUCCESS;

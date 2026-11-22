@@ -9,12 +9,11 @@
 namespace th06
 {
 
-#pragma var_order(angleY, angleX, i, vm, vecLength, bombPivot, bombIdx)
+#pragma var_order(angleY, angleX, i, vm, vecLength, bombPivot)
 void BombReimuACalc(Player *player)
 {
     i32 i;
     f32 vecLength;
-    i32 bombIdx;
     D3DXVECTOR3 bombPivot;
     AnmVm *vm;
     f32 angleX;
@@ -23,7 +22,7 @@ void BombReimuACalc(Player *player)
     if (player->bombInfo.timer >= player->bombInfo.duration)
     {
         g_Gui.EndPlayerSpellcard();
-        player->bombInfo.isInUse = false;
+        player->bombInfo.isActive = false;
         return;
     }
     if (player->bombInfo.timer.HasTicked() && player->bombInfo.timer == 0)
@@ -64,9 +63,9 @@ void BombReimuACalc(Player *player)
                 player->damageRegionDamageDealt[i] = 0;
 
                 vm = &player->bombInfo.vms[0][i * 4];
-                for (bombIdx = 0; bombIdx < 4; bombIdx++, vm++)
+                for (i32 j = 0; j < 4; j++, vm++)
                 {
-                    g_AnmManager->ExecuteAnmIdx(vm, ANM_SCRIPT_PLAYER_REIMU_A_BOMB_ARRAY + bombIdx);
+                    g_AnmManager->SetNewScript(vm, ANM_SCRIPT_PLAYER_REIMU_A_BOMB_ARRAY + j);
                 }
                 g_SoundPlayer.PlaySoundId(SOUND_BOMB_REIMU_A);
             }
@@ -199,7 +198,7 @@ static void DarkenViewport(Player *player)
         darknessLevel = 176;
     }
 
-    ScreenEffect_DrawSquare(&viewport, COLOR_SET_ALPHA(COLOR_BLACK, darknessLevel));
+    ScreenEffect_DrawRect(&viewport, COLOR_SET_ALPHA(COLOR_BLACK, darknessLevel));
 }
 
 void BombReimuADraw(Player *player)
@@ -254,7 +253,7 @@ void BombReimuBCalc(Player *player)
     if (player->bombInfo.timer >= player->bombInfo.duration)
     {
         g_Gui.EndPlayerSpellcard();
-        player->bombInfo.isInUse = false;
+        player->bombInfo.isActive = false;
         return;
     }
 
@@ -268,7 +267,7 @@ void BombReimuBCalc(Player *player)
 
         for (i = 0; i < 4; i++, vm++)
         {
-            g_AnmManager->ExecuteAnmIdx(vm, ANM_SCRIPT_PLAYER_REIMU_B_BOMB_ARRAY + i);
+            g_AnmManager->SetNewScript(vm, ANM_SCRIPT_PLAYER_REIMU_B_BOMB_ARRAY + i);
         }
 
         g_SoundPlayer.PlaySoundId(SOUND_BOMB_REIMARI);
@@ -348,7 +347,7 @@ void BombMarisaACalc(Player *player)
     if (player->bombInfo.timer >= player->bombInfo.duration)
     {
         g_Gui.EndPlayerSpellcard();
-        player->bombInfo.isInUse = false;
+        player->bombInfo.isActive = false;
         return;
     }
 
@@ -362,7 +361,7 @@ void BombMarisaACalc(Player *player)
         starSprite = player->bombInfo.vms[0];
         for (i = 0; i < ARRAY_SIZE_SIGNED(player->bombInfo.vms); i++, starSprite++)
         {
-            g_AnmManager->ExecuteAnmIdx(starSprite, ANM_SCRIPT_PLAYER_MARISA_A_BLUE_STAR + i % 3);
+            g_AnmManager->SetNewScript(starSprite, ANM_SCRIPT_PLAYER_MARISA_A_BLUE_STAR + i % 3);
             player->bombInfo.projectilePosition[i] = player->position;
 
             float starAngle = i * ZUN_2PI / 8.0f;
@@ -447,7 +446,7 @@ void BombMarisaBCalc(Player *player)
     if (player->bombInfo.timer >= player->bombInfo.duration)
     {
         g_Gui.EndPlayerSpellcard();
-        player->bombInfo.isInUse = false;
+        player->bombInfo.isActive = false;
         player->speedMultiplierDuringBomb.x = player->speedMultiplierDuringBomb.y = 1.0f;
         return;
     }
@@ -461,7 +460,7 @@ void BombMarisaBCalc(Player *player)
         vm = player->bombInfo.vms[0];
         for (i = 0; i < 4; i++, vm++)
         {
-            g_AnmManager->ExecuteAnmIdx(vm, ANM_SCRIPT_PLAYER_MARISA_B_MASTER_SPARK + i);
+            g_AnmManager->SetNewScript(vm, ANM_SCRIPT_PLAYER_MARISA_B_MASTER_SPARK + i);
             player->bombInfo.projectilePosition[i] = player->position;
         }
         g_SoundPlayer.PlaySoundId(SOUND_BOMB_MARISA_B);

@@ -45,7 +45,7 @@ ChainCallbackResult Stage_OnUpdate(Stage *stage)
     }
     for (;;)
     {
-        curInstr = stage->beginningOfScript + stage->instructionIndex;
+        curInstr = &stage->script[stage->instructionIndex];
         switch (curInstr->opcode)
         {
         case STD_OPCODE_CAMERA_POSITION_KEY:
@@ -240,7 +240,7 @@ ChainCallbackResult Stage_OnDrawLowPrio(Stage *stage)
                 gameRegion.right = GAME_REGION_POS_RIGHT;
                 gameRegion.bottom = GAME_REGION_POS_BOTTOM;
                 spellBackgroundAlpha = RAMP_UP(255, stage->spellcardTicks, SPELL_BACKGROUND_FADE_IN_DURATION);
-                ScreenEffect_DrawSquare(&gameRegion, COLOR_SET_ALPHA(COLOR_BLACK, spellBackgroundAlpha));
+                ScreenEffect_DrawRect(&gameRegion, COLOR_SET_ALPHA(COLOR_BLACK, spellBackgroundAlpha));
             }
         }
     }
@@ -250,7 +250,7 @@ ChainCallbackResult Stage_OnDrawLowPrio(Stage *stage)
         // this, won't that just restart the script?
         if (stage->spellcardTicks <= g_Supervisor.cfg.frameskipConfig)
         {
-            g_AnmManager->SetAndExecuteScriptIdx(&stage->spellcardBackground, ANM_SCRIPT_EFFECTS_SPELLCARD_BACKGROUND);
+            g_AnmManager->SetScript(&stage->spellcardBackground, ANM_SCRIPT_EFFECTS_SPELLCARD_BACKGROUND);
         }
         g_AnmManager->Draw2DRotated(&stage->spellcardBackground);
     }
@@ -353,12 +353,12 @@ void Stage_CutChain()
     g_FuncChain.Cut(&g_StageOnDrawLowPrioChain);
 }
 
-#pragma var_order(vmIdx, idx, curObj, curQuad)
+#pragma var_order(vmIdx, i, curObj, curQuad)
 ZunResult Stage::LoadStageData(const char *anmpath, const char *stdpath)
 {
     StdRawObject *curObj;
     StdRawQuadBasic *curQuad;
-    i32 idx;
+    i32 i;
     i32 vmIdx;
 
     if (g_AnmManager->LoadAnm(ANM_FILE_STAGEBG, anmpath, ANM_OFFSET_STAGEBG) != ZUN_SUCCESS)
@@ -373,48 +373,48 @@ ZunResult Stage::LoadStageData(const char *anmpath, const char *stdpath)
     }
     this->objectCount = this->stdFile->numObjects;
     this->quadCount = this->stdFile->numQuads;
-    this->instances = (StdRawInstance *)(this->stdFile->instancesOffset + (u32)this->stdFile);
-    this->beginningOfScript = (StdRawInstr *)(this->stdFile->scriptOffset + (u32)this->stdFile);
+    this->instances = OFFSET_PTR(StdRawInstance *, this->stdFile->instancesOffset, this->stdFile);
+    this->script = OFFSET_PTR(StdRawInstr *, this->stdFile->scriptOffset, this->stdFile);
     this->objects = (StdRawObject **)(this->stdFile + 1);
-    for (idx = 0; idx < this->objectCount; idx++)
+    for (i = 0; i < this->objectCount; i++)
     {
-        this->objects[idx] = (StdRawObject *)((u32)this->objects[idx] + (u32)this->stdFile);
+        this->objects[i] = OFFSET_PTR(StdRawObject *, this->objects[i], this->stdFile);
     }
     this->quadVms = ZUN_ALLOC_ARRAY(AnmVm, this->quadCount);
-    for (idx = 0, vmIdx = 0; idx < this->objectCount; idx++)
+    for (i = 0, vmIdx = 0; i < this->objectCount; i++)
     {
-        curObj = this->objects[idx];
+        curObj = this->objects[i];
         curObj->flags = STD_OBJECT_RUN_ANMS;
         curQuad = curObj->quads;
         while (curQuad->type >= 0)
         {
-            g_AnmManager->ExecuteAnmIdx(&this->quadVms[vmIdx], curQuad->anmScript + ANM_OFFSET_STAGEBG);
+            g_AnmManager->SetNewScript(&this->quadVms[vmIdx], curQuad->anmScript + ANM_OFFSET_STAGEBG);
             curQuad->vmIdx = vmIdx++;
-            curQuad = (StdRawQuadBasic *)((u8 *)curQuad + curQuad->byteSize);
+            curQuad = OFFSET_PTR(StdRawQuadBasic *, curQuad, curQuad->byteSize);
         }
     }
     return ZUN_SUCCESS;
 }
 
-#pragma var_order(objQuadType1, vmsRunning, objIdx, vm)
+#pragma var_order(objQuadType1, vmsRunning, i, vm)
 ZunResult Stage::UpdateObjects()
 {
     AnmVm *vm;
     StdRawQuadBasic *objQuadType1;
-    i32 objIdx;
+    i32 i;
     i32 vmsRunning;
 
-    for (objIdx = 0; objIdx < this->objectCount; objIdx++)
+    for (i = 0; i < this->objectCount; i++)
     {
-        StdRawObject *obj = this->objects[objIdx];
+        StdRawObject *obj = this->objects[i];
         if (obj->flags & STD_OBJECT_RUN_ANMS)
         {
             vmsRunning = 0;
-            StdRawQuadBasic *objQuad = obj->quads;
-            while (objQuad->type >= 0)
+            StdRawQuadBasic *curQuad = obj->quads;
+            while (curQuad->type >= 0)
             {
-                vm = &this->quadVms[objQuad->vmIdx];
-                switch (objQuad->type)
+                vm = &this->quadVms[curQuad->vmIdx];
+                switch (curQuad->type)
                 {
                 case 0:
                     g_AnmManager->RunAnm(vm);
@@ -423,7 +423,7 @@ ZunResult Stage::UpdateObjects()
                     // I assume this casts it, but this is all dead code
                     // as the engine doesn't contain any other reference
                     // to type 1 quads.
-                    objQuadType1 = objQuad;
+                    objQuadType1 = curQuad;
                     g_AnmManager->RunAnm(vm);
                     break;
                 }
@@ -431,11 +431,11 @@ ZunResult Stage::UpdateObjects()
                 {
                     vmsRunning++;
                 }
-                objQuad = (StdRawQuadBasic *)((i32)&objQuad->type + objQuad->byteSize);
+                curQuad = OFFSET_PTR(StdRawQuadBasic *, curQuad, curQuad->byteSize);
             }
             if (vmsRunning == 0)
             {
-                obj->flags &= ~1;
+                obj->flags &= ~STD_OBJECT_RUN_ANMS;
             }
         }
     }
@@ -629,7 +629,7 @@ ZunResult Stage::RenderObjects(i32 layer)
                     }
                     break;
                 }
-                curQuad = (StdRawQuadBasic *)((i32)&curQuad->type + curQuad->byteSize);
+                curQuad = OFFSET_PTR(StdRawQuadBasic *, curQuad, curQuad->byteSize);
             }
             instancesDrawn++;
         }

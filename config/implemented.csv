@@ -45,14 +45,14 @@ th06::AnmManager::ReleaseTexture
 th06::AnmManager::ReleaseSurface
 th06::AnmManager::ReleaseSurfaces
 th06::AnmManager::ReleaseVertexBuffer
-th06::AnmManager::SetActiveSprite
+th06::AnmManager::SetSprite
 th06::AnmManager::SetAndExecuteScript
 th06::AnmManager::SetupVertexBuffer
 th06::AnmManager::SetRenderStateForVm
 th06::AnmManager::TakeScreenshotIfRequested
 th06::AnmManager::TakeScreenshot
 th06::AnmManager::TranslateRotation
-th06::AnmManager::ExecuteAnmIdx
+th06::AnmManager::SetNewScript
 th06::BulletBase::BulletBase
 th06::BulletManager::RegisterChain
 th06::BulletManager::CutChain

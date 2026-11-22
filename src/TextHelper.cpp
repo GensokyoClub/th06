@@ -350,47 +350,45 @@ bool TextHelper::SetAlpha(u8 alpha)
     return true;
 }
 
-#pragma var_order(bufferRegion, idx, doubleArea)
+#pragma var_order(bufferRegion, i, doubleArea)
 bool TextHelper::InvertAlpha(i32 x, i32 y, i32 spriteWidth, i32 fontHeight)
 {
-    i32 doubleArea;
-    u8 *bufferRegion;
-    i32 idx;
+    i32 i;
 
-    doubleArea = spriteWidth * fontHeight * 2;
-    bufferRegion = &this->GetBuffer()[y * spriteWidth * 2];
+    i32 doubleArea = spriteWidth * fontHeight * 2;
+    u8 *bufferRegion = &this->GetBuffer()[y * spriteWidth * 2];
     switch (this->format)
     {
     case D3DFMT_A8R8G8B8:
-        for (idx = 3; idx < doubleArea; idx += 4)
+        for (i = 3; i < doubleArea; i += 4)
         {
-            bufferRegion[idx] = bufferRegion[idx] ^ 0xff;
+            bufferRegion[i] ^= 0xff;
         }
         break;
     case D3DFMT_A1R5G5B5: {
-        A1R5G5B5 *bufferCursor;
-        for (bufferCursor = (A1R5G5B5 *)bufferRegion, idx = 0; idx < doubleArea; idx += 2, bufferCursor += 1)
+        A1R5G5B5 *bufferCursor = (A1R5G5B5 *)bufferRegion;
+        for (i = 0; i < doubleArea; i += 2, bufferCursor += 1)
         {
             bufferCursor->alpha ^= 1;
             if (bufferCursor->alpha)
             {
-                bufferCursor->red = bufferCursor->red - bufferCursor->red * idx / doubleArea / 2;
-                bufferCursor->green = bufferCursor->green - bufferCursor->green * idx / doubleArea / 2;
-                bufferCursor->blue = bufferCursor->blue - bufferCursor->blue * idx / doubleArea / 4;
+                bufferCursor->red = bufferCursor->red - bufferCursor->red * i / doubleArea / 2;
+                bufferCursor->green = bufferCursor->green - bufferCursor->green * i / doubleArea / 2;
+                bufferCursor->blue = bufferCursor->blue - bufferCursor->blue * i / doubleArea / 4;
             }
             else
             {
-                bufferCursor->red = 31 - idx * 31 / doubleArea / 2;
-                bufferCursor->green = 31 - idx * 31 / doubleArea / 2;
-                bufferCursor->blue = 31 - idx * 31 / doubleArea / 4;
+                bufferCursor->red = 31 - i * 31 / doubleArea / 2;
+                bufferCursor->green = 31 - i * 31 / doubleArea / 2;
+                bufferCursor->blue = 31 - i * 31 / doubleArea / 4;
             }
         }
         break;
     }
     case D3DFMT_A4R4G4B4:
-        for (idx = 1; idx < doubleArea; idx += 2)
+        for (i = 1; i < doubleArea; i += 2)
         {
-            bufferRegion[idx] = bufferRegion[idx] ^ 0xf0;
+            bufferRegion[i] ^= 0xf0;
         }
         break;
     default:

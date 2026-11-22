@@ -65,7 +65,7 @@ ZUN_ASSERT_TYPE(EnemyShooter, 0x54, 4);
 
 typedef void (*ExInsn)(Enemy *, EclRawInstr *);
 
-struct EnemyEclContext
+struct EclContext
 {
     EclRawInstr *currentInstr;
     ZunTimer time;
@@ -85,7 +85,7 @@ struct EnemyEclContext
     i32 compareRegister;
     u16 subId;
 };
-ZUN_ASSERT_TYPE(EnemyEclContext, 0x4c, 4);
+ZUN_ASSERT_TYPE(EclContext, 0x4c, 4);
 
 enum EnemyMoveMode
 {
@@ -198,8 +198,8 @@ struct Enemy
 
     AnmVm primaryVm;
     AnmVm vms[ENEMY_ANM_SLOTS];
-    EnemyEclContext currentContext;
-    EnemyEclContext savedContextStack[MAX_ECL_STACK_DEPTH + 1]; // +1 dummy slot for overflow
+    EclContext currentContext;
+    EclContext savedContextStack[MAX_ECL_STACK_DEPTH + 1]; // +1 dummy slot for overflow
     i32 stackDepth;
     unreferenced_fields(0x4);
     i32 deathCallbackSub;
@@ -254,8 +254,7 @@ struct Enemy
 #if BUILT_BEFORE(100)
     alignment_padding(0x2);
 #endif
-    Float2 lowerMoveLimit;
-    Float2 upperMoveLimit;
+    FloatRect moveLimit;
     Effect *spellEffects[MAX_ENEMY_SPELL_EFFECTS];
     i32 spellEffectCount;
     f32 spellEffectRadius;

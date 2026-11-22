@@ -111,7 +111,7 @@ struct Stage
     i32 objectCount;
     StdRawObject **objects;
     StdRawInstance *instances;
-    StdRawInstr *beginningOfScript;
+    StdRawInstr *script;
     ZunTimer scriptTime;
     i32 instructionIndex;
     ZunTimer tickCount; // Not really used, changes to i32 when used later in PCB

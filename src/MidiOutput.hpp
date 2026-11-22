@@ -60,6 +60,8 @@ struct MidiChannel
 };
 ZUN_ASSERT_TYPE(MidiChannel, 0x17, 1);
 
+#define MAX_MIDI_FILES 32
+
 class MidiOutput : MidiTimer
 {
   public:
@@ -98,9 +100,9 @@ class MidiOutput : MidiTimer
     void FadeOutSetVolume(i32 volume);
 
   private:
-    MIDIHDR *midiHeaders[32];
+    MIDIHDR *midiHeaders[MAX_MIDI_FILES];
     i32 midiHeadersCursor;
-    u8 *midiFileData[32];
+    u8 *midiFileData[MAX_MIDI_FILES];
 
     i32 numTracks;
     u32 format;
@@ -108,7 +110,7 @@ class MidiOutput : MidiTimer
     i32 tempo;
     alignment_padding(0x4);
     u64 playcount1;
-    i64 playcount2;
+    u64 playcount2;
     MidiTrack *tracks;
     MidiDevice midiOutDev;
     unreferenced_fields(0x10);

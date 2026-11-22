@@ -382,16 +382,16 @@ enum UpdateGameMenuState
 
 i32 StageMenu::OnUpdateGameMenu()
 {
-    i32 vmIdx;
+    i32 i;
 
     if (WAS_PRESSED(TH_BUTTON_MENU))
     {
         this->curState = GAME_MENU_PAUSE_SELECTED_UNPAUSE;
-        for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites); vmIdx++)
+        for (i = 0; i < ARRAY_SIZE_SIGNED(this->menuSprites); i++)
         {
-            if (this->menuSprites[vmIdx].IsVisible())
+            if (this->menuSprites[i].IsVisible())
             {
-                this->menuSprites[vmIdx].pendingInterrupt = 2;
+                this->menuSprites[i].pendingInterrupt = 2;
             }
         }
         this->numFrames = 0;
@@ -400,11 +400,11 @@ i32 StageMenu::OnUpdateGameMenu()
     if (WAS_PRESSED(TH_BUTTON_Q))
     {
         this->curState = GAME_MENU_QUIT_SELECTED_YES;
-        for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites); vmIdx++)
+        for (i = 0; i < ARRAY_SIZE_SIGNED(this->menuSprites); i++)
         {
-            if (this->menuSprites[vmIdx].IsVisible())
+            if (this->menuSprites[i].IsVisible())
             {
-                this->menuSprites[vmIdx].pendingInterrupt = 2;
+                this->menuSprites[i].pendingInterrupt = 2;
             }
         }
         this->numFrames = 0;
@@ -412,20 +412,20 @@ i32 StageMenu::OnUpdateGameMenu()
     switch (this->curState)
     {
     case GAME_MENU_PAUSE_OPENING:
-        for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites); vmIdx++)
+        for (i = 0; i < ARRAY_SIZE_SIGNED(this->menuSprites); i++)
         {
-            g_AnmManager->SetAndExecuteScriptIdx(&this->menuSprites[vmIdx], vmIdx + 2);
+            g_AnmManager->SetScript(&this->menuSprites[i], i + 2);
         }
-        for (vmIdx = GAME_MENU_SPRITES_START_PAUSE; vmIdx < GAME_MENU_SPRITES_END_PAUSE; vmIdx++)
+        for (i = GAME_MENU_SPRITES_START_PAUSE; i < GAME_MENU_SPRITES_END_PAUSE; i++)
         {
-            this->menuSprites[vmIdx].pendingInterrupt = 1;
+            this->menuSprites[i].pendingInterrupt = 1;
         }
         this->curState++;
         this->numFrames = 0;
         if (g_Supervisor.lockableBackbuffer)
         {
             g_AnmManager->RequestScreenshot();
-            g_AnmManager->SetAndExecuteScriptIdx(&this->menuBackground, ANM_SCRIPT_CAPTURE_PAUSE_BG);
+            g_AnmManager->SetScript(&this->menuBackground, ANM_SCRIPT_CAPTURE_PAUSE_BG);
             this->menuBackground.pos.x = GAME_REGION_POS_X;
             this->menuBackground.pos.y = GAME_REGION_POS_Y;
             this->menuBackground.pos.z = 0.0f;
@@ -448,9 +448,9 @@ i32 StageMenu::OnUpdateGameMenu()
             }
             if (WAS_PRESSED(TH_BUTTON_SHOOT))
             {
-                for (vmIdx = GAME_MENU_SPRITES_START_PAUSE; vmIdx < GAME_MENU_SPRITES_END_PAUSE; vmIdx++)
+                for (i = GAME_MENU_SPRITES_START_PAUSE; i < GAME_MENU_SPRITES_END_PAUSE; i++)
                 {
-                    this->menuSprites[vmIdx].pendingInterrupt = 2;
+                    this->menuSprites[i].pendingInterrupt = 2;
                 }
                 this->curState = GAME_MENU_PAUSE_SELECTED_UNPAUSE;
                 this->numFrames = 0;
@@ -475,13 +475,13 @@ i32 StageMenu::OnUpdateGameMenu()
             }
             if (WAS_PRESSED(TH_BUTTON_SHOOT))
             {
-                for (vmIdx = GAME_MENU_SPRITES_START_PAUSE; vmIdx < GAME_MENU_SPRITES_END_PAUSE; vmIdx++)
+                for (i = GAME_MENU_SPRITES_START_PAUSE; i < GAME_MENU_SPRITES_END_PAUSE; i++)
                 {
-                    this->menuSprites[vmIdx].pendingInterrupt = 2;
+                    this->menuSprites[i].pendingInterrupt = 2;
                 }
-                for (vmIdx = GAME_MENU_SPRITES_START_QUIT; vmIdx < GAME_MENU_SPRITES_END_QUIT; vmIdx++)
+                for (i = GAME_MENU_SPRITES_START_QUIT; i < GAME_MENU_SPRITES_END_QUIT; i++)
                 {
-                    this->menuSprites[vmIdx].pendingInterrupt = 1;
+                    this->menuSprites[i].pendingInterrupt = 1;
                 }
                 this->curState = GAME_MENU_QUIT_CURSOR_NO;
                 this->numFrames = 0;
@@ -494,9 +494,9 @@ i32 StageMenu::OnUpdateGameMenu()
         {
             this->curState = GAME_MENU_PAUSE_OPENING;
             g_GameManager.isInGameMenu = 0;
-            for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites); vmIdx++)
+            for (i = 0; i < ARRAY_SIZE_SIGNED(this->menuSprites); i++)
             {
-                this->menuSprites[vmIdx].SetInvisible();
+                this->menuSprites[i].SetInvisible();
             }
         }
         break;
@@ -517,9 +517,9 @@ i32 StageMenu::OnUpdateGameMenu()
             }
             if (WAS_PRESSED(TH_BUTTON_SHOOT))
             {
-                for (vmIdx = GAME_MENU_SPRITES_START_QUIT; vmIdx < GAME_MENU_SPRITES_END_QUIT; vmIdx++)
+                for (i = GAME_MENU_SPRITES_START_QUIT; i < GAME_MENU_SPRITES_END_QUIT; i++)
                 {
-                    this->menuSprites[vmIdx].pendingInterrupt = 2;
+                    this->menuSprites[i].pendingInterrupt = 2;
                 }
                 this->curState = GAME_MENU_QUIT_SELECTED_YES;
                 this->numFrames = 0;
@@ -543,13 +543,13 @@ i32 StageMenu::OnUpdateGameMenu()
             }
             if (WAS_PRESSED(TH_BUTTON_SHOOT))
             {
-                for (vmIdx = GAME_MENU_SPRITES_START_PAUSE; vmIdx < GAME_MENU_SPRITES_END_PAUSE; vmIdx++)
+                for (i = GAME_MENU_SPRITES_START_PAUSE; i < GAME_MENU_SPRITES_END_PAUSE; i++)
                 {
-                    this->menuSprites[vmIdx].pendingInterrupt = 1;
+                    this->menuSprites[i].pendingInterrupt = 1;
                 }
-                for (vmIdx = GAME_MENU_SPRITES_START_QUIT; vmIdx < GAME_MENU_SPRITES_END_QUIT; vmIdx++)
+                for (i = GAME_MENU_SPRITES_START_QUIT; i < GAME_MENU_SPRITES_END_QUIT; i++)
                 {
-                    this->menuSprites[vmIdx].pendingInterrupt = 2;
+                    this->menuSprites[i].pendingInterrupt = 2;
                 }
                 this->curState = GAME_MENU_PAUSE_CURSOR_QUIT;
                 this->numFrames = 0;
@@ -562,15 +562,15 @@ i32 StageMenu::OnUpdateGameMenu()
             this->curState = GAME_MENU_PAUSE_OPENING;
             g_GameManager.isInGameMenu = 0;
             g_Supervisor.curState = SUPERVISOR_STATE_MAINMENU;
-            for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites); vmIdx++)
+            for (i = 0; i < ARRAY_SIZE_SIGNED(this->menuSprites); i++)
             {
-                this->menuSprites[vmIdx].SetInvisible();
+                this->menuSprites[i].SetInvisible();
             }
         }
     }
-    for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites); vmIdx++)
+    for (i = 0; i < ARRAY_SIZE_SIGNED(this->menuSprites); i++)
     {
-        g_AnmManager->RunAnm(&this->menuSprites[vmIdx]);
+        g_AnmManager->RunAnm(&this->menuSprites[i]);
     }
     if (g_Supervisor.lockableBackbuffer)
     {
@@ -582,7 +582,7 @@ i32 StageMenu::OnUpdateGameMenu()
 
 void StageMenu::OnDrawGameMenu()
 {
-    i32 vmIdx;
+    i32 i;
 
     if (g_GameManager.isInGameMenu)
     {
@@ -597,11 +597,11 @@ void StageMenu::OnDrawGameMenu()
             menuBackground.flags.zWriteDisable = true;
             g_AnmManager->Draw2D(&menuBackground);
         }
-        for (vmIdx = 0; vmIdx < ARRAY_SIZE_SIGNED(this->menuSprites); vmIdx++)
+        for (i = 0; i < ARRAY_SIZE_SIGNED(this->menuSprites); i++)
         {
-            if (this->menuSprites[vmIdx].IsVisible())
+            if (this->menuSprites[i].IsVisible())
             {
-                g_AnmManager->Draw2D(&this->menuSprites[vmIdx]);
+                g_AnmManager->Draw2D(&this->menuSprites[i]);
             }
         }
     }
@@ -666,18 +666,18 @@ i32 StageMenu::OnUpdateRetryMenu()
             {
                 if (i < 2)
                 {
-                    g_AnmManager->SetAndExecuteScriptIdx(&this->menuSprites[i], i + 8);
+                    g_AnmManager->SetScript(&this->menuSprites[i], i + 8);
                 }
                 else
                 {
-                    g_AnmManager->SetAndExecuteScriptIdx(&this->menuSprites[i], i + 4);
+                    g_AnmManager->SetScript(&this->menuSprites[i], i + 4);
                 }
                 this->menuSprites[i].pendingInterrupt = 1;
             }
             if (g_Supervisor.lockableBackbuffer)
             {
                 g_AnmManager->RequestScreenshot();
-                g_AnmManager->SetAndExecuteScriptIdx(&this->menuBackground, ANM_SCRIPT_CAPTURE_PAUSE_BG);
+                g_AnmManager->SetScript(&this->menuBackground, ANM_SCRIPT_CAPTURE_PAUSE_BG);
                 this->menuBackground.pos.x = GAME_REGION_POS_X;
                 this->menuBackground.pos.y = GAME_REGION_POS_Y;
                 this->menuBackground.pos.z = 0.0f;

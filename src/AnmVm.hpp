@@ -12,19 +12,17 @@ namespace th06
 {
 struct AnmLoadedSprite
 {
-    i32 sourceFileIndex;
+    i32 textureId;
 
     // Positions of the sprite's corners, inclusive
-    Float2 startPixel;
-    Float2 endPixel;
+    FloatRect bounds;
 
     // Size of the entire texture
     f32 textureHeight;
     f32 textureWidth;
 
     // UV values as fractions of texture size
-    Float2 uvStart;
-    Float2 uvEnd;
+    FloatRect uv;
 
     // Size of the sprite itself
     f32 height;
@@ -179,13 +177,13 @@ struct AnmVmBase
 {
     void Initialize()
     {
-        this->uvScrollPos.x = this->uvScrollPos.y = 0.0f;
+        this->uvScroll.x = this->uvScroll.y = 0.0f;
         this->scaleInterpFinalY = this->scaleInterpFinalX = 0.0f;
         this->angleVel.x = this->angleVel.y = this->angleVel.z = 0.0f;
         this->rotation.x = this->rotation.y = this->rotation.z = 0.0f;
         this->scaleY = this->scaleX = 1.0f;
         this->scaleInterpDuration = 0;
-        this->alphaInterpDuration = 0;
+        this->colorInterpDuration = 0;
         this->color = COLOR_WHITE;
         D3DXMatrixIdentity(&this->matrix);
         this->flags.flags = AnmVmFlags_Visible | AnmVmFlags_VisibleOverride;
@@ -201,12 +199,12 @@ struct AnmVmBase
     f32 scaleX;
     f32 scaleInterpFinalY;
     f32 scaleInterpFinalX;
-    Float2 uvScrollPos;
+    Float2 uvScroll;
     ZunTimer scriptTime;
     D3DXMATRIX matrix;
     D3DCOLOR color;
     AnmVmFlags flags;
-    i16 alphaInterpDuration;
+    i16 colorInterpDuration;
     i16 scaleInterpDuration;
     i16 autoRotate; // This isn't a bool/flag because it's multipurposed for STD
     i16 pendingInterrupt;
@@ -223,7 +221,7 @@ struct AnmVm : AnmVmBase
 {
     AnmVm()
     {
-        this->activeSpriteIndex = -1;
+        this->spriteId = -1;
     }
 
     ZunBool IsVisible()
@@ -245,21 +243,21 @@ struct AnmVm : AnmVmBase
     f32 scaleInterpInitialY;
     f32 scaleInterpInitialX;
     ZunTimer scaleInterpTime;
-    i16 activeSpriteIndex;
-    i16 baseSpriteIndex;
-    i16 anmFileIndex;
+    i16 spriteId;
+    i16 baseSpriteId;
+    i16 scriptId;
     alignment_padding(0x2);
-    AnmRawInstr *beginningOfScript;
+    AnmRawInstr *script;
     AnmRawInstr *currentInstruction;
     AnmLoadedSprite *sprite;
-    D3DCOLOR alphaInterpInitial;
-    D3DCOLOR alphaInterpFinal;
+    D3DCOLOR colorInterpInitial; // Only alpha channel is actually interpolated in practice
+    D3DCOLOR colorInterpFinal;
     D3DXVECTOR3 posInterpInitial;
     D3DXVECTOR3 posInterpFinal;
     D3DXVECTOR3 posOffset;
     ZunTimer posInterpTime;
     i32 timeOfLastSpriteSet;
-    ZunTimer alphaInterpTime;
+    ZunTimer colorInterpTime;
     u8 fontWidth;
     u8 fontHeight;
     alignment_padding(0x2);

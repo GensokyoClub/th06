@@ -415,9 +415,9 @@ static ZunResult Supervisor_AddedCallback(Supervisor *s)
 static ZunResult Supervisor_DeletedCallback(Supervisor *s)
 {
     g_AnmManager->ReleaseVertexBuffer();
-    for (i32 pbg3Idx = 0; pbg3Idx < ARRAY_SIZE_SIGNED(s->pbg3Archives); pbg3Idx++)
+    for (i32 i = 0; i < ARRAY_SIZE_SIGNED(s->pbg3Archives); i++)
     {
-        s->ReleasePbg3(pbg3Idx);
+        s->ReleasePbg3(i);
     }
     g_AnmManager->ReleaseAnm(0);
     AsciiManager_CutChain();

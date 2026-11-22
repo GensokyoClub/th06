@@ -61,7 +61,7 @@ ZUN_ASSERT_TYPE(RenderVertexInfo, 0x14, 4);
 struct AnmRawSprite
 {
     u32 id;
-    Float2 offset;
+    Float2 position;
     Float2 size;
 };
 ZUN_ASSERT_TYPE(AnmRawSprite, 0x14, 4);
@@ -77,14 +77,14 @@ struct AnmRawEntry
 {
     i32 numSprites;
     i32 numScripts;
-    u32 textureIdx;
+    u32 textureId;
     i32 width;
     i32 height;
     u32 format;
     u32 colorKey;
     u32 nameOffset;
-    u32 spriteIdxOffset;
-    u32 mipmapNameOffset;
+    u32 idOffset;
+    u32 alphaNameOffset;
     u32 version;
     unreferenced_fields(0x4);
     u32 textureOffset;
@@ -94,6 +94,9 @@ struct AnmRawEntry
     u32 spriteOffsets[];
 };
 ZUN_ASSERT_TYPE(AnmRawEntry, 0x40, 4);
+
+#define MAX_TEXTURE_FILES 256
+#define MAX_SURFACES 32
 
 #define MAX_ANM_SCRIPTS 2048
 #define MAX_ANM_SPRITES 2048
@@ -111,14 +114,14 @@ struct AnmManager
 
     void SetupVertexBuffer();
 
-    ZunResult CreateEmptyTexture(i32 textureIdx, u32 width, u32 height, i32 textureFormat);
-    ZunResult LoadTexture(i32 textureIdx, const char *textureName, i32 textureFormat, D3DCOLOR colorKey);
-    ZunResult LoadTextureAlphaChannel(i32 textureIdx, const char *textureName, i32 textureFormat, D3DCOLOR colorKey);
-    void ReleaseTexture(i32 textureIdx);
+    ZunResult CreateEmptyTexture(i32 textureId, u32 width, u32 height, i32 textureFormat);
+    ZunResult LoadTexture(i32 textureId, const char *textureName, i32 textureFormat, D3DCOLOR colorKey);
+    ZunResult LoadTextureAlphaChannel(i32 textureId, const char *textureName, i32 textureFormat, D3DCOLOR colorKey);
+    void ReleaseTexture(i32 textureId);
 
     void ReleaseSurfaces()
     {
-        for (i32 i = 0; i < ARRAY_SIZE_SIGNED(this->surfaces); i++)
+        for (i32 i = 0; i < MAX_SURFACES; i++)
         {
             SAFE_RELEASE(this->surfaces[i]);
         }
@@ -136,16 +139,16 @@ struct AnmManager
 
     void TakeScreenshot(i32 textureId, i32 left, i32 top, i32 width, i32 height);
 
-    void InitializeAndSetSprite(AnmVm *vm, i32 spriteIdx)
+    void SetNewSprite(AnmVm *vm, i32 spriteId)
     {
         vm->Initialize();
-        this->SetActiveSprite(vm, spriteIdx);
+        this->SetSprite(vm, spriteId);
     }
 
-    void SetAndExecuteScriptIdx(AnmVm *vm, i32 anmFileIdx)
+    void SetScript(AnmVm *vm, i32 scriptId)
     {
-        vm->anmFileIndex = anmFileIdx;
-        this->SetAndExecuteScript(vm, this->scripts[anmFileIdx]);
+        vm->scriptId = scriptId;
+        this->SetAndExecuteScript(vm, this->scripts[scriptId]);
     }
 
     void ClearScriptRange(i32 base, i32 range)
@@ -162,11 +165,11 @@ struct AnmManager
         {
             return false;
         }
-        if (vm->sprite->sourceFileIndex < 0)
+        if (vm->sprite->textureId < 0)
         {
             return false;
         }
-        return this->textures[vm->sprite->sourceFileIndex] != NULL;
+        return this->textures[vm->sprite->textureId] != NULL;
     }
 
     void ClearBlendMode()
@@ -208,28 +211,29 @@ struct AnmManager
     ZunResult Draw3D(AnmVm *vm);
     ZunResult Draw3DRotated(AnmVm *vm);
 
-    void LoadSprite(u32 spriteIdx, AnmLoadedSprite *sprite);
-    ZunResult SetActiveSprite(AnmVm *vm, i32 spriteIdx);
-    void SetAndExecuteScript(AnmVm *vm, AnmRawInstr *beginningOfScript);
+    void LoadSprite(u32 spriteId, AnmLoadedSprite *sprite);
+
+    ZunResult SetSprite(AnmVm *vm, i32 spriteId);
+    void SetAndExecuteScript(AnmVm *vm, AnmRawInstr *script);
 
     ZunResult LoadSurface(i32 surfaceIdx, const char *path);
     void ReleaseSurface(i32 surfaceIdx);
     void CopySurfaceToBackBuffer(i32 surfaceIdx, i32 left, i32 top, i32 x, i32 y);
     void DrawEndingRect(i32 surfaceIdx, i32 rectX, i32 rectY, i32 rectLeft, i32 rectTop, i32 width, i32 height);
 
-    void TranslateRotation(VertexTex1Xyzrwh *param_1, float x, float y, float sine, float cosine, float xOffset,
-                           float yOffset);
+    void TranslateRotation(D3DXVECTOR3 *coord, f32 x, f32 y, f32 sine, f32 cosine, f32 xOffset, f32 yOffset);
 
     void ReleaseAnm(i32 anmIdx);
-    ZunResult LoadAnm(i32 anmIdx, const char *path, i32 spriteIdxOffset);
-    void ExecuteAnmIdx(AnmVm *vm, i32 anmFileIdx)
+    ZunResult LoadAnm(i32 anmIdx, const char *path, i32 idOffset);
+
+    void SetNewScript(AnmVm *vm, i32 scriptId)
     {
-        vm->anmFileIndex = anmFileIdx;
+        vm->scriptId = scriptId;
         vm->pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         vm->fontWidth = vm->fontHeight = DEFAULT_ANM_FONT_SIZE;
 
-        this->SetAndExecuteScript(vm, this->scripts[anmFileIdx]);
+        this->SetAndExecuteScript(vm, this->scripts[scriptId]);
     }
 
     void SetRenderStateForVm(AnmVm *vm);
@@ -255,7 +259,7 @@ struct AnmManager
     }
 
   private:
-    void DrawTextToTexture(u32 spriteDstIndex, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontWidth,
+    void DrawTextToTexture(u32 textureId, i32 xPos, i32 yPos, i32 spriteWidth, i32 spriteHeight, i32 fontWidth,
                            i32 fontHeight, D3DCOLOR textColor, D3DCOLOR shadowColor, const char *strToPrint);
 
 #define RENDER_VERTICES_DEFAULT false
@@ -263,17 +267,17 @@ struct AnmManager
     ZunResult DrawSprite(AnmVm *vm, ZunBool roundVertices);
 
     AnmLoadedSprite sprites[MAX_ANM_SPRITES];
-    AnmVm virtualMachine;
-    LPDIRECT3DTEXTURE8 textures[264];
-    void *imageDataArray[256];
-    i32 maybeLoadedSpriteCount;
+    unused_field(AnmVm);
+    LPDIRECT3DTEXTURE8 textures[MAX_TEXTURE_FILES + 8];
+    void *textureFiles[MAX_TEXTURE_FILES];
+    i32 spriteCount;
     AnmRawInstr *scripts[MAX_ANM_SCRIPTS];
-    i32 spriteIndices[MAX_ANM_SPRITES];
+    i32 idOffsetsByScript[MAX_ANM_SCRIPTS]; // Maps script IDs to the correct sprite offsets
     AnmRawEntry *anmFiles[MAX_ANM_FILES];
-    u32 anmFilesSpriteIndexOffsets[MAX_ANM_FILES];
-    LPDIRECT3DSURFACE8 surfaces[32];
-    LPDIRECT3DSURFACE8 surfacesBis[32];
-    D3DXIMAGE_INFO surfaceSourceInfo[32];
+    u32 idOffsetsByFile[MAX_ANM_FILES]; // Maps file IDs to the correct sprite/script offsets
+    LPDIRECT3DSURFACE8 surfaces[MAX_SURFACES];
+    LPDIRECT3DSURFACE8 surfacesBis[MAX_SURFACES];
+    D3DXIMAGE_INFO surfaceSourceInfo[MAX_SURFACES];
     D3DCOLOR currentTextureFactor;
     LPDIRECT3DTEXTURE8 currentTexture;
     u8 currentBlendMode;

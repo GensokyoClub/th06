@@ -30,15 +30,14 @@ EnemyManager g_EnemyManager;
 void EnemyManager::Initialize()
 {
     i32 i;
-    Enemy *enemy;
 
-    enemy = &this->enemies[0];
+    Enemy *enemy = &this->enemies[0];
     memset(this, 0, sizeof(EnemyManager));
     enemy = &this->enemyTemplate;
     memset(enemy, 0, sizeof(Enemy));
     for (i = 0; i < ENEMY_ANM_SLOTS; i++)
     {
-        enemy->vms[i].anmFileIndex = -1;
+        enemy->vms[i].scriptId = -1;
     }
     enemy->flags.isSlotOccupied = true;
     enemy->phaseTimer = 0;
@@ -87,21 +86,24 @@ EnemyManager::EnemyManager()
     this->Initialize();
 }
 
+#pragma var_order(i, newEnemy)
 Enemy *EnemyManager::SpawnEnemy(i32 eclSubId, D3DXVECTOR3 *pos, i16 life, i16 itemDrop, i32 score)
 {
-    Enemy *newEnemy;
-    i32 idx;
-
-    newEnemy = this->enemies;
-    for (idx = 0; idx < MAX_ENEMY_COUNT; idx++, newEnemy++)
+    Enemy *newEnemy = this->enemies;
+    i32 i;
+    for (i = 0; i < MAX_ENEMY_COUNT; i++, newEnemy++)
     {
         if (newEnemy->flags.isSlotOccupied)
+        {
             continue;
+        }
 
         *newEnemy = this->enemyTemplate;
 
         if (life >= 0)
+        {
             newEnemy->life = life;
+        }
 
         newEnemy->position = *pos;
         g_EclManager.CallEclSub(&newEnemy->currentContext, eclSubId);
@@ -110,10 +112,14 @@ Enemy *EnemyManager::SpawnEnemy(i32 eclSubId, D3DXVECTOR3 *pos, i16 life, i16 it
         newEnemy->itemDrop = itemDrop;
 
         if (life >= 0)
+        {
             newEnemy->life = life;
+        }
 
         if (score >= 0)
+        {
             newEnemy->score = score;
+        }
 
         newEnemy->maxLife = newEnemy->life;
         break;
@@ -186,7 +192,7 @@ void EnemyManager::RunEclTimeline()
                 if (!g_Gui.IsBossPresent())
                 {
                     TimelineEnemyCreateArgs *args = (TimelineEnemyCreateArgs *)this->timelineInstr->args;
-                    this->SpawnEnemy(this->timelineInstr->arg0, &args->pos, args->subLife, args->dropItem, args->score);
+                    this->SpawnEnemy(this->timelineInstr->arg0, &args->pos, args->subLife, args->itemDrop, args->score);
                 }
                 break;
             case TIMELINE_OPCODE_DUMMY_CREATE:
@@ -201,7 +207,7 @@ void EnemyManager::RunEclTimeline()
                 {
                     TimelineEnemyCreateArgs *args = (TimelineEnemyCreateArgs *)this->timelineInstr->args;
                     spawnedEnemy = this->SpawnEnemy(this->timelineInstr->arg0, &args->pos, args->subLife,
-                                                    args->dropItem, args->score);
+                                                    args->itemDrop, args->score);
                     spawnedEnemy->flags.mirrored = true;
                 }
                 break;
@@ -231,7 +237,7 @@ void EnemyManager::RunEclTimeline()
                     {
                         pos.z = g_Rng.GetRandomF32InRange(800.0f);
                     }
-                    this->SpawnEnemy(this->timelineInstr->arg0, &pos, args->subLife, args->dropItem, args->score);
+                    this->SpawnEnemy(this->timelineInstr->arg0, &pos, args->subLife, args->itemDrop, args->score);
                 }
                 break;
             }
@@ -273,7 +279,7 @@ void EnemyManager::RunEclTimeline()
                         pos.z = g_Rng.GetRandomF32InRange(800.0f);
                     }
                     spawnedEnemy =
-                        this->SpawnEnemy(this->timelineInstr->arg0, &pos, args->subLife, args->dropItem, args->score);
+                        this->SpawnEnemy(this->timelineInstr->arg0, &pos, args->subLife, args->itemDrop, args->score);
                     spawnedEnemy->flags.mirrored = true;
                 }
                 break;
@@ -336,7 +342,7 @@ void EnemyManager::RunEclTimeline()
         {
             break;
         }
-        this->timelineInstr = (TimelineInstr *)((u32)this->timelineInstr + this->timelineInstr->size);
+        this->timelineInstr = OFFSET_PTR(TimelineInstr *, this->timelineInstr, this->timelineInstr->size);
     }
     if (!g_Gui.IsMsgActive())
     {
@@ -458,41 +464,42 @@ void Enemy::ClampPos()
 {
     if (this->flags.hasMovementBounds)
     {
-        if (this->position[0] < this->lowerMoveLimit.x)
+        if (this->position[0] < this->moveLimit.left)
         {
-            this->position[0] = this->lowerMoveLimit.x;
+            this->position[0] = this->moveLimit.left;
         }
-        else if (this->position[0] > this->upperMoveLimit.x)
+        else if (this->position[0] > this->moveLimit.right)
         {
-            this->position[0] = this->upperMoveLimit.x;
+            this->position[0] = this->moveLimit.right;
         }
 
-        if (this->position[1] < this->lowerMoveLimit.y)
+        if (this->position[1] < this->moveLimit.top)
         {
-            this->position[1] = this->lowerMoveLimit.y;
+            this->position[1] = this->moveLimit.top;
         }
-        else if (this->position[1] > this->upperMoveLimit.y)
+        else if (this->position[1] > this->moveLimit.bottom)
         {
-            this->position[1] = this->upperMoveLimit.y;
+            this->position[1] = this->moveLimit.bottom;
         }
     }
 }
 
-#pragma var_order(hitByBomb, damage, enemyIdx, enemyHitbox, enemyVmIdx, enemyLifeBeforeDmg, curEnemy)
+#pragma var_order(hitByBomb, damage, i, enemyHitbox, j, enemyLifeBeforeDmg, curEnemy)
 static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
 {
     Enemy *curEnemy;
     i32 enemyLifeBeforeDmg;
-    i32 enemyVmIdx;
+    i32 j;
     D3DXVECTOR3 enemyHitbox;
-    i32 enemyIdx;
+    i32 i;
     i32 damage;
     ZunBool hitByBomb;
 
     hitByBomb = false;
     mgr->RunEclTimeline();
-    for (curEnemy = &mgr->enemies[0], mgr->enemyCount = 0, enemyIdx = 0; enemyIdx < MAX_ENEMY_COUNT;
-         enemyIdx++, curEnemy++)
+    curEnemy = &mgr->enemies[0];
+    mgr->enemyCount = 0;
+    for (i = 0; i < MAX_ENEMY_COUNT; i++, curEnemy++)
     {
         if (!curEnemy->flags.isSlotOccupied)
         {
@@ -533,12 +540,12 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
         curEnemy->primaryVm.color = curEnemy->color;
         g_AnmManager->RunAnm(&curEnemy->primaryVm);
         curEnemy->color = curEnemy->primaryVm.color;
-        for (enemyVmIdx = 0; enemyVmIdx < ENEMY_ANM_SLOTS; enemyVmIdx++)
+        for (j = 0; j < ENEMY_ANM_SLOTS; j++)
         {
-            if (curEnemy->vms[enemyVmIdx].anmFileIndex >= 0 &&
-                g_AnmManager->RunAnm(&curEnemy->vms[enemyVmIdx]) != SCRIPT_RUNNING)
+            if (curEnemy->vms[j].scriptId >= 0 &&
+                g_AnmManager->RunAnm(&curEnemy->vms[j]) != SCRIPT_RUNNING)
             {
-                curEnemy->vms[enemyVmIdx].anmFileIndex = -1;
+                curEnemy->vms[j].scriptId = -1;
             }
         }
         hitByBomb = false;
@@ -663,7 +670,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                     curEnemy->life = 0;
                     break;
                 }
-                g_SoundPlayer.PlaySoundId((enemyIdx % 2) + SOUND_2);
+                g_SoundPlayer.PlaySoundId((i % 2) + SOUND_2);
                 g_EffectManager.SpawnParticles(curEnemy->deathParticle, &curEnemy->position);
                 g_EffectManager.SpawnParticles(curEnemy->deathSparkParticle + PARTICLE_SPARK, &curEnemy->position, 4);
                 if (curEnemy->deathCallbackSub >= 0)
@@ -704,16 +711,16 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-#pragma var_order(curEnemyIdx, curEnemyVm, curEnemyVmIdx, curEnemy)
+#pragma var_order(i, curEnemyVm, j, curEnemy)
 static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
 {
     AnmVm *curEnemyVm;
     Enemy *curEnemy;
-    i32 curEnemyVmIdx;
-    i32 curEnemyIdx;
+    i32 j;
+    i32 i;
 
     curEnemy = &mgr->enemies[0];
-    for (curEnemyIdx = 0; curEnemyIdx < MAX_ENEMY_COUNT; curEnemyIdx++, curEnemy++)
+    for (i = 0; i < MAX_ENEMY_COUNT; i++, curEnemy++)
     {
         if (!curEnemy->flags.isSlotOccupied)
         {
@@ -725,9 +732,9 @@ static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
         }
 
         curEnemyVm = &curEnemy->vms[0];
-        for (curEnemyVmIdx = 0; curEnemyVmIdx < ENEMY_ANM_SLOTS / 2; curEnemyVmIdx++, curEnemyVm++)
+        for (j = 0; j < ENEMY_ANM_SLOTS / 2; j++, curEnemyVm++)
         {
-            if (curEnemyVm->anmFileIndex >= 0)
+            if (curEnemyVm->scriptId >= 0)
             {
                 if (curEnemyVm->autoRotate != AnmAutoRotate_Off)
                 {
@@ -745,9 +752,9 @@ static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
         curEnemy->primaryVm.pos = curEnemy->position + curEnemy->primaryVm.posOffset;
         curEnemy->primaryVm.pos.z = 0.494f;
         g_AnmManager->Draw3D(&curEnemy->primaryVm);
-        for (curEnemyVmIdx = ENEMY_ANM_SLOTS / 2; curEnemyVmIdx < ENEMY_ANM_SLOTS; curEnemyVmIdx++, curEnemyVm++)
+        for (j = ENEMY_ANM_SLOTS / 2; j < ENEMY_ANM_SLOTS; j++, curEnemyVm++)
         {
-            if (curEnemyVm->anmFileIndex >= 0)
+            if (curEnemyVm->scriptId >= 0)
             {
                 if (curEnemyVm->autoRotate != AnmAutoRotate_Off)
                 {

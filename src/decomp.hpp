@@ -118,7 +118,7 @@ typedef u64 uptr;
 typedef i32 sptr;
 typedef u32 uptr;
 #endif
-#define OFFSET_PTR(type, ptr, offset) (T)((uptr)(ptr) + (uptr)(offset))
+#define OFFSET_PTR(type, ptr, offset) (type)((uptr)(ptr) + (uptr)(offset))
 
 typedef float f32;
 typedef double f64;

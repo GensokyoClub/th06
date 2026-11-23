@@ -230,7 +230,7 @@ static ZunResult MusicRoom_AddedCallback(MusicRoom *musicRoom)
         return ZUN_ERROR;
     }
 
-    g_AnmManager->SetAndExecuteScriptIdx(musicRoom->mainVm, ANM_OFFSET_MUSIC00);
+    g_AnmManager->SetScript(musicRoom->mainVm, ANM_OFFSET_MUSIC00);
     musicRoom->waitFramesCount = 0;
     currChar = (char *)FileSystem::OpenPath("data/musiccmt.txt");
     fileBase = currChar;
@@ -336,7 +336,7 @@ finishMusiccmtRead:
 
     for (i = 0; i < musicRoom->numDescriptors; i++)
     {
-        g_AnmManager->InitializeAndSetSprite(&musicRoom->titleSprites[i], ANM_OFFSET_MUSIC01 + i);
+        g_AnmManager->SetNewSprite(&musicRoom->titleSprites[i], ANM_OFFSET_MUSIC01 + i);
         g_AnmManager->DrawTextToTextureLeft(&musicRoom->titleSprites[i], COLOR_MUSIC_ROOM_SONG_TITLE_TEXT,
                                             COLOR_MUSIC_ROOM_SONG_TITLE_SHADOW, musicRoom->trackDescriptors[i].title);
         musicRoom->titleSprites[i].pos.x = 93.0f;
@@ -348,7 +348,7 @@ finishMusiccmtRead:
     // Two sprites are used for each line, with a split at the 32nd byte
     for (i = 0; i < ARRAY_SIZE_SIGNED(musicRoom->descriptionSprites); i++)
     {
-        g_AnmManager->InitializeAndSetSprite(&musicRoom->descriptionSprites[i], ANM_SCRIPT_TEXT_MUSIC_ROOM_DESC + i);
+        g_AnmManager->SetNewSprite(&musicRoom->descriptionSprites[i], ANM_SCRIPT_TEXT_MUSIC_ROOM_DESC + i);
 
         char lineCharBuffer[64];
         memset(lineCharBuffer, 0, sizeof(lineCharBuffer));

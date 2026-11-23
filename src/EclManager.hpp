@@ -10,7 +10,7 @@ namespace th06
 {
 // Forward declaration to avoid include loop.
 struct Enemy;
-struct EnemyEclContext;
+struct EclContext;
 struct EnemyManager;
 
 enum EclVarId
@@ -46,7 +46,7 @@ struct TimelineEnemyCreateArgs
 {
     D3DXVECTOR3 pos;
     u16 subLife;
-    u16 dropItem;
+    u16 itemDrop;
     u32 score;
 };
 
@@ -335,7 +335,7 @@ struct EclManager
     ZunResult Load(const char *ecl);
     void Unload();
     ZunResult RunEcl(Enemy *enemy);
-    ZunResult CallEclSub(EnemyEclContext *enemyEcl, i16 subId);
+    ZunResult CallEclSub(EclContext *enemyEcl, i16 subId);
     void DebugWatch(i32 value);
 
     EclRawHeader *eclFile;

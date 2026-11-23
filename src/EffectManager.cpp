@@ -201,7 +201,7 @@ Effect *EffectManager::SpawnParticles(i32 effectId, D3DXVECTOR3 *pos, i32 count,
         effect->effectId = effectId;
         effect->position = *pos;
 
-        g_AnmManager->SetAndExecuteScriptIdx(&effect->vm, g_Effects[effectId].anmScript);
+        g_AnmManager->SetScript(&effect->vm, g_Effects[effectId].anmScript);
 
         effect->vm.color = tint;
         effect->updateCallback = g_Effects[effectId].updateCallback;

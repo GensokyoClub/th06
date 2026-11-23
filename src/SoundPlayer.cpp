@@ -252,8 +252,8 @@ ZunResult SoundPlayer::LoadSound(i32 idx, const char *path)
         ZUN_FREE(soundFileData);
         return ZUN_ERROR;
     }
-    if (FAILED(soundBuffers[idx]->Lock(0, formatSize, (LPVOID *)&audioPtr1, (LPDWORD)&audioSize1, (LPVOID *)&audioPtr2,
-                                       (LPDWORD)&audioSize2, NULL)))
+    if (FAILED(this->soundBuffers[idx]->Lock(0, formatSize, (LPVOID *)&audioPtr1, (LPDWORD)&audioSize1,
+                                             (LPVOID *)&audioPtr2, (LPDWORD)&audioSize2, NULL)))
     {
         ZUN_FREE(soundFileData);
         return ZUN_ERROR;
@@ -263,7 +263,7 @@ ZunResult SoundPlayer::LoadSound(i32 idx, const char *path)
     {
         memcpy(audioPtr2, (i8 *)wavDataPtr + audioSize1, audioSize2);
     }
-    soundBuffers[idx]->Unlock((LPVOID *)audioPtr1, audioSize1, (LPVOID *)audioPtr2, audioSize2);
+    this->soundBuffers[idx]->Unlock((LPVOID *)audioPtr1, audioSize1, (LPVOID *)audioPtr2, audioSize2);
     ZUN_FREE(soundFileData);
     return ZUN_SUCCESS;
 }
@@ -463,7 +463,6 @@ void SoundPlayer::StopBGM()
 
 ZunResult SoundPlayer::InitSoundBuffers()
 {
-    i32 idx;
     if (this->manager == NULL)
     {
         return ZUN_ERROR;
@@ -474,26 +473,27 @@ ZunResult SoundPlayer::InitSoundBuffers()
     }
     else
     {
+        i32 i;
 #if BUILT_SINCE(100)
-        for (idx = 0; idx < SFX_QUEUE_LENGTH; idx++)
+        for (i = 0; i < SFX_QUEUE_LENGTH; i++)
         {
-            this->soundBuffersToPlay[idx] = -1;
+            this->soundBuffersToPlay[i] = NO_SOUND;
         }
 #endif
-        for (idx = 0; idx < ARRAY_SIZE_SIGNED(g_SFXList); idx++)
+        for (i = 0; i < ARRAY_SIZE_SIGNED(g_SFXList); i++)
         {
-            if (this->LoadSound(idx, g_SFXList[idx]) != ZUN_SUCCESS)
+            if (this->LoadSound(i, g_SFXList[i]) != ZUN_SUCCESS)
             {
-                g_GameErrorContext.Log(TH_ERR_SOUNDPLAYER_FAILED_TO_LOAD_SOUND_FILE, g_SFXList[idx]);
+                g_GameErrorContext.Log(TH_ERR_SOUNDPLAYER_FAILED_TO_LOAD_SOUND_FILE, g_SFXList[i]);
                 return ZUN_ERROR;
             }
         }
-        for (idx = 0; idx < ARRAY_SIZE(g_SoundBufferIdxVol); idx++)
+        for (i = 0; i < ARRAY_SIZE(g_SoundBufferIdxVol); i++)
         {
-            this->dsoundHdl->DuplicateSoundBuffer(this->soundBuffers[g_SoundBufferIdxVol[idx].bufferIdx],
-                                                  &this->duplicateSoundBuffers[idx]);
-            this->duplicateSoundBuffers[idx]->SetCurrentPosition(0);
-            this->duplicateSoundBuffers[idx]->SetVolume(g_SoundBufferIdxVol[idx].volume);
+            this->dsoundHdl->DuplicateSoundBuffer(this->soundBuffers[g_SoundBufferIdxVol[i].bufferIdx],
+                                                  &this->duplicateSoundBuffers[i]);
+            this->duplicateSoundBuffers[i]->SetCurrentPosition(0);
+            this->duplicateSoundBuffers[i]->SetVolume(g_SoundBufferIdxVol[i].volume);
         }
     }
     return ZUN_SUCCESS;

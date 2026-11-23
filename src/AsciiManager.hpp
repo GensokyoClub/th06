@@ -86,9 +86,9 @@ struct AsciiManager
 
         this->popupVm.flags.anchor = AnmVmAnchor_TopLeft;
 
-        g_AnmManager->InitializeAndSetSprite(&this->popupVm, 0);
+        g_AnmManager->SetNewSprite(&this->popupVm, 0);
         // BUG: That's not how your sprite numbers work ZUN
-        g_AnmManager->InitializeAndSetSprite(&this->fontVm, ' ');
+        g_AnmManager->SetNewSprite(&this->fontVm, ' ');
 
         this->popupVm.pos.z = 0.1f;
         this->isSelected = false;

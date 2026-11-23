@@ -10,13 +10,12 @@ ItemManager g_ItemManager;
 ChainElem g_ItemManagerCalcChain; // unused
 ChainElem g_ItemMgrOnDrawElem;    // unused
 
+#pragma var_order(i, item)
 void ItemManager::SpawnItem(D3DXVECTOR3 *position, i32 itemType, i32 state)
 {
-    Item *item;
-    i32 idx;
-
-    item = &this->items[this->nextIndex];
-    for (idx = 0; idx < MAX_ITEMS; idx++)
+    Item *item = &this->items[this->nextIndex];
+    i32 i;
+    for (i = 0; i < MAX_ITEMS; i++)
     {
         this->nextIndex++;
         if (item->isInUse)
@@ -54,7 +53,7 @@ void ItemManager::SpawnItem(D3DXVECTOR3 *position, i32 itemType, i32 state)
             // start position
             item->startPositionVelocity = item->currentPosition;
         }
-        g_AnmManager->SetAndExecuteScriptIdx(&item->sprite, ANM_SCRIPT_BULLET3_ITEMS_START + itemType);
+        g_AnmManager->SetScript(&item->sprite, ANM_SCRIPT_BULLET3_ITEMS_START + itemType);
         item->sprite.color = COLOR_WHITE;
         item->isIndicatorHidden = true;
         return;
@@ -93,11 +92,11 @@ i32 g_PowerUpThresholds[] = {
          ? (top)                                                                                                       \
          : ((bottom) - (((i32)(item)->currentPosition.y - PIV_LINE) * (multiplier))))
 
-#pragma var_order(idx, itemScore, playerAngle, itemAcquired, curItem)
+#pragma var_order(i, itemScore, playerAngle, itemAcquired, curItem)
 void ItemManager::OnUpdate()
 {
     i32 itemScore;
-    i32 idx;
+    i32 i;
     Item *curItem;
     f32 playerAngle;
     ZunBool itemAcquired;
@@ -108,7 +107,7 @@ void ItemManager::OnUpdate()
 
     itemAcquired = false;
     this->itemCount = 0;
-    for (idx = 0; idx < MAX_ITEMS; idx++, curItem++)
+    for (i = 0; i < MAX_ITEMS; i++, curItem++)
     {
         if (!curItem->isInUse)
         {
@@ -334,7 +333,7 @@ void ItemManager::OnUpdate()
                 break;
             case ITEM_STAR:
                 itemScore = (g_GameManager.grazeInStage / 3) * 10 + 500;
-                if (g_Player.bombInfo.isInUse)
+                if (g_Player.bombInfo.isActive)
                 {
                     itemScore = 100;
                 }
@@ -355,30 +354,29 @@ void ItemManager::OnUpdate()
     }
 }
 
-#pragma var_order(idx, cursor)
+#pragma var_order(i, curItem)
 void ItemManager::MagnetAllItems()
 {
-    Item *cursor;
-    i32 idx;
-
-    for (cursor = &this->items[0], idx = 0; idx < MAX_ITEMS; idx++, cursor++)
+    Item *curItem = &this->items[0];
+    i32 i;
+    for (i = 0; i < MAX_ITEMS; i++, curItem++)
     {
-        if (!cursor->isInUse)
+        if (!curItem->isInUse)
         {
             continue;
         }
-        cursor->state = ITEM_STATE_MAGNETED;
+        curItem->state = ITEM_STATE_MAGNETED;
     }
 }
 
-#pragma var_order(itemAlpha, idx, curItem)
+#pragma var_order(itemAlpha, i, curItem)
 void ItemManager::OnDraw()
 {
-    i32 idx;
+    i32 i;
     i32 itemAlpha;
 
     Item *curItem = &this->items[0];
-    for (idx = 0; idx < MAX_ITEMS; idx++, curItem++)
+    for (i = 0; i < MAX_ITEMS; i++, curItem++)
     {
         if (!curItem->isInUse)
         {
@@ -392,7 +390,7 @@ void ItemManager::OnDraw()
             curItem->sprite.pos.y = (ITEM_SIZE / 2.0f) + g_GameManager.gameRegionScreenPos.y;
             if (curItem->isIndicatorHidden)
             {
-                g_AnmManager->SetActiveSprite(&curItem->sprite, curItem->itemType + ANM_SPRITE_ITEM_INDICATORS_START);
+                g_AnmManager->SetSprite(&curItem->sprite, curItem->itemType + ANM_SPRITE_ITEM_INDICATORS_START);
                 curItem->isIndicatorHidden = false;
             }
             itemAlpha = 255 - (i32)RAMP_UP(255.0f, (ITEM_SIZE / 2.0f) - curItem->currentPosition[1], 128.0f);
@@ -406,7 +404,7 @@ void ItemManager::OnDraw()
         {
             if (!curItem->isIndicatorHidden)
             {
-                g_AnmManager->SetActiveSprite(&curItem->sprite, curItem->itemType + ANM_SPRITE_ITEMS_START);
+                g_AnmManager->SetSprite(&curItem->sprite, curItem->itemType + ANM_SPRITE_ITEMS_START);
                 curItem->isIndicatorHidden = true;
                 curItem->sprite.color = COLOR_WHITE;
             }

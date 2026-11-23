@@ -91,7 +91,7 @@ ZUN_ASSERT_TYPE(PlayerRect, 0x10, 4);
 
 struct PlayerBullet
 {
-    AnmVm sprite;
+    AnmVm vm;
     D3DXVECTOR3 position;
     D3DXVECTOR3 size;
     Float2 velocity;
@@ -112,7 +112,7 @@ typedef void (*BombCallback)(Player *);
 
 struct BombInfo
 {
-    ZunBool isInUse;
+    ZunBool isActive;
     i32 duration;
     ZunTimer timer;
     BombCallback calc;
@@ -181,8 +181,8 @@ struct Player
     i32 CalcLaserHitbox(D3DXVECTOR3 *laserCenter, D3DXVECTOR3 *laserSize, D3DXVECTOR3 *rotation, f32 angle,
                         ZunBool canGraze);
     i32 CalcDamageToEnemy(D3DXVECTOR3 *enemyPos, D3DXVECTOR3 *enemySize, ZunBool *hitByBomb);
-    ZunBool CalcItemBoxCollision(D3DXVECTOR3 *center, D3DXVECTOR3 *size);
-    void ScoreGraze(D3DXVECTOR3 *center);
+    ZunBool CalcItemBoxCollision(D3DXVECTOR3 *itemPosition, D3DXVECTOR3 *itemSize);
+    void ScoreGraze(D3DXVECTOR3 *grazedPosition);
     void Die();
 
     AnmVm playerSprite;
@@ -208,7 +208,7 @@ struct Player
     i8 playerState;
     u8 unk_9e1;
     i8 orbState;
-    i8 isFocus;
+    i8 isFocused;
     u8 particleTimer;
     alignment_padding(0x3);
     ZunTimer focusMovementTimer;

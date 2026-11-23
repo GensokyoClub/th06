@@ -42,7 +42,7 @@ enum EndOpcode
 #define SPRITES_PER_LINE_GROUP 2
 // NOTE: Currently unclear if this is intended to be 8 line groups
 // or fewer line groups with some extra space for more sprites.
-#define END_SPRITE_COUNT 16
+#define END_VM_COUNT 16
 
 struct Ending
 {
@@ -68,7 +68,7 @@ struct Ending
     ChainElem *drawChain;
     Float2 backgroundPos;
     f32 backgroundScrollSpeed;
-    AnmVm sprites[END_SPRITE_COUNT];
+    AnmVm vms[END_VM_COUNT];
     u8 *endFileData;
     ZunBool hasSeenEnding;
     ZunTimer scriptTime;

@@ -54,7 +54,7 @@ ChainCallbackResult ScreenEffect_CalcFadeIn(ScreenEffect *effect)
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
-void ScreenEffect_DrawSquare(FloatRect *rect, D3DCOLOR rectColor)
+void ScreenEffect_DrawRect(FloatRect *rect, D3DCOLOR rectColor)
 {
     VertexDiffuseXyzrwh vertices[4];
 
@@ -131,7 +131,7 @@ static ChainCallbackResult ScreenEffect_DrawFadeIn(ScreenEffect *effect)
     g_Supervisor.viewport.Width = GAME_WINDOW_WIDTH;
     g_Supervisor.viewport.Height = GAME_WINDOW_HEIGHT;
     g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
-    ScreenEffect_DrawSquare(&fadeRect, COLOR_SET_UNMASKED(effect->genericParam, effect->fadeAlpha));
+    ScreenEffect_DrawRect(&fadeRect, COLOR_SET_UNMASKED(effect->genericParam, effect->fadeAlpha));
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
@@ -142,7 +142,7 @@ static ChainCallbackResult ScreenEffect_DrawFadeOut(ScreenEffect *effect)
     fadeRect.top = GAME_REGION_POS_Y;
     fadeRect.right = GAME_REGION_POS_RIGHT;
     fadeRect.bottom = GAME_REGION_POS_BOTTOM;
-    ScreenEffect_DrawSquare(&fadeRect, COLOR_SET_UNMASKED(effect->genericParam, effect->fadeAlpha));
+    ScreenEffect_DrawRect(&fadeRect, COLOR_SET_UNMASKED(effect->genericParam, effect->fadeAlpha));
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 

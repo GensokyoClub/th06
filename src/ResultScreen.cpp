@@ -207,14 +207,14 @@ ScoreDat *OpenScore(const char *path)
             goto FAILED_TO_READ;
         }
         fileLen = scoreData->fileLen;
-        decryptedFilePointer = (Th6k *)((u8 *)scoreData + scoreData->dataOffset);
+        decryptedFilePointer = OFFSET_PTR(Th6k *, scoreData, scoreData->dataOffset);
         fileLen -= scoreData->dataOffset;
         while (fileLen > 0)
         {
             if (decryptedFilePointer->magic == TH6K_MAGIC)
                 break;
 
-            decryptedFilePointer = (Th6k *)((u8 *)decryptedFilePointer + decryptedFilePointer->th6kLen);
+            decryptedFilePointer = OFFSET_PTR(Th6k *, decryptedFilePointer, decryptedFilePointer->th6kLen);
             fileLen = fileLen - decryptedFilePointer->th6kLen;
         }
         if (fileLen <= 0)
@@ -249,7 +249,7 @@ u32 GetHighScore(ScoreDat *scoreDat, ScoreListNode *node, u32 character, u32 dif
     }
 
     remainingSize = scoreData->fileLen;
-    highScore = (Hscr *)((u8 *)scoreData + scoreData->dataOffset);
+    highScore = OFFSET_PTR(Hscr *, scoreData, scoreData->dataOffset);
     remainingSize -= scoreData->dataOffset;
 
     while (remainingSize > 0)
@@ -268,7 +268,7 @@ u32 GetHighScore(ScoreDat *scoreDat, ScoreListNode *node, u32 character, u32 dif
         }
 
         remainingSize -= highScore->base.th6kLen;
-        highScore = (Hscr *)((u8 *)highScore + highScore->base.th6kLen);
+        highScore = OFFSET_PTR(Hscr *, highScore, highScore->base.th6kLen);
     }
     if (scoreData->scores->next != NULL)
     {
@@ -302,19 +302,21 @@ ZunResult ParseCatk(ScoreDat *scoreDat, Catk *outCatk)
         return ZUN_ERROR;
     }
 
-    parsedCatk = (Catk *)((u8 *)sd + sd->dataOffset);
+    parsedCatk = OFFSET_PTR(Catk *, sd, sd->dataOffset);
     cursor = sd->fileLen - sd->dataOffset;
     while (cursor > 0)
     {
         if (parsedCatk->base.magic == CATK_MAGIC && parsedCatk->base.version == TH6K_VERSION)
         {
             if (parsedCatk->idx >= CATK_COUNT)
+            {
                 break;
+            }
 
             outCatk[parsedCatk->idx] = *parsedCatk;
         }
         cursor -= parsedCatk->base.th6kLen;
-        parsedCatk = (Catk *)((u8 *)parsedCatk + parsedCatk->base.th6kLen);
+        parsedCatk = OFFSET_PTR(Catk *, parsedCatk, parsedCatk->base.th6kLen);
     }
     return ZUN_SUCCESS;
 }
@@ -351,19 +353,21 @@ ZunResult ParseClrd(ScoreDat *scoreDat, Clrd *outClrd)
         }
     }
 
-    parsedClrd = (Clrd *)((u8 *)sd + sd->dataOffset);
+    parsedClrd = OFFSET_PTR(Clrd *, sd, sd->dataOffset);
     cursor = sd->fileLen - sd->dataOffset;
     while (cursor > 0)
     {
         if (parsedClrd->base.magic == CLRD_MAGIC && parsedClrd->base.version == TH6K_VERSION)
         {
             if (parsedClrd->characterShotType >= SHOTTYPE_COUNT)
+            {
                 break;
+            }
 
             outClrd[parsedClrd->characterShotType] = *parsedClrd;
         }
         cursor -= parsedClrd->base.th6kLen;
-        parsedClrd = (Clrd *)((u8 *)parsedClrd + parsedClrd->base.th6kLen);
+        parsedClrd = OFFSET_PTR(Clrd *, parsedClrd, parsedClrd->base.th6kLen);
     }
     return ZUN_SUCCESS;
 }
@@ -404,7 +408,7 @@ ZunResult ParsePscr(ScoreDat *scoreDat, Pscr *outClrd)
         }
     }
 
-    parsedPscr = (Pscr *)((u8 *)sd + sd->dataOffset);
+    parsedPscr = OFFSET_PTR(Pscr *, sd, sd->dataOffset);
     cursor = sd->fileLen - sd->dataOffset;
 
     while (cursor > 0)
@@ -414,13 +418,15 @@ ZunResult ParsePscr(ScoreDat *scoreDat, Pscr *outClrd)
             pscr = parsedPscr;
             if (pscr->character >= SHOTTYPE_COUNT || pscr->difficulty >= PSCR_NUM_DIFFICULTIES + 1 ||
                 pscr->stage >= PSCR_NUM_STAGES + 1)
+            {
                 break;
+            }
 
             outClrd[pscr->character * PSCR_NUM_STAGES * SHOTTYPE_COUNT + pscr->stage * PSCR_NUM_DIFFICULTIES +
                     pscr->difficulty] = *pscr;
         }
         cursor -= parsedPscr->base.th6kLen;
-        parsedPscr = (Pscr *)((u8 *)parsedPscr + parsedPscr->base.th6kLen);
+        parsedPscr = OFFSET_PTR(Pscr *, parsedPscr, parsedPscr->base.th6kLen);
     }
     return ZUN_SUCCESS;
 }
@@ -2071,13 +2077,13 @@ static ZunResult ResultScreen_AddedCallback(ResultScreen *resultScreen)
             vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
             // Execute all the scripts from the start of result00 to the end of result02
-            g_AnmManager->SetAndExecuteScriptIdx(vm, ANM_SCRIPT_RESULT00_START + i);
+            g_AnmManager->SetScript(vm, ANM_SCRIPT_RESULT00_START + i);
         }
 
         vm = &resultScreen->textLineVms[0];
         for (i = 0; i < ARRAY_SIZE_SIGNED(resultScreen->textLineVms); i++, vm++)
         {
-            g_AnmManager->InitializeAndSetSprite(vm, ANM_SCRIPT_TEXT_RESULTSCREEN_CHARACTER_NAME + i);
+            g_AnmManager->SetNewSprite(vm, ANM_SCRIPT_TEXT_RESULTSCREEN_CHARACTER_NAME + i);
 
             vm->pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
@@ -2137,7 +2143,7 @@ static ZunResult ResultScreen_AddedCallback(ResultScreen *resultScreen)
             .score = g_GameManager.score;
     }
 
-    resultScreen->unk_39a0.activeSpriteIndex = -1;
+    resultScreen->unk_39a0.spriteId = -1;
 
     return ZUN_SUCCESS;
 }

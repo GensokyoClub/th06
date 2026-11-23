@@ -93,7 +93,7 @@ void Ending::FadingEffect()
     }
     if ((this->fadeColor & COLOR_ALPHA_MASK) != COLOR_TRANSPARENT)
     {
-        ScreenEffect_DrawSquare(&endingRect, this->fadeColor);
+        ScreenEffect_DrawRect(&endingRect, this->fadeColor);
     }
 }
 
@@ -123,7 +123,7 @@ ZunResult Ending::ParseEndFile()
         }
         if (this->clearTimer <= 0)
         {
-            memset(this->sprites, 0, sizeof(this->sprites));
+            memset(this->vms, 0, sizeof(this->vms));
             this->textLine = 0;
         }
         else
@@ -167,14 +167,14 @@ ZunResult Ending::ParseEndFile()
                 }
                 break;
 
-#pragma var_order(scriptIdx, vmIndex, spriteIdx)
-            case END_OPCODE_ANM_SET_SLOT: { // anm(vmIndex, scriptIdx, spriteIdx)
+#pragma var_order(scriptId, vmIndex, spriteId)
+            case END_OPCODE_ANM_SET_SLOT: { // anm(vmIndex, scriptId, spriteId)
                 this->endFileDataPtr++;
                 i32 vmIndex = this->ReadEndFileParameter();
-                i32 scriptIdx = this->ReadEndFileParameter();
-                i32 spriteIdx = this->ReadEndFileParameter();
-                g_AnmManager->ExecuteAnmIdx(&this->sprites[vmIndex], ANM_OFFSET_STAFF01 + scriptIdx);
-                g_AnmManager->SetActiveSprite(&this->sprites[vmIndex], ANM_OFFSET_STAFF01 + spriteIdx);
+                i32 scriptId = this->ReadEndFileParameter();
+                i32 spriteId = this->ReadEndFileParameter();
+                g_AnmManager->SetNewScript(&this->vms[vmIndex], ANM_OFFSET_STAFF01 + scriptId);
+                g_AnmManager->SetSprite(&this->vms[vmIndex], ANM_OFFSET_STAFF01 + spriteId);
                 break;
             }
 #pragma var_order(scrollBGDistance, scrollBGDuration)
@@ -213,9 +213,9 @@ ZunResult Ending::ParseEndFile()
                 // fallthrough
             }
             case END_OPCODE_CLEAR: { // staffroll()
-                for (i32 spriteIdx = 0; spriteIdx < END_SPRITE_COUNT; spriteIdx++)
+                for (i32 i = 0; i < END_VM_COUNT; i++)
                 {
-                    this->sprites[spriteIdx].anmFileIndex = 0;
+                    this->vms[i].scriptId = 0;
                 }
                 break;
             }
@@ -322,11 +322,11 @@ ZunResult Ending::ParseEndFile()
             // When encountered a breakline or null byte, display the text already loaded in textBuffer
             if (charactersRead != 0)
             {
-                g_AnmManager->SetAndExecuteScriptIdx(
-                    &this->sprites[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP],
-                    ANM_SCRIPT_TEXT_ENDING_TEXT + firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP);
+                g_AnmManager->SetScript(&this->vms[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP],
+                                        ANM_SCRIPT_TEXT_ENDING_TEXT + firstLineDisplayed +
+                                            this->textLine * SPRITES_PER_LINE_GROUP);
                 g_AnmManager->DrawTextToTextureLeft(
-                    &this->sprites[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP], this->textColor,
+                    &this->vms[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP], this->textColor,
                     COLOR_END_TEXT_SHADOW, textBuffer);
             }
             // Skip to start of next line
@@ -358,11 +358,11 @@ ZunResult Ending::ParseEndFile()
             // When reached the character limit, display the text now
             if (charactersRead >= 32)
             {
-                g_AnmManager->SetAndExecuteScriptIdx(
-                    &this->sprites[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP],
-                    ANM_SCRIPT_TEXT_ENDING_TEXT + firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP);
+                g_AnmManager->SetScript(&this->vms[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP],
+                                        ANM_SCRIPT_TEXT_ENDING_TEXT + firstLineDisplayed +
+                                            this->textLine * SPRITES_PER_LINE_GROUP);
                 g_AnmManager->DrawTextToTextureLeft(
-                    &this->sprites[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP], this->textColor,
+                    &this->vms[firstLineDisplayed + this->textLine * SPRITES_PER_LINE_GROUP], this->textColor,
                     COLOR_END_TEXT_SHADOW, textBuffer);
                 if (firstLineDisplayed)
                 {
@@ -420,11 +420,11 @@ skipping:
     {
         return CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB;
     }
-    for (i32 idx = 0; idx < END_SPRITE_COUNT; idx++)
+    for (i32 i = 0; i < END_VM_COUNT; i++)
     {
-        if (ending->sprites[idx].anmFileIndex != 0)
+        if (ending->vms[i].scriptId != 0)
         {
-            g_AnmManager->RunAnm(&ending->sprites[idx]);
+            g_AnmManager->RunAnm(&ending->vms[i]);
         }
     }
     if (ending->hasSeenEnding && IS_PRESSED(TH_BUTTON_SKIP) && framesSkipped < 4)
@@ -439,11 +439,11 @@ static ChainCallbackResult Ending_OnDraw(Ending *ending)
 {
     g_AnmManager->DrawEndingRect(0, 0, 0, ending->backgroundPos.x, ending->backgroundPos.y, GAME_WINDOW_WIDTH,
                                  GAME_WINDOW_HEIGHT);
-    for (i32 idx = 0; idx < END_SPRITE_COUNT; idx++)
+    for (i32 i = 0; i < END_VM_COUNT; i++)
     {
-        if (ending->sprites[idx].anmFileIndex != 0)
+        if (ending->vms[i].scriptId != 0)
         {
-            g_AnmManager->Draw2D(&ending->sprites[idx]);
+            g_AnmManager->Draw2D(&ending->vms[i]);
         }
     }
     ending->FadingEffect();

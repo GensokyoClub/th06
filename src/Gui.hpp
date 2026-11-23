@@ -36,7 +36,7 @@ struct Gui
     void DrawStageElements();
     void DrawGameScene();
 
-    void MsgRead(i32 msgIdx);
+    void MsgRead(i32 msgId);
     ZunBool MsgWait();
 
     void ShowSpellcard(i32 spellcardSprite, const char *spellcardName);

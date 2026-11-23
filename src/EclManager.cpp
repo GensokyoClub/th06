@@ -80,11 +80,11 @@ ZunResult EclManager::Load(const char *eclPath)
         g_GameErrorContext.Log(TH_ERR_ECLMANAGER_ENEMY_DATA_CORRUPT);
         return ZUN_ERROR;
     }
-    this->eclFile->timelineOffsets[0] = (TimelineInstr *)((u32)this->eclFile->timelineOffsets[0] + (u32)this->eclFile);
+    this->eclFile->timelineOffsets[0] = OFFSET_PTR(TimelineInstr *, this->eclFile->timelineOffsets[0], this->eclFile);
     this->subTable = &this->eclFile->subOffsets[0];
-    for (i32 idx = 0; idx < this->eclFile->subCount; idx++)
+    for (i32 i = 0; i < this->eclFile->subCount; i++)
     {
-        this->subTable[idx] = (EclRawInstr *)((u32)this->subTable[idx] + (u32)this->eclFile);
+        this->subTable[i] = OFFSET_PTR(EclRawInstr *, this->subTable[i], this->eclFile);
     }
     this->timeline = this->eclFile->timelineOffsets[0];
     return ZUN_SUCCESS;
@@ -99,7 +99,7 @@ void EclManager::Unload()
     this->eclFile = NULL;
 }
 
-ZunResult EclManager::CallEclSub(EnemyEclContext *ctx, i16 subId)
+ZunResult EclManager::CallEclSub(EclContext *ctx, i16 subId)
 {
     ctx->currentInstr = this->subTable[subId];
     ctx->time = 0;
@@ -250,7 +250,7 @@ restart_sub_changed:
         case ECL_OPCODE_JUMP:
         handle_jump:
             enemy->currentContext.time.current = GET_INSTR_INT_ARG(0);
-            curInstr = (EclRawInstr *)((u32)curInstr + GET_INT_ARG(1));
+            curInstr = OFFSET_PTR(EclRawInstr *, curInstr, GET_INT_ARG(1));
             continue;
         case ECL_OPCODE_SET_INT:
         case ECL_OPCODE_SET_FLOAT:
@@ -377,7 +377,7 @@ restart_sub_changed:
         case ECL_OPCODE_CALL:
         handle_call:
             genericInt = GET_INSTR_INT_ARG(0);
-            enemy->currentContext.currentInstr = (EclRawInstr *)((u8 *)curInstr + curInstr->offsetToNext);
+            enemy->currentContext.currentInstr = OFFSET_PTR(EclRawInstr *, curInstr, curInstr->offsetToNext);
             if (!enemy->flags.disableCallStack)
             {
                 enemy->savedContextStack[enemy->stackDepth] = enemy->currentContext;
@@ -431,7 +431,7 @@ restart_sub_changed:
                 goto handle_call;
             break;
         case ECL_OPCODE_ANM_SET_MAIN:
-            g_AnmManager->SetAndExecuteScriptIdx(&enemy->primaryVm, GET_INSTR_INT_ARG(0) + ANM_SCRIPT_ENEMY_START);
+            g_AnmManager->SetScript(&enemy->primaryVm, GET_INSTR_INT_ARG(0) + ANM_SCRIPT_ENEMY_START);
             break;
         case ECL_OPCODE_ANM_SET_SLOT:
 #if !TRIALBUILD
@@ -440,8 +440,7 @@ restart_sub_changed:
                 ReportEclError("error : sub anim overflow\n");
             }
 #endif
-            g_AnmManager->SetAndExecuteScriptIdx(&enemy->vms[GET_INSTR_INT_ARG(0)],
-                                                 GET_INT_ARG(1) + ANM_SCRIPT_ENEMY_START);
+            g_AnmManager->SetScript(&enemy->vms[GET_INSTR_INT_ARG(0)], GET_INT_ARG(1) + ANM_SCRIPT_ENEMY_START);
             break;
         case ECL_OPCODE_MOVE_POSITION:
             enemy->position = GET_INSTR_ARG(D3DXVECTOR3, 0);
@@ -670,9 +669,9 @@ restart_sub_changed:
             break;
 #endif
         case ECL_OPCODE_LASER_CLEAR_ALL: {
-            for (i32 idx = 0; idx < MAX_LASERS_PER_ENEMY; idx++)
+            for (i32 i = 0; i < MAX_LASERS_PER_ENEMY; i++)
             {
-                enemy->lasers[idx] = NULL;
+                enemy->lasers[i] = NULL;
             }
             break;
         }
@@ -754,10 +753,10 @@ restart_sub_changed:
             enemy->flags.moveInterpMode = EnemyInterp_AccelerateFast;
             break;
         case ECL_OPCODE_MOVE_BOUNDS_SET:
-            enemy->lowerMoveLimit.x = GET_INSTR_FLOAT_ARG(0);
-            enemy->lowerMoveLimit.y = GET_INSTR_FLOAT_ARG(1);
-            enemy->upperMoveLimit.x = GET_INSTR_FLOAT_ARG(2);
-            enemy->upperMoveLimit.y = GET_INSTR_FLOAT_ARG(3);
+            enemy->moveLimit.left = GET_INSTR_FLOAT_ARG(0);
+            enemy->moveLimit.top = GET_INSTR_FLOAT_ARG(1);
+            enemy->moveLimit.right = GET_INSTR_FLOAT_ARG(2);
+            enemy->moveLimit.bottom = GET_INSTR_FLOAT_ARG(3);
             enemy->flags.hasMovementBounds = true;
             break;
         case ECL_OPCODE_MOVE_BOUNDS_DISABLE:
@@ -770,7 +769,7 @@ restart_sub_changed:
         case ECL_OPCODE_MOVE_RAND_IN_BOUNDS:
             genericFloat3 = GET_INSTR_ARG(Float3, 0);
             enemy->angle = g_Rng.GetRandomF32InRange(genericFloat3.y - genericFloat3.x) + genericFloat3.x;
-            if (enemy->position.x < enemy->lowerMoveLimit.x + 96.0f)
+            if (enemy->position.x < enemy->moveLimit.left + 96.0f)
             {
                 if (enemy->angle > ZUN_HALF_PI)
                 {
@@ -781,7 +780,7 @@ restart_sub_changed:
                     enemy->angle = -ZUN_PI - enemy->angle;
                 }
             }
-            if (enemy->position.x > enemy->upperMoveLimit.x - 96.0f)
+            if (enemy->position.x > enemy->moveLimit.right - 96.0f)
             {
                 if (enemy->angle < ZUN_HALF_PI && enemy->angle >= 0.0f)
                 {
@@ -792,11 +791,11 @@ restart_sub_changed:
                     enemy->angle = -ZUN_PI - enemy->angle;
                 }
             }
-            if (enemy->position.y < enemy->lowerMoveLimit.y + 48.0f && enemy->angle < 0.0f)
+            if (enemy->position.y < enemy->moveLimit.top + 48.0f && enemy->angle < 0.0f)
             {
                 enemy->angle = -enemy->angle;
             }
-            if (enemy->position.y > enemy->upperMoveLimit.y - 48.0f && enemy->angle > 0.0f)
+            if (enemy->position.y > enemy->moveLimit.bottom - 48.0f && enemy->angle > 0.0f)
             {
                 enemy->angle = -enemy->angle;
             }
@@ -835,7 +834,7 @@ restart_sub_changed:
         case ECL_OPCODE_ENEMY_INTERRUPT:
             enemy->runInterrupt = GET_INSTR_INT_ARG(0);
         run_interrupt:
-            enemy->currentContext.currentInstr = (EclRawInstr *)((u8 *)curInstr + curInstr->offsetToNext);
+            enemy->currentContext.currentInstr = OFFSET_PTR(EclRawInstr *, curInstr, curInstr->offsetToNext);
             if (!enemy->flags.disableCallStack)
             {
                 enemy->savedContextStack[enemy->stackDepth] = enemy->currentContext;
@@ -895,10 +894,10 @@ restart_sub_changed:
                 if (g_EnemyManager.spellcardInfo.ticksActive == 1)
                 {
                     i32 scoreIncrease = g_BulletManager.DespawnBulletsForScore(12800, BULLET_CANCEL);
-#pragma var_order(catk, idx, score)
+#pragma var_order(catk, i, score)
                     if (g_EnemyManager.spellcardInfo.isCapturing)
                     {
-                        i32 idx;
+                        i32 i;
                         Catk *catk = &g_GameManager.catk[g_EnemyManager.spellcardInfo.id];
                         i32 score = g_EnemyManager.spellcardInfo.captureScore >= 500000
                                         ? 500000 / 10
@@ -914,9 +913,9 @@ restart_sub_changed:
                         {
                             // BUG: Capture count isn't capped like attempt count
                             catk->captures++;
-                            for (idx = ARRAY_SIZE(catk->recentShotTypes) - 1; idx > 0; idx--)
+                            for (i = ARRAY_SIZE(catk->recentShotTypes) - 1; i > 0; i--)
                             {
-                                catk->recentShotTypes[idx] = catk->recentShotTypes[idx - 1];
+                                catk->recentShotTypes[i] = catk->recentShotTypes[i - 1];
                             }
                             catk->recentShotTypes[0] = CURRENT_SHOTTYPE();
                         }
@@ -1072,7 +1071,7 @@ restart_sub_changed:
 #endif
         }
     next_instruction:
-        curInstr = (EclRawInstr *)((u8 *)curInstr + curInstr->offsetToNext);
+        curInstr = OFFSET_PTR(EclRawInstr *, curInstr, curInstr->offsetToNext);
     }
     switch (enemy->flags.movementMode)
     {
@@ -1150,25 +1149,22 @@ restart_sub_changed:
                 case EnemyPose_Neutral:
                     if (enemy->anmPoseCurrent == EnemyPose_Default)
                     {
-                        g_AnmManager->SetAndExecuteScriptIdx(&enemy->primaryVm,
-                                                             enemy->anmPoseDefault + ANM_OFFSET_ENEMY);
+                        g_AnmManager->SetScript(&enemy->primaryVm, enemy->anmPoseDefault + ANM_OFFSET_ENEMY);
                     }
                     else if (enemy->anmPoseCurrent == EnemyPose_Left)
                     {
-                        g_AnmManager->SetAndExecuteScriptIdx(&enemy->primaryVm,
-                                                             enemy->anmPoseNeutralFromLeft + ANM_OFFSET_ENEMY);
+                        g_AnmManager->SetScript(&enemy->primaryVm, enemy->anmPoseNeutralFromLeft + ANM_OFFSET_ENEMY);
                     }
                     else // EnemyPose_Right
                     {
-                        g_AnmManager->SetAndExecuteScriptIdx(&enemy->primaryVm,
-                                                             enemy->anmPoseNeutralFromRight + ANM_OFFSET_ENEMY);
+                        g_AnmManager->SetScript(&enemy->primaryVm, enemy->anmPoseNeutralFromRight + ANM_OFFSET_ENEMY);
                     }
                     break;
                 case EnemyPose_Left:
-                    g_AnmManager->SetAndExecuteScriptIdx(&enemy->primaryVm, enemy->anmPoseLeft + ANM_OFFSET_ENEMY);
+                    g_AnmManager->SetScript(&enemy->primaryVm, enemy->anmPoseLeft + ANM_OFFSET_ENEMY);
                     break;
                 case EnemyPose_Right:
-                    g_AnmManager->SetAndExecuteScriptIdx(&enemy->primaryVm, enemy->anmPoseRight + ANM_OFFSET_ENEMY);
+                    g_AnmManager->SetScript(&enemy->primaryVm, enemy->anmPoseRight + ANM_OFFSET_ENEMY);
                     break;
                 }
                 enemy->anmPoseCurrent = newPose;

@@ -871,7 +871,8 @@ restart_sub_changed:
                 length = strlen(catk->name);
                 while (length > 0)
                 {
-                    csum += catk->name[--length];
+                    length--;
+                    csum += catk->name[length];
                 }
                 if (catk->nameCsum != (u8)csum)
                 {

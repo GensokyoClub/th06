@@ -369,13 +369,17 @@ ZunResult SoundPlayer::LoadWav(char *path)
     return ZUN_SUCCESS;
 }
 
-#pragma var_order(fileData, bgmFile, loopEnd, loopStart)
+struct PosFile
+{
+    i32 loopStart;
+    i32 loopEnd;
+};
+
+#pragma var_order(fileData, bgmFile)
 ZunResult SoundPlayer::LoadPos(const char *path)
 {
-    u8 *fileData;
+    PosFile *fileData;
     CWaveFile *bgmFile;
-    i32 loopEnd;
-    i32 loopStart;
 
     if (this->manager == NULL)
     {
@@ -390,16 +394,13 @@ ZunResult SoundPlayer::LoadPos(const char *path)
         return ZUN_ERROR;
     }
 
-    fileData = FileSystem::OpenPath(path);
+    fileData = (PosFile *)FileSystem::OpenPath(path);
     if (fileData == NULL)
     {
         return ZUN_ERROR;
     }
     bgmFile = this->backgroundMusic->GetWaveFile();
-    loopEnd = *(i32 *)(fileData + 4) * 4;
-    loopStart = *(i32 *)(fileData) * 4;
-    bgmFile->m_loopStartPoint = loopStart;
-    bgmFile->m_loopEndPoint = loopEnd;
+    bgmFile->SetLoopPoints(fileData->loopStart * 4, fileData->loopEnd * 4);
     ZUN_FREE(fileData);
     return ZUN_SUCCESS;
 }

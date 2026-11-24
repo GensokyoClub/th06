@@ -171,6 +171,12 @@ class CWaveFile
                           // point.
     i32 m_loopEndPoint;   // End of the loop
 
+    void SetLoopPoints(i32 start, i32 end)
+    {
+        this->m_loopStartPoint = start;
+        this->m_loopEndPoint = end;
+    }
+
   protected:
     HRESULT ReadMMIO();
 

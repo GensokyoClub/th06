@@ -37,7 +37,7 @@ ShtEntry g_ReimuALevel0[] = {
         ANGLE_UP, 12.0f,
         48,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
 };
 
@@ -48,7 +48,7 @@ ShtEntry g_ReimuALevel1[] = {
         ANGLE_UP, 12.0f,
         48,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
     {
         30, 0,
@@ -76,7 +76,7 @@ ShtEntry g_ReimuALevel2[] = {
         ANGLE_UP - RADIANS(1.0f), 12.0f,
         30,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -84,7 +84,7 @@ ShtEntry g_ReimuALevel2[] = {
         ANGLE_UP + RADIANS(1.0f), 12.0f,
         30,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         30, 0,
@@ -111,7 +111,7 @@ ShtEntry g_ReimuALevel3[] = {
         ANGLE_UP - RADIANS(6.0f), 12.0f,
         24,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
     {
         5, 0,
@@ -119,7 +119,7 @@ ShtEntry g_ReimuALevel3[] = {
         ANGLE_UP, 12.0f,
         30,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -127,7 +127,7 @@ ShtEntry g_ReimuALevel3[] = {
         ANGLE_UP + RADIANS(6.0f), 12.0f,
         24,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         30, 0,
@@ -154,7 +154,7 @@ ShtEntry g_ReimuALevel4[] = {
         ANGLE_UP - RADIANS(7.0f), 12.0f,
         24,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
     {
         5, 0,
@@ -162,7 +162,7 @@ ShtEntry g_ReimuALevel4[] = {
         ANGLE_UP, 12.0f,
         30,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -170,7 +170,7 @@ ShtEntry g_ReimuALevel4[] = {
         ANGLE_UP + RADIANS(7.0f), 12.0f,
         24,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         15, 0,
@@ -197,7 +197,7 @@ ShtEntry g_ReimuALevel5[] = {
         ANGLE_UP - RADIANS(7.0f), 12.0f,
         24,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
     {
         5, 0,
@@ -205,7 +205,7 @@ ShtEntry g_ReimuALevel5[] = {
         ANGLE_UP, 12.0f,
         29,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -213,7 +213,7 @@ ShtEntry g_ReimuALevel5[] = {
         ANGLE_UP + RADIANS(7.0f), 12.0f,
         24,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         15, 0,
@@ -256,7 +256,7 @@ ShtEntry g_ReimuALevel6[] = {
         ANGLE_UP - RADIANS(7.0f), 12.0f,
         24,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
     {
         5, 0,
@@ -264,7 +264,7 @@ ShtEntry g_ReimuALevel6[] = {
         ANGLE_UP, 12.0f,
         28,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -272,7 +272,7 @@ ShtEntry g_ReimuALevel6[] = {
         ANGLE_UP + RADIANS(7.0f), 12.0f,
         24,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         30, 0,
@@ -331,7 +331,7 @@ ShtEntry g_ReimuALevel7[] = {
         ANGLE_UP - RADIANS(7.0f), 12.0f,
         24,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
     {
         5, 0,
@@ -339,7 +339,7 @@ ShtEntry g_ReimuALevel7[] = {
         ANGLE_UP, 12.0f,
         28,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -347,7 +347,7 @@ ShtEntry g_ReimuALevel7[] = {
         ANGLE_UP + RADIANS(7.0f), 12.0f,
         24,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         15, 0,
@@ -406,7 +406,7 @@ ShtEntry g_ReimuALevel8[] = {
         ANGLE_UP - RADIANS(7.0f), 12.0f,
         23,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
     {
         5, 0,
@@ -414,7 +414,7 @@ ShtEntry g_ReimuALevel8[] = {
         ANGLE_UP, 12.0f,
         24,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -422,7 +422,7 @@ ShtEntry g_ReimuALevel8[] = {
         ANGLE_UP, 12.0f,
         24,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -430,7 +430,7 @@ ShtEntry g_ReimuALevel8[] = {
         ANGLE_UP + RADIANS(7.0f), 12.0f,
         23,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         16, 0,
@@ -517,7 +517,7 @@ ShtEntry g_ReimuBLevel0[] = {
         ANGLE_UP, 12.0f,
         48,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
 };
 
@@ -528,7 +528,7 @@ ShtEntry g_ReimuBLevel1[] = {
         ANGLE_UP, 12.0f,
         48,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
     {
         15, 0,
@@ -555,7 +555,7 @@ ShtEntry g_ReimuBLevel2[] = {
         ANGLE_UP - RADIANS(1.0f), 12.0f,
         32,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
     {
         5, 0,
@@ -563,7 +563,7 @@ ShtEntry g_ReimuBLevel2[] = {
         ANGLE_UP + RADIANS(1.0f), 12.0f,
         32,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         10, 0,
@@ -590,7 +590,7 @@ ShtEntry g_ReimuBLevel3[] = {
         ANGLE_UP - RADIANS(1.0f), 12.0f,
         30,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
     {
         5, 0,
@@ -598,7 +598,7 @@ ShtEntry g_ReimuBLevel3[] = {
         ANGLE_UP + RADIANS(1.0f), 12.0f,
         30,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         8, 0,
@@ -625,7 +625,7 @@ ShtEntry g_ReimuBLevel4[] = {
         ANGLE_UP - RADIANS(7.0f), 12.0f,
         20,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
     {
         5, 0,
@@ -633,7 +633,7 @@ ShtEntry g_ReimuBLevel4[] = {
         ANGLE_UP, 12.0f,
         28,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -641,7 +641,7 @@ ShtEntry g_ReimuBLevel4[] = {
         ANGLE_UP + RADIANS(7.0f), 12.0f,
         20,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         8, 0,
@@ -668,7 +668,7 @@ ShtEntry g_ReimuBLevel5[] = {
         ANGLE_UP - RADIANS(7.0f), 12.0f,
         16,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
     {
         5, 0,
@@ -676,7 +676,7 @@ ShtEntry g_ReimuBLevel5[] = {
         ANGLE_UP, 12.0f,
         27,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -684,7 +684,7 @@ ShtEntry g_ReimuBLevel5[] = {
         ANGLE_UP + RADIANS(7.0f), 12.0f,
         16,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -727,7 +727,7 @@ ShtEntry g_ReimuBLevel6[] = {
         { 0.0f, 0.0f }, { 12.0f, 12.0f },
         ANGLE_UP - RADIANS(8.0f), 12.0f,
         16,
-        SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT, ANM_SCRIPT_PLAYER_BULLET,
+        SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT, ANM_SCRIPT_REIMU_TALISMAN,
         SOUND_SHOOT
     },
     {
@@ -735,7 +735,7 @@ ShtEntry g_ReimuBLevel6[] = {
         { 0.0f, 0.0f }, { 12.0f, 12.0f },
         ANGLE_UP, 12.0f,
         22,
-        SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT, ANM_SCRIPT_PLAYER_BULLET,
+        SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT, ANM_SCRIPT_REIMU_TALISMAN,
         NO_SOUND
     },
     {
@@ -744,7 +744,7 @@ ShtEntry g_ReimuBLevel6[] = {
         ANGLE_UP + RADIANS(8.0f), 12.0f,
         16,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         3, 0,
@@ -788,7 +788,7 @@ ShtEntry g_ReimuBLevel7[] = {
         ANGLE_UP - RADIANS(16.0f), 12.0f,
         9,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
     {
         5, 0,
@@ -796,7 +796,7 @@ ShtEntry g_ReimuBLevel7[] = {
         ANGLE_UP - RADIANS(8.0f), 12.0f,
         17,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -804,7 +804,7 @@ ShtEntry g_ReimuBLevel7[] = {
         ANGLE_UP, 12.0f,
         20,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -812,7 +812,7 @@ ShtEntry g_ReimuBLevel7[] = {
         ANGLE_UP + RADIANS(8.0f), 12.0f,
         17,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -820,7 +820,7 @@ ShtEntry g_ReimuBLevel7[] = {
         ANGLE_UP + RADIANS(16.0f), 12.0f,
         9,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         3, 0,
@@ -880,7 +880,7 @@ ShtEntry g_ReimuBLevel8[] = {
         ANGLE_UP - RADIANS(16.0f), 12.0f,
         9,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_REIMU_TALISMAN, SOUND_SHOOT
     },
     {
         5, 0,
@@ -888,7 +888,7 @@ ShtEntry g_ReimuBLevel8[] = {
         ANGLE_UP - RADIANS(8.0f), 12.0f,
         17,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -896,7 +896,7 @@ ShtEntry g_ReimuBLevel8[] = {
         ANGLE_UP, 12.0f,
         20,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -904,7 +904,7 @@ ShtEntry g_ReimuBLevel8[] = {
         ANGLE_UP + RADIANS(8.0f), 12.0f,
         17,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         5, 0,
@@ -912,7 +912,7 @@ ShtEntry g_ReimuBLevel8[] = {
         ANGLE_UP + RADIANS(16.0f), 12.0f,
         9,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_REIMU_TALISMAN, NO_SOUND
     },
     {
         3, 0,
@@ -983,7 +983,7 @@ ShtEntry g_MarisaALevel0[] = {
         ANGLE_UP, 12.0f,
         48,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
 };
 
@@ -994,7 +994,7 @@ ShtEntry g_MarisaALevel1[] = {
         ANGLE_UP, 12.0f,
         36,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         30, 0,
@@ -1002,7 +1002,7 @@ ShtEntry g_MarisaALevel1[] = {
         ANGLE_UP, 3.0f,
         18,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_TINY, NO_SOUND
     },
     {
         30, 0,
@@ -1010,7 +1010,7 @@ ShtEntry g_MarisaALevel1[] = {
         ANGLE_UP, 3.0f,
         18,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_TINY, NO_SOUND
     },
 };
 
@@ -1021,7 +1021,7 @@ ShtEntry g_MarisaALevel2[] = {
         ANGLE_UP, 12.0f,
         32,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         30, 0,
@@ -1029,7 +1029,7 @@ ShtEntry g_MarisaALevel2[] = {
         ANGLE_UP - RADIANS(5.0f), 3.0f,
         16,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_TINY, NO_SOUND
     },
     {
         30, 0,
@@ -1037,7 +1037,7 @@ ShtEntry g_MarisaALevel2[] = {
         ANGLE_UP + RADIANS(5.0f), 3.0f,
         16,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_TINY, NO_SOUND
     },
     {
         30, 15,
@@ -1045,7 +1045,7 @@ ShtEntry g_MarisaALevel2[] = {
         ANGLE_UP + RADIANS(5.0f), 3.0f,
         10,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_TINY, NO_SOUND
     },
     {
         30, 15,
@@ -1053,10 +1053,11 @@ ShtEntry g_MarisaALevel2[] = {
         ANGLE_UP - RADIANS(5.0f), 3.0f,
         10,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_TINY, NO_SOUND
     },
 };
 
+// BUG: Bullets 4 and 5 will never fire because X % 15 != 15
 ShtEntry g_MarisaALevel3[] = {
     {
         5, 0,
@@ -1064,7 +1065,7 @@ ShtEntry g_MarisaALevel3[] = {
         ANGLE_UP, 12.0f,
         32,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         15, 0,
@@ -1072,7 +1073,7 @@ ShtEntry g_MarisaALevel3[] = {
         ANGLE_UP - RADIANS(5.0f), 3.0f,
         15,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_TINY, NO_SOUND
     },
     {
         15, 0,
@@ -1080,7 +1081,7 @@ ShtEntry g_MarisaALevel3[] = {
         ANGLE_UP + RADIANS(5.0f), 3.0f,
         15,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_TINY, NO_SOUND
     },
     {
         15, 15,
@@ -1088,7 +1089,7 @@ ShtEntry g_MarisaALevel3[] = {
         ANGLE_UP + RADIANS(5.0f), 3.0f,
         10,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_TINY, NO_SOUND
     },
     {
         15, 15,
@@ -1096,10 +1097,11 @@ ShtEntry g_MarisaALevel3[] = {
         ANGLE_UP - RADIANS(5.0f), 3.0f,
         10,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_TINY, NO_SOUND
     },
 };
 
+// BUG: Bullets 4 and 5 will never fire because X % 15 != 20
 ShtEntry g_MarisaALevel4[] = {
     {
         5, 0,
@@ -1107,7 +1109,7 @@ ShtEntry g_MarisaALevel4[] = {
         ANGLE_UP, 12.0f,
         32,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         15, 0,
@@ -1115,7 +1117,7 @@ ShtEntry g_MarisaALevel4[] = {
         ANGLE_UP - RADIANS(5.0f), 3.0f,
         16,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_SMALL, NO_SOUND
     },
     {
         15, 0,
@@ -1123,7 +1125,7 @@ ShtEntry g_MarisaALevel4[] = {
         ANGLE_UP + RADIANS(5.0f), 3.0f,
         16,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_SMALL, NO_SOUND
     },
     {
         15, 20,
@@ -1131,7 +1133,7 @@ ShtEntry g_MarisaALevel4[] = {
         ANGLE_UP + RADIANS(5.0f), 3.0f,
         11,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_SMALL, NO_SOUND
     },
     {
         15, 20,
@@ -1139,7 +1141,7 @@ ShtEntry g_MarisaALevel4[] = {
         ANGLE_UP - RADIANS(5.0f), 3.0f,
         11,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_SMALL, NO_SOUND
     },
 };
 
@@ -1150,7 +1152,7 @@ ShtEntry g_MarisaALevel5[] = {
         ANGLE_UP, 12.0f,
         16,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         5, 0,
@@ -1158,7 +1160,7 @@ ShtEntry g_MarisaALevel5[] = {
         ANGLE_UP, 12.0f,
         16,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         10, 0,
@@ -1166,7 +1168,7 @@ ShtEntry g_MarisaALevel5[] = {
         ANGLE_UP - RADIANS(5.0f), 3.0f,
         16,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_SMALL, NO_SOUND
     },
     {
         10, 0,
@@ -1174,7 +1176,7 @@ ShtEntry g_MarisaALevel5[] = {
         ANGLE_UP + RADIANS(5.0f), 3.0f,
         16,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_SMALL, NO_SOUND
     },
     {
         15, 5,
@@ -1182,7 +1184,7 @@ ShtEntry g_MarisaALevel5[] = {
         ANGLE_UP + RADIANS(5.0f), 3.0f,
         10,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_SMALL, NO_SOUND
     },
     {
         15, 5,
@@ -1190,7 +1192,7 @@ ShtEntry g_MarisaALevel5[] = {
         ANGLE_UP - RADIANS(5.0f), 3.0f,
         10,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_SMALL, NO_SOUND
     },
 };
 
@@ -1201,7 +1203,7 @@ ShtEntry g_MarisaALevel6[] = {
         ANGLE_UP, 12.0f,
         13,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         5, 0,
@@ -1209,7 +1211,7 @@ ShtEntry g_MarisaALevel6[] = {
         ANGLE_UP, 12.0f,
         13,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         10, 0,
@@ -1217,7 +1219,7 @@ ShtEntry g_MarisaALevel6[] = {
         ANGLE_UP - RADIANS(8.0f), 3.0f,
         16,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_MEDIUM, NO_SOUND
     },
     {
         10, 0,
@@ -1225,7 +1227,7 @@ ShtEntry g_MarisaALevel6[] = {
         ANGLE_UP + RADIANS(8.0f), 3.0f,
         16,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_MEDIUM, NO_SOUND
     },
     {
         10, 5,
@@ -1233,7 +1235,7 @@ ShtEntry g_MarisaALevel6[] = {
         ANGLE_UP + RADIANS(8.0f), 3.0f,
         10,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_MEDIUM, NO_SOUND
     },
     {
         10, 5,
@@ -1241,7 +1243,7 @@ ShtEntry g_MarisaALevel6[] = {
         ANGLE_UP - RADIANS(8.0f), 3.0f,
         10,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_MEDIUM, NO_SOUND
     },
 };
 
@@ -1252,7 +1254,7 @@ ShtEntry g_MarisaALevel7[] = {
         ANGLE_UP - RADIANS(4.0f), 12.0f,
         8,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         5, 0,
@@ -1260,7 +1262,7 @@ ShtEntry g_MarisaALevel7[] = {
         ANGLE_UP, 12.0f,
         12,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         5, 0,
@@ -1268,7 +1270,7 @@ ShtEntry g_MarisaALevel7[] = {
         ANGLE_UP + RADIANS(4.0f), 12.0f,
         8,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         10, 0,
@@ -1276,7 +1278,7 @@ ShtEntry g_MarisaALevel7[] = {
         ANGLE_UP - RADIANS(8.0f), 3.0f,
         15,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_MEDIUM, NO_SOUND
     },
     {
         10, 0,
@@ -1284,7 +1286,7 @@ ShtEntry g_MarisaALevel7[] = {
         ANGLE_UP + RADIANS(8.0f), 3.0f,
         15,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_MEDIUM, NO_SOUND
     },
     {
         10, 5,
@@ -1292,7 +1294,7 @@ ShtEntry g_MarisaALevel7[] = {
         ANGLE_UP + RADIANS(8.0f), 3.0f,
         10,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_MEDIUM, NO_SOUND
     },
     {
         10, 5,
@@ -1300,7 +1302,7 @@ ShtEntry g_MarisaALevel7[] = {
         ANGLE_UP - RADIANS(8.0f), 3.0f,
         10,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_MEDIUM, NO_SOUND
     },
     {
         15, 0,
@@ -1308,7 +1310,7 @@ ShtEntry g_MarisaALevel7[] = {
         ANGLE_UP + RADIANS(12.0f), 3.0f,
         9,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_MEDIUM, NO_SOUND
     },
     {
         15, 0,
@@ -1316,7 +1318,7 @@ ShtEntry g_MarisaALevel7[] = {
         ANGLE_UP - RADIANS(12.0f), 3.0f,
         9,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_MEDIUM, NO_SOUND
     },
 };
 
@@ -1327,7 +1329,7 @@ ShtEntry g_MarisaALevel8[] = {
         ANGLE_UP - RADIANS(4.0f), 12.0f,
         8,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         5, 0,
@@ -1335,7 +1337,7 @@ ShtEntry g_MarisaALevel8[] = {
         ANGLE_UP, 12.0f,
         12,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         5, 0,
@@ -1343,7 +1345,7 @@ ShtEntry g_MarisaALevel8[] = {
         ANGLE_UP + RADIANS(4.0f), 12.0f,
         8,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         10, 0,
@@ -1351,7 +1353,7 @@ ShtEntry g_MarisaALevel8[] = {
         ANGLE_UP - RADIANS(8.0f), 3.0f,
         14,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_4, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_LARGE, NO_SOUND
     },
     {
         10, 0,
@@ -1359,7 +1361,7 @@ ShtEntry g_MarisaALevel8[] = {
         ANGLE_UP + RADIANS(8.0f), 3.0f,
         14,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_4, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_LARGE, NO_SOUND
     },
     {
         10, 5,
@@ -1367,7 +1369,7 @@ ShtEntry g_MarisaALevel8[] = {
         ANGLE_UP + RADIANS(8.0f), 3.0f,
         10,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_4, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_LARGE, NO_SOUND
     },
     {
         10, 5,
@@ -1375,7 +1377,7 @@ ShtEntry g_MarisaALevel8[] = {
         ANGLE_UP - RADIANS(8.0f), 3.0f,
         10,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_4, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_LARGE, NO_SOUND
     },
     {
         10, 0,
@@ -1383,7 +1385,7 @@ ShtEntry g_MarisaALevel8[] = {
         ANGLE_UP + RADIANS(15.0f), 3.0f,
         10,
         SPAWN_FROM_OPTION(0), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_4, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_LARGE, NO_SOUND
     },
     {
         10, 0,
@@ -1391,7 +1393,7 @@ ShtEntry g_MarisaALevel8[] = {
         ANGLE_UP - RADIANS(15.0f), 3.0f,
         10,
         SPAWN_FROM_OPTION(1), PLAYER_BULLET_ACCELERATE,
-        ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_4, NO_SOUND
+        ANM_SCRIPT_MARISA_MISSILE_LARGE, NO_SOUND
     },
 };
 
@@ -1414,7 +1416,7 @@ ShtEntry g_MarisaBLevel0[] = {
         ANGLE_UP, 12.0f,
         48,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
 };
 
@@ -1425,7 +1427,7 @@ ShtEntry g_MarisaBLevel1[] = {
         ANGLE_UP, 12.0f,
         32,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         120, 0,
@@ -1433,7 +1435,7 @@ ShtEntry g_MarisaBLevel1[] = {
         ANGLE_UP, 3.0f,
         3,
         SPAWN_FROM_OPTION(0), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_1, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_SMALL, NO_SOUND
     },
     {
         120, 1,
@@ -1441,7 +1443,7 @@ ShtEntry g_MarisaBLevel1[] = {
         ANGLE_UP, 3.0f,
         3,
         SPAWN_FROM_OPTION(1), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_1, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_SMALL, NO_SOUND
     },
 };
 
@@ -1452,7 +1454,7 @@ ShtEntry g_MarisaBLevel2[] = {
         ANGLE_UP, 12.0f,
         32,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         170, 0,
@@ -1460,7 +1462,7 @@ ShtEntry g_MarisaBLevel2[] = {
         ANGLE_UP, 3.0f,
         3,
         SPAWN_FROM_OPTION(0), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_1, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_SMALL, NO_SOUND
     },
     {
         170, 1,
@@ -1468,7 +1470,7 @@ ShtEntry g_MarisaBLevel2[] = {
         ANGLE_UP, 3.0f,
         3,
         SPAWN_FROM_OPTION(1), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_1, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_SMALL, NO_SOUND
     },
 };
 
@@ -1479,7 +1481,7 @@ ShtEntry g_MarisaBLevel3[] = {
         ANGLE_UP - RADIANS(2.0f), 12.0f,
         22,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         5, 0,
@@ -1487,7 +1489,7 @@ ShtEntry g_MarisaBLevel3[] = {
         ANGLE_UP + RADIANS(2.0f), 12.0f,
         22,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         200, 0,
@@ -1495,7 +1497,7 @@ ShtEntry g_MarisaBLevel3[] = {
         ANGLE_UP, 3.0f,
         3,
         SPAWN_FROM_OPTION(0), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_1, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_SMALL, NO_SOUND
     },
     {
         200, 1,
@@ -1503,7 +1505,7 @@ ShtEntry g_MarisaBLevel3[] = {
         ANGLE_UP, 3.0f,
         3,
         SPAWN_FROM_OPTION(1), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_1, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_SMALL, NO_SOUND
     },
 };
 
@@ -1514,7 +1516,7 @@ ShtEntry g_MarisaBLevel4[] = {
         ANGLE_UP - RADIANS(2.0f), 12.0f,
         22,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         5, 0,
@@ -1522,7 +1524,7 @@ ShtEntry g_MarisaBLevel4[] = {
         ANGLE_UP + RADIANS(2.0f), 12.0f,
         22,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         210, 0,
@@ -1530,7 +1532,7 @@ ShtEntry g_MarisaBLevel4[] = {
         ANGLE_UP, 3.0f,
         3,
         SPAWN_FROM_OPTION(0), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_2, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_MEDIUM, NO_SOUND
     },
     {
         210, 1,
@@ -1538,7 +1540,7 @@ ShtEntry g_MarisaBLevel4[] = {
         ANGLE_UP, 3.0f,
         3,
         SPAWN_FROM_OPTION(1), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_2, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_MEDIUM, NO_SOUND
     },
 };
 
@@ -1549,7 +1551,7 @@ ShtEntry g_MarisaBLevel5[] = {
         ANGLE_UP - RADIANS(2.0f), 12.0f,
         20,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         5, 0,
@@ -1557,7 +1559,7 @@ ShtEntry g_MarisaBLevel5[] = {
         ANGLE_UP + RADIANS(2.0f), 12.0f,
         20,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         230, 0,
@@ -1565,7 +1567,7 @@ ShtEntry g_MarisaBLevel5[] = {
         ANGLE_UP, 3.0f,
         4,
         SPAWN_FROM_OPTION(0), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_2, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_MEDIUM, NO_SOUND
     },
     {
         230, 1,
@@ -1573,7 +1575,7 @@ ShtEntry g_MarisaBLevel5[] = {
         ANGLE_UP, 3.0f,
         4,
         SPAWN_FROM_OPTION(1), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_2, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_MEDIUM, NO_SOUND
     },
 };
 
@@ -1584,7 +1586,7 @@ ShtEntry g_MarisaBLevel6[] = {
         ANGLE_UP - RADIANS(5.0f), 12.0f,
         15,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         5, 0,
@@ -1592,7 +1594,7 @@ ShtEntry g_MarisaBLevel6[] = {
         ANGLE_UP, 12.0f,
         20,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         5, 0,
@@ -1600,7 +1602,7 @@ ShtEntry g_MarisaBLevel6[] = {
         ANGLE_UP + RADIANS(5.0f), 12.0f,
         15,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         250, 0,
@@ -1608,7 +1610,7 @@ ShtEntry g_MarisaBLevel6[] = {
         ANGLE_UP, 3.0f,
         4,
         SPAWN_FROM_OPTION(0), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_2, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_MEDIUM, NO_SOUND
     },
     {
         250, 1,
@@ -1616,7 +1618,7 @@ ShtEntry g_MarisaBLevel6[] = {
         ANGLE_UP, 3.0f,
         4,
         SPAWN_FROM_OPTION(1), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_2, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_MEDIUM, NO_SOUND
     },
 };
 
@@ -1627,7 +1629,7 @@ ShtEntry g_MarisaBLevel7[] = {
         ANGLE_UP - RADIANS(5.0f), 12.0f,
         15,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         5, 0,
@@ -1635,7 +1637,7 @@ ShtEntry g_MarisaBLevel7[] = {
         ANGLE_UP, 12.0f,
         20,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         5, 0,
@@ -1643,7 +1645,7 @@ ShtEntry g_MarisaBLevel7[] = {
         ANGLE_UP + RADIANS(5.0f), 12.0f,
         15,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         270, 0,
@@ -1651,7 +1653,7 @@ ShtEntry g_MarisaBLevel7[] = {
         ANGLE_UP, 3.0f,
         5,
         SPAWN_FROM_OPTION(0), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_3, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_LARGE, NO_SOUND
     },
     {
         270, 1,
@@ -1659,7 +1661,7 @@ ShtEntry g_MarisaBLevel7[] = {
         ANGLE_UP, 3.0f,
         5,
         SPAWN_FROM_OPTION(1), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_3, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_LARGE, NO_SOUND
     },
 };
 
@@ -1670,7 +1672,7 @@ ShtEntry g_MarisaBLevel8[] = {
         ANGLE_UP - RADIANS(10.0f), 12.0f,
         12,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, SOUND_SHOOT
+        ANM_SCRIPT_MARISA_MAGIC, SOUND_SHOOT
     },
     {
         5, 0,
@@ -1678,7 +1680,7 @@ ShtEntry g_MarisaBLevel8[] = {
         ANGLE_UP - RADIANS(5.0f), 12.0f,
         15,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         5, 0,
@@ -1686,7 +1688,7 @@ ShtEntry g_MarisaBLevel8[] = {
         ANGLE_UP, 12.0f,
         20,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         5, 0,
@@ -1694,7 +1696,7 @@ ShtEntry g_MarisaBLevel8[] = {
         ANGLE_UP + RADIANS(5.0f), 12.0f,
         15,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         5, 0,
@@ -1702,7 +1704,7 @@ ShtEntry g_MarisaBLevel8[] = {
         ANGLE_UP + RADIANS(10.0f), 12.0f,
         12,
         SPAWN_FROM_PLAYER, PLAYER_BULLET_DEFAULT,
-        ANM_SCRIPT_PLAYER_BULLET, NO_SOUND
+        ANM_SCRIPT_MARISA_MAGIC, NO_SOUND
     },
     {
         330, 0,
@@ -1710,7 +1712,7 @@ ShtEntry g_MarisaBLevel8[] = {
         ANGLE_UP, 3.0f,
         6,
         SPAWN_FROM_OPTION(0), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_3, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_LARGE, NO_SOUND
     },
     {
         330, 1,
@@ -1718,7 +1720,7 @@ ShtEntry g_MarisaBLevel8[] = {
         ANGLE_UP, 3.0f,
         6,
         SPAWN_FROM_OPTION(1), PLAYER_LASER,
-        ANM_SCRIPT_PLAYER_MARISA_B_ORB_LASER_3, NO_SOUND
+        ANM_SCRIPT_MARISA_LASER_LARGE, NO_SOUND
     },
 };
 

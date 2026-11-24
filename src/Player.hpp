@@ -201,7 +201,7 @@ struct Player
     void Die();
 
     AnmVm vm;
-    AnmVm optionVms[3]; // why is this 3?
+    AnmVm optionVms[MAX_PLAYER_OPTION_COUNT + 1]; // why is this +1?
     D3DXVECTOR3 position;
     unused_field(D3DXVECTOR3);
     D3DXVECTOR3 hitboxTopLeft;
@@ -216,7 +216,7 @@ struct Player
     i32 damageRegionDamage[MAX_DAMAGE_REGION_COUNT];
     i32 damageRegionDamageDealt[MAX_DAMAGE_REGION_COUNT];
     PlayerRect cancelRegions[MAX_CANCEL_REGION_COUNT];
-    ZunTimer shotTimer[PLAYER_SHOT_TIMER_COUNT];
+    ZunTimer shotTimer[PLAYER_SHOT_TIMER_COUNT]; // TODO: Better name so that fireBulletTimer -> shotTimer
     Float2 speedMultiplierDuringBomb;
     i32 respawnTimer;
     i32 bulletGracePeriod;

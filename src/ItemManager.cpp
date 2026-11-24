@@ -53,7 +53,7 @@ void ItemManager::SpawnItem(D3DXVECTOR3 *position, i32 itemType, i32 state)
             // start position
             item->startPositionVelocity = item->currentPosition;
         }
-        g_AnmManager->SetScript(&item->sprite, ANM_SCRIPT_BULLET3_ITEMS_START + itemType);
+        g_AnmManager->SetScript(&item->sprite, ANM_SCRIPT_ITEMS_START + itemType);
         item->sprite.color = COLOR_WHITE;
         item->isIndicatorHidden = true;
         return;

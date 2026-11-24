@@ -57,7 +57,7 @@ void EnemyManager::Initialize()
     enemy->stackDepth = 0;
     enemy->life = 1;
     enemy->score = 100;
-    enemy->deathParticle = PARTICLE_DEATH_POP;
+    enemy->deathParticle = PARTICLE_POP;
     enemy->deathSparkParticle = SPARK_TYPE_WHITE;
     enemy->unkParticle = 0;
     enemy->shootInterval = 0;

@@ -65,7 +65,7 @@ void BombReimuACalc(Player *player)
                 vm = &player->bomb.vms[0][i * 4];
                 for (i32 j = 0; j < 4; j++, vm++)
                 {
-                    g_AnmManager->SetNewScript(vm, ANM_SCRIPT_PLAYER_REIMU_A_BOMB_ARRAY + j);
+                    g_AnmManager->SetNewScript(vm, ANM_SCRIPT_FANTASY_SEAL_START + j);
                 }
                 g_SoundPlayer.PlaySoundId(SOUND_BOMB_REIMU_A);
             }
@@ -267,7 +267,7 @@ void BombReimuBCalc(Player *player)
 
         for (i = 0; i < 4; i++, vm++)
         {
-            g_AnmManager->SetNewScript(vm, ANM_SCRIPT_PLAYER_REIMU_B_BOMB_ARRAY + i);
+            g_AnmManager->SetNewScript(vm, ANM_SCRIPT_EVIL_SEALING_CIRCLE_START + i);
         }
 
         g_SoundPlayer.PlaySoundId(SOUND_BOMB_REIMARI);
@@ -361,7 +361,12 @@ void BombMarisaACalc(Player *player)
         starSprite = player->bomb.vms[0];
         for (i = 0; i < ARRAY_SIZE_SIGNED(player->bomb.vms); i++, starSprite++)
         {
-            g_AnmManager->SetNewScript(starSprite, ANM_SCRIPT_PLAYER_MARISA_A_BLUE_STAR + i % 3);
+            // Modulo 3 for the 3 colors of stars.
+            // Since there are only 8 VMs the color distribution isn't evenly split.
+            // Blue: 3
+            // Green: 3
+            // Red: 2
+            g_AnmManager->SetNewScript(starSprite, ANM_SCRIPT_STARDUST_REVERIE_START + i % 3);
             player->bomb.projectilePosition[i] = player->position;
 
             float starAngle = i * ZUN_2PI / 8.0f;
@@ -460,7 +465,7 @@ void BombMarisaBCalc(Player *player)
         vm = player->bomb.vms[0];
         for (i = 0; i < 4; i++, vm++)
         {
-            g_AnmManager->SetNewScript(vm, ANM_SCRIPT_PLAYER_MARISA_B_MASTER_SPARK + i);
+            g_AnmManager->SetNewScript(vm, ANM_SCRIPT_MASTER_SPARK_START + i);
             player->bomb.projectilePosition[i] = player->position;
         }
         g_SoundPlayer.PlaySoundId(SOUND_BOMB_MARISA_B);

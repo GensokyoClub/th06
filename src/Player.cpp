@@ -405,19 +405,19 @@ i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPosition, D3DXVECTOR3 *enemySize
             }
             switch (bullet->vm.scriptId)
             {
-            case ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_1:
+            case ANM_SCRIPT_MARISA_MISSILE_TINY:
                 bullet->size.x = 32.0f;
                 bullet->size.y = 32.0f;
                 break;
-            case ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_2:
+            case ANM_SCRIPT_MARISA_MISSILE_SMALL:
                 bullet->size.x = 42.0f;
                 bullet->size.y = 42.0f;
                 break;
-            case ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_3:
+            case ANM_SCRIPT_MARISA_MISSILE_MEDIUM:
                 bullet->size.x = 48.0f;
                 bullet->size.y = 48.0f;
                 break;
-            case ANM_SCRIPT_PLAYER_MARISA_A_ORB_BULLET_4:
+            case ANM_SCRIPT_MARISA_MISSILE_LARGE:
                 bullet->size.x = 48.0f;
                 bullet->size.y = 48.0f;
             }
@@ -431,8 +431,9 @@ i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPosition, D3DXVECTOR3 *enemySize
         {
             if (bullet->bulletState == PLAYER_BULLET_STATE_FIRED)
             {
-                // TODO: Name this raw 32 constant
-                g_AnmManager->SetScript(&bullet->vm, bullet->vm.scriptId + 32);
+                // Hit effects for each bullet are just a
+                // constant offset from the script of the bullet.
+                g_AnmManager->SetScript(&bullet->vm, bullet->vm.scriptId + ANM_SCRIPT_PLAYER_BULLET_HIT_OFFSET);
                 g_EffectManager.SpawnParticles(PARTICLE_SPARK_RED, &bullet->position);
                 bullet->position[2] = 0.1f;
             }
@@ -1303,8 +1304,8 @@ static ZunResult Player_AddedCallback(Player *player)
     player->playerState = PLAYER_STATE_SPAWNING;
     player->stateTimer = 120;
     player->orbState = OPTION_HIDDEN;
-    g_AnmManager->SetScript(&player->optionVms[0], ANM_SCRIPT_PLAYER_ORB_LEFT);
-    g_AnmManager->SetScript(&player->optionVms[1], ANM_SCRIPT_PLAYER_ORB_RIGHT);
+    g_AnmManager->SetScript(&player->optionVms[0], ANM_SCRIPT_PLAYER_OPTION_LEFT);
+    g_AnmManager->SetScript(&player->optionVms[1], ANM_SCRIPT_PLAYER_OPTION_RIGHT);
     {
         PlayerBullet *curBullet = &player->bullets[0];
         for (i = 0; i < MAX_PLAYER_BULLETS; i++, curBullet++)

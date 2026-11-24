@@ -896,7 +896,7 @@ void ExInsFlandreFinalContextUpdate(Enemy *enemy, EclRawInstr *curInstr)
 
     if (GET_INT_ARG(1) == 0)
     {
-        enemy->currentContext.float3 = RAMP_DOWN_RANGE(2.0f, 1.0f, remainingLife, 6000);
+        enemy->currentContext.float3 = 2.0f - (f32)RAMP_UP(1.0f, remainingLife, 6000);
         enemy->currentContext.counter1 = RAMP_UP_RANGE(40, 240, remainingLife, 6000);
     }
     else

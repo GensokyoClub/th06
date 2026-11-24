@@ -90,8 +90,8 @@ struct EclRawInstrLaserArgs
     f32 speed;
     f32 startOffset;
     f32 endOffset;
-    f32 length;
-    f32 width;
+    f32 maxLength;
+    f32 maxWidth;
     i32 startTime;
     i32 duration;
     i32 despawnDuration;

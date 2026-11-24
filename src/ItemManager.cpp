@@ -333,7 +333,7 @@ void ItemManager::OnUpdate()
                 break;
             case ITEM_STAR:
                 itemScore = (g_GameManager.grazeInStage / 3) * 10 + 500;
-                if (g_Player.bombInfo.isActive)
+                if (g_Player.bomb.isActive)
                 {
                     itemScore = 100;
                 }

@@ -303,7 +303,7 @@ th06::MusicRoom_DeletedCallback,0x425d97,0x6c,__cdecl,,ZunResult,MusicRoom*
 th06::Player::Player,0x425e10,0x1e8,__thiscall,,Player*,Player*
 th06::BombInfo::BombInfo,0x426000,0xc2,__thiscall,,BombInfo*,BombInfo*
 th06::FireBulletReimuA,0x4260d0,0x22,default,,FireBulletResult,Player*,PlayerBullet*,u32,u32
-th06::FireSingleBullet,0x426100,0x31b,default,,FireBulletResult,Player*,PlayerBullet*,i32,i32,CharacterPowerData*
+th06::FireSingleBullet,0x426100,0x31b,default,,FireBulletResult,Player*,PlayerBullet*,i32,i32,PowerData*
 th06::FireBulletReimuB,0x426420,0x22,default,,FireBulletResult,Player*,PlayerBullet*,u32,u32
 th06::FireBulletMarisaA,0x426450,0x22,default,,FireBulletResult,Player*,PlayerBullet*,u32,u32
 th06::FireBulletMarisaB,0x426480,0x22,default,,FireBulletResult,Player*,PlayerBullet*,u32,u32
@@ -323,9 +323,9 @@ th06::Player_OnUpdate,0x4288c0,0x8ea,default,,ChainCallbackResult,Player*
 th06::UpdatePlayerBullets,0x4291b0,0x55b,default,,void,Player*
 th06::UpdateFireBulletsTimer,0x429710,0x10c,default,,ZunResult,Player*
 th06::SpawnBullets,0x429820,0x10e,default,,void,Player*,u32
-th06::Player_OnDrawHighPrio,0x429930,0x1c9,default,,ChainCallbackResult,Player*
+th06::Player_OnDraw,0x429930,0x1c9,default,,ChainCallbackResult,Player*
 th06::DrawBullets,0x429b00,0x8c,default,,void,Player*
-th06::Player_OnDrawLowPrio,0x429b90,0x16,default,,ChainCallbackResult,Player*
+th06::Player_OnDrawEffects,0x429b90,0x16,default,,ChainCallbackResult,Player*
 th06::DrawBulletExplosions,0x429bb0,0x99,default,,void,Player*
 th06::Player_AddedCallback,0x429c50,0x45e,default,,ZunResult,Player*
 th06::Player_DeletedCallback,0x42a0b0,0x24,default,,ZunResult,Player*

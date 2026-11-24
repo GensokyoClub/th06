@@ -350,7 +350,7 @@ void EnemyManager::RunEclTimeline()
     }
 }
 
-ZunBool Enemy::HandleLifeCallback()
+BOOL Enemy::HandleLifeCallback()
 {
     if (this->life < this->lifeCallbackThreshold)
     {
@@ -386,7 +386,7 @@ ZunBool Enemy::HandleLifeCallback()
     return false;
 }
 
-ZunBool Enemy::HandleTimerCallback()
+BOOL Enemy::HandleTimerCallback()
 {
     if (this->flags.isBoss)
     {
@@ -493,7 +493,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
     D3DXVECTOR3 enemyHitbox;
     i32 i;
     i32 damage;
-    ZunBool hitByBomb;
+    BOOL hitByBomb;
 
     hitByBomb = false;
     mgr->RunEclTimeline();

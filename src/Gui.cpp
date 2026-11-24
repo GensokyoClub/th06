@@ -67,7 +67,7 @@ struct GuiFormattedText
 {
     D3DXVECTOR3 pos;
     i32 fmtArg;
-    ZunBool isShown;
+    BOOL isShown;
     ZunTimer timer;
 };
 ZUN_ASSERT_TYPE(GuiFormattedText, 0x20, 4);
@@ -99,7 +99,7 @@ struct GuiImpl
     AnmVm enemySpellcardBackground;
     AnmVm loadingScreenSprite;
     MsgVm msg;
-    ZunBool finishedStage;
+    BOOL finishedStage;
     u32 stageScore;
     GuiFormattedText bonusScore;
     GuiFormattedText fullPowerMode;
@@ -111,7 +111,7 @@ Gui g_Gui;
 ChainElem g_GuiExecChain;
 ChainElem g_GuiDrawChain;
 
-ZunBool Gui::IsStageFinished()
+BOOL Gui::IsStageFinished()
 {
     return this->impl->loadingScreenSprite.spriteId >= 0 && this->impl->loadingScreenSprite.IsStopped();
 }
@@ -126,7 +126,7 @@ void Gui::EndEnemySpellcard()
     this->impl->enemySpellcardName.pendingInterrupt = 1;
 }
 
-ZunBool Gui::IsDialogueSkippable()
+BOOL Gui::IsDialogueSkippable()
 {
     return this->impl->msg.dialogueSkippable;
 }
@@ -863,7 +863,7 @@ ZunResult GuiImpl::DrawDialogue()
     return ZUN_SUCCESS;
 }
 
-ZunBool Gui::MsgWait()
+BOOL Gui::MsgWait()
 {
     if (this->impl->msg.ignoreWaitCounter > 0)
     {
@@ -872,7 +872,7 @@ ZunBool Gui::MsgWait()
     return this->impl->msg.currentMsgId >= 0;
 }
 
-ZunBool Gui::IsMsgActive()
+BOOL Gui::IsMsgActive()
 {
     return this->impl->msg.currentMsgId >= 0;
 }

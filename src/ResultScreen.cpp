@@ -100,7 +100,7 @@ ZUN_ASSERT_TYPE(ResultScreen, 0x56b0, 4);
 #define GET_NAME_CURSOR(self) ((self)->cursor >= MAX_NAME_LENGTH ? MAX_NAME_LENGTH - 1 : (self)->cursor)
 
 static void MoveResultCursor(ResultScreen *r, i32 len);
-static ZunBool MoveResultCursorHorizontally(ResultScreen *r, i32 len);
+static BOOL MoveResultCursorHorizontally(ResultScreen *r, i32 len);
 
 static const char *g_AlphabetList = TH_KEYBOARD;
 
@@ -1516,7 +1516,7 @@ static void MoveResultCursor(ResultScreen *resultScreen, i32 length)
     }
 }
 
-static ZunBool MoveResultCursorHorizontally(ResultScreen *resultScreen, i32 length)
+static BOOL MoveResultCursorHorizontally(ResultScreen *resultScreen, i32 length)
 {
     if (WAS_PRESSED_REPEATING(TH_BUTTON_LEFT))
     {

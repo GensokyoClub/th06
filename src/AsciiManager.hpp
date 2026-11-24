@@ -50,9 +50,9 @@ struct AsciiManagerString
     Float2 scale;
     // If true, we are drawing the currently selected element of the MainMenu
     // class.
-    ZunBool isSelected;
+    BOOL isSelected;
     // If true, we are drawing an element of the Gui class.
-    ZunBool isGui;
+    BOOL isGui;
 };
 ZUN_ASSERT_TYPE(AsciiManagerString, 0x60, 4);
 
@@ -127,12 +127,12 @@ struct AsciiManager
         this->scale.y = y;
     }
 
-    void SetIsGuiMode(ZunBool isGui)
+    void SetIsGuiMode(BOOL isGui)
     {
         this->isGui = isGui;
     }
 
-    void SetIsSelected(ZunBool isSelected)
+    void SetIsSelected(BOOL isSelected)
     {
         this->isSelected = isSelected;
     }
@@ -144,10 +144,10 @@ struct AsciiManager
     D3DCOLOR color;
     Float2 scale;
     // If true, we are drawing an element of the Gui class.
-    ZunBool isGui;
+    BOOL isGui;
     // If true, we are drawing the currently selected element of the MainMenu
     // class.
-    ZunBool isSelected;
+    BOOL isSelected;
     i32 nextScorePopup;
     i32 nextStarPopup;
     unreferenced_fields(0x4);

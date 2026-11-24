@@ -4,7 +4,7 @@
 #include "EclManager.hpp"
 #include "Effect.hpp"
 #include "SoundPlayer.hpp"
-#include "ZunBool.hpp"
+
 #include "ZunResult.hpp"
 #include "decomp.hpp"
 #include <Windows.h>
@@ -177,8 +177,8 @@ struct Enemy
     }
 
     void ClampPos();
-    ZunBool HandleLifeCallback();
-    ZunBool HandleTimerCallback();
+    BOOL HandleLifeCallback();
+    BOOL HandleTimerCallback();
     void Despawn();
 
     f32 LifePercent()

@@ -1,7 +1,7 @@
 #pragma once
 #include "AnmVm.hpp"
 #include "ReplayData.hpp"
-#include "ZunBool.hpp"
+
 #include "ZunResult.hpp"
 #include "decomp.hpp"
 
@@ -13,7 +13,7 @@
 
 namespace th06
 {
-ZunResult MainMenu_RegisterChain(ZunBool isDemo);
+ZunResult MainMenu_RegisterChain(BOOL isDemo);
 enum MenuState
 {
     STATE_STARTUP,
@@ -47,13 +47,13 @@ struct MainMenu
 {
     ZunResult BeginStartup();
     ZunResult DrawStartMenu();
-    ZunBool OnUpdateOptionsMenu();
+    BOOL OnUpdateOptionsMenu();
     ZunResult DrawReplayMenu();
     ZunResult ChoosePracticeLevel();
-    ZunBool WeirdSecondInputCheck();
+    BOOL WeirdSecondInputCheck();
     void ColorMenuItem(AnmVm *, i32, i32, i32);
 
-    ZunBool ReplayHandling();
+    BOOL ReplayHandling();
 
 #if BUILT_SINCE(102)
     AnmVm vm[122];

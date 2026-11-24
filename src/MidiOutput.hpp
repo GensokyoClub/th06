@@ -1,5 +1,5 @@
 #pragma once
-#include "ZunBool.hpp"
+
 #include "ZunResult.hpp"
 #include "decomp.hpp"
 #include <Windows.h>
@@ -34,11 +34,11 @@ class MidiDevice
     ~MidiDevice();
 
     ZunResult Close();
-    ZunBool OpenDevice(u32 uDeviceId);
-    ZunBool SendShortMsg(DWORD msg);
-    ZunBool SendShortMsg(u8 midiStatus, u8 firstByte, u8 secondByte);
+    BOOL OpenDevice(u32 uDeviceId);
+    BOOL SendShortMsg(DWORD msg);
+    BOOL SendShortMsg(u8 midiStatus, u8 firstByte, u8 secondByte);
     void GetDeviceName(u32 uDeviceId, char *name);
-    ZunBool SendLongMsg(LPMIDIHDR pmh);
+    BOOL SendLongMsg(LPMIDIHDR pmh);
 
     HMIDIOUT handle;
 
@@ -123,7 +123,7 @@ class MidiOutput : MidiTimer
     u32 unk2d4;
     u32 unk2d8;
     u32 unk2dc;
-    ZunBool fadeOutFlag;
+    BOOL fadeOutFlag;
     i32 fadeOutInterval;
     i32 fadeOutElapsedMS;
     i32 loopTempo;

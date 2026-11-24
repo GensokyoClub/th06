@@ -124,7 +124,7 @@ ZunResult ParseCatk(ScoreDat *scoreDat, Catk *catk);
 ZunResult ParseClrd(ScoreDat *scoreDat, Clrd *out);
 ZunResult ParsePscr(ScoreDat *scoreDat, Pscr *out);
 
-ZunResult ResultScreen_RegisterChain(ZunBool unk);
+ZunResult ResultScreen_RegisterChain(BOOL unk);
 struct ScoreDat
 {
     u8 xorseed[2];

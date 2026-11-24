@@ -1,5 +1,5 @@
 #pragma once
-#include "ZunBool.hpp"
+
 #include "ZunResult.hpp"
 #include "decomp.hpp"
 #include <Windows.h>
@@ -28,16 +28,16 @@ struct Gui
     ZunResult LoadMsg(const char *path);
     void FreeMsgFile();
 
-    ZunBool IsStageFinished();
+    BOOL IsStageFinished();
 
     void UpdateStageElements();
-    ZunBool IsMsgActive();
+    BOOL IsMsgActive();
 
     void DrawStageElements();
     void DrawGameScene();
 
     void MsgRead(i32 msgId);
-    ZunBool MsgWait();
+    BOOL MsgWait();
 
     void ShowSpellcard(i32 spellcardSprite, const char *spellcardName);
     void ShowSpellcardBonus(u32 spellcardScore);
@@ -45,7 +45,7 @@ struct Gui
     void ShowBonusScore(u32 bonusScore);
     void EndEnemySpellcard();
     void EndPlayerSpellcard();
-    ZunBool IsDialogueSkippable();
+    BOOL IsDialogueSkippable();
 
     void ShowFullPowerMode(i32 fmtArg);
 

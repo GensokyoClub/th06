@@ -102,7 +102,7 @@ ZunResult Ending::ParseEndFile()
 {
     char textBuffer[38];
 
-    ZunBool firstLineDisplayed = false;
+    BOOL firstLineDisplayed = false;
     i32 charactersRead = 0;
 
     memset(textBuffer, 0, sizeof(textBuffer));

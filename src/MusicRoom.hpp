@@ -1,7 +1,7 @@
 #pragma once
 #include "AnmVm.hpp"
 #include "Chain.hpp"
-#include "ZunBool.hpp"
+
 #include "ZunResult.hpp"
 #include "decomp.hpp"
 
@@ -28,13 +28,13 @@ struct MusicRoom
         memset(this, 0, sizeof(MusicRoom));
     }
 
-    ZunBool ProcessInput();
+    BOOL ProcessInput();
     ZunResult CheckInputEnable();
 
     ChainElem *calc_chain;
     ChainElem *draw_chain;
     i32 waitFramesCount;
-    ZunBool enableInput;
+    BOOL enableInput;
     i32 cursor;
     i32 selectedSongIndex;
     i32 listingOffset;

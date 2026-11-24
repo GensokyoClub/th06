@@ -224,7 +224,7 @@ struct AnmVm : AnmVmBase
         this->spriteId = -1;
     }
 
-    ZunBool IsVisible()
+    BOOL IsVisible()
     {
         return this->flags.isVisible;
     }
@@ -234,7 +234,7 @@ struct AnmVm : AnmVmBase
         this->flags.isVisible = false;
     }
 
-    ZunBool IsStopped()
+    BOOL IsStopped()
     {
         return this->flags.isStopped;
     }

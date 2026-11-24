@@ -581,8 +581,8 @@ static DWORD WINAPI SoundPlayer_BackgroundMusicPlayerThread(LPVOID lpThreadParam
 {
     DWORD waitObj;
     MSG msg;
-    ZunBool stopped;
-    ZunBool looped;
+    BOOL stopped;
+    BOOL looped;
     LPVOID lpThreadParameterCopy;
     HRESULT res;
 

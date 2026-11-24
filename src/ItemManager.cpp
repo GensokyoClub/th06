@@ -99,7 +99,7 @@ void ItemManager::OnUpdate()
     i32 i;
     Item *curItem;
     f32 playerAngle;
-    ZunBool itemAcquired;
+    BOOL itemAcquired;
 
     curItem = &this->items[0];
 

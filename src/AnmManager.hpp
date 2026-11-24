@@ -159,7 +159,7 @@ struct AnmManager
         }
     }
 
-    ZunBool ShouldDraw(AnmVm *vm)
+    BOOL ShouldDraw(AnmVm *vm)
     {
         if (vm->sprite == NULL)
         {
@@ -264,7 +264,7 @@ struct AnmManager
 
 #define RENDER_VERTICES_DEFAULT false
 #define RENDER_VERTICES_ROUND_INPUTS true
-    ZunResult DrawSprite(AnmVm *vm, ZunBool roundVertices);
+    ZunResult DrawSprite(AnmVm *vm, BOOL roundVertices);
 
     AnmLoadedSprite sprites[MAX_ANM_SPRITES];
     unused_field(AnmVm);

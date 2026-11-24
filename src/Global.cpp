@@ -335,7 +335,7 @@ ChainElem *Chain::CreateElem(ChainCallback callback)
 void Chain::Cut(ChainElem *to_remove)
 {
 #if BUILT_SINCE(013a) || BUILD_VERSION == BUILD_VERSION_013
-    ZunBool isDrawChain = false;
+    BOOL isDrawChain = false;
 #endif
 
     if (to_remove == NULL)
@@ -994,7 +994,7 @@ Pbg3Archive **g_Pbg3ArcList;
 
 #pragma var_order(pbg3Idx, entryname, entryIdx, fsize, data, file)
 #if BUILT_SINCE(100)
-u8 *FileSystem::OpenPath(const char *filepath, ZunBool isExternalResource)
+u8 *FileSystem::OpenPath(const char *filepath, BOOL isExternalResource)
 #else
 u8 *FileSystem::OpenPath(const char *filepath)
 #endif

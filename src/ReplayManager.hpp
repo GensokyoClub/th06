@@ -1,14 +1,14 @@
 #pragma once
 #include "Chain.hpp"
 #include "ReplayData.hpp"
-#include "ZunBool.hpp"
+
 #include "decomp.hpp"
 
 namespace th06
 {
 #define REPLAY_MAGIC "T6RP"
 
-ZunResult ReplayManager_RegisterChain(ZunBool isDemo, const char *replayFile);
+ZunResult ReplayManager_RegisterChain(BOOL isDemo, const char *replayFile);
 
 void StopRecordingReplay();
 void SaveReplay(const char *replayPath, const char *replayName);
@@ -23,14 +23,14 @@ struct ReplayManager
     {
     }
 
-    ZunBool IsDemo()
+    BOOL IsDemo()
     {
         return this->isDemo;
     }
 
     i32 frameId;
     ReplayData *replayData;
-    ZunBool isDemo;
+    BOOL isDemo;
     const char *replayFile;
     unreferenced_fields(0x34);
     u16 unk44;

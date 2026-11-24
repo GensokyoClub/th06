@@ -946,7 +946,8 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
 
         laserSize.y = curLaser->width / 2.0f;
         laserSize.x = curLaser->endOffset - curLaser->startOffset;
-        laserCenter[0] = (curLaser->endOffset - curLaser->startOffset) / 2.0f + curLaser->startOffset + curLaser->pos.x;
+        laserCenter[0] =
+            curLaser->pos.x + (curLaser->startOffset + (curLaser->endOffset - curLaser->startOffset) / 2.0f);
         laserCenter[1] = curLaser->pos.y;
         curLaser->vm.scaleX = curLaser->width / curLaser->vm.sprite->width;
         size = curLaser->endOffset - curLaser->startOffset;

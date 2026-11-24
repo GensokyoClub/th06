@@ -41,7 +41,7 @@ ZunResult LoadReplayMenu(MainMenu *menu);
 ZunResult LoadDiffCharSelect(MainMenu *s);
 
 static CursorMovement MoveCursor(MainMenu *menu, i32 menuLength);
-static void SwapMapping(MainMenu *menu, ControllerButton btnPressed, ControllerButton oldMapping, ZunBool unk);
+static void SwapMapping(MainMenu *menu, ControllerButton btnPressed, ControllerButton oldMapping, BOOL unk);
 static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor, D3DCOLOR activeItemColor, D3DCOLOR inactiveItemColor,
                          i32 sprite);
 
@@ -984,7 +984,7 @@ static CursorMovement MoveCursor(MainMenu *menu, i32 menuLength)
     return CURSOR_DONT_MOVE;
 }
 
-static void SwapMapping(MainMenu *menu, ControllerButton btnPressed, ControllerButton oldMapping, ZunBool unk)
+static void SwapMapping(MainMenu *menu, ControllerButton btnPressed, ControllerButton oldMapping, BOOL unk)
 {
     if (!unk && menu->controlMapping.shootButton == btnPressed)
     {
@@ -1093,7 +1093,7 @@ ZunResult MainMenu::BeginStartup()
     return ZUN_SUCCESS;
 }
 
-ZunBool MainMenu::WeirdSecondInputCheck()
+BOOL MainMenu::WeirdSecondInputCheck()
 {
     if (this->stateTimer < 30)
     {
@@ -1314,7 +1314,7 @@ ZunResult MainMenu::DrawStartMenu()
 }
 
 #pragma var_order(anmVm, i, replayFileHandle, replayFileIdx, replayData, replayFilePath, replayFileInfo)
-ZunBool MainMenu::ReplayHandling()
+BOOL MainMenu::ReplayHandling()
 {
     AnmVm *anmVm;
     i32 i;
@@ -1584,7 +1584,7 @@ ZunResult MainMenu::DrawReplayMenu()
         }
         else
         {
-            ZunBool isSelected = (i == this->chosenReplay);
+            BOOL isSelected = (i == this->chosenReplay);
             g_AsciiManager.SetIsSelected(isSelected);
 
             if (i == this->chosenReplay)
@@ -1635,7 +1635,7 @@ ZunResult MainMenu::DrawReplayMenu()
             }
             else
             {
-                ZunBool isSelected = (i == this->cursor);
+                BOOL isSelected = (i == this->cursor);
                 g_AsciiManager.SetIsSelected(isSelected);
                 if (i == this->cursor)
                 {
@@ -1724,7 +1724,7 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelect
 }
 
 #pragma var_order(i, optionsVm)
-ZunBool MainMenu::OnUpdateOptionsMenu()
+BOOL MainMenu::OnUpdateOptionsMenu()
 {
     AnmVm *optionsVm;
     i32 i;
@@ -2333,7 +2333,7 @@ static ZunResult MainMenu_DeletedCallback(MainMenu *menu)
     return ZUN_SUCCESS;
 }
 
-ZunResult MainMenu_RegisterChain(ZunBool isDemo)
+ZunResult MainMenu_RegisterChain(BOOL isDemo)
 {
     MainMenu *menu = &g_MainMenu;
 

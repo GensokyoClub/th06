@@ -189,7 +189,7 @@ void AsciiManager::DrawStrings()
     u8 *text;
     D3DXVECTOR3 unusedVec3; // NOTE: Not padding, IN calls default constructor
 
-    ZunBool guiString = TRUE;
+    BOOL guiString = TRUE;
     AsciiManagerString *string = this->strings;
     this->fontVm.flags.isVisible = true;
     this->fontVm.flags.anchor = AnmVmAnchor_TopLeft;

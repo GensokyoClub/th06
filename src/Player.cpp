@@ -354,7 +354,7 @@ static ZunResult UpdateFireBulletsTimer(Player *p)
 }
 
 #pragma var_order(bullet, i, enemyBottomRight, bulletBottomRight, enemyTopLeft, damage, bulletTopLeft)
-i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPosition, D3DXVECTOR3 *enemySize, ZunBool *hitByBomb)
+i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPosition, D3DXVECTOR3 *enemySize, BOOL *hitByBomb)
 {
     D3DXVECTOR3 bulletTopLeft;
     i32 damage;
@@ -576,7 +576,7 @@ i32 Player::CheckGraze(D3DXVECTOR3 *position, D3DXVECTOR3 *size)
 }
 
 #pragma var_order(itemBottomRight, itemTopLeft)
-ZunBool Player::CalcItemBoxCollision(D3DXVECTOR3 *itemPosition, D3DXVECTOR3 *itemSize)
+BOOL Player::CalcItemBoxCollision(D3DXVECTOR3 *itemPosition, D3DXVECTOR3 *itemSize)
 {
     if (this->playerState != PLAYER_STATE_ALIVE && this->playerState != PLAYER_STATE_INVULNERABLE)
     {
@@ -602,7 +602,7 @@ ZunBool Player::CalcItemBoxCollision(D3DXVECTOR3 *itemPosition, D3DXVECTOR3 *ite
 
 #pragma var_order(playerRelativeTopLeft, laserBottomRight, laserTopLeft, playerRelativeBottomRight)
 i32 Player::CalcLaserHitbox(D3DXVECTOR3 *laserCenter, D3DXVECTOR3 *laserSize, D3DXVECTOR3 *rotation, f32 angle,
-                            ZunBool canGraze)
+                            BOOL canGraze)
 {
     D3DXVECTOR3 laserTopLeft;
     D3DXVECTOR3 laserBottomRight;
@@ -1088,7 +1088,7 @@ static ChainCallbackResult Player_OnUpdate(Player *p)
             float scaleFactor = (f32)p->stateTimer / 30.0f;
             p->playerSprite.scaleY = 3.0f * scaleFactor + 1.0f;
             p->playerSprite.scaleX = 1.0f - 1.0f * scaleFactor;
-            p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, (u32)RAMP_DOWN(255.0f, (f32)p->stateTimer, 30.0f));
+            p->playerSprite.color = COLOR_SET_ALPHA(COLOR_WHITE, (u32)(RAMP_DOWN(255.0f, (f32)p->stateTimer, 30.0f)));
             p->playerSprite.flags.blendMode = AnmBlendMode_Additive;
             p->previousSpeed.x = 0.0f;
             p->previousSpeed.y = 0.0f;

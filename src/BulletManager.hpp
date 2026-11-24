@@ -1,6 +1,6 @@
 #pragma once
 #include "AnmVm.hpp"
-#include "ZunBool.hpp"
+
 #include "ZunResult.hpp"
 #include "decomp.hpp"
 
@@ -202,7 +202,7 @@ struct Laser
     i32 duration;
     i32 despawnDuration;
     i32 hitboxEndDelay;
-    ZunBool inUse;
+    BOOL inUse;
     ZunTimer timer;
     u16 flags;
     i16 color;
@@ -225,12 +225,12 @@ struct BulletManager
 {
     BulletManager();
 
-    void DespawnBullets(ZunBool spawnCancelItems);
+    void DespawnBullets(BOOL spawnCancelItems);
     void InitializeToZero();
 
     void CancelAllBullets();
 
-    i32 DespawnBulletsForScore(i32 maxBonusScore, ZunBool spawnCancelItems);
+    i32 DespawnBulletsForScore(i32 maxBonusScore, BOOL spawnCancelItems);
 
     ZunResult SpawnBulletPattern(EnemyShooter *bulletProps);
     Laser *SpawnLaserPattern(EnemyShooter *bulletProps);

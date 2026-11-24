@@ -10,7 +10,7 @@ namespace th06
 {
 struct RunningSpellcardInfo
 {
-    ZunBool isCapturing;
+    BOOL isCapturing;
     u32 ticksActive;
     i32 captureScore;
     u32 id;

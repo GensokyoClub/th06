@@ -1,6 +1,6 @@
 #pragma once
 #include "Supervisor.hpp"
-#include "ZunBool.hpp"
+
 #include "ZunResult.hpp"
 #include "decomp.hpp"
 
@@ -17,27 +17,27 @@ struct ZunTimer
         this->Initialize();
     }
 
-    ZunBool operator==(i32 time)
+    BOOL operator==(i32 time)
     {
         return this->current == time;
     }
 
-    ZunBool operator>=(i32 time)
+    BOOL operator>=(i32 time)
     {
         return this->current >= time;
     }
 
-    ZunBool operator>(i32 time)
+    BOOL operator>(i32 time)
     {
         return this->current > time;
     }
 
-    ZunBool operator<(i32 time)
+    BOOL operator<(i32 time)
     {
         return this->current < time;
     }
 
-    ZunBool operator<=(i32 time)
+    BOOL operator<=(i32 time)
     {
         return this->current <= time;
     }
@@ -96,7 +96,7 @@ struct ZunTimer
         return this->current;
     }
 
-    ZunBool HasTicked()
+    BOOL HasTicked()
     {
         return this->current != this->previous;
     }

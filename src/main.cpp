@@ -18,9 +18,9 @@ struct GameWindow
     RenderResult Render();
 
     HWND window;
-    ZunBool isAppClosing;
-    ZunBool isAppActive;
-    ZunBool showCursor;
+    BOOL isAppClosing;
+    BOOL isAppActive;
+    BOOL showCursor;
     u8 curFrame;
     alignment_padding(0x3);
     BOOL screenSaveActive;
@@ -776,7 +776,7 @@ ZunResult CheckForRunningGameInstance()
 #if BUILT_BEFORE(102g)
 // Adapted from the DirectX 8 SDK's getdxver sample (dxver.cpp). Returns true when DirectX 8 is missing;
 // 1.02f is the only build that doesn't inline it, so its code shows this form.
-ZunBool CheckDirectXVersion()
+BOOL CheckDirectXVersion()
 {
     DWORD dwDXVersion = GetDXVersion();
 

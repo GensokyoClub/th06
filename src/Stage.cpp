@@ -447,7 +447,7 @@ ZunResult Stage::UpdateObjects()
 ZunResult Stage::RenderObjects(i32 layer)
 {
     D3DXVECTOR3 projectSrc;
-    ZunBool didDraw;
+    BOOL didDraw;
     StdRawQuadBasic *curQuad;
     D3DXVECTOR3 quadPos;
     D3DXVECTOR3 quadScaledPos;

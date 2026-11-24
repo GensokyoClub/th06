@@ -495,7 +495,7 @@ void AnmManager::SetRenderStateForVm(AnmVm *vm)
     }
 }
 
-ZunResult AnmManager::DrawSprite(AnmVm *vm, ZunBool roundVertices)
+ZunResult AnmManager::DrawSprite(AnmVm *vm, BOOL roundVertices)
 {
     static const f32 g_ZeroPointFive = 0.5f;
     if (roundVertices)

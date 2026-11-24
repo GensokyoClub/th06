@@ -64,7 +64,7 @@ struct GameManager
 {
     GameManager();
 
-    ZunBool HasExtraUnlocked(i32 character, i32 shottype)
+    BOOL HasExtraUnlocked(i32 character, i32 shottype)
     {
         return this->clrd[shottype + character * SHOTTYPES_PER_CHARACTER].stagesClearedWithoutContinues[NORMAL] ==
                    ALL_CLEARED ||
@@ -85,7 +85,7 @@ struct GameManager
 
     void IncreaseSubrank(i32 amount);
     void DecreaseSubrank(i32 amount);
-    ZunBool IsInBounds(f32 x, f32 y, f32 width, f32 height);
+    BOOL IsInBounds(f32 x, f32 y, f32 width, f32 height);
 
     void AddScore(i32 points)
     {
@@ -109,7 +109,7 @@ struct GameManager
     i32 difficulty;
     i32 grazeInStage;
     i32 grazeInTotal;
-    ZunBool isInReplay;
+    BOOL isInReplay;
     i32 deaths;
     i32 bombsUsed;
     i32 spellcardsCaptured;

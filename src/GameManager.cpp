@@ -34,7 +34,7 @@ ChainElem g_GameManagerOnDrawChain;
 
 #define MAX_LIVES 8
 
-ZunBool GameManager::IsInBounds(f32 x, f32 y, f32 width, f32 height)
+BOOL GameManager::IsInBounds(f32 x, f32 y, f32 width, f32 height)
 {
     if (width / 2.0f + x < GAME_REGION_LEFT)
     {
@@ -87,7 +87,7 @@ ChainCallbackResult GameManager_OnUpdate(GameManager *gameManager)
 #endif
     }
 
-    gameManager->isInMenu = (ZunBool)(!gameManager->isInRetryMenu && !gameManager->isInGameMenu);
+    gameManager->isInMenu = (BOOL)(!gameManager->isInRetryMenu && !gameManager->isInGameMenu);
 
     g_Supervisor.viewport.X = gameManager->gameRegionScreenPos.x;
     g_Supervisor.viewport.Y = gameManager->gameRegionScreenPos.y;
@@ -213,7 +213,7 @@ static ZunResult GameManager_AddedCallback(GameManager *mgr)
     };
 
 #if BUILT_SINCE(102g)
-    ZunBool failedToLoadReplay = false;
+    BOOL failedToLoadReplay = false;
 #endif
     g_Supervisor.d3dDevice->ResourceManagerDiscardBytes(0);
 

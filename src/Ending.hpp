@@ -70,7 +70,7 @@ struct Ending
     f32 backgroundScrollSpeed;
     AnmVm vms[END_VM_COUNT];
     u8 *endFileData;
-    ZunBool hasSeenEnding;
+    BOOL hasSeenEnding;
     ZunTimer scriptTime;
     ZunTimer pauseTimer;
     ZunTimer clearTimer;

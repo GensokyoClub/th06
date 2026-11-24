@@ -4,7 +4,7 @@
 
 #include "AnmVm.hpp"
 #include "Chain.hpp"
-#include "ZunBool.hpp"
+
 #include "ZunResult.hpp"
 #include "decomp.hpp"
 
@@ -112,7 +112,7 @@ typedef void (*BombCallback)(Player *);
 
 struct BombInfo
 {
-    ZunBool isActive;
+    BOOL isActive;
     i32 duration;
     ZunTimer timer;
     BombCallback calc;
@@ -179,9 +179,9 @@ struct Player
     i32 CheckGraze(D3DXVECTOR3 *position, D3DXVECTOR3 *size);
     i32 CheckCollision(D3DXVECTOR3 *position, D3DXVECTOR3 *size);
     i32 CalcLaserHitbox(D3DXVECTOR3 *laserCenter, D3DXVECTOR3 *laserSize, D3DXVECTOR3 *rotation, f32 angle,
-                        ZunBool canGraze);
-    i32 CalcDamageToEnemy(D3DXVECTOR3 *enemyPos, D3DXVECTOR3 *enemySize, ZunBool *hitByBomb);
-    ZunBool CalcItemBoxCollision(D3DXVECTOR3 *itemPosition, D3DXVECTOR3 *itemSize);
+                        BOOL canGraze);
+    i32 CalcDamageToEnemy(D3DXVECTOR3 *enemyPos, D3DXVECTOR3 *enemySize, BOOL *hitByBomb);
+    BOOL CalcItemBoxCollision(D3DXVECTOR3 *itemPosition, D3DXVECTOR3 *itemSize);
     void ScoreGraze(D3DXVECTOR3 *grazedPosition);
     void Die();
 

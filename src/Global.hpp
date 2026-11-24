@@ -8,7 +8,6 @@
 extern DWORD GetDXVersion();
 
 #include "DebugPrint.hpp"
-#include "ZunBool.hpp"
 #include "ZunColor.hpp"
 #include "ZunMath.hpp"
 #include "ZunResult.hpp"
@@ -58,7 +57,7 @@ namespace th06
 
 ZunResult CheckForRunningGameInstance();
 #if BUILT_BEFORE(102g)
-ZunBool CheckDirectXVersion();
+BOOL CheckDirectXVersion();
 #endif
 
 f32 ReduceAngleAdd(f32 angle, f32 add);
@@ -69,9 +68,9 @@ void RotatePoint(D3DXVECTOR3 *outVector, D3DXVECTOR3 *point, f32 angle);
 
 #define ZUN_LERP(start, end, time) ((end - start) * time + start)
 
-#define RAMP_UP_RANGE(low, high, time, duration) (low + RAMP_UP(high, time, duration))
+#define RAMP_UP_RANGE(low, high, time, duration) low + RAMP_UP(high, time, duration)
 #define RAMP_UP(val, time, duration) ((time) * (val) / (duration))
-#define RAMP_DOWN_RANGE(high, low, time, duration) (high - RAMP_UP(low, time, duration))
+#define RAMP_DOWN_RANGE(high, low, time, duration) high - RAMP_UP(low, time, duration)
 #define RAMP_DOWN(val, time, duration) RAMP_DOWN_RANGE(val, val, time, duration)
 
 #define MULTIPLE_OF(val, mult) !((i32)(val) % (mult))
@@ -193,7 +192,7 @@ class ZunMemory
     }
 
   private:
-    ZunBool bRegistryInUse;
+    BOOL bRegistryInUse;
 };
 extern ZunMemory g_ZunMemoryMgr;
 
@@ -203,7 +202,7 @@ namespace FileSystem
 // This documents intent better than just true
 #define EXTERNAL_FILE true
 #if BUILT_SINCE(100)
-u8 *OpenPath(const char *filepath, ZunBool isExternalResource = false);
+u8 *OpenPath(const char *filepath, BOOL isExternalResource = false);
 #else
 // 0.08 tries the archives first, then falls back to a loose file.
 u8 *OpenPath(const char *filepath);

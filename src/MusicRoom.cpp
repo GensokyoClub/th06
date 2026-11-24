@@ -18,7 +18,7 @@ ZunResult MusicRoom::CheckInputEnable()
     return ZUN_SUCCESS;
 }
 
-ZunBool MusicRoom::ProcessInput()
+BOOL MusicRoom::ProcessInput()
 {
     // This variable is never used after this?
     i32 listPos = this->listingOffset;
@@ -111,7 +111,7 @@ ZunBool MusicRoom::ProcessInput()
 
 static ChainCallbackResult MusicRoom_OnUpdate(MusicRoom *musicRoom)
 {
-    ZunBool oldInputSetting = musicRoom->enableInput;
+    BOOL oldInputSetting = musicRoom->enableInput;
     for (;;)
     {
         switch (musicRoom->enableInput)

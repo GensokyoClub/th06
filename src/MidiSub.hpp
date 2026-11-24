@@ -1,5 +1,5 @@
 #pragma once
-#include "ZunBool.hpp"
+
 #include "decomp.hpp"
 #include <Windows.h>
 
@@ -74,7 +74,7 @@ enum MidiOpcode
 
 struct MidiTrack
 {
-    ZunBool play;
+    BOOL play;
     // Tick at which the next event is due.
     i32 count;
     u32 size;

@@ -248,7 +248,7 @@ static ZunResult ReplayManager_DeletedCallback(ReplayManager *mgr)
     return ZUN_SUCCESS;
 }
 
-ZunResult ReplayManager_RegisterChain(ZunBool isDemo, const char *replayFile)
+ZunResult ReplayManager_RegisterChain(BOOL isDemo, const char *replayFile)
 {
     if (g_Supervisor.framerateMultiplier < 0.99f && !isDemo)
     {

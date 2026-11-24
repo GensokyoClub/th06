@@ -400,7 +400,7 @@ u32 BulletManager::SpawnSingleBullet(EnemyShooter *bulletProps, i32 bulletIdx1, 
 }
 
 #pragma var_order(itemPos, i, sine, bullet, laser, cosine)
-void BulletManager::DespawnBullets(ZunBool spawnCancelItems)
+void BulletManager::DespawnBullets(BOOL spawnCancelItems)
 {
     i32 i;
     f32 sine;
@@ -465,7 +465,7 @@ void BulletManager::CancelAllBullets()
 }
 
 #pragma var_order(bulletScore, totalBonusScore, awardedBullets, i, sine, bullet, itemPos, laser, cosine)
-i32 BulletManager::DespawnBulletsForScore(i32 maxBonusScore, ZunBool spawnCancelItems)
+i32 BulletManager::DespawnBulletsForScore(i32 maxBonusScore, BOOL spawnCancelItems)
 {
     i32 i;
     f32 sine;

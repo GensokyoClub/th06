@@ -5,7 +5,7 @@
 
 #include "Chain.hpp"
 #include "Global.hpp"
-#include "ZunBool.hpp"
+
 #include "ZunResult.hpp"
 #include "decomp.hpp"
 #include "pbg3/Pbg3Archive.hpp"
@@ -138,8 +138,8 @@ struct Supervisor
         memset(this, 0, sizeof(Supervisor));
     }
 
-    ZunBool ReadMidiFile(u32 midiFileIdx, const char *path);
-    ZunBool PlayMidiFile(i32 midiFileIdx);
+    BOOL ReadMidiFile(u32 midiFileIdx, const char *path);
+    BOOL PlayMidiFile(i32 midiFileIdx);
     ZunResult PlayAudio(const char *path);
     ZunResult StopAudio();
     ZunResult SetupMidiPlayback(const char *path);
@@ -152,85 +152,85 @@ struct Supervisor
 
     void TickTimer(i32 *frames, f32 *subframes);
 
-    ZunBool IsForced60Fps()
+    BOOL IsForced60Fps()
     {
         return this->cfg.opts.force60Fps;
     }
 
-    ZunBool IsReferenceRasterizerMode()
+    BOOL IsReferenceRasterizerMode()
     {
         return this->cfg.opts.referenceRasterizerMode;
     }
 
-    ZunBool IsFogDisabled()
+    BOOL IsFogDisabled()
     {
         return this->cfg.opts.disableFog;
     }
 
-    ZunBool IsShadingDisabled()
+    BOOL IsShadingDisabled()
     {
         return this->cfg.opts.suppressUseOfGoroudShading;
     }
 
-    ZunBool IsVertexBufferDisabled()
+    BOOL IsVertexBufferDisabled()
     {
         return this->cfg.opts.dontUseVertexBuf;
     }
 
-    ZunBool Is16bitColorMode()
+    BOOL Is16bitColorMode()
     {
         return this->cfg.opts.force16bitColorMode;
     }
 
-    ZunBool IsMinimumGraphicsMode()
+    BOOL IsMinimumGraphicsMode()
     {
         return this->cfg.opts.displayMinimumGraphics;
     }
 
-    ZunBool IsDepthTestDisabled()
+    BOOL IsDepthTestDisabled()
     {
         return this->cfg.opts.disableDepthTest;
     }
 
-    ZunBool IsColorCompositingDisabled()
+    BOOL IsColorCompositingDisabled()
     {
         return this->cfg.opts.disableColorCompositing;
     }
 
-    ZunBool IsDInputDisabled()
+    BOOL IsDInputDisabled()
     {
         return this->cfg.opts.dontUseDirectInput;
     }
 
-    ZunBool ShouldForceBackbufferClear()
+    BOOL ShouldForceBackbufferClear()
     {
         return this->cfg.opts.clearBackBufferOnRefresh | this->cfg.opts.displayMinimumGraphics;
     }
 
-    ZunBool IsSoftwareTexturing()
+    BOOL IsSoftwareTexturing()
     {
         return this->cfg.opts.disableColorCompositing | this->cfg.opts.useSwTextureBlending;
     }
 
-    ZunBool IsHardwareBlendingDisabled()
+    BOOL IsHardwareBlendingDisabled()
     {
         return this->cfg.opts.useSwTextureBlending;
     }
 
 #if BUILT_SINCE(102f)
     // The later frame-pacing condition also checks vsyncEnabled, which earlier builds lack.
-    ZunBool ShouldRunAt60Fps()
+    BOOL ShouldRunAt60Fps()
     {
         return this->IsForced60Fps() && this->vsyncEnabled;
     }
 #endif
 
-    ZunBool IsWindowed()
+    BOOL IsWindowed()
     {
         return this->cfg.windowed;
     }
 
-    ZunBool IsNotLoadingNextStage()
+    BOOL IsNotLoadingNextStage()
     {
         return this->curState != SUPERVISOR_STATE_NEXT_STAGE;
     }
@@ -261,10 +261,10 @@ struct Supervisor
 
     unreferenced_fields(0x4);
     i32 forceRedrawFrames;
-    ZunBool isInEnding;
+    BOOL isInEnding;
 
 #if BUILT_SINCE(102f)
-    ZunBool vsyncEnabled;
+    BOOL vsyncEnabled;
 #endif
     i32 lastFrameTime;
     f32 gameSpeed;

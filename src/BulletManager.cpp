@@ -1138,8 +1138,8 @@ static void DrawBulletNoHwVertex(Bullet *bullet)
         break;
     }
 
-    anmVm->pos[0] = g_GameManager.gameRegionScreenPos.x + bullet->pos[0];
-    anmVm->pos[1] = g_GameManager.gameRegionScreenPos.y + bullet->pos[1];
+    anmVm->pos[0] = g_GameManager.gameRegionPosition.x + bullet->pos[0];
+    anmVm->pos[1] = g_GameManager.gameRegionPosition.y + bullet->pos[1];
     anmVm->pos[2] = 0.0f;
     anmVm->color = COLOR_COMBINE_ALPHA(COLOR_WHITE, anmVm->color);
 

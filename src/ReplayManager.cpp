@@ -61,7 +61,7 @@ static ChainCallbackResult ReplayManager_OnUpdateDemoHighPrio(ReplayManager *mgr
     {
         if (g_CountFramesInputsWereHeld >= 30)
         {
-            if (g_CountFramesInputsWereHeld % 8 == 0)
+            if (!(g_CountFramesInputsWereHeld % 8))
             {
                 g_IsEigthFrameInput = true;
             }
@@ -190,9 +190,9 @@ static ZunResult ReplayManager_AddedCallbackDemo(ReplayManager *mgr)
     if (mgr->replayData == NULL)
     {
 #if BUILT_SINCE(100)
-        mgr->replayData = (ReplayData *)FileSystem::OpenPath(mgr->replayFile, !g_GameManager.demoMode);
+        mgr->replayData = (ReplayData *)FileSystem::OpenPath(mgr->replayPath, !g_GameManager.demoMode);
 #else
-        mgr->replayData = (ReplayData *)FileSystem::OpenPath(mgr->replayFile);
+        mgr->replayData = (ReplayData *)FileSystem::OpenPath(mgr->replayPath);
 #endif
         if (ValidateReplayData(mgr->replayData, g_ReadFileSize) != ZUN_SUCCESS)
         {
@@ -248,7 +248,7 @@ static ZunResult ReplayManager_DeletedCallback(ReplayManager *mgr)
     return ZUN_SUCCESS;
 }
 
-ZunResult ReplayManager_RegisterChain(BOOL isDemo, const char *replayFile)
+ZunResult ReplayManager_RegisterChain(BOOL isDemo, const char *replayPath)
 {
     if (g_Supervisor.framerateMultiplier < 0.99f && !isDemo)
     {
@@ -261,7 +261,7 @@ ZunResult ReplayManager_RegisterChain(BOOL isDemo, const char *replayFile)
         g_ReplayManager = replayMgr;
         replayMgr->replayData = NULL;
         replayMgr->isDemo = isDemo;
-        replayMgr->replayFile = replayFile;
+        replayMgr->replayPath = replayPath;
         switch (isDemo)
         {
         case false:

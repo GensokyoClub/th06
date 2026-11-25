@@ -256,7 +256,7 @@ th06::MidiDevice::SendShortMsg
 th06::MidiDevice::SendLongMsg
 th06::MidiDevice::~MidiDevice
 th06::MidiOutput::MidiOutput
-th06::MidiOutput::LoadTracks
+th06::MidiOutput::PlayTracks
 th06::MidiOutput::ClearTracks
 th06::MidiOutput::ParseFile
 th06::MidiOutput::LoadFile
@@ -268,7 +268,7 @@ th06::MidiOutput::ReleaseFileData
 th06::MidiOutput::StopPlayback
 th06::MidiOutput::SetFadeOut
 th06::MidiOutput::ProcessMsg
-th06::MidiOutput::FadeOutSetVolume
+th06::MidiOutput::SetVolume
 th06::ConvWord
 th06::GetDeltaTime
 th06::MidiOutput::~MidiOutput

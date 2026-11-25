@@ -57,21 +57,23 @@ STATIC_ASSERT(MAX_POWER < LEVEL_UNREACHABLE);
 
 #define MAX_CONTINUE_CREDITS 3
 
-struct GameManager;
-
-extern GameManager g_GameManager;
 struct GameManager
 {
-    GameManager();
+    GameManager()
+    {
+        memset(this, 0, sizeof(GameManager));
+
+        this->gameRegionPosition.x = GAME_REGION_POS_X;
+        this->gameRegionPosition.y = GAME_REGION_POS_Y;
+        this->gameRegionSize.x = GAME_REGION_WIDTH;
+        this->gameRegionSize.y = GAME_REGION_HEIGHT;
+    }
 
     BOOL HasExtraUnlocked(i32 character, i32 shottype)
     {
-        return this->clrd[shottype + character * SHOTTYPES_PER_CHARACTER].stagesClearedWithoutContinues[NORMAL] ==
-                   ALL_CLEARED ||
-               this->clrd[shottype + character * SHOTTYPES_PER_CHARACTER].stagesClearedWithoutContinues[HARD] ==
-                   ALL_CLEARED ||
-               this->clrd[shottype + character * SHOTTYPES_PER_CHARACTER].stagesClearedWithoutContinues[LUNATIC] ==
-                   ALL_CLEARED;
+        return this->clrd[SHOTTYPE_ID(character, shottype)].stagesClearedWithoutContinues[NORMAL] == ALL_CLEARED ||
+               this->clrd[SHOTTYPE_ID(character, shottype)].stagesClearedWithoutContinues[HARD] == ALL_CLEARED ||
+               this->clrd[SHOTTYPE_ID(character, shottype)].stagesClearedWithoutContinues[LUNATIC] == ALL_CLEARED;
     }
     i32 GetLives()
     {
@@ -137,13 +139,13 @@ struct GameManager
     u8 demoMode;
     alignment_padding(0x3);
     i32 demoFrames;
-    char replayFile[256];
+    char replayPath[256];
     unused_array_field(char, 256);
     u16 randomSeed;
     u32 gameFrames;
     i32 currentStage;
     u32 menuCursorBackup;
-    Float2 gameRegionScreenPos;
+    Float2 gameRegionPosition;
     Float2 gameRegionSize;
     Float2 playerMovementAreaTopLeftPos;
     Float2 playerMovementAreaSize;
@@ -155,6 +157,9 @@ struct GameManager
     i32 minRank;
     i32 subRank;
 };
+ZUN_ASSERT_TYPE(GameManager, 0x1a80, 4);
+
+extern GameManager g_GameManager;
 
 #define CURRENT_SHOTTYPE() SHOTTYPE_ID(g_GameManager.character, g_GameManager.shotType)
 
@@ -163,5 +168,4 @@ void GameManager_CutChain();
 void SetupCamera(f32 extraRenderDistance);
 void SetupCameraStageBackground(f32 extraRenderDistance);
 
-ZUN_ASSERT_TYPE(GameManager, 0x1a80, 4);
 } // namespace th06

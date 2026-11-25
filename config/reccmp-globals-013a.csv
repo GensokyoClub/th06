@@ -264,7 +264,7 @@ th06::g_GuiExecChain,0x687C7C,global,32
 th06::g_GameManager,0x687CA0,global,6784
 th06::g_GameMgrCalcChainElem,0x689720,global,32
 th06::g_GameManagerOnDrawChain,0x689740,global,32
-th06::g_FocusButtonConflictState,0x689760,global,2
+th06::g_FocusTimer,0x689760,global,2
 th06::g_Rng,0x689764,global,8
 th06::g_Pbg3ArcList,0x68976C,global,4
 th06::g_CurFrameInput,0x689770,global,2

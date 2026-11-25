@@ -8,7 +8,7 @@ namespace th06
 {
 #define REPLAY_MAGIC "T6RP"
 
-ZunResult ReplayManager_RegisterChain(BOOL isDemo, const char *replayFile);
+ZunResult ReplayManager_RegisterChain(BOOL isDemo, const char *replayPath);
 
 void StopRecordingReplay();
 void SaveReplay(const char *replayPath, const char *replayName);
@@ -31,7 +31,7 @@ struct ReplayManager
     i32 frameId;
     ReplayData *replayData;
     BOOL isDemo;
-    const char *replayFile;
+    const char *replayPath;
     unreferenced_fields(0x34);
     u16 unk44;
     alignment_padding(0x2);

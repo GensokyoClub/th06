@@ -8,7 +8,7 @@
 
 namespace th06
 {
-struct RunningSpellcardInfo
+struct Spellcard
 {
     BOOL isCapturing;
     u32 ticksActive;
@@ -16,7 +16,7 @@ struct RunningSpellcardInfo
     u32 id;
     u32 usedBombTick;
 };
-ZUN_ASSERT_TYPE(RunningSpellcardInfo, 0x14, 4);
+ZUN_ASSERT_TYPE(Spellcard, 0x14, 4);
 
 #define MAX_ENEMY_COUNT 256
 #define MAX_BOSS_COUNT 8
@@ -38,7 +38,7 @@ struct EnemyManager
     u16 randomItemTableIndex;
     i32 enemyCount;
     unreferenced_fields(0x4);
-    RunningSpellcardInfo spellcardInfo;
+    Spellcard spellcard;
     unreferenced_fields(0x4);
     TimelineInstr *timelineInstr;
     ZunTimer timelineTime;

@@ -211,29 +211,29 @@ void BombReimuADraw(Player *player)
         }
 
         vm->pos = player->bomb.projectilePosition[i] + vm->offset;
-        vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
-        vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
+        vm->pos[0] += g_GameManager.gameRegionPosition.x;
+        vm->pos[1] += g_GameManager.gameRegionPosition.y;
         vm->pos[2] = 0.0f;
         g_AnmManager->Draw2D(vm);
         vm++;
 
         vm->pos = player->bomb.projectilePosition[i] + vm->offset;
-        vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
-        vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
+        vm->pos[0] += g_GameManager.gameRegionPosition.x;
+        vm->pos[1] += g_GameManager.gameRegionPosition.y;
         vm->pos[2] = 0.0f;
         g_AnmManager->Draw2D(vm);
         vm++;
 
         vm->pos = player->bomb.projectilePosition[i] + vm->offset;
-        vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
-        vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
+        vm->pos[0] += g_GameManager.gameRegionPosition.x;
+        vm->pos[1] += g_GameManager.gameRegionPosition.y;
         vm->pos[2] = 0.0f;
         g_AnmManager->Draw2D(vm);
         vm++;
 
         vm->pos = player->bomb.projectilePosition[i] + vm->offset;
-        vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
-        vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
+        vm->pos[0] += g_GameManager.gameRegionPosition.x;
+        vm->pos[1] += g_GameManager.gameRegionPosition.y;
         vm->pos[2] = 0.0f;
         g_AnmManager->Draw2D(vm);
         vm++;
@@ -324,8 +324,8 @@ void BombReimuBDraw(Player *player)
     for (i32 i = 0; i < REIMU_B_BOMB_PROJECTILES; i++, vm++)
     {
         vm->pos = player->bomb.projectilePosition[i] + vm->offset;
-        vm->pos.x += g_GameManager.gameRegionScreenPos.x;
-        vm->pos.y += g_GameManager.gameRegionScreenPos.y;
+        vm->pos.x += g_GameManager.gameRegionPosition.x;
+        vm->pos.y += g_GameManager.gameRegionPosition.y;
         vm->pos.z = 0.0f;
         g_AnmManager->Draw2DRotated(vm);
     }
@@ -402,8 +402,8 @@ void BombMarisaADraw(Player *player)
     for (i32 i = 0; i < MARISA_A_BOMB_PROJECTILES; i++)
     {
         vm->pos = player->bomb.projectilePosition[i];
-        vm->pos.x += g_GameManager.gameRegionScreenPos.x;
-        vm->pos.y += g_GameManager.gameRegionScreenPos.y;
+        vm->pos.x += g_GameManager.gameRegionPosition.x;
+        vm->pos.y += g_GameManager.gameRegionPosition.y;
         vm->pos.z = 0.0f;
         vm->scaleX = 3.2f;
         vm->scaleY = 3.2f;
@@ -511,8 +511,8 @@ void BombMarisaBDraw(Player *player)
         vm->pos.y += (sinf(angle) * vm->sprite->height * vm->scaleY) / 2.0f;
         angle = ZUN_HALF_PI - angle;
         vm->rotation.z = ReduceAngleAdd(angle, ZUN_PI);
-        vm->pos.x += g_GameManager.gameRegionScreenPos.x;
-        vm->pos.y += g_GameManager.gameRegionScreenPos.y;
+        vm->pos.x += g_GameManager.gameRegionPosition.x;
+        vm->pos.y += g_GameManager.gameRegionPosition.y;
         vm->pos.z = 0.0f;
         g_AnmManager->Draw2DRotated(vm);
         vm++;

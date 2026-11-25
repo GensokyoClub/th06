@@ -76,7 +76,7 @@ BOOL MusicRoom::ProcessInput()
             char lineCharBuffer[64];
             memset(lineCharBuffer, 0, sizeof(lineCharBuffer));
 
-            if (i % 2 == 0 || strlen(this->trackDescriptors[this->selectedSongIndex].description[i / 2]) > 32)
+            if (!(i % 2) || strlen(this->trackDescriptors[this->selectedSongIndex].description[i / 2]) > 32)
             {
                 memcpy(lineCharBuffer,
                        &this->trackDescriptors[this->selectedSongIndex].description[i / 2][(i % 2) * 32], 32);
@@ -141,7 +141,7 @@ static ChainCallbackResult MusicRoom_OnUpdate(MusicRoom *musicRoom)
     {
         musicRoom->waitFramesCount++;
     }
-    g_AnmManager->RunAnm(musicRoom->mainVm);
+    g_AnmManager->RunAnm(&musicRoom->mainVm[0]);
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }
 
@@ -156,7 +156,7 @@ static ChainCallbackResult MusicRoom_OnDraw(MusicRoom *musicRoom)
 
     g_AnmManager->ClearTexture();
     g_AnmManager->CopySurfaceToBackBuffer(0, 0, 0, 0, 0);
-    g_AnmManager->Draw2D(musicRoom->mainVm);
+    g_AnmManager->Draw2D(&musicRoom->mainVm[0]);
 
     // Draw the 10 songs in the song select window, and list indices
     for (i = musicRoom->listingOffset; i < musicRoom->listingOffset + 10; i++)
@@ -230,7 +230,7 @@ static ZunResult MusicRoom_AddedCallback(MusicRoom *musicRoom)
         return ZUN_ERROR;
     }
 
-    g_AnmManager->SetScript(musicRoom->mainVm, ANM_OFFSET_MUSIC00);
+    g_AnmManager->SetScript(&musicRoom->mainVm[0], ANM_OFFSET_MUSIC00);
     musicRoom->waitFramesCount = 0;
     currChar = (char *)FileSystem::OpenPath("data/musiccmt.txt");
     fileBase = currChar;
@@ -353,7 +353,7 @@ finishMusiccmtRead:
         char lineCharBuffer[64];
         memset(lineCharBuffer, 0, sizeof(lineCharBuffer));
 
-        if (i % 2 == 0 || strlen(musicRoom->trackDescriptors[musicRoom->selectedSongIndex].description[i / 2]) > 32)
+        if (!(i % 2) || strlen(musicRoom->trackDescriptors[musicRoom->selectedSongIndex].description[i / 2]) > 32)
         {
             memcpy(lineCharBuffer, &musicRoom->trackDescriptors[0].description[i / 2][(i % 2) * 32], 32);
         }
@@ -389,8 +389,8 @@ static ZunResult MusicRoom_DeletedCallback(MusicRoom *musicRoom)
     g_AnmManager->ReleaseAnm(ANM_FILE_MUSIC00);
     g_AnmManager->ReleaseAnm(ANM_FILE_MUSIC01);
     g_AnmManager->ReleaseAnm(ANM_FILE_MUSIC02);
-    g_FuncChain.Cut(musicRoom->draw_chain);
-    musicRoom->draw_chain = NULL;
+    g_FuncChain.Cut(musicRoom->drawChain);
+    musicRoom->drawChain = NULL;
 
     return ZUN_SUCCESS;
 }
@@ -401,19 +401,19 @@ ZunResult MusicRoom_RegisterChain()
     MusicRoom *musicRoom = &g_MusicRoom;
     memset(musicRoom, 0, sizeof(MusicRoom));
 
-    musicRoom->calc_chain = g_FuncChain.CreateElem((ChainCallback)MusicRoom_OnUpdate);
-    musicRoom->calc_chain->arg = musicRoom;
-    musicRoom->calc_chain->addedCallback = (ChainAddedCallback)MusicRoom_AddedCallback;
-    musicRoom->calc_chain->deletedCallback = (ChainDeletedCallback)MusicRoom_DeletedCallback;
+    musicRoom->calcChain = g_FuncChain.CreateElem((ChainCallback)MusicRoom_OnUpdate);
+    musicRoom->calcChain->arg = musicRoom;
+    musicRoom->calcChain->addedCallback = (ChainAddedCallback)MusicRoom_AddedCallback;
+    musicRoom->calcChain->deletedCallback = (ChainDeletedCallback)MusicRoom_DeletedCallback;
 
-    if (g_FuncChain.AddToCalcChain(musicRoom->calc_chain, TH_CHAIN_PRIO_CALC_MAINMENU) != ZUN_SUCCESS)
+    if (g_FuncChain.AddToCalcChain(musicRoom->calcChain, TH_CHAIN_PRIO_CALC_MAINMENU) != ZUN_SUCCESS)
     {
         return ZUN_ERROR;
     }
 
-    musicRoom->draw_chain = g_FuncChain.CreateElem((ChainCallback)MusicRoom_OnDraw);
-    musicRoom->draw_chain->arg = musicRoom;
-    g_FuncChain.AddToDrawChain(musicRoom->draw_chain, TH_CHAIN_PRIO_DRAW_MAINMENU);
+    musicRoom->drawChain = g_FuncChain.CreateElem((ChainCallback)MusicRoom_OnDraw);
+    musicRoom->drawChain->arg = musicRoom;
+    g_FuncChain.AddToDrawChain(musicRoom->drawChain, TH_CHAIN_PRIO_DRAW_MAINMENU);
 
     return ZUN_SUCCESS;
 }

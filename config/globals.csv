@@ -106,7 +106,7 @@ _g_GameManager,                         0x0069bca0
 _g_GameManagerCalcChain,                0x0069d720
 _g_GameManagerDrawChain,                0x0069d740
 _g_JoystickCaps,                        0x0069d760
-_g_FocusButtonConflictState,            0x0069d8f4
+_g_FocusTimer,            0x0069d8f4
 _g_Rng,                                 0x0069d8f8
 _g_Pbg3Archives,                        0x0069d900
 _g_CurFrameInput,                       0x0069d904

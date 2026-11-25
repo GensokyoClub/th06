@@ -25,7 +25,7 @@ ChainCallbackResult Supervisor_OnUpdate(Supervisor *s)
     {
         if (g_CountFramesInputsWereHeld >= 30)
         {
-            if (g_CountFramesInputsWereHeld % 8 == 0)
+            if (!(g_CountFramesInputsWereHeld % 8))
             {
                 g_IsEigthFrameInput = true;
             }

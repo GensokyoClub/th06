@@ -97,7 +97,7 @@ struct GuiImpl
     AnmVm enemySpellcardName;
     AnmVm bombSpellcardBackground;
     AnmVm enemySpellcardBackground;
-    AnmVm loadingScreenSprite;
+    AnmVm stageResultScreen;
     MsgVm msg;
     BOOL finishedStage;
     u32 stageScore;
@@ -113,7 +113,7 @@ ChainElem g_GuiDrawChain;
 
 BOOL Gui::IsStageFinished()
 {
-    return this->impl->loadingScreenSprite.spriteId >= 0 && this->impl->loadingScreenSprite.IsStopped();
+    return this->impl->stageResultScreen.spriteId >= 0 && this->impl->stageResultScreen.IsStopped();
 }
 
 void Gui::EndPlayerSpellcard()
@@ -339,7 +339,7 @@ ZunResult Gui::ActualAddedCallback()
         {
             return ZUN_ERROR;
         }
-        this->impl->loadingScreenSprite.spriteId = -1;
+        this->impl->stageResultScreen.spriteId = -1;
         switch (g_GameManager.character)
         {
         case REIMU:
@@ -380,8 +380,8 @@ ZunResult Gui::ActualAddedCallback()
     }
     else
     {
-        g_AnmManager->SetScript(&this->impl->loadingScreenSprite, ANM_SCRIPT_LOADING_SHOW_LOADING_SCREEN);
-        this->impl->loadingScreenSprite.pendingInterrupt = 1;
+        g_AnmManager->SetScript(&this->impl->stageResultScreen, ANM_SCRIPT_LOADING_SHOW_LOADING_SCREEN);
+        this->impl->stageResultScreen.pendingInterrupt = 1;
     }
     switch (g_GameManager.currentStage)
     {
@@ -710,7 +710,7 @@ ZunResult GuiImpl::RunMsg()
             this->finishedStage = TRUE;
             if (g_GameManager.currentStage < Stage6)
             {
-                g_AnmManager->SetScript(&this->loadingScreenSprite, ANM_SCRIPT_LOADING_SHOW_LOADING_SCREEN);
+                g_AnmManager->SetScript(&this->stageResultScreen, ANM_SCRIPT_LOADING_SHOW_LOADING_SCREEN);
             }
             else
             {
@@ -813,17 +813,17 @@ ZunResult GuiImpl::DrawDialogue()
     }
     VertexDiffuseXyzrwh vertices[4];
     vertices[0].position = D3DXVECTOR3(
-        g_GameManager.gameRegionScreenPos.x + (g_GameManager.gameRegionSize.x - 256.0f) / 2.0f - 16.0f, 384.0f, 0.0f);
+        g_GameManager.gameRegionPosition.x + (g_GameManager.gameRegionSize.x - 256.0f) / 2.0f - 16.0f, 384.0f, 0.0f);
 
-    vertices[1].position = D3DXVECTOR3(g_GameManager.gameRegionScreenPos.x +
+    vertices[1].position = D3DXVECTOR3(g_GameManager.gameRegionPosition.x +
                                            (g_GameManager.gameRegionSize.x - 256.0f) / 2.0f + 256.0f + 16.0f,
                                        384.0f, 0.0f);
 
     vertices[2].position =
-        D3DXVECTOR3(g_GameManager.gameRegionScreenPos.x + (g_GameManager.gameRegionSize.x - 256.0f) / 2.0f - 16.0f,
+        D3DXVECTOR3(g_GameManager.gameRegionPosition.x + (g_GameManager.gameRegionSize.x - 256.0f) / 2.0f - 16.0f,
                     384.0f + dialogueBoxHeight, 0.0f);
 
-    vertices[3].position = D3DXVECTOR3(g_GameManager.gameRegionScreenPos.x +
+    vertices[3].position = D3DXVECTOR3(g_GameManager.gameRegionPosition.x +
                                            (g_GameManager.gameRegionSize.x - 256.0f) / 2.0f + 256.0f + 16.0f,
                                        384.0f + dialogueBoxHeight, 0.0f);
 
@@ -960,10 +960,10 @@ void Gui::UpdateStageElements()
     g_AnmManager->RunAnm(&this->impl->bombSpellcardName);
     g_AnmManager->RunAnm(&this->impl->enemySpellcardPortrait);
     g_AnmManager->RunAnm(&this->impl->enemySpellcardName);
-    if (this->impl->loadingScreenSprite.spriteId >= 0 &&
-        g_AnmManager->RunAnm(&this->impl->loadingScreenSprite) != SCRIPT_RUNNING)
+    if (this->impl->stageResultScreen.spriteId >= 0 &&
+        g_AnmManager->RunAnm(&this->impl->stageResultScreen) != SCRIPT_RUNNING)
     {
-        this->impl->loadingScreenSprite.spriteId = -1;
+        this->impl->stageResultScreen.spriteId = -1;
     }
     if (this->impl->bonusScore.isShown)
     {
@@ -1384,15 +1384,15 @@ void Gui::DrawStageElements()
         g_AnmManager->Draw2D(&this->impl->enemySpellcardBackground);
         g_AnmManager->Draw2D(&this->impl->enemySpellcardName);
     }
-    if (this->impl->loadingScreenSprite.spriteId >= 0)
+    if (this->impl->stageResultScreen.spriteId >= 0)
     {
-        g_Supervisor.viewport.X = g_GameManager.gameRegionScreenPos.x;
-        g_Supervisor.viewport.Y = g_GameManager.gameRegionScreenPos.y;
+        g_Supervisor.viewport.X = g_GameManager.gameRegionPosition.x;
+        g_Supervisor.viewport.Y = g_GameManager.gameRegionPosition.y;
         g_Supervisor.viewport.Width = g_GameManager.gameRegionSize.x;
         g_Supervisor.viewport.Height = g_GameManager.gameRegionSize.y;
 
         g_Supervisor.d3dDevice->SetViewport(&g_Supervisor.viewport);
-        g_AnmManager->Draw2D(&this->impl->loadingScreenSprite);
+        g_AnmManager->Draw2D(&this->impl->stageResultScreen);
     }
 }
 

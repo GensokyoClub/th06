@@ -259,14 +259,14 @@ th06::MidiOutput::ReleaseFileData,0x422070,0x3c,__thiscall,,void,MidiOutput*,u32
 th06::MidiOutput::ClearTracks,0x4220b0,0x83,__thiscall,,void,MidiOutput*
 th06::MidiOutput::ParseFile,0x422140,0x231,__thiscall,,ZunResult,MidiOutput*,i32
 th06::MidiOutput::LoadFile,0x422380,0x3a,__thiscall,,ZunResult,MidiOutput*,char*
-th06::MidiOutput::LoadTracks,0x4223c0,0xcf,__thiscall,,void,MidiOutput*
+th06::MidiOutput::PlayTracks,0x4223c0,0xcf,__thiscall,,void,MidiOutput*
 th06::MidiOutput::Play,0x422490,0x44,__thiscall,,ZunResult,MidiOutput*
 th06::MidiOutput::StopPlayback,0x4224e0,0x7c,__thiscall,,ZunResult,MidiOutput*
 th06::MidiOutput::UnprepareHeader,0x422560,0xc7,__thiscall,,ZunResult,MidiOutput*,midihdr_tag*
 th06::MidiOutput::SetFadeOut,0x422630,0x4f,__thiscall,,u32,MidiOutput*,u32
 th06::MidiOutput::OnTimerElapsed,0x422680,0x27b,__thiscall,,void,MidiOutput*
 th06::MidiOutput::ProcessMsg,0x422900,0x7ff,__thiscall,,void,MidiOutput*,MidiTrack*
-th06::MidiOutput::FadeOutSetVolume,0x423260,0xce,__thiscall,,void,MidiOutput*,i32
+th06::MidiOutput::SetVolume,0x423260,0xce,__thiscall,,void,MidiOutput*,i32
 th06::AnmManager::~AnmManager,0x423330,0xb,__thiscall,,void,AnmManager*
 th06::Supervisor_OnUpdate,0x42333b,0x44a,__stdcall,,ChainCallbackResult,Supervisor*
 th06::Supervisor_OnDraw,0x423785,0x7c,__stdcall,,ChainCallbackResult,Supervisor*

@@ -13,7 +13,6 @@
 
 namespace th06
 {
-ZunResult MainMenu_RegisterChain(BOOL isDemo);
 enum MenuState
 {
     STATE_STARTUP,
@@ -82,8 +81,8 @@ struct MainMenu
     u8 windowed;
     u8 frameskipConfig;
     alignment_padding(0x1);
-    ChainElem *chainCalc;
-    ChainElem *chainDraw;
+    ChainElem *calcChain;
+    ChainElem *drawChain;
     char replayFilePaths[TOTAL_REPLAY_COUNT][512];
     char replayNames[TOTAL_REPLAY_COUNT][8];
     ReplayData replayFileData[TOTAL_REPLAY_COUNT];
@@ -100,5 +99,7 @@ ZUN_ASSERT_TYPE(MainMenu, 0x10f34, 4);
 #else
 ZUN_ASSERT_TYPE(MainMenu, 0x10b04, 4);
 #endif
+
+ZunResult MainMenu_RegisterChain(BOOL isDemo);
 
 } // namespace th06

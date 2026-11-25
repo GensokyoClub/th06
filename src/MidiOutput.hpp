@@ -49,18 +49,19 @@ ZUN_ASSERT_TYPE(MidiDevice, 0x8, 4);
 
 struct MidiChannel
 {
-    u8 keyPressedFlags[16];
-    u8 instrument;
-    u8 instrumentBank;
+    u8 keysPressed[128 / CHAR_BIT];
+    u8 program;
+    u8 bankMSB;
     u8 pan;
-    u8 effectOneDepth;
-    u8 effectThreeDepth;
-    u8 channelVolume;
-    u8 modifiedVolume;
+    u8 reverbDepth;
+    u8 chorusDepth;
+    u8 rawVolume;
+    u8 mixedVolume;
 };
 ZUN_ASSERT_TYPE(MidiChannel, 0x17, 1);
 
 #define MAX_MIDI_FILES 32
+#define MIDI_CHANNEL_COUNT 16
 
 class MidiOutput : MidiTimer
 {
@@ -73,7 +74,7 @@ class MidiOutput : MidiTimer
     ZunResult UnprepareHeader(LPMIDIHDR pmh);
 
     ZunResult StopPlayback();
-    void LoadTracks();
+    void PlayTracks();
     void ClearTracks();
     ZunResult ReadFileData(u32 idx, const char *path);
     void ReleaseFileData(u32 idx);
@@ -97,38 +98,37 @@ class MidiOutput : MidiTimer
     }
 
     u32 SetFadeOut(u32 ms);
-    void FadeOutSetVolume(i32 volume);
+    void SetVolume(i32 volume);
 
   private:
     MIDIHDR *midiHeaders[MAX_MIDI_FILES];
     i32 midiHeadersCursor;
     u8 *midiFileData[MAX_MIDI_FILES];
-
     i32 numTracks;
     u32 format;
-    i32 timebase;
+    i32 divisions;
     i32 tempo;
     alignment_padding(0x4);
-    u64 playcount1;
-    u64 playcount2;
+    u64 msSinceLastTempoEvent;
+    u64 msOfLastTempoEvent;
     MidiTrack *tracks;
     MidiDevice midiOutDev;
     unreferenced_fields(0x10);
-    MidiChannel channels[16];
-    i8 unk2c4;
+    MidiChannel channels[MIDI_CHANNEL_COUNT];
+    i8 transpose;
     alignment_padding(0x1);
-    f32 fadeOutVolumeMultiplier;
-    u32 fadeOutLastSetVolume;
+    f32 volumeMultiplier;
+    u32 prevFadeOutVolume;
     u32 unk2d0;
-    u32 unk2d4;
+    BOOL isVolumeLocked;
     u32 unk2d8;
     u32 unk2dc;
-    BOOL fadeOutFlag;
-    i32 fadeOutInterval;
-    i32 fadeOutElapsedMS;
+    BOOL isFadingOut;
+    i32 fadeOutDuration;
+    i32 fadeOutTimer;
     i32 loopTempo;
-    u64 loopPlaycount1;
-    u64 loopPlaycount2;
+    u64 loopMsSinceLastTempoEvent;
+    u64 loopMsOfLastTempoEvent;
 };
 ZUN_ASSERT_TYPE(MidiOutput, 0x300, 8);
 } // namespace th06

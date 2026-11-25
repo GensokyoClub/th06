@@ -552,13 +552,13 @@ void MidiOutput::ProcessMsg(MidiTrack *track)
             // file, but not in the context of the MIDI protocol itself.
             u8 code = *track->readCursor++;
             length = GetDeltaTime(&track->readCursor);
-            
+
             if (code == MIDI_META_EVENT_END_OF_TRACK)
             {
                 track->isPlaying = false;
                 return;
             }
-            
+
             if (code == MIDI_META_EVENT_TEMPO_CHANGE)
             {
                 this->msOfLastTempoEvent += this->msSinceLastTempoEvent * this->divisions * 1000 / this->tempo;
@@ -606,7 +606,7 @@ void MidiOutput::ProcessMsg(MidiTrack *track)
         // fallthrough
     case MIDI_OPCODE_NOTE_OFF:
         arg1 += this->transpose;
-        this->channels[opcodeLow].keysPressed[arg1 >> 3] &= (u8)~(1 << (arg1 & 7));
+        this->channels[opcodeLow].keysPressed[arg1 >> 3] &= (u8) ~(1 << (arg1 & 7));
         break;
     case MIDI_OPCODE_PROGRAM_CHANGE:
         this->channels[opcodeLow].program = arg1;

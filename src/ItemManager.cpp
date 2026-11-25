@@ -88,9 +88,7 @@ i32 g_PowerUpThresholds[] = {
 #define ITEM_SIZE 16.0f
 
 #define CALCULATE_POINT_SCORE(item, top, bottom, multiplier)                                                           \
-    (((i32)(item)->position.y < PIV_LINE)                                                                       \
-         ? (top)                                                                                                       \
-         : ((bottom) - (((i32)(item)->position.y - PIV_LINE) * (multiplier))))
+    (((i32)(item)->position.y < PIV_LINE) ? (top) : ((bottom) - (((i32)(item)->position.y - PIV_LINE) * (multiplier))))
 
 #pragma var_order(i, itemScore, playerAngle, itemAcquired, curItem)
 void ItemManager::OnUpdate()
@@ -118,8 +116,7 @@ void ItemManager::OnUpdate()
             {
                 float fVar5 = (f32)curItem->timer / 60.0f;
                 // start position
-                curItem->position =
-                    fVar5 * curItem->targetPosition + curItem->startPositionVelocity * (1.0f - fVar5);
+                curItem->position = fVar5 * curItem->targetPosition + curItem->startPositionVelocity * (1.0f - fVar5);
                 goto yolo;
             }
             else if (curItem->timer == 60)

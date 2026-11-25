@@ -39,7 +39,7 @@ struct MusicRoom
     i32 listingOffset;
     i32 numDescriptors;
     TrackDescriptor *trackDescriptors;
-    AnmVm mainVm[1]; // music00.anm
+    AnmVm mainVm[1];        // music00.anm
     AnmVm titleSprites[32]; // music01.anm + music02.anm
     AnmVm descriptionSprites[16];
 };

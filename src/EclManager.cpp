@@ -903,9 +903,8 @@ restart_sub_changed:
                         i32 score = g_EnemyManager.spellcard.captureScore >= 500000
                                         ? 500000 / 10
                                         : g_EnemyManager.spellcard.captureScore / 10;
-                        scoreIncrease =
-                            g_EnemyManager.spellcard.captureScore +
-                            g_EnemyManager.spellcard.captureScore * g_Gui.SpellcardSecondsRemaining() / 10;
+                        scoreIncrease = g_EnemyManager.spellcard.captureScore +
+                                        g_EnemyManager.spellcard.captureScore * g_Gui.SpellcardSecondsRemaining() / 10;
                         g_Gui.ShowSpellcardBonus(scoreIncrease);
                         g_GameManager.AddScore(scoreIncrease);
 #if BUILT_SINCE(100)

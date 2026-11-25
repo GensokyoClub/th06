@@ -135,19 +135,11 @@ struct SoundPlayer
     HANDLE backgroundMusicUpdateEvent;
     BOOL isLooping;
 };
-
 #if BUILT_SINCE(100)
 ZUN_ASSERT_TYPE(SoundPlayer, 0x638, 4);
 #else
 ZUN_ASSERT_TYPE(SoundPlayer, 0x628, 4);
 #endif
 
-#if BUILT_SINCE(100)
-extern SoundEffectData g_SoundEffects[32];
-extern const char *g_SoundEffectFiles[26];
-#else
-extern SoundEffectData g_SoundEffects[30];
-extern const char *g_SoundEffectFiles[24];
-#endif
 extern SoundPlayer g_SoundPlayer;
 } // namespace th06

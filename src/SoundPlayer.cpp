@@ -43,7 +43,6 @@ enum SoundEffectFiles
 #endif
 };
 
-// clang-format off
 SoundEffectData g_SoundEffects[] = {
 #if BUILT_SINCE(100)
     {SFX_PLST00, -1500, 0},   {SFX_PLST00, -2000, 0},   {SFX_ENEP00, -1200, 5},   {SFX_ENEP00, -1400, 5},  {SFX_PLDEAD00, -1000, 100}, {SFX_POWER0, -500, 100},

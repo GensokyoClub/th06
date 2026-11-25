@@ -108,8 +108,6 @@ struct PlayerBullet
 };
 ZUN_ASSERT_TYPE(PlayerBullet, 0x158, 4);
 
-#define BULLET_OPTION_INDEX(bullet) ((bullet)->spawnPositionIdx - 1)
-
 typedef void (*BombCallback)(Player *);
 
 #define MAX_BOMB_PROJECTILES 8
@@ -198,6 +196,8 @@ enum PlayerBulletSpawnIndex
     BULLET_SPAWN_PLAYER = 0,
     BULLET_SPAWN_OPTIONS = 1,
 };
+
+#define OPTION_SPAWN_INDEX(bullet) ((bullet)->spawnPositionIdx - BULLET_SPAWN_OPTIONS)
 
 #define SHOT_TIMER_MAX 30
 

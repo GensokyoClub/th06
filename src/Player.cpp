@@ -55,7 +55,7 @@ static FireBulletResult FireSingleBullet(Player *player, PlayerBullet *bullet, i
         }
         else
         {
-            bullet->position = player->optionPosition[shtEntry->spawnPositionIdx - 1];
+            bullet->position = player->optionPosition[OPTION_SPAWN_INDEX(shtEntry)];
         }
         bullet->position[0] += shtEntry->offset.x;
         bullet->position[1] += shtEntry->offset.y;
@@ -256,7 +256,7 @@ static void UpdatePlayerBullets(Player *player)
                 bullet->vm.pendingInterrupt = 1;
             }
 
-            bullet->position = player->optionPosition[bullet->spawnPositionIdx - 1];
+            bullet->position = player->optionPosition[OPTION_SPAWN_INDEX(bullet)];
 
             bullet->position.x += bullet->offset.x;
             bullet->position.y /= 2.0f;

@@ -92,8 +92,7 @@ void BombReimuACalc(Player *player)
                 angleX = bombPivot.x - player->bomb.projectilePosition[i].x;
                 angleY = bombPivot.y - player->bomb.projectilePosition[i].y;
 
-                vecLength =
-                    sqrtf(ZUN_SQUARE(angleX) + ZUN_SQUARE(angleY)) / (player->bomb.projectileCustom[i] / 8.0f);
+                vecLength = sqrtf(ZUN_SQUARE(angleX) + ZUN_SQUARE(angleY)) / (player->bomb.projectileCustom[i] / 8.0f);
                 if (vecLength < 1.0f)
                 {
                     vecLength = 1.0f;
@@ -124,8 +123,7 @@ void BombReimuACalc(Player *player)
                 player->cancelRegions[i].size.x = 48.0f;
                 player->cancelRegions[i].size.y = 48.0f;
 
-                if (player->damageRegionDamageDealt[i] >= 100 ||
-                    player->bomb.timer >= player->bomb.duration - 30)
+                if (player->damageRegionDamageDealt[i] >= 100 || player->bomb.timer >= player->bomb.duration - 30)
                 {
                     g_EffectManager.SpawnParticles(PARTICLE_SPARK_GREEN, &player->bomb.projectilePosition[i], 8);
                     g_EffectManager.SpawnParticles(PARTICLE_FLASH, &player->bomb.projectilePosition[i], 1,
@@ -212,28 +210,28 @@ void BombReimuADraw(Player *player)
             continue;
         }
 
-        vm->pos = player->bomb.projectilePosition[i] + vm->posOffset;
+        vm->pos = player->bomb.projectilePosition[i] + vm->offset;
         vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
         vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
         vm->pos[2] = 0.0f;
         g_AnmManager->Draw2D(vm);
         vm++;
 
-        vm->pos = player->bomb.projectilePosition[i] + vm->posOffset;
+        vm->pos = player->bomb.projectilePosition[i] + vm->offset;
         vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
         vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
         vm->pos[2] = 0.0f;
         g_AnmManager->Draw2D(vm);
         vm++;
 
-        vm->pos = player->bomb.projectilePosition[i] + vm->posOffset;
+        vm->pos = player->bomb.projectilePosition[i] + vm->offset;
         vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
         vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
         vm->pos[2] = 0.0f;
         g_AnmManager->Draw2D(vm);
         vm++;
 
-        vm->pos = player->bomb.projectilePosition[i] + vm->posOffset;
+        vm->pos = player->bomb.projectilePosition[i] + vm->offset;
         vm->pos[0] += g_GameManager.gameRegionScreenPos.x;
         vm->pos[1] += g_GameManager.gameRegionScreenPos.y;
         vm->pos[2] = 0.0f;
@@ -305,11 +303,11 @@ void BombReimuBCalc(Player *player)
             g_AnmManager->RunAnm(&player->bomb.vms[i]);
             if (player->bomb.timer.HasTicked() && !MULTIPLE_OF(player->bomb.timer, 2))
             {
-                player->cancelRegions[i].pos.x = player->bomb.projectilePosition[i].x + player->bomb.vms[i].posOffset.x;
-                player->cancelRegions[i].pos.y = player->bomb.projectilePosition[i].y + player->bomb.vms[i].posOffset.y;
+                player->cancelRegions[i].pos.x = player->bomb.projectilePosition[i].x + player->bomb.vms[i].offset.x;
+                player->cancelRegions[i].pos.y = player->bomb.projectilePosition[i].y + player->bomb.vms[i].offset.y;
                 player->damageRegionSize[i].x = player->cancelRegions[i].size.x;
                 player->damageRegionSize[i].y = player->cancelRegions[i].size.y;
-                player->damageRegionPosition[i] = player->bomb.projectilePosition[i] + player->bomb.vms[i].posOffset;
+                player->damageRegionPosition[i] = player->bomb.projectilePosition[i] + player->bomb.vms[i].offset;
                 player->damageRegionDamage[i] = 8;
             }
         }
@@ -325,7 +323,7 @@ void BombReimuBDraw(Player *player)
     AnmVm *vm = &player->bomb.vms[0];
     for (i32 i = 0; i < REIMU_B_BOMB_PROJECTILES; i++, vm++)
     {
-        vm->pos = player->bomb.projectilePosition[i] + vm->posOffset;
+        vm->pos = player->bomb.projectilePosition[i] + vm->offset;
         vm->pos.x += g_GameManager.gameRegionScreenPos.x;
         vm->pos.y += g_GameManager.gameRegionScreenPos.y;
         vm->pos.z = 0.0f;

@@ -632,7 +632,7 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
                         vm->color = COLOR_WHITE;
                     }
 
-                    vm->posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
+                    vm->offset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
                 }
                 else
                 {
@@ -644,7 +644,7 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
                     {
                         vm->color = COLOR_SET_ALPHA(COLOR_WHITE, 0xb0);
                     }
-                    vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+                    vm->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
                 }
             }
         }
@@ -674,7 +674,7 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
                 {
                     vm->color = COLOR_WHITE;
                 }
-                vm->posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
+                vm->offset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
             }
             else
             {
@@ -686,7 +686,7 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
                 {
                     vm->color = COLOR_SET_ALPHA(COLOR_WHITE, 0xb0);
                 }
-                vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+                vm->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
             }
         }
 
@@ -1750,7 +1750,7 @@ static ChainCallbackResult ResultScreen_OnDraw(ResultScreen *resultScreen)
     for (i = 0; i < ARRAY_SIZE_SIGNED(resultScreen->vms); i++, vm++)
     {
         pos = vm->pos;
-        vm->pos += vm->posOffset;
+        vm->pos += vm->offset;
         g_AnmManager->Draw2D(vm);
         vm->pos = pos;
     }
@@ -2074,7 +2074,7 @@ static ZunResult ResultScreen_AddedCallback(ResultScreen *resultScreen)
         for (i = 0; i < ARRAY_SIZE_SIGNED(resultScreen->vms); i++, vm++)
         {
             vm->pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-            vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+            vm->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
             // Execute all the scripts from the start of result00 to the end of result02
             g_AnmManager->SetScript(vm, ANM_SCRIPT_RESULT00_START + i);

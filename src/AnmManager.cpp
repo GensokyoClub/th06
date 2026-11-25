@@ -1016,7 +1016,7 @@ i32 AnmManager::RunAnm(AnmVm *vm)
             vm->scaleX *= -1.0f;
             break;
         case ANM_OPCODE_POSITION_MODE:
-            vm->flags.usePosOffset = INT_ARG_IMM(0);
+            vm->flags.positionMode = INT_ARG_IMM(0);
             break;
         case ANM_OPCODE_SCALE_FLIP_Y:
             vm->flags.flip ^= AnmVmMirror_Y;
@@ -1068,13 +1068,13 @@ i32 AnmManager::RunAnm(AnmVm *vm)
             vm->flags.blendMode = AnmBlendMode_Normal;
             break;
         case ANM_OPCODE_MOVE_POSITION:
-            if (!vm->flags.usePosOffset)
+            if (vm->flags.positionMode == AnmPositionMode_UsePosition)
             {
                 vm->pos = D3DXVECTOR3(FLOAT_ARG_IMM(0), FLOAT_ARG_IMM(1), FLOAT_ARG_IMM(2));
             }
-            else
+            else // AnmPositionMode_UseOffset
             {
-                vm->posOffset = D3DXVECTOR3(FLOAT_ARG_IMM(0), FLOAT_ARG_IMM(1), FLOAT_ARG_IMM(2));
+                vm->offset = D3DXVECTOR3(FLOAT_ARG_IMM(0), FLOAT_ARG_IMM(1), FLOAT_ARG_IMM(2));
             }
             break;
         case ANM_OPCODE_MOVE_POSITION_INTERP_DECELERATE_FAST:
@@ -1086,13 +1086,13 @@ i32 AnmManager::RunAnm(AnmVm *vm)
         case ANM_OPCODE_MOVE_POSITION_INTERP_LINEAR:
             vm->flags.moveInterpMode = AnmVmInterp_Linear;
         move_position_interp_common:
-            if (!vm->flags.usePosOffset)
+            if (vm->flags.positionMode == AnmPositionMode_UsePosition)
             {
                 vm->posInterpInitial = vm->pos;
             }
-            else
+            else // AnmPositionMode_UseOffset
             {
-                vm->posInterpInitial = vm->posOffset;
+                vm->posInterpInitial = vm->offset;
             }
             vm->posInterpFinal = D3DXVECTOR3(FLOAT_ARG_IMM(0), FLOAT_ARG_IMM(1), FLOAT_ARG_IMM(2));
             vm->posInterpDuration = INT_ARG_IMM(3);
@@ -1276,17 +1276,17 @@ break_parser:
             interpVal = 1.0f - interpVal;
             break;
         }
-        if (!vm->flags.usePosOffset)
+        if (vm->flags.positionMode == AnmPositionMode_UsePosition)
         {
             vm->pos.x = interpVal * vm->posInterpFinal.x + (1.0f - interpVal) * vm->posInterpInitial.x;
             vm->pos.y = interpVal * vm->posInterpFinal.y + (1.0f - interpVal) * vm->posInterpInitial.y;
             vm->pos.z = interpVal * vm->posInterpFinal.z + (1.0f - interpVal) * vm->posInterpInitial.z;
         }
-        else
+        else // AnmPositionMode_UseOffset
         {
-            vm->posOffset.x = interpVal * vm->posInterpFinal.x + (1.0f - interpVal) * vm->posInterpInitial.x;
-            vm->posOffset.y = interpVal * vm->posInterpFinal.y + (1.0f - interpVal) * vm->posInterpInitial.y;
-            vm->posOffset.z = interpVal * vm->posInterpFinal.z + (1.0f - interpVal) * vm->posInterpInitial.z;
+            vm->offset.x = interpVal * vm->posInterpFinal.x + (1.0f - interpVal) * vm->posInterpInitial.x;
+            vm->offset.y = interpVal * vm->posInterpFinal.y + (1.0f - interpVal) * vm->posInterpInitial.y;
+            vm->offset.z = interpVal * vm->posInterpFinal.z + (1.0f - interpVal) * vm->posInterpInitial.z;
         }
 
         if ((i32)vm->posInterpTime >= vm->posInterpDuration)

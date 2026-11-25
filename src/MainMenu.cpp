@@ -429,7 +429,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                     {
                         vmList->color = 0x60ffffff;
                     }
-                    vmList->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+                    vmList->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
                     vmList->colorInterpDuration = 0;
                 }
                 else
@@ -442,7 +442,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                     {
                         vmList->color = COLOR_WHITE;
                     }
-                    vmList->posOffset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
+                    vmList->offset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
                 }
             }
             vmList->flags.isVisibleOverride = false;
@@ -463,7 +463,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                 {
                     vmList->color = COLOR_WHITE;
                 }
-                vmList->posOffset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
+                vmList->offset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
             }
         }
         if (WAS_PRESSED(TH_BUTTON_RETURNMENU))
@@ -703,7 +703,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                 {
                     vmList->color = 0xa0d0d0d0;
                 }
-                vmList->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+                vmList->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
             }
             else
             {
@@ -715,7 +715,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                 {
                     vmList->color = COLOR_WHITE;
                 }
-                vmList->posOffset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
+                vmList->offset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
             }
         }
         if (menu->stateTimer < 30)
@@ -1040,7 +1040,7 @@ static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor, D3DCOLOR current
             g_AnmManager->SetSprite(vm, vm->baseSpriteId + sprite);
             vm->color = COLOR_COMBINE_ALPHA(COLOR_WHITE, currentItemColor);
         }
-        vm->posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
+        vm->offset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
     }
     else
     {
@@ -1053,7 +1053,7 @@ static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor, D3DCOLOR current
             g_AnmManager->SetSprite(vm, vm->baseSpriteId);
             vm->color = COLOR_COMBINE_ALPHA(COLOR_WHITE, otherItemColor);
         }
-        vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        vm->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
     }
 }
 
@@ -1087,7 +1087,7 @@ ZunResult MainMenu::BeginStartup()
         {
             this->vm[i].color = COLOR_WHITE;
         }
-        this->vm[i].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        this->vm[i].offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
     }
     this->gameState = STATE_PRE_INPUT;
     return ZUN_SUCCESS;
@@ -1119,7 +1119,7 @@ BOOL MainMenu::WeirdSecondInputCheck()
     {
         this->vm[this->cursor].color = COLOR_PINK;
     }
-    this->vm[this->cursor].posOffset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
+    this->vm[this->cursor].offset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
 
     this->minimumOpacity = 0;
     this->menuTextColor = COLOR_MENU_ACTIVE_BACKGROUND;
@@ -1676,7 +1676,7 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelect
         }
         vm->scaleX = 1.0f;
         vm->scaleY = 1.0f;
-        vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        vm->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
     }
     else
     {
@@ -1692,7 +1692,7 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelect
         {
             g_AnmManager->SetSprite(vm, vm->baseSpriteId + (ANM_OFFSET_TITLE04S - ANM_OFFSET_TITLE04));
         }
-        vm->posOffset = D3DXVECTOR3(-2.0f, -2.0f, 0.0f);
+        vm->offset = D3DXVECTOR3(-2.0f, -2.0f, 0.0f);
     }
 
     if (item != this->cursor)
@@ -1706,7 +1706,7 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelect
             vm->color = COLOR_SET_ALPHA(vm->color, 0x80);
         }
 
-        vm->posOffset += D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        vm->offset += D3DXVECTOR3(0.0f, 0.0f, 0.0f);
     }
     else
     {
@@ -1719,7 +1719,7 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelect
             vm->color = COLOR_SET_ALPHA(vm->color, 0xff);
         }
 
-        vm->posOffset += D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
+        vm->offset += D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
     }
 }
 
@@ -2052,7 +2052,7 @@ ChainCallbackResult MainMenu_OnDraw(MainMenu *menu)
         if (g_AnmManager->ShouldDraw(vm))
         {
             D3DXVECTOR3 posBackup = vm->pos;
-            vm->pos += vm->posOffset;
+            vm->pos += vm->offset;
             g_AnmManager->Draw2DRotated(vm);
             vm->pos = posBackup;
         }
@@ -2181,7 +2181,7 @@ ZunResult LoadDiffCharSelect(MainMenu *menu)
         {
             vm->color = COLOR_WHITE;
         }
-        vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        vm->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         vm->baseSpriteId = vm->spriteId;
         vm->flags.zWriteDisable = true;
     }
@@ -2224,7 +2224,7 @@ ZunResult LoadReplayMenu(MainMenu *menu)
         {
             vm->color = COLOR_WHITE;
         }
-        vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        vm->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         vm->baseSpriteId = vm->spriteId;
         vm->flags.zWriteDisable = true;
     }

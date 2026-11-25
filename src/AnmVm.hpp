@@ -108,6 +108,12 @@ enum AnmColorOp
     AnmColorOp_Add,
 };
 
+enum AnmPositionMode
+{
+    AnmPositionMode_UsePosition = 0,
+    AnmPositionMode_UseOffset = 1
+};
+
 enum AnmZWriteState
 {
     AnmZWriteState_NotSet = -1,
@@ -162,7 +168,7 @@ union AnmVmFlags {
         u32 blendMode : 1;         // AnmBlendMode
         u32 colorOp : 1;           // AnmColorOp
         unreferenced_bitfields(u32, 1);
-        u32 usePosOffset : 1;
+        u32 positionMode : 1;   // AnmPositionMode
         u32 flip : 2;           // AnmVmMirror
         u32 anchor : 2;         // AnmVmAnchor
         u32 moveInterpMode : 2; // AnmVmInterpMode
@@ -254,7 +260,7 @@ struct AnmVm : AnmVmBase
     D3DCOLOR colorInterpFinal;
     D3DXVECTOR3 posInterpInitial;
     D3DXVECTOR3 posInterpFinal;
-    D3DXVECTOR3 posOffset;
+    D3DXVECTOR3 offset;
     ZunTimer posInterpTime;
     i32 timeOfLastSpriteSet;
     ZunTimer colorInterpTime;

@@ -739,7 +739,7 @@ static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
                 {
                     curEnemyVm->rotation.z = curEnemy->angle;
                 }
-                curEnemyVm->pos = curEnemy->position + curEnemyVm->posOffset;
+                curEnemyVm->pos = curEnemy->position + curEnemyVm->offset;
                 curEnemyVm->pos.z = 0.495f;
                 g_AnmManager->Draw3D(curEnemyVm);
             }
@@ -748,7 +748,7 @@ static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
         {
             curEnemy->primaryVm.rotation.z = curEnemy->angle;
         }
-        curEnemy->primaryVm.pos = curEnemy->position + curEnemy->primaryVm.posOffset;
+        curEnemy->primaryVm.pos = curEnemy->position + curEnemy->primaryVm.offset;
         curEnemy->primaryVm.pos.z = 0.494f;
         g_AnmManager->Draw3D(&curEnemy->primaryVm);
         for (j = ENEMY_ANM_SLOTS / 2; j < ENEMY_ANM_SLOTS; j++, curEnemyVm++)
@@ -759,7 +759,7 @@ static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
                 {
                     curEnemyVm->rotation.z = curEnemy->angle;
                 }
-                curEnemyVm->pos = curEnemy->position + curEnemyVm->posOffset;
+                curEnemyVm->pos = curEnemy->position + curEnemyVm->offset;
                 curEnemyVm->pos.z = 0.495f;
                 g_AnmManager->Draw3D(curEnemyVm);
             }

@@ -734,13 +734,13 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
                     vm->pendingInterrupt = 2;
                 }
                 resultScreen->resultScreenState = RESULT_SCREEN_STATE_EXITING;
-                g_SoundPlayer.PlaySoundId(SOUND_BACK);
+                g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
             }
         }
         if (WAS_PRESSED(TH_BUTTON_RETURNMENU))
         {
             resultScreen->cursor = RESULT_SCREEN_CURSOR_EXIT;
-            g_SoundPlayer.PlaySoundId(SOUND_BACK);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
         }
         break;
 
@@ -805,7 +805,7 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
                     }
                 }
                 resultScreen->cheatCodeStep = 0;
-                g_SoundPlayer.PlaySoundId(SOUND_1UP);
+                g_SoundPlayer.PlaySoundId(SOUND_EXTEND);
             }
         }
         else
@@ -843,7 +843,7 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
         }
         if (WAS_PRESSED(TH_BUTTON_RETURNMENU))
         {
-            g_SoundPlayer.PlaySoundId(SOUND_BACK);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
             resultScreen->resultScreenState = RESULT_SCREEN_STATE_INIT;
             resultScreen->frameTimer = 1;
             vm = &resultScreen->vms[0];
@@ -899,7 +899,7 @@ static ChainCallbackResult ResultScreen_OnUpdate(ResultScreen *resultScreen)
         }
         if (WAS_PRESSED(TH_BUTTON_RETURNMENU))
         {
-            g_SoundPlayer.PlaySoundId(SOUND_BACK);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
             resultScreen->resultScreenState = RESULT_SCREEN_STATE_INIT;
             resultScreen->frameTimer = 1;
             vm = &resultScreen->vms[0];
@@ -1015,7 +1015,7 @@ i32 ResultScreen::HandleResultKeyboard()
         {
             goto up_press_skip_spaces;
         }
-        g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+        g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
     }
     if (WAS_PRESSED_REPEATING(TH_BUTTON_DOWN))
     {
@@ -1031,7 +1031,7 @@ i32 ResultScreen::HandleResultKeyboard()
         {
             goto down_press_skip_spaces;
         }
-        g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+        g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
     }
     if (WAS_PRESSED_REPEATING(TH_BUTTON_LEFT))
     {
@@ -1052,7 +1052,7 @@ i32 ResultScreen::HandleResultKeyboard()
         {
             goto left_press_skip_spaces;
         }
-        g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+        g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
     }
     if (WAS_PRESSED_REPEATING(TH_BUTTON_RIGHT))
     {
@@ -1068,7 +1068,7 @@ i32 ResultScreen::HandleResultKeyboard()
         {
             goto right_press_skip_spaces;
         }
-        g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+        g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
     }
     if (WAS_PRESSED_REPEATING(TH_BUTTON_SELECTMENU))
     {
@@ -1095,7 +1095,7 @@ i32 ResultScreen::HandleResultKeyboard()
                 this->selectedCharacter = RESULT_KEYBOARD_END;
             }
         }
-        g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+        g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
     }
 
     if (WAS_PRESSED_REPEATING(TH_BUTTON_RETURNMENU))
@@ -1107,12 +1107,12 @@ i32 ResultScreen::HandleResultKeyboard()
             this->cursor--;
             this->hscr.name[replayNameIdx] = ' ';
         }
-        g_SoundPlayer.PlaySoundId(SOUND_BACK);
+        g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
     }
     if (WAS_PRESSED(TH_BUTTON_MENU))
     {
     RETURN_TO_STATS_SCREEN:
-        g_SoundPlayer.PlaySoundId(SOUND_BACK);
+        g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
 
     RETURN_TO_STATS_SCREEN_WITHOUT_SOUND:
 
@@ -1190,7 +1190,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
             {
             GO_TO_CHOOSE_REPLAY_FILE:
 
-                g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+                g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
                 this->resultScreenState = RESULT_SCREEN_STATE_CHOOSING_REPLAY_FILE;
 
                 vm = &this->vms[0];
@@ -1206,7 +1206,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
         EXIT_WITH_SOUND:
 
             this->frameTimer = 0;
-            g_SoundPlayer.PlaySoundId(SOUND_BACK);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
             this->resultScreenState = RESULT_SCREEN_STATE_EXITING;
             vm = &this->vms[0];
             for (i = 0; i < ARRAY_SIZE_SIGNED(this->vms); i++, vm++)
@@ -1225,7 +1225,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
         if (WAS_PRESSED(TH_BUTTON_SELECTMENU) || WAS_PRESSED(TH_BUTTON_RETURNMENU))
         {
             this->frameTimer = 0;
-            g_SoundPlayer.PlaySoundId(SOUND_BACK);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
             this->resultScreenState = RESULT_SCREEN_STATE_EXITING;
             vm = &this->vms[0];
             for (i = 0; i < ARRAY_SIZE_SIGNED(this->vms); i++, vm++)
@@ -1282,7 +1282,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
         this->replayNumber = this->cursor;
         if (WAS_PRESSED(TH_BUTTON_SELECTMENU))
         {
-            g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
             this->replayNumber = this->cursor;
             this->frameTimer = 0;
             _strdate(this->defaultReplay.date);
@@ -1315,7 +1315,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
         }
         if (WAS_PRESSED(TH_BUTTON_RETURNMENU))
         {
-            g_SoundPlayer.PlaySoundId(SOUND_BACK);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
             this->resultScreenState = RESULT_SCREEN_STATE_SAVE_REPLAY_QUESTION;
             vm = &this->vms[0];
             for (i = 0; i < ARRAY_SIZE_SIGNED(this->vms); i++, vm++)
@@ -1344,7 +1344,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
             {
                 goto up_press_skip_spaces;
             }
-            g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+            g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
         }
         if (WAS_PRESSED_REPEATING(TH_BUTTON_DOWN))
         {
@@ -1360,7 +1360,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
             {
                 goto down_press_skip_spaces;
             }
-            g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+            g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
         }
         if (WAS_PRESSED_REPEATING(TH_BUTTON_LEFT))
         {
@@ -1381,7 +1381,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
             {
                 goto left_press_skip_spaces;
             }
-            g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+            g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
         }
         if (WAS_PRESSED_REPEATING(TH_BUTTON_RIGHT))
         {
@@ -1397,7 +1397,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
             {
                 goto right_press_skip_spaces;
             }
-            g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+            g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
         }
         if (WAS_PRESSED_REPEATING(TH_BUTTON_SELECTMENU))
         {
@@ -1431,7 +1431,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
                     this->selectedCharacter = RESULT_KEYBOARD_END;
                 }
             }
-            g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
         }
 
         if (WAS_PRESSED_REPEATING(TH_BUTTON_RETURNMENU))
@@ -1443,7 +1443,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
                 this->cursor--;
                 this->replayName[replayNameCharacter] = ' ';
             }
-            g_SoundPlayer.PlaySoundId(SOUND_BACK);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
         }
         if (WAS_PRESSED(TH_BUTTON_MENU))
         {
@@ -1504,7 +1504,7 @@ static void MoveResultCursor(ResultScreen *resultScreen, i32 length)
         {
             resultScreen->cursor += length;
         }
-        g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+        g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
     }
     if (WAS_PRESSED_REPEATING(TH_BUTTON_DOWN))
     {
@@ -1512,7 +1512,7 @@ static void MoveResultCursor(ResultScreen *resultScreen, i32 length)
         {
             resultScreen->cursor -= length;
         }
-        g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+        g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
     }
 }
 
@@ -1524,7 +1524,7 @@ static BOOL MoveResultCursorHorizontally(ResultScreen *resultScreen, i32 length)
         {
             resultScreen->cursor += length;
         }
-        g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+        g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
         return true;
     }
     else if (WAS_PRESSED_REPEATING(TH_BUTTON_RIGHT))
@@ -1533,7 +1533,7 @@ static BOOL MoveResultCursorHorizontally(ResultScreen *resultScreen, i32 length)
         {
             resultScreen->cursor -= length;
         }
-        g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+        g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
         return true;
     }
     return false;

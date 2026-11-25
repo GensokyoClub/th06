@@ -312,7 +312,7 @@ void Gui::ShowBombNamePortrait(u32 sprite, const char *bombName)
 #if BUILT_SINCE(102g)
     g_Supervisor.forceRedrawFrames = 3;
 #endif
-    g_SoundPlayer.PlaySoundId(SOUND_SPELL_START);
+    g_SoundPlayer.PlaySoundId(SOUND_SPELLCARD);
 }
 
 void Gui::ShowSpellcard(i32 spellcardSprite, const char *spellcardName)
@@ -323,7 +323,7 @@ void Gui::ShowSpellcard(i32 spellcardSprite, const char *spellcardName)
     g_AnmManager->DrawTextToTextureRight(&this->impl->enemySpellcardName, COLOR_RGB(COLOR_BARELY_RED),
                                          COLOR_RGB(COLOR_BLACK), spellcardName);
     this->spellcardNameBarLength = strlen(spellcardName) * DEFAULT_ANM_FONT_SIZE / 2.0f + 16.0f;
-    g_SoundPlayer.PlaySoundId(SOUND_SPELL_START);
+    g_SoundPlayer.PlaySoundId(SOUND_SPELLCARD);
 }
 
 ZunResult Gui::ActualAddedCallback()
@@ -1110,7 +1110,7 @@ void Gui::DrawGameScene()
         if (cappedSpellcardSecondsRemaining < 10 &&
             this->lastSpellcardSecondsRemaining != this->spellcardSecondsRemaining)
         {
-            g_SoundPlayer.PlaySoundId(SOUND_29);
+            g_SoundPlayer.PlaySoundId(SOUND_TIMER_WARNING);
         }
         g_AsciiManager.AddFormatText(&textPos, "%.2d", cappedSpellcardSecondsRemaining);
         g_AsciiManager.SetColor(COLOR_WHITE);

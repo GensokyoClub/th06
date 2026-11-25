@@ -181,8 +181,8 @@ th06::g_CharacterList,0x4784d8,global,24
 g_SpellcardsWeightsList,0x4784f0,global,20
 g_RightAlignedDifficultyList,0x478504,global,20
 g_ShortCharacterList2,0x478518,global,16
-th06::g_SoundBufferIdxVol,0x478528,global,256
-th06::g_SFXList,0x478628,global,104
+th06::g_SoundEffects,0x478528,global,256
+th06::g_SoundEffectFiles,0x478628,global,104
 g_LastJoystickInput,0x478690,global,2
 g_StageList,0x478694,global,28
 g_ShortCharacterList,0x4786b0,global,16

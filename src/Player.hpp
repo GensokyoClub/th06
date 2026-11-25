@@ -112,6 +112,22 @@ ZUN_ASSERT_TYPE(PlayerBullet, 0x158, 4);
 
 typedef void (*BombCallback)(Player *);
 
+#define MAX_BOMB_PROJECTILES 8
+#define VMS_PER_BOMB_PROJECTILE 4
+
+// These don't all actually have "projectiles"
+// but the naming convention still makes sense
+// for how the macros are used.
+#define REIMU_A_BOMB_PROJECTILES 8
+#define REIMU_B_BOMB_PROJECTILES 4
+#define MARISA_A_BOMB_PROJECTILES 8
+#define MARISA_B_BOMB_PROJECTILES 4
+
+STATIC_ASSERT(REIMU_A_BOMB_PROJECTILES <= MAX_BOMB_PROJECTILES);
+STATIC_ASSERT(REIMU_B_BOMB_PROJECTILES <= MAX_BOMB_PROJECTILES);
+STATIC_ASSERT(MARISA_A_BOMB_PROJECTILES <= MAX_BOMB_PROJECTILES);
+STATIC_ASSERT(MARISA_B_BOMB_PROJECTILES <= MAX_BOMB_PROJECTILES);
+
 struct BombInfo
 {
     BOOL isActive;
@@ -119,11 +135,11 @@ struct BombInfo
     ZunTimer timer;
     BombCallback calc;
     BombCallback draw;
-    i32 projectileState[8];
-    f32 projectileCustom[8];
-    D3DXVECTOR3 projectilePosition[8];
-    D3DXVECTOR3 projectileVelocity[8];
-    AnmVm vms[8][4];
+    i32 projectileState[MAX_BOMB_PROJECTILES];
+    f32 projectileCustom[MAX_BOMB_PROJECTILES];
+    D3DXVECTOR3 projectilePosition[MAX_BOMB_PROJECTILES];
+    D3DXVECTOR3 projectileVelocity[MAX_BOMB_PROJECTILES];
+    AnmVm vms[MAX_BOMB_PROJECTILES * VMS_PER_BOMB_PROJECTILE];
 };
 ZUN_ASSERT_TYPE(BombInfo, 0x231c, 4);
 

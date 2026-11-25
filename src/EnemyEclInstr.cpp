@@ -123,7 +123,7 @@ void ExInsShootStarPattern(Enemy *enemy, EclRawInstr *curInstr)
             enemy->bulletProps.speed1 = propsSpeedBackup;
             enemy->bulletProps.angle1 -= (ZUN_PI / 6.0f) * patternPosition;
         }
-        g_SoundPlayer.PlaySoundId(SOUND_22);
+        g_SoundPlayer.PlaySoundId(SOUND_BULLET_4);
     }
     enemy->currentContext.int2++;
 #undef ENEMY_POS
@@ -388,7 +388,7 @@ void ExInsStage5Func5(Enemy *enemy, EclRawInstr *curInstr)
             bulletProps.color = BULLET_BLUE8;
             g_BulletManager.SpawnBulletPattern(&bulletProps);
         }
-        g_SoundPlayer.PlaySoundId(SOUND_7);
+        g_SoundPlayer.PlaySoundId(SOUND_BULLET);
     }
     enemy->currentContext.int2++;
 }

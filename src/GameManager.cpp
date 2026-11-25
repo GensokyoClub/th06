@@ -149,7 +149,7 @@ ChainCallbackResult GameManager_OnUpdate(GameManager *gameManager)
             if (gameManager->livesRemaining < MAX_LIVES)
             {
                 gameManager->livesRemaining++;
-                g_SoundPlayer.PlaySoundId(SOUND_1UP);
+                g_SoundPlayer.PlaySoundId(SOUND_EXTEND);
             }
             g_Gui.redrawFrames.lifeIcons = 2;
             gameManager->livesEarned++;

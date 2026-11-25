@@ -12,44 +12,46 @@ enum SoundIdx
 {
     NO_SOUND = -1,
     SOUND_SHOOT,
-    SOUND_1,
-    SOUND_2,
-    SOUND_3,
+    SOUND_SHOOT_2, // UNUSED: quieter variant sound
+    SOUND_ENEMY_DIE,
+    SOUND_ENEMY_DIE_2, // quieter variant sound
     SOUND_PICHUN,
-    SOUND_5,
-    SOUND_BOMB_REIMARI,
-    SOUND_7,
-    SOUND_8,
-    SOUND_SHOOT_BOSS,
-    SOUND_SELECT,
-    SOUND_BACK,
-    SOUND_MOVE_MENU,
-    SOUND_BOMB_REIMU_A,
-    SOUND_SPELL_START,
-    SOUND_15,
-    SOUND_BOSS_LASER,
-    SOUND_BOSS_LASER_2,
-    SOUND_18,
-    SOUND_BOMB_MARISA_B,
-    SOUND_TOTAL_BOSS_DEATH,
-    SOUND_21,
-    SOUND_22,
-    SOUND_23,
-    SOUND_24,
-    SOUND_WTF_IS_THAT_LMAO,
-    SOUND_26,
-    SOUND_27,
-    SOUND_1UP,
-    SOUND_29,
+    SOUND_CHARGE,
+    SOUND_CHARGE_2,
+    SOUND_BULLET,
+    SOUND_BULLET_2,
+    SOUND_BULLET_3,
+    SOUND_MENU_SELECT,
+    SOUND_MENU_CANCEL,
+    SOUND_MOVE_CURSOR,
+    SOUND_FANTASY_SEAL_START,
+    SOUND_SPELLCARD,
+    SOUND_FANTASY_SEAL_ATTACK,
+    SOUND_LASER,
+    SOUND_LASER_2,
+    SOUND_BOSS_DIE,
+    SOUND_MASTER_SPARK,
+    SOUND_ENEMY_HIT,
+    SOUND_ITEM_COLLECT,
+    SOUND_BULLET_4,
+    SOUND_BULLET_5,
+    SOUND_BULLET_6,
+    SOUND_SPARKLE,
+    SOUND_SPARKLE_2,
+    SOUND_SPARKLE_3,
+    SOUND_EXTEND,
+    SOUND_TIMER_WARNING,
+#if BUILT_SINCE(100)
     SOUND_GRAZE,
     SOUND_POWERUP,
+#endif
 };
 
 #define IS_VALID_SFX(sfx) ((sfx) >= 0)
 
 struct SoundEffectData
 {
-    i32 bufferIdx;
+    i32 fileIdx;
     i16 volume;
     i16 unk;
 };
@@ -141,11 +143,11 @@ ZUN_ASSERT_TYPE(SoundPlayer, 0x628, 4);
 #endif
 
 #if BUILT_SINCE(100)
-extern SoundEffectData g_SoundBufferIdxVol[32];
-extern const char *g_SFXList[26];
+extern SoundEffectData g_SoundEffects[32];
+extern const char *g_SoundEffectFiles[26];
 #else
-extern SoundEffectData g_SoundBufferIdxVol[30];
-extern const char *g_SFXList[24];
+extern SoundEffectData g_SoundEffects[30];
+extern const char *g_SoundEffectFiles[24];
 #endif
 extern SoundPlayer g_SoundPlayer;
 } // namespace th06

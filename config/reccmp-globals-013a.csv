@@ -176,8 +176,8 @@ g_AlphabetList,0x4644DC,global,4
 th06::g_CharacterList,0x4644E0,global,24
 g_RightAlignedDifficultyList,0x4644F8,global,20
 g_ShortCharacterList2,0x46450C,global,16
-th06::g_SoundBufferIdxVol,0x464520,global,256
-th06::g_SFXList,0x464620,global,104
+th06::g_SoundEffects,0x464520,global,256
+th06::g_SoundEffectFiles,0x464620,global,104
 g_StageList,0x464688,global,28
 g_ShortCharacterList,0x4646A4,global,16
 g_DifficultyList,0x4646B4,global,20

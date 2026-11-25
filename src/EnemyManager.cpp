@@ -669,7 +669,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                     curEnemy->life = 0;
                     break;
                 }
-                g_SoundPlayer.PlaySoundId((i % 2) + SOUND_2);
+                g_SoundPlayer.PlaySoundId((i % 2) + SOUND_ENEMY_DIE);
                 g_EffectManager.SpawnParticles(curEnemy->deathParticle, &curEnemy->position);
                 g_EffectManager.SpawnParticles(curEnemy->deathSparkParticle + PARTICLE_SPARK, &curEnemy->position, 4);
                 if (curEnemy->deathCallbackSub >= 0)
@@ -691,7 +691,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
             }
             else if (enemyLifeBeforeDmg > curEnemy->life)
             {
-                g_SoundPlayer.PlaySoundId(SOUND_TOTAL_BOSS_DEATH);
+                g_SoundPlayer.PlaySoundId(SOUND_ENEMY_HIT);
                 curEnemy->primaryVm.flags.colorOp = AnmColorOp_Add;
                 curEnemy->hitEffectDelay = 4;
             }

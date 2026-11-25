@@ -316,7 +316,7 @@ void ItemManager::OnUpdate()
                     g_Gui.redrawFrames.lifeIcons = 2;
                 }
                 g_GameManager.IncreaseSubrank(200);
-                g_SoundPlayer.PlaySoundId(SOUND_1UP);
+                g_SoundPlayer.PlaySoundId(SOUND_EXTEND);
                 break;
             case ITEM_FULL_POWER:
                 if (g_GameManager.currentPower < MAX_POWER)
@@ -350,7 +350,7 @@ void ItemManager::OnUpdate()
     }
     if (itemAcquired)
     {
-        g_SoundPlayer.PlaySoundId(SOUND_21);
+        g_SoundPlayer.PlaySoundId(SOUND_ITEM_COLLECT);
     }
 }
 

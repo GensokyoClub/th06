@@ -53,7 +53,7 @@ void ItemManager::SpawnItem(D3DXVECTOR3 *position, i32 itemType, i32 state)
             // start position
             item->startPositionVelocity = item->currentPosition;
         }
-        g_AnmManager->SetScript(&item->sprite, ANM_SCRIPT_BULLET3_ITEMS_START + itemType);
+        g_AnmManager->SetScript(&item->sprite, ANM_SCRIPT_ITEMS_START + itemType);
         item->sprite.color = COLOR_WHITE;
         item->isIndicatorHidden = true;
         return;
@@ -316,7 +316,7 @@ void ItemManager::OnUpdate()
                     g_Gui.redrawFrames.lifeIcons = 2;
                 }
                 g_GameManager.IncreaseSubrank(200);
-                g_SoundPlayer.PlaySoundId(SOUND_1UP);
+                g_SoundPlayer.PlaySoundId(SOUND_EXTEND);
                 break;
             case ITEM_FULL_POWER:
                 if (g_GameManager.currentPower < MAX_POWER)
@@ -333,7 +333,7 @@ void ItemManager::OnUpdate()
                 break;
             case ITEM_STAR:
                 itemScore = (g_GameManager.grazeInStage / 3) * 10 + 500;
-                if (g_Player.bombInfo.isActive)
+                if (g_Player.bomb.isActive)
                 {
                     itemScore = 100;
                 }
@@ -350,7 +350,7 @@ void ItemManager::OnUpdate()
     }
     if (itemAcquired)
     {
-        g_SoundPlayer.PlaySoundId(SOUND_21);
+        g_SoundPlayer.PlaySoundId(SOUND_ITEM_COLLECT);
     }
 }
 

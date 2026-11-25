@@ -4,8 +4,8 @@
 
 namespace th06
 {
-extern CharacterPowerData g_CharacterPowerDataReimuA[9];
-extern CharacterPowerData g_CharacterPowerDataReimuB[9];
-extern CharacterPowerData g_CharacterPowerDataMarisaA[9];
-extern CharacterPowerData g_CharacterPowerDataMarisaB[9];
+extern PowerData g_PowerDataReimuA[9];
+extern PowerData g_PowerDataReimuB[9];
+extern PowerData g_PowerDataMarisaA[9];
+extern PowerData g_PowerDataMarisaB[9];
 } // namespace th06

@@ -194,8 +194,8 @@ struct Laser
     f32 angle;
     f32 startOffset;
     f32 endOffset;
-    f32 length;
-    f32 width;
+    f32 maxLength;
+    f32 maxWidth;
     f32 speed;
     i32 startTime;
     i32 hitboxStartTime;
@@ -210,6 +210,8 @@ struct Laser
     alignment_padding(0x3);
 };
 ZUN_ASSERT_TYPE(Laser, 0x270, 4);
+
+#define LASER_LENGTH(laser) ((laser)->endOffset - (laser)->startOffset)
 
 #define MAX_ENEMY_BULLET_TYPES 16
 #define MAX_ENEMY_BULLETS 640

@@ -123,7 +123,7 @@ void ExInsShootStarPattern(Enemy *enemy, EclRawInstr *curInstr)
             enemy->bulletProps.speed1 = propsSpeedBackup;
             enemy->bulletProps.angle1 -= (ZUN_PI / 6.0f) * patternPosition;
         }
-        g_SoundPlayer.PlaySoundId(SOUND_22);
+        g_SoundPlayer.PlaySoundId(SOUND_BULLET_4);
     }
     enemy->currentContext.int2++;
 #undef ENEMY_POS
@@ -388,7 +388,7 @@ void ExInsStage5Func5(Enemy *enemy, EclRawInstr *curInstr)
             bulletProps.color = BULLET_BLUE8;
             g_BulletManager.SpawnBulletPattern(&bulletProps);
         }
-        g_SoundPlayer.PlaySoundId(SOUND_7);
+        g_SoundPlayer.PlaySoundId(SOUND_BULLET);
     }
     enemy->currentContext.int2++;
 }
@@ -537,20 +537,20 @@ void ExInsStage6Func7(Enemy *enemy, EclRawInstr *curInstr)
                     if (g_GameManager.difficulty <= NORMAL)
                     {
                         laserProps.endOffset = lengthMultiplier;
-                        laserProps.length = lengthMultiplier;
+                        laserProps.maxLength = lengthMultiplier;
                     }
                     else
                     {
                         laserProps.endOffset = 440.0f;
-                        laserProps.length = 440.0f;
+                        laserProps.maxLength = 440.0f;
                     }
                     if (g_GameManager.difficulty <= NORMAL)
                     {
-                        laserProps.width = 28.0f;
+                        laserProps.maxWidth = 28.0f;
                     }
                     else
                     {
-                        laserProps.width = 20.0f;
+                        laserProps.maxWidth = 20.0f;
                     }
                     laserProps.startTime = innerLoopCount * 16 + 60;
 #if BUILT_SINCE(100)
@@ -724,7 +724,7 @@ void ExInsBatTransformation(Enemy *enemy, EclRawInstr *curInstr)
 #endif
 
     ExInsBatWingEffect(enemy, curInstr);
-    if (g_Player.bombInfo.isActive)
+    if (g_Player.bomb.isActive)
     {
         if (enemy->anmPoseLeft >= 0) // Check if poses are enabled
         {

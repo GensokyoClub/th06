@@ -182,7 +182,7 @@
 #define TH_EN_ERR_MIDI_FAILED_TO_READ_FILE "error : MIDI File %s could not be read.\n"
 #define TH_EN_ERR_MIDI_NOT_LOADED "error : MIDI not loaded before being playback started.\n"
 
-#define TH_EN_REIMU_A_BOMB_NAME "Spirit Sign \"Dream Seal\""
+#define TH_EN_REIMU_A_BOMB_NAME "Spirit Sign \"Fantasy Seal\""
 #define TH_EN_REIMU_B_BOMB_NAME "Dream Sign \"Evil-Sealing Circle\""
 #define TH_EN_MARISA_A_BOMB_NAME "Magic Sign \"Stardust Reverie\""
 #define TH_EN_MARISA_B_BOMB_NAME "Love Sign \"Master Spark\""

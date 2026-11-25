@@ -592,8 +592,8 @@ Laser *BulletManager::SpawnLaserPattern(EnemyShooter *bulletProps)
         g_AnmManager->SetScript(&laser->vm, bulletProps->sprite + ANM_SCRIPT_BULLET_LINE_LASER);
         g_AnmManager->SetSprite(&laser->vm, laser->vm.spriteId + bulletProps->color);
 
-        g_AnmManager->SetNewSprite(&laser->baseGlowVm, g_BulletSpawnEffects16Colors[bulletProps->color] +
-                                                           ANM_SPRITE_BULLET3_SPAWN_BIG_BALL);
+        g_AnmManager->SetNewSprite(&laser->baseGlowVm,
+                                   g_BulletSpawnEffects16Colors[bulletProps->color] + ANM_SPRITE_BULLET_SPAWN_BIG_BALL);
 
         laser->baseGlowVm.flags.blendMode = AnmBlendMode_Additive;
         laser->pos = bulletProps->position;
@@ -610,8 +610,8 @@ Laser *BulletManager::SpawnLaserPattern(EnemyShooter *bulletProps)
         laser->timer = 0;
         laser->startOffset = bulletProps->startOffset;
         laser->endOffset = bulletProps->endOffset;
-        laser->length = bulletProps->length;
-        laser->width = bulletProps->width;
+        laser->maxLength = bulletProps->maxLength;
+        laser->maxWidth = bulletProps->maxWidth;
         laser->speed = bulletProps->speed1;
         laser->startTime = bulletProps->startTime;
         laser->duration = bulletProps->duration;
@@ -934,9 +934,9 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
 
         curLaser->endOffset += curLaser->speed * g_Supervisor.gameSpeed;
 
-        if (curLaser->length < curLaser->endOffset - curLaser->startOffset)
+        if (curLaser->maxLength < LASER_LENGTH(curLaser))
         {
-            curLaser->startOffset = curLaser->endOffset - curLaser->length;
+            curLaser->startOffset = curLaser->endOffset - curLaser->maxLength;
         }
 
         if (curLaser->startOffset < 0.0f)
@@ -944,13 +944,12 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
             curLaser->startOffset = 0.0f;
         }
 
-        laserSize.y = curLaser->width / 2.0f;
-        laserSize.x = curLaser->endOffset - curLaser->startOffset;
-        laserCenter[0] =
-            curLaser->pos.x + (curLaser->startOffset + (curLaser->endOffset - curLaser->startOffset) / 2.0f);
+        laserSize.y = curLaser->maxWidth / 2.0f;
+        laserSize.x = LASER_LENGTH(curLaser);
+        laserCenter[0] = curLaser->pos.x + (curLaser->startOffset + LASER_LENGTH(curLaser) / 2.0f);
         laserCenter[1] = curLaser->pos.y;
-        curLaser->vm.scaleX = curLaser->width / curLaser->vm.sprite->width;
-        size = curLaser->endOffset - curLaser->startOffset;
+        curLaser->vm.scaleX = curLaser->maxWidth / curLaser->vm.sprite->width;
+        size = LASER_LENGTH(curLaser);
         curLaser->vm.scaleY = size / curLaser->vm.sprite->height;
         curLaser->vm.rotation.z = ZUN_HALF_PI - curLaser->angle;
 
@@ -976,7 +975,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
                 i32 res = ZUN_MIN(curLaser->startTime, 30);
                 if (curLaser->startTime - res < (i32)curLaser->timer)
                 {
-                    size = RAMP_UP(curLaser->width, (f32)curLaser->timer, curLaser->startTime);
+                    size = RAMP_UP(curLaser->maxWidth, (f32)curLaser->timer, curLaser->startTime);
                 }
                 else
                 {
@@ -1040,7 +1039,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
             }
             else if (curLaser->despawnDuration > 0)
             {
-                size = RAMP_DOWN(curLaser->width, (f32)curLaser->timer, curLaser->despawnDuration);
+                size = RAMP_DOWN(curLaser->maxWidth, (f32)curLaser->timer, curLaser->despawnDuration);
                 curLaser->vm.scaleX = size / 16.0f;
                 // Bug: ZUN intended to set laserSize.y instead of laserSize.x
                 // This way, for hitboxEndDelay ticks after the laser starts despawning,
@@ -1171,7 +1170,7 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
             continue;
         }
         fsincos_wrapper(&sine, &cosine, curLaser->angle);
-        laserOffset = (curLaser->endOffset - curLaser->startOffset) / 2.0f + curLaser->startOffset;
+        laserOffset = LASER_LENGTH(curLaser) / 2.0f + curLaser->startOffset;
         curLaser->vm.pos[0] = cosine * laserOffset + curLaser->pos[0];
         curLaser->vm.pos[1] = sine * laserOffset + curLaser->pos[1];
         curLaser->vm.pos[2] = 0.0f;
@@ -1187,11 +1186,11 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
             curLaser->baseGlowVm.flags.colorOp = AnmColorOp_Add;
             curLaser->baseGlowVm.color = COLOR_SET_ALPHA(curLaser->baseGlowVm.color, 0xff);
             curLaser->baseGlowVm.scaleY = curLaser->baseGlowVm.scaleX =
-                (curLaser->width / 10.0f) * ((16.0f - curLaser->startOffset) / 16.0f);
+                (curLaser->maxWidth / 10.0f) * ((16.0f - curLaser->startOffset) / 16.0f);
 
             if (curLaser->baseGlowVm.scaleY < 0.0f)
             {
-                curLaser->baseGlowVm.scaleY = curLaser->baseGlowVm.scaleX = curLaser->width / 10.0f;
+                curLaser->baseGlowVm.scaleY = curLaser->baseGlowVm.scaleX = curLaser->maxWidth / 10.0f;
             }
 
             g_AnmManager->Draw3DRotated(&curLaser->baseGlowVm);

@@ -39,9 +39,9 @@ enum ShotType
 
 enum PlayerBulletType
 {
-    PLAYER_BULLET_TYPE_0,
-    PLAYER_BULLET_TYPE_1,
-    PLAYER_BULLET_TYPE_2,
+    PLAYER_BULLET_DEFAULT,
+    PLAYER_BULLET_HOMING,
+    PLAYER_BULLET_ACCELERATE,
     PLAYER_LASER
 };
 
@@ -53,13 +53,13 @@ enum PlayerState
     PLAYER_STATE_INVULNERABLE,
 };
 
-enum OrbState
+enum OptionState
 {
-    ORB_HIDDEN,
-    ORB_UNFOCUSED,
-    ORB_FOCUSING,
-    ORB_FOCUSED,
-    ORB_UNFOCUSING,
+    OPTION_HIDDEN,
+    OPTION_UNFOCUSED,
+    OPTION_FOCUSING,
+    OPTION_FOCUSED,
+    OPTION_UNFOCUSING,
 };
 
 enum PlayerBulletState
@@ -95,20 +95,38 @@ struct PlayerBullet
     D3DXVECTOR3 position;
     D3DXVECTOR3 size;
     Float2 velocity;
-    Float2 motion;
+    Float2 offset;
     f32 speed;
     f32 angle;
     ZunTimer lifetime;
     i16 damage;
     i16 bulletState;
     i16 bulletType;
-    i16 bulletFrame;
+    i16 delayTimerIdx;
     i16 spawnPositionIdx;
     alignment_padding(0x2);
 };
 ZUN_ASSERT_TYPE(PlayerBullet, 0x158, 4);
 
+#define BULLET_OPTION_INDEX(bullet) ((bullet)->spawnPositionIdx - 1)
+
 typedef void (*BombCallback)(Player *);
+
+#define MAX_BOMB_PROJECTILES 8
+#define VMS_PER_BOMB_PROJECTILE 4
+
+// These don't all actually have "projectiles"
+// but the naming convention still makes sense
+// for how the macros are used.
+#define REIMU_A_BOMB_PROJECTILES 8
+#define REIMU_B_BOMB_PROJECTILES 4
+#define MARISA_A_BOMB_PROJECTILES 8
+#define MARISA_B_BOMB_PROJECTILES 4
+
+STATIC_ASSERT(REIMU_A_BOMB_PROJECTILES <= MAX_BOMB_PROJECTILES);
+STATIC_ASSERT(REIMU_B_BOMB_PROJECTILES <= MAX_BOMB_PROJECTILES);
+STATIC_ASSERT(MARISA_A_BOMB_PROJECTILES <= MAX_BOMB_PROJECTILES);
+STATIC_ASSERT(MARISA_B_BOMB_PROJECTILES <= MAX_BOMB_PROJECTILES);
 
 struct BombInfo
 {
@@ -117,11 +135,11 @@ struct BombInfo
     ZunTimer timer;
     BombCallback calc;
     BombCallback draw;
-    i32 projectileState[8];
-    f32 projectileCustom[8];
-    D3DXVECTOR3 projectilePosition[8];
-    D3DXVECTOR3 projectileVelocity[8];
-    AnmVm vms[8][4];
+    i32 projectileState[MAX_BOMB_PROJECTILES];
+    f32 projectileCustom[MAX_BOMB_PROJECTILES];
+    D3DXVECTOR3 projectilePosition[MAX_BOMB_PROJECTILES];
+    D3DXVECTOR3 projectileVelocity[MAX_BOMB_PROJECTILES];
+    AnmVm vms[MAX_BOMB_PROJECTILES * VMS_PER_BOMB_PROJECTILE];
 };
 ZUN_ASSERT_TYPE(BombInfo, 0x231c, 4);
 
@@ -129,7 +147,8 @@ typedef i32 FireBulletResult;
 #define FBR_STOP_SPAWNING (-2)
 #define FBR_SPAWN_MORE (-1)
 
-typedef FireBulletResult (*FireBulletCallback)(Player *, PlayerBullet *, u32, u32);
+typedef FireBulletResult (*FireBulletCallback)(Player *, PlayerBullet *, i32, i32);
+
 struct CharacterData
 {
     f32 linearMovementSpeed;
@@ -141,34 +160,46 @@ struct CharacterData
 };
 ZUN_ASSERT_TYPE(CharacterData, 0x18, 4);
 
-struct CharacterPowerBulletData
+struct ShtEntry
 {
-    i16 waitBetweenBullets;
-    i16 bulletFrame;
-    Float2 motion;
+    i16 fireRate;
+    i16 delay;
+    Float2 offset;
     Float2 size;
-    f32 direction;
-    f32 velocity;
+    f32 angle;
+    f32 speed;
     u16 damage;
     u8 spawnPositionIdx;
     u8 bulletType;
-    i16 anmFileIdx;
-    i16 bulletSoundIdx;
+    i16 anmScript;
+    i16 shootSfx;
 };
-ZUN_ASSERT_TYPE(CharacterPowerBulletData, 0x24, 4);
+ZUN_ASSERT_TYPE(ShtEntry, 0x24, 4);
 
-struct CharacterPowerData
+#define SPAWN_FROM_PLAYER 0
+#define SPAWN_FROM_OPTION(idx) ((idx) + 1)
+
+struct PowerData
 {
-    i32 numBullets;
-    i32 power;
-    CharacterPowerBulletData *bullets;
+    i32 numEntries;
+    i32 nextPowerThreshold;
+    ShtEntry *entries;
 };
-ZUN_ASSERT_TYPE(CharacterPowerData, 0xc, 4);
+ZUN_ASSERT_TYPE(PowerData, 0xc, 4);
 
 #define MAX_PLAYER_BULLETS 80
 #define MAX_DAMAGE_REGION_COUNT 32
 #define MAX_CANCEL_REGION_COUNT 16
 #define PLAYER_SHOT_TIMER_COUNT 2
+#define MAX_PLAYER_OPTION_COUNT 2
+
+enum PlayerBulletSpawnIndex
+{
+    BULLET_SPAWN_PLAYER = 0,
+    BULLET_SPAWN_OPTIONS = 1,
+};
+
+#define SHOT_TIMER_MAX 30
 
 struct Player
 {
@@ -178,15 +209,15 @@ struct Player
     f32 AngleToPlayer(D3DXVECTOR3 *pos);
     i32 CheckGraze(D3DXVECTOR3 *position, D3DXVECTOR3 *size);
     i32 CheckCollision(D3DXVECTOR3 *position, D3DXVECTOR3 *size);
-    i32 CalcLaserHitbox(D3DXVECTOR3 *laserCenter, D3DXVECTOR3 *laserSize, D3DXVECTOR3 *rotation, f32 angle,
+    i32 CalcLaserHitbox(D3DXVECTOR3 *laserCenter, D3DXVECTOR3 *laserSize, D3DXVECTOR3 *laserPosition, f32 angle,
                         BOOL canGraze);
     i32 CalcDamageToEnemy(D3DXVECTOR3 *enemyPos, D3DXVECTOR3 *enemySize, BOOL *hitByBomb);
     BOOL CalcItemBoxCollision(D3DXVECTOR3 *itemPosition, D3DXVECTOR3 *itemSize);
     void ScoreGraze(D3DXVECTOR3 *grazedPosition);
     void Die();
 
-    AnmVm playerSprite;
-    AnmVm orbsSprite[3]; // why is this 3?
+    AnmVm vm;
+    AnmVm optionVms[MAX_PLAYER_OPTION_COUNT + 1]; // why is this +1?
     D3DXVECTOR3 position;
     unused_field(D3DXVECTOR3);
     D3DXVECTOR3 hitboxTopLeft;
@@ -195,13 +226,13 @@ struct Player
     D3DXVECTOR3 grabItemBottomRight;
     D3DXVECTOR3 hitboxSize;
     D3DXVECTOR3 grabItemSize;
-    D3DXVECTOR3 orbsPosition[2];
+    D3DXVECTOR3 optionPosition[MAX_PLAYER_OPTION_COUNT];
     D3DXVECTOR3 damageRegionPosition[MAX_DAMAGE_REGION_COUNT];
     D3DXVECTOR3 damageRegionSize[MAX_DAMAGE_REGION_COUNT];
     i32 damageRegionDamage[MAX_DAMAGE_REGION_COUNT];
     i32 damageRegionDamageDealt[MAX_DAMAGE_REGION_COUNT];
     PlayerRect cancelRegions[MAX_CANCEL_REGION_COUNT];
-    ZunTimer shotTimer[PLAYER_SHOT_TIMER_COUNT];
+    ZunTimer shotTimer[PLAYER_SHOT_TIMER_COUNT]; // TODO: Better name so that fireBulletTimer -> shotTimer
     Float2 speedMultiplierDuringBomb;
     i32 respawnTimer;
     i32 bulletGracePeriod;
@@ -223,10 +254,10 @@ struct Player
     ZunTimer stateTimer;
     FireBulletCallback fireBulletCallback;
     FireBulletCallback fireBulletFocusCallback;
-    BombInfo bombInfo;
+    BombInfo bomb;
     ChainElem *chainCalc;
-    ChainElem *chainDraw1;
-    ChainElem *chainDraw2;
+    ChainElem *chainDraw;
+    ChainElem *chainDrawEffects;
 };
 ZUN_ASSERT_TYPE(Player, 0x98f0, 4);
 

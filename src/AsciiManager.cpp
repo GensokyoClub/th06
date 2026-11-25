@@ -438,8 +438,8 @@ i32 StageMenu::OnUpdateGameMenu()
             this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleY = 1.7f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleX =
             this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleY = 1.5f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].offset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         if (this->numFrames >= 4)
         {
             if (WAS_PRESSED(TH_BUTTON_UP) || WAS_PRESSED(TH_BUTTON_DOWN))
@@ -465,8 +465,8 @@ i32 StageMenu::OnUpdateGameMenu()
             this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].scaleY = 1.5f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleX =
             this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].scaleY = 1.7f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_UNPAUSE].offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_QUIT].offset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
         if (this->numFrames >= 4)
         {
             if (WAS_PRESSED(TH_BUTTON_UP) || WAS_PRESSED(TH_BUTTON_DOWN))
@@ -507,8 +507,8 @@ i32 StageMenu::OnUpdateGameMenu()
             1.7f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleY =
             1.5f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].offset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         if (this->numFrames >= 4)
         {
             if (WAS_PRESSED(TH_BUTTON_UP) || WAS_PRESSED(TH_BUTTON_DOWN))
@@ -533,8 +533,8 @@ i32 StageMenu::OnUpdateGameMenu()
             1.5f;
         this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleX = this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].scaleY =
             1.7f;
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_YES].offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        this->menuSprites[GAME_MENU_SPRITE_CURSOR_NO].offset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
         if (this->numFrames >= 4)
         {
             if (WAS_PRESSED(TH_BUTTON_UP) || WAS_PRESSED(TH_BUTTON_DOWN))
@@ -693,8 +693,8 @@ i32 StageMenu::OnUpdateRetryMenu()
         this->menuSprites[RETRY_MENU_SPRITE_NO].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
         this->menuSprites[RETRY_MENU_SPRITE_YES].scaleX = this->menuSprites[RETRY_MENU_SPRITE_YES].scaleY = 1.7f;
         this->menuSprites[RETRY_MENU_SPRITE_NO].scaleX = this->menuSprites[RETRY_MENU_SPRITE_NO].scaleY = 1.5f;
-        this->menuSprites[RETRY_MENU_SPRITE_YES].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
-        this->menuSprites[RETRY_MENU_SPRITE_NO].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        this->menuSprites[RETRY_MENU_SPRITE_YES].offset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
+        this->menuSprites[RETRY_MENU_SPRITE_NO].offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         if (this->numFrames >= 4)
         {
             if (WAS_PRESSED(TH_BUTTON_UP) || WAS_PRESSED(TH_BUTTON_DOWN))
@@ -718,8 +718,8 @@ i32 StageMenu::OnUpdateRetryMenu()
         this->menuSprites[RETRY_MENU_SPRITE_YES].color = COLOR_SET_ALPHA(COLOR_GREY, 0x80);
         this->menuSprites[RETRY_MENU_SPRITE_YES].scaleX = this->menuSprites[RETRY_MENU_SPRITE_YES].scaleY = 1.5f;
         this->menuSprites[RETRY_MENU_SPRITE_NO].scaleX = this->menuSprites[RETRY_MENU_SPRITE_NO].scaleY = 1.7f;
-        this->menuSprites[RETRY_MENU_SPRITE_NO].posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
-        this->menuSprites[RETRY_MENU_SPRITE_YES].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        this->menuSprites[RETRY_MENU_SPRITE_NO].offset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
+        this->menuSprites[RETRY_MENU_SPRITE_YES].offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         if (this->numFrames >= 30)
         {
             if (WAS_PRESSED(TH_BUTTON_UP) || WAS_PRESSED(TH_BUTTON_DOWN))

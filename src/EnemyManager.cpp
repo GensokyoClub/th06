@@ -57,7 +57,7 @@ void EnemyManager::Initialize()
     enemy->stackDepth = 0;
     enemy->life = 1;
     enemy->score = 100;
-    enemy->deathParticle = PARTICLE_DEATH_POP;
+    enemy->deathParticle = PARTICLE_POP;
     enemy->deathSparkParticle = SPARK_TYPE_WHITE;
     enemy->unkParticle = 0;
     enemy->shootInterval = 0;
@@ -669,7 +669,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                     curEnemy->life = 0;
                     break;
                 }
-                g_SoundPlayer.PlaySoundId((i % 2) + SOUND_2);
+                g_SoundPlayer.PlaySoundId((i % 2) + SOUND_ENEMY_DIE);
                 g_EffectManager.SpawnParticles(curEnemy->deathParticle, &curEnemy->position);
                 g_EffectManager.SpawnParticles(curEnemy->deathSparkParticle + PARTICLE_SPARK, &curEnemy->position, 4);
                 if (curEnemy->deathCallbackSub >= 0)
@@ -691,7 +691,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
             }
             else if (enemyLifeBeforeDmg > curEnemy->life)
             {
-                g_SoundPlayer.PlaySoundId(SOUND_TOTAL_BOSS_DEATH);
+                g_SoundPlayer.PlaySoundId(SOUND_ENEMY_HIT);
                 curEnemy->primaryVm.flags.colorOp = AnmColorOp_Add;
                 curEnemy->hitEffectDelay = 4;
             }
@@ -739,7 +739,7 @@ static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
                 {
                     curEnemyVm->rotation.z = curEnemy->angle;
                 }
-                curEnemyVm->pos = curEnemy->position + curEnemyVm->posOffset;
+                curEnemyVm->pos = curEnemy->position + curEnemyVm->offset;
                 curEnemyVm->pos.z = 0.495f;
                 g_AnmManager->Draw3D(curEnemyVm);
             }
@@ -748,7 +748,7 @@ static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
         {
             curEnemy->primaryVm.rotation.z = curEnemy->angle;
         }
-        curEnemy->primaryVm.pos = curEnemy->position + curEnemy->primaryVm.posOffset;
+        curEnemy->primaryVm.pos = curEnemy->position + curEnemy->primaryVm.offset;
         curEnemy->primaryVm.pos.z = 0.494f;
         g_AnmManager->Draw3D(&curEnemy->primaryVm);
         for (j = ENEMY_ANM_SLOTS / 2; j < ENEMY_ANM_SLOTS; j++, curEnemyVm++)
@@ -759,7 +759,7 @@ static ChainCallbackResult EnemyManager_OnDraw(EnemyManager *mgr)
                 {
                     curEnemyVm->rotation.z = curEnemy->angle;
                 }
-                curEnemyVm->pos = curEnemy->position + curEnemyVm->posOffset;
+                curEnemyVm->pos = curEnemy->position + curEnemyVm->offset;
                 curEnemyVm->pos.z = 0.495f;
                 g_AnmManager->Draw3D(curEnemyVm);
             }

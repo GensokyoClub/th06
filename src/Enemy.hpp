@@ -39,8 +39,8 @@ struct EnemyShooter
         {
             f32 startOffset;
             f32 endOffset;
-            f32 length;
-            f32 width;
+            f32 maxLength;
+            f32 maxWidth;
         };
     };
     union {

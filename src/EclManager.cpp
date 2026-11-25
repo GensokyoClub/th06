@@ -605,8 +605,8 @@ restart_sub_changed:
             shooter->speed1 = *EclGetVarFloat(enemy, &args->speed, NULL);
             shooter->startOffset = *EclGetVarFloat(enemy, &args->startOffset, NULL);
             shooter->endOffset = *EclGetVarFloat(enemy, &args->endOffset, NULL);
-            shooter->length = *EclGetVarFloat(enemy, &args->length, NULL);
-            shooter->width = args->width;
+            shooter->maxLength = *EclGetVarFloat(enemy, &args->maxLength, NULL);
+            shooter->maxWidth = args->maxWidth;
             shooter->startTime = args->startTime;
             shooter->duration = args->duration;
             shooter->despawnDuration = args->despawnDuration;

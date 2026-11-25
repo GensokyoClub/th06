@@ -230,7 +230,7 @@ struct AnmManager
     {
         vm->scriptId = scriptId;
         vm->pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-        vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        vm->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         vm->fontWidth = vm->fontHeight = DEFAULT_ANM_FONT_SIZE;
 
         this->SetAndExecuteScript(vm, this->scripts[scriptId]);

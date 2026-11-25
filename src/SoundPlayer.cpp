@@ -11,23 +11,56 @@ static DWORD WINAPI SoundPlayer_BackgroundMusicPlayerThread(LPVOID lpThreadParam
 #define BACKGROUND_MUSIC_WAV_BITS_PER_SAMPLE 16
 #define BACKGROUND_MUSIC_WAV_BLOCK_ALIGN BACKGROUND_MUSIC_WAV_BITS_PER_SAMPLE / 8 * BACKGROUND_MUSIC_WAV_NUM_CHANNELS
 
-SoundEffectData g_SoundBufferIdxVol[] = {
+enum SoundEffectFiles
+{
+    SFX_PLST00,
+    SFX_ENEP00,
+    SFX_PLDEAD00,
+    SFX_POWER0,
+    SFX_POWER1,
+    SFX_TAN00,
+    SFX_TAN01,
+    SFX_TAN02,
+    SFX_OK00,
+    SFX_CANCEL00,
+    SFX_SELECT00,
+    SFX_GUN00,
+    SFX_CAT00,
+    SFX_LAZER00,
+    SFX_LAZER01,
+    SFX_ENEP01,
+    SFX_NEP00,
+    SFX_DAMAGE00,
+    SFX_ITEM00,
+    SFX_KIRA00,
+    SFX_KIRA01,
+    SFX_KIRA02,
+    SFX_EXTEND,
+    SFX_TIMEOUT,
 #if BUILT_SINCE(100)
-    {0, -1500, 0},   {0, -2000, 0},   {1, -1200, 5},   {1, -1400, 5},  {2, -1000, 100}, {3, -500, 100},
-    {4, -500, 100},  {5, -1700, 50},  {6, -1700, 50},  {7, -1700, 50}, {8, -1000, 100}, {9, -1000, 100},
-    {10, -1900, 10}, {11, -1200, 10}, {12, -900, 100}, {5, -1500, 50}, {13, -900, 50},  {14, -900, 50},
-    {15, -600, 100}, {16, -400, 100}, {17, -1100, 0},  {18, -900, 0},  {5, -1800, 20},  {6, -1800, 20},
-    {7, -1800, 20},  {19, -300, 50},  {20, -600, 50},  {21, -800, 50}, {22, -100, 140}, {23, -500, 100},
-    {24, -1000, 20}, {25, -1000, 90},
-#else
-    {0, -2500, 0},   {0, -3000, 0},   {1, -1200, 5},   {1, -1700, 5},   {2, -1500, 100}, {3, -300, 100},
-    {4, -300, 100},  {5, -1500, 50},  {6, -1500, 50},  {7, -1500, 50},  {8, -800, 100},  {9, -1400, 100},
-    {10, -1700, 10}, {11, -1500, 10}, {12, -800, 100}, {5, -1000, 50},  {13, -700, 50},  {14, -700, 50},
-    {15, -500, 100}, {16, -200, 100}, {17, -1600, 0},  {18, -900, 0},   {5, -2200, 20},  {6, -2200, 20},
-    {7, -2200, 20},  {19, -500, 50},  {20, -800, 50},  {21, -1200, 50}, {22, -300, 140}, {23, -500, 100},
+    SFX_GRAZE,
+    SFX_POWERUP
 #endif
 };
-const char *g_SFXList[] = {
+
+// clang-format off
+SoundEffectData g_SoundEffects[] = {
+#if BUILT_SINCE(100)
+    {SFX_PLST00, -1500, 0},   {SFX_PLST00, -2000, 0},   {SFX_ENEP00, -1200, 5},   {SFX_ENEP00, -1400, 5},  {SFX_PLDEAD00, -1000, 100}, {SFX_POWER0, -500, 100},
+    {SFX_POWER1, -500, 100},  {SFX_TAN00, -1700, 50},  {SFX_TAN01, -1700, 50},  {SFX_TAN02, -1700, 50}, {SFX_OK00, -1000, 100}, {SFX_CANCEL00, -1000, 100},
+    {SFX_SELECT00, -1900, 10}, {SFX_GUN00, -1200, 10}, {SFX_CAT00, -900, 100}, {SFX_TAN00, -1500, 50}, {SFX_LAZER00, -900, 50},  {SFX_LAZER01, -900, 50},
+    {SFX_ENEP01, -600, 100}, {SFX_NEP00, -400, 100}, {SFX_DAMAGE00, -1100, 0},  {SFX_ITEM00, -900, 0},  {SFX_TAN00, -1800, 20},  {SFX_TAN01, -1800, 20},
+    {SFX_TAN02, -1800, 20},  {SFX_KIRA00, -300, 50},  {SFX_KIRA01, -600, 50},  {SFX_KIRA02, -800, 50}, {SFX_EXTEND, -100, 140}, {SFX_TIMEOUT, -500, 100},
+    {SFX_GRAZE, -1000, 20}, {SFX_POWERUP, -1000, 90},
+#else
+    {SFX_PLST00, -2500, 0},   {SFX_PLST00, -3000, 0},   {SFX_ENEP00, -1200, 5},   {SFX_ENEP00, -1700, 5},   {SFX_PLDEAD00, -1500, 100}, {SFX_POWER0, -300, 100},
+    {SFX_POWER1, -300, 100},  {SFX_TAN00, -1500, 50},  {SFX_TAN01, -1500, 50},  {SFX_TAN02, -1500, 50},  {SFX_OK00, -800, 100},  {SFX_CANCEL00, -1400, 100},
+    {SFX_SELECT00, -1700, 10}, {SFX_GUN00, -1500, 10}, {SFX_CAT00, -800, 100}, {SFX_TAN00, -1000, 50},  {SFX_LAZER00, -700, 50},  {SFX_LAZER01, -700, 50},
+    {SFX_ENEP01, -500, 100}, {SFX_NEP00, -200, 100}, {SFX_DAMAGE00, -1600, 0},  {SFX_ITEM00, -900, 0},   {SFX_TAN00, -2200, 20},  {SFX_TAN01, -2200, 20},
+    {SFX_TAN02, -2200, 20},  {SFX_KIRA00, -500, 50},  {SFX_KIRA01, -800, 50},  {SFX_KIRA02, -1200, 50}, {SFX_EXTEND, -300, 140}, {SFX_TIMEOUT, -500, 100},
+#endif
+};
+const char *g_SoundEffectFiles[] = {
     "data/wav/plst00.wav", "data/wav/enep00.wav",   "data/wav/pldead00.wav", "data/wav/power0.wav",
     "data/wav/power1.wav", "data/wav/tan00.wav",    "data/wav/tan01.wav",    "data/wav/tan02.wav",
     "data/wav/ok00.wav",   "data/wav/cancel00.wav", "data/wav/select00.wav", "data/wav/gun00.wav",
@@ -481,33 +514,33 @@ ZunResult SoundPlayer::InitSoundBuffers()
             this->soundBuffersToPlay[i] = NO_SOUND;
         }
 #endif
-        for (i = 0; i < ARRAY_SIZE_SIGNED(g_SFXList); i++)
+        for (i = 0; i < ARRAY_SIZE_SIGNED(g_SoundEffectFiles); i++)
         {
-            if (this->LoadSound(i, g_SFXList[i]) != ZUN_SUCCESS)
+            if (this->LoadSound(i, g_SoundEffectFiles[i]) != ZUN_SUCCESS)
             {
-                g_GameErrorContext.Log(TH_ERR_SOUNDPLAYER_FAILED_TO_LOAD_SOUND_FILE, g_SFXList[i]);
+                g_GameErrorContext.Log(TH_ERR_SOUNDPLAYER_FAILED_TO_LOAD_SOUND_FILE, g_SoundEffectFiles[i]);
                 return ZUN_ERROR;
             }
         }
-        for (i = 0; i < ARRAY_SIZE(g_SoundBufferIdxVol); i++)
+        for (i = 0; i < ARRAY_SIZE(g_SoundEffects); i++)
         {
-            this->dsoundHdl->DuplicateSoundBuffer(this->soundBuffers[g_SoundBufferIdxVol[i].bufferIdx],
+            this->dsoundHdl->DuplicateSoundBuffer(this->soundBuffers[g_SoundEffects[i].fileIdx],
                                                   &this->duplicateSoundBuffers[i]);
             this->duplicateSoundBuffers[i]->SetCurrentPosition(0);
-            this->duplicateSoundBuffers[i]->SetVolume(g_SoundBufferIdxVol[i].volume);
+            this->duplicateSoundBuffers[i]->SetVolume(g_SoundEffects[i].volume);
         }
     }
     return ZUN_SUCCESS;
 }
 
-#pragma var_order(i, SFXToPlay)
+#pragma var_order(i, unk)
 void SoundPlayer::PlaySoundId(i32 sound, i32 unused)
 {
 #if BUILT_SINCE(100)
-    i32 SFXToPlay;
+    i32 unk;
     i32 i;
 
-    SFXToPlay = g_SoundBufferIdxVol[sound].unk;
+    unk = g_SoundEffects[sound].unk;
     for (i = 0; i < SFX_QUEUE_LENGTH; i++)
     {
         if (!IS_VALID_SFX(this->soundBuffersToPlay[i]))
@@ -524,7 +557,7 @@ void SoundPlayer::PlaySoundId(i32 sound, i32 unused)
         return;
     }
     this->soundBuffersToPlay[i] = sound;
-    this->unk408[sound] = SFXToPlay;
+    this->unk408[sound] = unk;
 #else
     if (this->manager == NULL)
     {
@@ -538,7 +571,7 @@ void SoundPlayer::PlaySoundId(i32 sound, i32 unused)
     {
         return;
     }
-    this->unk408[sound] = g_SoundBufferIdxVol[sound].unk;
+    this->unk408[sound] = g_SoundEffects[sound].unk;
     this->duplicateSoundBuffers[sound]->Stop();
     this->duplicateSoundBuffers[sound]->SetCurrentPosition(0);
     this->duplicateSoundBuffers[sound]->Play(0, 0, 0);

@@ -278,7 +278,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                     }
                     idx = 1 << mapping;
 #endif
-                g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+                g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
                 switch (menu->cursor)
                 {
                 case TH_BUTTON_SHOOT_IDX:
@@ -363,7 +363,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                     // Before 1.02 leaving key config puts the cursor on the screen mode option.
                     menu->cursor = OPTIONS_CURSOR_SCREENMODE;
 #endif
-                    g_SoundPlayer.PlaySoundId(SOUND_BACK);
+                    g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
                     g_ControllerMapping = menu->controlMapping;
                     g_Supervisor.cfg.controllerMapping = menu->controlMapping;
                     break;
@@ -429,7 +429,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                     {
                         vmList->color = 0x60ffffff;
                     }
-                    vmList->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+                    vmList->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
                     vmList->colorInterpDuration = 0;
                 }
                 else
@@ -442,7 +442,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                     {
                         vmList->color = COLOR_WHITE;
                     }
-                    vmList->posOffset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
+                    vmList->offset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
                 }
             }
             vmList->flags.isVisibleOverride = false;
@@ -463,7 +463,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                 {
                     vmList->color = COLOR_WHITE;
                 }
-                vmList->posOffset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
+                vmList->offset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
             }
         }
         if (WAS_PRESSED(TH_BUTTON_RETURNMENU))
@@ -474,7 +474,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
             {
                 menu->vm[i].pendingInterrupt = 4;
             }
-            g_SoundPlayer.PlaySoundId(SOUND_BACK);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
             if (g_GameManager.difficulty < EXTRA)
             {
                 g_Supervisor.cfg.defaultDifficulty = menu->cursor;
@@ -501,7 +501,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
             {
                 menu->vm[i].pendingInterrupt = 7;
             }
-            g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
             if (g_GameManager.difficulty < EXTRA)
             {
                 vmList = &menu->vm[MENU_VMS_DIFFICULTY_SELECT + menu->cursor];
@@ -555,7 +555,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                 }
                 goto here;
             }
-            g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+            g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
             vmList = &menu->vm[MENU_VMS_CHARACTER_SELECT];
             for (i = 0; i < CHARACTER_COUNT; i++, vmList++)
             {
@@ -588,7 +588,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                 }
                 goto here;
             }
-            g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+            g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
             vmList = &menu->vm[MENU_VMS_CHARACTER_SELECT];
             for (i = 0; i < CHARACTER_COUNT; i++, vmList++)
             {
@@ -627,7 +627,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                 }
                 menu->cursor = 0;
             }
-            g_SoundPlayer.PlaySoundId(SOUND_BACK);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
             break;
         }
         if (WAS_PRESSED(TH_BUTTON_SELECTMENU))
@@ -674,7 +674,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                     menu->cursor = 1 - g_GameManager.shotType;
                 }
             }
-            g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
         }
         break;
     case STATE_SHOT_SELECT:
@@ -703,7 +703,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                 {
                     vmList->color = 0xa0d0d0d0;
                 }
-                vmList->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+                vmList->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
             }
             else
             {
@@ -715,7 +715,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                 {
                     vmList->color = COLOR_WHITE;
                 }
-                vmList->posOffset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
+                vmList->offset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
             }
         }
         if (menu->stateTimer < 30)
@@ -741,7 +741,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
             }
             vmList = &menu->vm[MENU_VMS_DIFFICULTY_SELECT + g_GameManager.difficulty];
             vmList->pendingInterrupt = 0;
-            g_SoundPlayer.PlaySoundId(SOUND_BACK);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
             g_GameManager.shotType = menu->cursor;
             menu->cursor = g_GameManager.character;
             vmList = &menu->vm[MENU_VMS_CHARACTER_SELECT];
@@ -780,7 +780,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                     g_GameManager.bombsRemaining = DEFAULT_BOMB_COUNT;
                 }
                 g_Supervisor.curState = SUPERVISOR_STATE_GAMEMANAGER;
-                g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+                g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
                 g_GameManager.isInReplay = false;
                 local_48 = 0.0f;
                 if (menu->timeRelatedArrSize >= 2)
@@ -905,7 +905,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
                 }
             }
             menu->cursor = g_GameManager.shotType;
-            g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
             break;
         }
         else if (WAS_PRESSED(TH_BUTTON_SELECTMENU))
@@ -954,7 +954,7 @@ static CursorMovement MoveCursor(MainMenu *menu, i32 menuLength)
     if (WAS_PRESSED_REPEATING(TH_BUTTON_UP))
     {
         menu->cursor--;
-        g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+        g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
         if (menu->cursor < 0)
         {
             menu->cursor = menuLength - 1;
@@ -969,7 +969,7 @@ static CursorMovement MoveCursor(MainMenu *menu, i32 menuLength)
     if (WAS_PRESSED_REPEATING(TH_BUTTON_DOWN))
     {
         menu->cursor++;
-        g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+        g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
         if (menu->cursor < 0)
         {
             menu->cursor = menuLength - 1;
@@ -1040,7 +1040,7 @@ static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor, D3DCOLOR current
             g_AnmManager->SetSprite(vm, vm->baseSpriteId + sprite);
             vm->color = COLOR_COMBINE_ALPHA(COLOR_WHITE, currentItemColor);
         }
-        vm->posOffset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
+        vm->offset = D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
     }
     else
     {
@@ -1053,7 +1053,7 @@ static void DrawMenuItem(AnmVm *vm, i32 itemNumber, i32 cursor, D3DCOLOR current
             g_AnmManager->SetSprite(vm, vm->baseSpriteId);
             vm->color = COLOR_COMBINE_ALPHA(COLOR_WHITE, otherItemColor);
         }
-        vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        vm->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
     }
 }
 
@@ -1087,7 +1087,7 @@ ZunResult MainMenu::BeginStartup()
         {
             this->vm[i].color = COLOR_WHITE;
         }
-        this->vm[i].posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        this->vm[i].offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
     }
     this->gameState = STATE_PRE_INPUT;
     return ZUN_SUCCESS;
@@ -1119,7 +1119,7 @@ BOOL MainMenu::WeirdSecondInputCheck()
     {
         this->vm[this->cursor].color = COLOR_PINK;
     }
-    this->vm[this->cursor].posOffset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
+    this->vm[this->cursor].offset = D3DXVECTOR3(-6.0f, -6.0f, 0.0f);
 
     this->minimumOpacity = 0;
     this->menuTextColor = COLOR_MENU_ACTIVE_BACKGROUND;
@@ -1183,7 +1183,7 @@ ZunResult MainMenu::DrawStartMenu()
                 this->menuTextColor = COLOR_BLACK;
                 this->numFramesSinceActive = 0;
                 this->framesActive = 60;
-                g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+                g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
                 break;
 #if !TRIALBUILD
             case TITLE_CURSOR_EXTRA_START:
@@ -1204,11 +1204,11 @@ ZunResult MainMenu::DrawStartMenu()
                     this->menuTextColor = COLOR_BLACK;
                     this->numFramesSinceActive = 0;
                     this->framesActive = 60;
-                    g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+                    g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
                 }
                 else
                 {
-                    g_SoundPlayer.PlaySoundId(SOUND_BACK);
+                    g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
                 }
                 break;
 #endif
@@ -1232,7 +1232,7 @@ ZunResult MainMenu::DrawStartMenu()
                 this->menuTextColor = COLOR_BLACK;
                 this->numFramesSinceActive = 0;
                 this->framesActive = 60;
-                g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+                g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
                 break;
             case TITLE_CURSOR_REPLAY:
                 for (i = 0; i < ARRAY_SIZE_SIGNED(this->vm); i++)
@@ -1246,7 +1246,7 @@ ZunResult MainMenu::DrawStartMenu()
                 this->menuTextColor = COLOR_BLACK;
                 this->numFramesSinceActive = 0;
                 this->framesActive = 60;
-                g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+                g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
                 break;
             case TITLE_CURSOR_SCORE:
                 for (i = 0; i < ARRAY_SIZE_SIGNED(this->vm); i++)
@@ -1259,7 +1259,7 @@ ZunResult MainMenu::DrawStartMenu()
                 this->menuTextColor = COLOR_BLACK;
                 this->numFramesSinceActive = 0;
                 this->framesActive = 60;
-                g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+                g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
                 break;
             case TITLE_CURSOR_MUSIC_ROOM:
                 this->gameState = STATE_MUSIC_ROOM;
@@ -1268,7 +1268,7 @@ ZunResult MainMenu::DrawStartMenu()
                 {
                     this->vm[i].pendingInterrupt = 4;
                 }
-                g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+                g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
                 break;
             case TITLE_CURSOR_OPTION:
                 this->gameState = STATE_OPTIONS;
@@ -1281,7 +1281,7 @@ ZunResult MainMenu::DrawStartMenu()
                 this->colorMode16bit = g_Supervisor.cfg.colorMode16bit;
                 this->windowed = g_Supervisor.cfg.windowed;
                 this->frameskipConfig = g_Supervisor.cfg.frameskipConfig;
-                g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+                g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
                 break;
             case TITLE_CURSOR_QUIT:
                 this->gameState = STATE_QUIT;
@@ -1290,7 +1290,7 @@ ZunResult MainMenu::DrawStartMenu()
                 {
                     this->vm[i].pendingInterrupt = 4;
                 }
-                g_SoundPlayer.PlaySoundId(SOUND_BACK);
+                g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
                 break;
             }
         }
@@ -1302,12 +1302,12 @@ ZunResult MainMenu::DrawStartMenu()
             {
                 this->vm[i].pendingInterrupt = 4;
             }
-            g_SoundPlayer.PlaySoundId(SOUND_BACK);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
         }
         if (WAS_PRESSED(TH_BUTTON_RETURNMENU))
         {
             this->cursor = TITLE_CURSOR_QUIT;
-            g_SoundPlayer.PlaySoundId(SOUND_BACK);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
         }
     }
     return ZUN_SUCCESS;
@@ -1434,7 +1434,7 @@ BOOL MainMenu::ReplayHandling()
                 anmVm->pendingInterrupt = 16;
                 this->stateTimer = 0;
                 this->cursor = 0;
-                g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+                g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
                 this->currentReplay =
 #if BUILT_SINCE(100)
                     (ReplayData *)FileSystem::OpenPath(this->replayFilePaths[this->chosenReplay], EXTERNAL_FILE);
@@ -1468,7 +1468,7 @@ BOOL MainMenu::ReplayHandling()
             {
                 this->vm[i].pendingInterrupt = 4;
             }
-            g_SoundPlayer.PlaySoundId(SOUND_BACK);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
             this->cursor = TITLE_CURSOR_START;
             break;
         }
@@ -1536,7 +1536,7 @@ BOOL MainMenu::ReplayHandling()
             {
                 this->vm[i].pendingInterrupt = 4;
             }
-            g_SoundPlayer.PlaySoundId(SOUND_BACK);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
             this->gameState = STATE_REPLAY_ANIM;
             anmVm = this->vm;
             for (i = 0; i < ARRAY_SIZE_SIGNED(this->vm); i++, anmVm++)
@@ -1676,7 +1676,7 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelect
         }
         vm->scaleX = 1.0f;
         vm->scaleY = 1.0f;
-        vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        vm->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
     }
     else
     {
@@ -1692,7 +1692,7 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelect
         {
             g_AnmManager->SetSprite(vm, vm->baseSpriteId + (ANM_OFFSET_TITLE04S - ANM_OFFSET_TITLE04));
         }
-        vm->posOffset = D3DXVECTOR3(-2.0f, -2.0f, 0.0f);
+        vm->offset = D3DXVECTOR3(-2.0f, -2.0f, 0.0f);
     }
 
     if (item != this->cursor)
@@ -1706,7 +1706,7 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelect
             vm->color = COLOR_SET_ALPHA(vm->color, 0x80);
         }
 
-        vm->posOffset += D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        vm->offset += D3DXVECTOR3(0.0f, 0.0f, 0.0f);
     }
     else
     {
@@ -1719,7 +1719,7 @@ void MainMenu::ColorMenuItem(AnmVm *vm, i32 item, i32 subItem, i32 subItemSelect
             vm->color = COLOR_SET_ALPHA(vm->color, 0xff);
         }
 
-        vm->posOffset += D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
+        vm->offset += D3DXVECTOR3(-4.0f, -4.0f, 0.0f);
     }
 }
 
@@ -1780,7 +1780,7 @@ BOOL MainMenu::OnUpdateOptionsMenu()
             {
             case OPTIONS_CURSOR_LIFECOUNT:
 
-                g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+                g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
                 if (g_Supervisor.cfg.lifeCount <= 0)
                 {
                     g_Supervisor.cfg.lifeCount = 5;
@@ -1790,7 +1790,7 @@ BOOL MainMenu::OnUpdateOptionsMenu()
 
             case OPTIONS_CURSOR_BOMBCOUNT:
 
-                g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+                g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
                 if (g_Supervisor.cfg.bombCount <= 0)
                 {
                     g_Supervisor.cfg.bombCount = 4;
@@ -1800,7 +1800,7 @@ BOOL MainMenu::OnUpdateOptionsMenu()
 
             case OPTIONS_CURSOR_COLORMODE:
 
-                g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+                g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
                 if (g_Supervisor.cfg.colorMode16bit <= 0)
                 {
                     g_Supervisor.cfg.colorMode16bit = 2;
@@ -1810,7 +1810,7 @@ BOOL MainMenu::OnUpdateOptionsMenu()
 
             case OPTIONS_CURSOR_MUSICMODE:
 
-                g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+                g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
                 g_Supervisor.StopAudio();
                 if (g_Supervisor.cfg.musicMode <= OFF)
                 {
@@ -1823,7 +1823,7 @@ BOOL MainMenu::OnUpdateOptionsMenu()
 
             case OPTIONS_CURSOR_PLAYSOUNDS:
 
-                g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+                g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
                 if (g_Supervisor.cfg.playSounds <= 0)
                 {
                     g_Supervisor.cfg.playSounds = 2;
@@ -1833,7 +1833,7 @@ BOOL MainMenu::OnUpdateOptionsMenu()
 
             case OPTIONS_CURSOR_SCREENMODE:
 
-                g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+                g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
                 if (this->windowed <= 0)
                 {
                     this->windowed = 2;
@@ -1845,7 +1845,7 @@ BOOL MainMenu::OnUpdateOptionsMenu()
         if (WAS_PRESSED(TH_BUTTON_MENU | TH_BUTTON_BOMB))
         {
             this->cursor = OPTIONS_CURSOR_EXIT;
-            g_SoundPlayer.PlaySoundId(SOUND_BACK);
+            g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
         }
         if (WAS_PRESSED_REPEATING(TH_BUTTON_RIGHT))
         {
@@ -1853,7 +1853,7 @@ BOOL MainMenu::OnUpdateOptionsMenu()
             {
             case OPTIONS_CURSOR_LIFECOUNT:
 
-                g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+                g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
                 g_Supervisor.cfg.lifeCount += 1;
                 if (g_Supervisor.cfg.lifeCount >= 5)
                 {
@@ -1862,7 +1862,7 @@ BOOL MainMenu::OnUpdateOptionsMenu()
                 break;
             case OPTIONS_CURSOR_BOMBCOUNT:
 
-                g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+                g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
                 g_Supervisor.cfg.bombCount += 1;
                 if (g_Supervisor.cfg.bombCount >= 4)
                 {
@@ -1871,7 +1871,7 @@ BOOL MainMenu::OnUpdateOptionsMenu()
                 break;
             case OPTIONS_CURSOR_COLORMODE:
 
-                g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+                g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
                 g_Supervisor.cfg.colorMode16bit += 1;
                 if (g_Supervisor.cfg.colorMode16bit >= 2)
                 {
@@ -1880,7 +1880,7 @@ BOOL MainMenu::OnUpdateOptionsMenu()
                 break;
             case OPTIONS_CURSOR_MUSICMODE:
 
-                g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+                g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
                 g_Supervisor.StopAudio();
                 g_Supervisor.cfg.musicMode += 1;
                 if (g_Supervisor.cfg.musicMode >= MIDI + 1)
@@ -1892,7 +1892,7 @@ BOOL MainMenu::OnUpdateOptionsMenu()
                 break;
             case OPTIONS_CURSOR_PLAYSOUNDS:
 
-                g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+                g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
                 g_Supervisor.cfg.playSounds += 1;
                 if (g_Supervisor.cfg.playSounds >= 2)
                 {
@@ -1901,7 +1901,7 @@ BOOL MainMenu::OnUpdateOptionsMenu()
                 break;
             case OPTIONS_CURSOR_SCREENMODE:
 
-                g_SoundPlayer.PlaySoundId(SOUND_MOVE_MENU);
+                g_SoundPlayer.PlaySoundId(SOUND_MOVE_CURSOR);
                 this->windowed += 1;
                 if (this->windowed >= 2)
                 {
@@ -1923,7 +1923,7 @@ BOOL MainMenu::OnUpdateOptionsMenu()
                     this->vm[i].pendingInterrupt = 5;
                 }
                 this->cursor = TH_BUTTON_SHOOT_IDX;
-                g_SoundPlayer.PlaySoundId(SOUND_SELECT);
+                g_SoundPlayer.PlaySoundId(SOUND_MENU_SELECT);
 
                 this->controlMapping = g_ControllerMapping;
 
@@ -1954,7 +1954,7 @@ BOOL MainMenu::OnUpdateOptionsMenu()
                     this->vm[i].pendingInterrupt = 2;
                 }
                 this->cursor = TITLE_CURSOR_OPTION;
-                g_SoundPlayer.PlaySoundId(SOUND_BACK);
+                g_SoundPlayer.PlaySoundId(SOUND_MENU_CANCEL);
                 if (this->colorMode16bit != g_Supervisor.cfg.colorMode16bit ||
                     this->windowed != g_Supervisor.cfg.windowed ||
                     this->frameskipConfig != g_Supervisor.cfg.frameskipConfig)
@@ -2052,7 +2052,7 @@ ChainCallbackResult MainMenu_OnDraw(MainMenu *menu)
         if (g_AnmManager->ShouldDraw(vm))
         {
             D3DXVECTOR3 posBackup = vm->pos;
-            vm->pos += vm->posOffset;
+            vm->pos += vm->offset;
             g_AnmManager->Draw2DRotated(vm);
             vm->pos = posBackup;
         }
@@ -2181,7 +2181,7 @@ ZunResult LoadDiffCharSelect(MainMenu *menu)
         {
             vm->color = COLOR_WHITE;
         }
-        vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        vm->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         vm->baseSpriteId = vm->spriteId;
         vm->flags.zWriteDisable = true;
     }
@@ -2224,7 +2224,7 @@ ZunResult LoadReplayMenu(MainMenu *menu)
         {
             vm->color = COLOR_WHITE;
         }
-        vm->posOffset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+        vm->offset = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
         vm->baseSpriteId = vm->spriteId;
         vm->flags.zWriteDisable = true;
     }

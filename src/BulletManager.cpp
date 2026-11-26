@@ -1151,18 +1151,17 @@ static void DrawBulletNoHwVertex(Bullet *bullet)
     g_AnmManager->Draw2DRotated(anmVm);
 }
 
-#pragma var_order(i, sine, curLaser, laserOffset, cosine)
+#pragma var_order(i, sine, curLaser, laserCenterOffset, cosine)
 static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
 {
     i32 i;
     f32 sine;
-    Laser *curLaser;
-    f32 laserOffset;
+    f32 laserCenterOffset;
     f32 cosine;
 
     g_Supervisor.d3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 
-    curLaser = &mgr->lasers[0];
+    Laser *curLaser = &mgr->lasers[0];
     for (i = 0; i < MAX_ENEMY_LASERS; i++, curLaser++)
     {
         if (!curLaser->inUse)
@@ -1170,9 +1169,9 @@ static ChainCallbackResult BulletManager_OnDraw(BulletManager *mgr)
             continue;
         }
         fsincos_wrapper(&sine, &cosine, curLaser->angle);
-        laserOffset = LASER_LENGTH(curLaser) / 2.0f + curLaser->startOffset;
-        curLaser->vm.pos[0] = cosine * laserOffset + curLaser->pos[0];
-        curLaser->vm.pos[1] = sine * laserOffset + curLaser->pos[1];
+        laserCenterOffset = LASER_LENGTH(curLaser) / 2.0f + curLaser->startOffset;
+        curLaser->vm.pos[0] = cosine * laserCenterOffset + curLaser->pos[0];
+        curLaser->vm.pos[1] = sine * laserCenterOffset + curLaser->pos[1];
         curLaser->vm.pos[2] = 0.0f;
         curLaser->color = COLOR_COMBINE_ALPHA(COLOR_WHITE, curLaser->color);
         g_AnmManager->Draw3DRotated(&curLaser->vm);

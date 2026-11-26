@@ -824,6 +824,17 @@ ZunResult AnmManager::Draw3DRotated(AnmVm *vm)
     // Load sprite if vm->sprite is not the same as current sprite.
     if (this->currentSprite != vm->sprite)
     {
+        // BUG: DrawSprite expects changing the current sprite to have updated
+        // the UV coords in g_PrimitivesToDrawVertexBuf, but that doesn't happen
+        // here. This causes stale UVs to be used if the next DrawSprite call
+        // uses the same sprite, which happens with laser/bullet spawn effects
+        // when hardware vertices aren't supported.
+        //
+        // Before version 1.01 this also applied to the current FVF type and
+        // caused sprites to stop rendering. ZUN likely got a bug report about
+        // this and moved the FVF change out of the sprite logic, but didn't
+        // consider UV coordinates. The result looks "close enough" so people
+        // may not have reported the new form of the issue.
         this->currentSprite = vm->sprite;
         textureMatrix = vm->matrix;
         textureMatrix.m[2][0] = vm->sprite->uv.left + vm->uvScroll.x;

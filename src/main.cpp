@@ -21,7 +21,7 @@ struct GameWindow
     BOOL isAppClosing;
     BOOL isAppActive;
     BOOL showCursor;
-    u8 curFrame;
+    u8 curFrameTicks;
     alignment_padding(0x3);
     BOOL screenSaveActive;
     BOOL lowPowerActive;
@@ -107,7 +107,7 @@ restart:
             ShowCursor(FALSE);
         }
 
-        g_GameWindow.curFrame = 0;
+        g_GameWindow.curFrameTicks = 0;
 
         HRESULT testCoopLevelRes;
 
@@ -206,7 +206,12 @@ static void GameWindow_Present()
 RenderResult GameWindow::Render()
 {
     static i32 g_TickCountToEffectiveFramerate;
+#ifdef BINARYMATCHBUILD
     static f64 g_LastFrameTime;
+#else
+    // This fixes the frame limiter bug that prevents booting the game
+    static f64 g_LastFrameTime = timeGetTime();
+#endif
 
     i32 res;
 
@@ -215,14 +220,12 @@ RenderResult GameWindow::Render()
         return RENDER_RESULT_KEEP_RUNNING;
     }
 
-    if (this->curFrame == 0)
+    if (this->curFrameTicks == 0)
     {
-#ifndef BINARYMATCHBUILD
-        // This fixes the frame limiter bug that prevents booting the game
-        g_Supervisor.lastFrameTime = g_LastFrameTime = timeGetTime();
-#endif
-    LOOP_USING_GOTO_BECAUSE_WHY_NOT:
-        if (g_Supervisor.cfg.frameskipConfig <= this->curFrame)
+    skip_frame:
+        // Why is the draw chain rechecked on every frame skip
+        // just to ignore it???
+        if (g_Supervisor.cfg.frameskipConfig <= this->curFrameTicks)
         {
             if (g_Supervisor.ShouldForceBackbufferClear())
             {
@@ -261,10 +264,10 @@ RenderResult GameWindow::Render()
         {
             return RENDER_RESULT_EXIT_ERROR;
         }
-        this->curFrame++;
+        this->curFrameTicks++;
     }
 
-// Starting with 1.02f, this condition also checks VSync.
+    // Starting with 1.02f, this condition also checks VSync.
 #if BUILT_SINCE(102f)
     if (g_Supervisor.IsWindowed() || g_Supervisor.ShouldRunAt60Fps())
 #else
@@ -272,7 +275,7 @@ RenderResult GameWindow::Render()
 #endif
     {
 #pragma var_order(curtime, delta)
-        if (this->curFrame != 0)
+        if (this->curFrameTicks != 0)
         {
             g_Supervisor.framerateMultiplier = 1.0f;
             timeBeginPeriod(1);
@@ -283,6 +286,23 @@ RenderResult GameWindow::Render()
             }
             f64 delta = fabs(curtime - g_LastFrameTime);
             timeEndPeriod(1);
+
+            // BUG: timeGetTime returns the number of milliseconds since the PC was booted, which would normally
+            // be fine for calculating relative time differences. However, g_LastFrameTime is 0.0 the first time
+            // this logic runs and causes delta to be equal to the millisecond value instead of an actual difference.
+            // If the uptime value is large enough then the loop becomes infinite because it fails to subtract
+            // FRAME_TIME due to floating point precision.
+            //
+            // The calculation is using double variables so normally triggering this bug would require
+            // 288230376151711744ms of uptime (almost 10 million years) and not be worth documenting.
+            // However D3D initialization reduces x87 instructions to single precision and this causes the
+            // issue after only 536870962ms (~6 days and 3 hours).
+            //
+            // Windows 10's "Fast Startup" setting makes this issue much worse because the number of milliseconds
+            // since boot does not reset to 0 unless a user selects "Restart" instead of "Shut down".
+            //
+            // Do not write frame limiters like this.
+
             if (delta >= FRAME_TIME)
             {
                 do
@@ -291,9 +311,11 @@ RenderResult GameWindow::Render()
                     delta -= FRAME_TIME;
                 } while (delta >= FRAME_TIME);
 
-                if (g_Supervisor.cfg.frameskipConfig < this->curFrame)
-                    goto I_HAVE_NO_CLUE_WHY_BUT_I_MUST_JUMP_HERE;
-                goto LOOP_USING_GOTO_BECAUSE_WHY_NOT;
+                if (g_Supervisor.cfg.frameskipConfig < this->curFrameTicks)
+                {
+                    goto end_frame_skip;
+                }
+                goto skip_frame;
             }
         }
     }
@@ -304,13 +326,13 @@ RenderResult GameWindow::Render()
     if (!g_Supervisor.IsWindowed() && !g_Supervisor.cfg.opts.force60Fps)
 #endif
     {
-        if (g_Supervisor.cfg.frameskipConfig >= this->curFrame)
+        if (g_Supervisor.cfg.frameskipConfig >= this->curFrameTicks)
         {
             GameWindow_Present();
-            goto LOOP_USING_GOTO_BECAUSE_WHY_NOT;
+            goto skip_frame;
         }
 
-    I_HAVE_NO_CLUE_WHY_BUT_I_MUST_JUMP_HERE:
+    end_frame_skip:
 
         GameWindow_Present();
         if (g_Supervisor.framerateMultiplier == 0.0f)
@@ -349,7 +371,7 @@ RenderResult GameWindow::Render()
         {
             g_Supervisor.gameSpeed = g_Supervisor.framerateMultiplier;
         }
-        this->curFrame = 0;
+        this->curFrameTicks = 0;
         g_TickCountToEffectiveFramerate++;
     }
     return RENDER_RESULT_KEEP_RUNNING;

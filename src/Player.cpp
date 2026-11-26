@@ -421,7 +421,7 @@ i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPosition, D3DXVECTOR3 *enemySize
                 bullet->size.x = 48.0f;
                 bullet->size.y = 48.0f;
             }
-            if (MULTIPLE_OF(bullet->lifetime, 6))
+            if (MULTIPLE_OF((i32)bullet->lifetime, 6))
             {
                 g_EffectManager.SpawnParticles(PARTICLE_SPARK_RED, &bullet->position);
             }
@@ -441,7 +441,7 @@ i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPosition, D3DXVECTOR3 *enemySize
             bullet->velocity.x /= 8.0f;
             bullet->velocity.y /= 8.0f;
         }
-        else if (++this->particleTimer % 8 == 0)
+        else if (MULTIPLE_OF(++this->particleTimer, 8))
         {
             bulletTopLeft = *enemyPosition;
             bulletTopLeft.x = bullet->position.x;
@@ -465,7 +465,7 @@ i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPosition, D3DXVECTOR3 *enemySize
         }
         damage += this->damageRegionDamage[i];
         this->damageRegionDamageDealt[i] += this->damageRegionDamage[i];
-        if (++this->particleTimer % 4 == 0)
+        if (MULTIPLE_OF(++this->particleTimer, 4))
         {
             g_EffectManager.SpawnParticles(PARTICLE_BOMB_FLASH, enemyPosition);
         }
@@ -683,7 +683,7 @@ void Player::ScoreGraze(D3DXVECTOR3 *grazedPosition)
 
 void Player::Die()
 {
-    g_EnemyManager.spellcardInfo.isCapturing = false;
+    g_EnemyManager.spellcard.isCapturing = false;
     g_EffectManager.SpawnParticles(PARTICLE_FLASH, &this->position, 1, COLOR_NEONBLUE);
     g_EffectManager.SpawnParticles(PARTICLE_SPARK_GREEN, &this->position, 16);
     this->playerState = PLAYER_STATE_DEAD;
@@ -1036,16 +1036,15 @@ static ChainCallbackResult Player_OnUpdate(Player *player)
         player->bomb.timer = 0;
         player->bomb.duration = 999;
         player->bomb.calc(player);
-        g_EnemyManager.spellcardInfo.isCapturing = false;
+        g_EnemyManager.spellcard.isCapturing = false;
         g_GameManager.DecreaseSubrank(200);
-        g_EnemyManager.spellcardInfo.usedBombTick = g_EnemyManager.spellcardInfo.ticksActive;
+        g_EnemyManager.spellcard.usedBombTick = g_EnemyManager.spellcard.ticksActive;
     }
     if (player->playerState == PLAYER_STATE_DEAD)
     {
         if (player->respawnTimer != 0)
         {
-            player->respawnTimer--;
-            if (player->respawnTimer == 0)
+            if (--player->respawnTimer == 0)
             {
                 g_GameManager.fullPowerScoreIdx = 0;
                 if (g_GameManager.livesRemaining > 0)
@@ -1199,8 +1198,8 @@ static ChainCallbackResult Player_OnDraw(Player *player)
     {
         player->bomb.draw(player);
     }
-    player->vm.pos.x = g_GameManager.gameRegionScreenPos.x + player->position.x;
-    player->vm.pos.y = g_GameManager.gameRegionScreenPos.y + player->position.y;
+    player->vm.pos.x = g_GameManager.gameRegionPosition.x + player->position.x;
+    player->vm.pos.y = g_GameManager.gameRegionPosition.y + player->position.y;
     player->vm.pos.z = 0.49f;
     if (!g_GameManager.isInRetryMenu)
     {
@@ -1210,10 +1209,10 @@ static ChainCallbackResult Player_OnDraw(Player *player)
         {
             player->optionVms[0].pos = player->optionPosition[0];
             player->optionVms[1].pos = player->optionPosition[1];
-            player->optionVms[0].pos[0] += g_GameManager.gameRegionScreenPos.x;
-            player->optionVms[0].pos[1] += g_GameManager.gameRegionScreenPos.y;
-            player->optionVms[1].pos[0] += g_GameManager.gameRegionScreenPos.x;
-            player->optionVms[1].pos[1] += g_GameManager.gameRegionScreenPos.y;
+            player->optionVms[0].pos[0] += g_GameManager.gameRegionPosition.x;
+            player->optionVms[0].pos[1] += g_GameManager.gameRegionPosition.y;
+            player->optionVms[1].pos[0] += g_GameManager.gameRegionPosition.x;
+            player->optionVms[1].pos[1] += g_GameManager.gameRegionPosition.y;
             player->optionVms[0].pos.z = 0.491f;
             player->optionVms[1].pos.z = 0.491f;
             g_AnmManager->Draw2DRotated(&player->optionVms[0]);
@@ -1342,30 +1341,30 @@ ZunResult Player_RegisterChain(u8 unk)
 
     player->stateTimer = 0;
     player->unk_9e1 = unk;
-    player->chainCalc = g_FuncChain.CreateElem((ChainCallback)Player_OnUpdate);
-    player->chainDraw = g_FuncChain.CreateElem((ChainCallback)Player_OnDraw);
-    player->chainDrawEffects = g_FuncChain.CreateElem((ChainCallback)Player_OnDrawEffects);
-    player->chainCalc->arg = player;
-    player->chainDraw->arg = player;
-    player->chainDrawEffects->arg = player;
-    player->chainCalc->addedCallback = (ChainAddedCallback)Player_AddedCallback;
-    player->chainCalc->deletedCallback = (ChainDeletedCallback)Player_DeletedCallback;
-    if (g_FuncChain.AddToCalcChain(player->chainCalc, TH_CHAIN_PRIO_CALC_PLAYER) != ZUN_SUCCESS)
+    player->calcChain = g_FuncChain.CreateElem((ChainCallback)Player_OnUpdate);
+    player->drawChain = g_FuncChain.CreateElem((ChainCallback)Player_OnDraw);
+    player->drawEffectsChain = g_FuncChain.CreateElem((ChainCallback)Player_OnDrawEffects);
+    player->calcChain->arg = player;
+    player->drawChain->arg = player;
+    player->drawEffectsChain->arg = player;
+    player->calcChain->addedCallback = (ChainAddedCallback)Player_AddedCallback;
+    player->calcChain->deletedCallback = (ChainDeletedCallback)Player_DeletedCallback;
+    if (g_FuncChain.AddToCalcChain(player->calcChain, TH_CHAIN_PRIO_CALC_PLAYER) != ZUN_SUCCESS)
     {
         return ZUN_ERROR;
     }
-    g_FuncChain.AddToDrawChain(player->chainDraw, TH_CHAIN_PRIO_DRAW_LOW_PRIO_PLAYER);
-    g_FuncChain.AddToDrawChain(player->chainDrawEffects, TH_CHAIN_PRIO_DRAW_HIGH_PRIO_PLAYER);
+    g_FuncChain.AddToDrawChain(player->drawChain, TH_CHAIN_PRIO_DRAW_LOW_PRIO_PLAYER);
+    g_FuncChain.AddToDrawChain(player->drawEffectsChain, TH_CHAIN_PRIO_DRAW_HIGH_PRIO_PLAYER);
     return ZUN_SUCCESS;
 }
 
 void Player_CutChain()
 {
-    g_FuncChain.Cut(g_Player.chainCalc);
-    g_Player.chainCalc = NULL;
-    g_FuncChain.Cut(g_Player.chainDraw);
-    g_Player.chainDraw = NULL;
-    g_FuncChain.Cut(g_Player.chainDrawEffects);
-    g_Player.chainDrawEffects = NULL;
+    g_FuncChain.Cut(g_Player.calcChain);
+    g_Player.calcChain = NULL;
+    g_FuncChain.Cut(g_Player.drawChain);
+    g_Player.drawChain = NULL;
+    g_FuncChain.Cut(g_Player.drawEffectsChain);
+    g_Player.drawEffectsChain = NULL;
 }
 } // namespace th06

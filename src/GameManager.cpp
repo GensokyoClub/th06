@@ -64,8 +64,7 @@ ChainCallbackResult GameManager_OnUpdate(GameManager *gameManager)
         {
             g_Supervisor.curState = SUPERVISOR_STATE_MAINMENU;
         }
-        gameManager->demoFrames++;
-        if (gameManager->demoFrames == DEMO_FADEOUT_FRAMES)
+        if (++gameManager->demoFrames == DEMO_FADEOUT_FRAMES)
         {
             SCREEN_EFFECT_FADE_OUT(120, COLOR_BLACK);
         }
@@ -78,8 +77,8 @@ ChainCallbackResult GameManager_OnUpdate(GameManager *gameManager)
         WAS_PRESSED(TH_BUTTON_MENU))
     {
         gameManager->isInGameMenu = 1;
-        g_GameManager.gameRegionScreenPos.x = GAME_REGION_POS_X;
-        g_GameManager.gameRegionScreenPos.y = GAME_REGION_POS_Y;
+        g_GameManager.gameRegionPosition.x = GAME_REGION_POS_X;
+        g_GameManager.gameRegionPosition.y = GAME_REGION_POS_Y;
         g_GameManager.gameRegionSize.x = GAME_REGION_WIDTH;
         g_GameManager.gameRegionSize.y = GAME_REGION_HEIGHT;
 #if BUILT_SINCE(102g)
@@ -89,8 +88,8 @@ ChainCallbackResult GameManager_OnUpdate(GameManager *gameManager)
 
     gameManager->isInMenu = (BOOL)(!gameManager->isInRetryMenu && !gameManager->isInGameMenu);
 
-    g_Supervisor.viewport.X = gameManager->gameRegionScreenPos.x;
-    g_Supervisor.viewport.Y = gameManager->gameRegionScreenPos.y;
+    g_Supervisor.viewport.X = gameManager->gameRegionPosition.x;
+    g_Supervisor.viewport.Y = gameManager->gameRegionPosition.y;
     g_Supervisor.viewport.Width = gameManager->gameRegionSize.x;
     g_Supervisor.viewport.Height = gameManager->gameRegionSize.y;
     g_Supervisor.viewport.MinZ = 0.5f;
@@ -175,6 +174,8 @@ ChainCallbackResult GameManager_OnDraw(GameManager *gameManager)
 
 static ZunResult GameManager_AddedCallback(GameManager *mgr)
 {
+    // TODO: Position these near their uses, otherwise
+    // the duped rank tables wouldn't make sense to exist.
     static const char *g_EclFiles[] = {
         "dummy",
         "data/ecldata1.ecl",
@@ -223,8 +224,8 @@ static ZunResult GameManager_AddedCallback(GameManager *mgr)
         g_Supervisor.defaultConfig.bombCount = g_GameManager.bombsRemaining;
         g_Supervisor.defaultConfig.lifeCount = g_GameManager.livesRemaining;
 #endif
-        mgr->gameRegionScreenPos.x = GAME_REGION_POS_X;
-        mgr->gameRegionScreenPos.y = GAME_REGION_POS_Y;
+        mgr->gameRegionPosition.x = GAME_REGION_POS_X;
+        mgr->gameRegionPosition.y = GAME_REGION_POS_Y;
         mgr->gameRegionSize.x = GAME_REGION_WIDTH;
         mgr->gameRegionSize.y = GAME_REGION_HEIGHT;
         mgr->playerMovementAreaTopLeftPos.x = GAME_REGION_LEFT + 8.0f;
@@ -333,12 +334,12 @@ static ZunResult GameManager_AddedCallback(GameManager *mgr)
     if (g_GameManager.isInReplay == TRUE)
     {
 #if BUILT_SINCE(102g)
-        if (ReplayManager_RegisterChain(true, g_GameManager.replayFile) != ZUN_SUCCESS)
+        if (ReplayManager_RegisterChain(true, g_GameManager.replayPath) != ZUN_SUCCESS)
         {
             failedToLoadReplay = true;
         }
 #else
-        ReplayManager_RegisterChain(true, g_GameManager.replayFile);
+        ReplayManager_RegisterChain(true, g_GameManager.replayPath);
 #endif
         while (g_ExtraLivesScores[mgr->livesEarned] <= mgr->guiScore)
         {
@@ -530,15 +531,5 @@ void GameManager::DecreaseSubrank(i32 amount)
     {
         this->rank = this->minRank;
     }
-}
-
-GameManager::GameManager()
-{
-    memset(this, 0, sizeof(GameManager));
-
-    this->gameRegionScreenPos.x = GAME_REGION_POS_X;
-    this->gameRegionScreenPos.y = GAME_REGION_POS_Y;
-    this->gameRegionSize.x = GAME_REGION_WIDTH;
-    this->gameRegionSize.y = GAME_REGION_HEIGHT;
 }
 } // namespace th06

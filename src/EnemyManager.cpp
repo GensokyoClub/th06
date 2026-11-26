@@ -177,7 +177,7 @@ void EnemyManager::RunEclTimeline()
         // number of lives lost?
         i32 subrankIncreaseFrame = 10 * 4 * 60;
         subrankIncreaseFrame -= g_GameManager.GetLives() * 4 * 60;
-        if (this->timelineTime.HasTicked() && MULTIPLE_OF(this->timelineTime, subrankIncreaseFrame))
+        if (this->timelineTime.HasTicked() && MULTIPLE_OF((i32)this->timelineTime, subrankIncreaseFrame))
         {
             g_GameManager.IncreaseSubrank(100);
         }
@@ -406,10 +406,10 @@ BOOL Enemy::HandleTimerCallback()
         this->phaseTimer = 0;
         if (!this->flags.isTimeoutSpell)
         {
-            g_EnemyManager.spellcardInfo.isCapturing = false;
-            if (g_EnemyManager.spellcardInfo.ticksActive != 0)
+            g_EnemyManager.spellcard.isCapturing = false;
+            if (g_EnemyManager.spellcard.ticksActive != 0)
             {
-                g_EnemyManager.spellcardInfo.ticksActive++;
+                g_EnemyManager.spellcard.ticksActive++;
             }
             g_BulletManager.DespawnBullets(BULLET_CLEAR);
         }
@@ -568,7 +568,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                     damage = 70;
                 }
                 g_GameManager.score = (damage / 5) * 10 + g_GameManager.score;
-                if (mgr->spellcardInfo.ticksActive != 0)
+                if (mgr->spellcard.ticksActive != 0)
                 {
                     if (!hitByBomb)
                     {
@@ -582,7 +582,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                         }
                     }
                     // Was the bomb used after the current spell started?
-                    else if (mgr->spellcardInfo.usedBombTick != 0)
+                    else if (mgr->spellcard.usedBombTick != 0)
                     {
                         if (damage > 3)
                         {
@@ -649,7 +649,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                     }
                     else if (curEnemy->itemDrop == ITEM_RANDOM_ITEM)
                     {
-                        if (mgr->randomItemSpawnIndex % ITEM_SPAWNS == 0)
+                        if (MULTIPLE_OF(mgr->randomItemSpawnIndex, ITEM_SPAWNS))
                         {
                             g_EffectManager.SpawnParticles(curEnemy->deathSparkParticle + PARTICLE_SPARK,
                                                            &curEnemy->position, 6);
@@ -662,7 +662,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                         }
                         mgr->randomItemSpawnIndex++;
                     }
-                    if (curEnemy->flags.isBoss && g_EnemyManager.spellcardInfo.ticksActive == 0)
+                    if (curEnemy->flags.isBoss && g_EnemyManager.spellcard.ticksActive == 0)
                     {
                         g_BulletManager.DespawnBulletsForScore(12800, BULLET_CLEAR);
                     }
@@ -786,7 +786,7 @@ static ZunResult EnemyManager_AddedCallback(EnemyManager *enemyManager)
     enemyManager->randomItemSpawnIndex = g_Rng.GetRandomU16InRange(ITEM_SPAWNS);
     enemyManager->randomItemTableIndex = g_Rng.GetRandomU16InRange(ITEM_TABLES);
 
-    enemyManager->spellcardInfo.ticksActive = 0;
+    enemyManager->spellcard.ticksActive = 0;
     enemyManager->timelineInstr = NULL;
 
     return ZUN_SUCCESS;

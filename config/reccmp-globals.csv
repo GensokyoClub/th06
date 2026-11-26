@@ -286,7 +286,7 @@ th06::g_GameManager,0x69bca0,global,6784
 th06::g_GameMgrCalcChainElem,0x69d720,global,32
 th06::g_GameManagerOnDrawChain,0x69d740,global,32
 th06::g_JoystickDevCaps,0x69d760,global,404
-th06::g_FocusButtonConflictState,0x69d8f4,global,2
+th06::g_FocusTimer,0x69d8f4,global,2
 th06::g_Rng,0x69d8f8,global,8
 th06::g_Pbg3ArcList,0x69d900,global,4
 th06::g_CurFrameInput,0x69d904,global,2

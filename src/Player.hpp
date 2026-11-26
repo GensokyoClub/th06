@@ -255,9 +255,9 @@ struct Player
     FireBulletCallback fireBulletCallback;
     FireBulletCallback fireBulletFocusCallback;
     BombInfo bomb;
-    ChainElem *chainCalc;
-    ChainElem *chainDraw;
-    ChainElem *chainDrawEffects;
+    ChainElem *calcChain;
+    ChainElem *drawChain;
+    ChainElem *drawEffectsChain;
 };
 ZUN_ASSERT_TYPE(Player, 0x98f0, 4);
 

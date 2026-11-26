@@ -142,7 +142,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
             g_GameManager.demoMode = true;
             g_GameManager.demoFrames = 0;
             g_Supervisor.framerateMultiplier = 1.0f;
-            strcpy(g_GameManager.replayFile, "data/demo/demo00.rpy");
+            strcpy(g_GameManager.replayPath, "data/demo/demo00.rpy");
             g_GameManager.currentStage = STAGE_INDEX(Stage4);
             g_GameManager.difficulty = LUNATIC;
             g_Supervisor.curState = SUPERVISOR_STATE_GAMEMANAGER;
@@ -169,7 +169,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
             g_GameManager.demoMode = true;
             g_GameManager.demoFrames = 0;
             g_Supervisor.framerateMultiplier = 1.0f;
-            strcpy(g_GameManager.replayFile, "data/demo/demo00.rpy");
+            strcpy(g_GameManager.replayPath, "data/demo/demo00.rpy");
             g_GameManager.currentStage = STAGE_INDEX(Stage4);
             g_GameManager.difficulty = LUNATIC;
             g_Supervisor.curState = SUPERVISOR_STATE_GAMEMANAGER;
@@ -232,7 +232,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
             }
             mapping++;
 #endif
-            if (i % 2 == 0)
+            if (MULTIPLE_OF(i, 2))
             {
                 g_AnmManager->SetSprite(vmList, mapping / 10 + ANM_SPRITE_TITLE01_START);
             }
@@ -1507,7 +1507,7 @@ BOOL MainMenu::ReplayHandling()
         {
             g_GameManager.isInReplay = true;
             g_Supervisor.framerateMultiplier = 1.0f;
-            strcpy(g_GameManager.replayFile, this->replayFilePaths[this->chosenReplay]);
+            strcpy(g_GameManager.replayPath, this->replayFilePaths[this->chosenReplay]);
             g_GameManager.difficulty = this->currentReplay->difficulty;
             g_GameManager.character = this->currentReplay->shottypeChara / SHOTTYPES_PER_CHARACTER;
             g_GameManager.shotType = this->currentReplay->shottypeChara % SHOTTYPES_PER_CHARACTER;
@@ -2326,8 +2326,8 @@ static ZunResult MainMenu_DeletedCallback(MainMenu *menu)
     }
     g_AnmManager->ReleaseSurface(0);
     g_AnmManager->ClearScriptRange(ANM_OFFSET_TITLE01, ANM_OFFSET_TITLE01S - ANM_OFFSET_TITLE01);
-    g_FuncChain.Cut(menu->chainDraw);
-    menu->chainDraw = NULL;
+    g_FuncChain.Cut(menu->drawChain);
+    menu->drawChain = NULL;
 
     ZUN_FREE(menu->currentReplay);
     return ZUN_SUCCESS;
@@ -2342,18 +2342,18 @@ ZunResult MainMenu_RegisterChain(BOOL isDemo)
     DebugPrint(TH_DBG_MAINMENU_VRAM, g_Supervisor.d3dDevice->GetAvailableTextureMem());
     menu->gameState = isDemo ? STATE_REPLAY_LOAD : STATE_STARTUP;
     g_Supervisor.framerateMultiplier = 0.0f;
-    menu->chainCalc = g_FuncChain.CreateElem((ChainCallback)MainMenu_OnUpdate);
-    menu->chainCalc->arg = menu;
-    menu->chainCalc->addedCallback = (ChainAddedCallback)MainMenu_AddedCallback;
-    menu->chainCalc->deletedCallback = (ChainDeletedCallback)MainMenu_DeletedCallback;
+    menu->calcChain = g_FuncChain.CreateElem((ChainCallback)MainMenu_OnUpdate);
+    menu->calcChain->arg = menu;
+    menu->calcChain->addedCallback = (ChainAddedCallback)MainMenu_AddedCallback;
+    menu->calcChain->deletedCallback = (ChainDeletedCallback)MainMenu_DeletedCallback;
     menu->stateTimer = 0;
-    if (g_FuncChain.AddToCalcChain(menu->chainCalc, TH_CHAIN_PRIO_CALC_MAINMENU) != ZUN_SUCCESS)
+    if (g_FuncChain.AddToCalcChain(menu->calcChain, TH_CHAIN_PRIO_CALC_MAINMENU) != ZUN_SUCCESS)
     {
         return ZUN_ERROR;
     }
-    menu->chainDraw = g_FuncChain.CreateElem((ChainCallback)MainMenu_OnDraw);
-    menu->chainDraw->arg = menu;
-    g_FuncChain.AddToDrawChain(menu->chainDraw, TH_CHAIN_PRIO_DRAW_MAINMENU);
+    menu->drawChain = g_FuncChain.CreateElem((ChainCallback)MainMenu_OnDraw);
+    menu->drawChain->arg = menu;
+    g_FuncChain.AddToDrawChain(menu->drawChain, TH_CHAIN_PRIO_DRAW_MAINMENU);
     menu->lastFrameTime = 0;
     menu->stateTimer = 60;
     menu->frameCountForRefreshRateCalc = 0;

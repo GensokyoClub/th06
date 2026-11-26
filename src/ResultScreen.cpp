@@ -1059,7 +1059,7 @@ i32 ResultScreen::HandleResultKeyboard()
     right_press_skip_spaces:
         this->selectedCharacter++;
 
-        if (this->selectedCharacter % RESULT_KEYBOARD_COLUMNS == 0)
+        if (!(this->selectedCharacter % RESULT_KEYBOARD_COLUMNS))
         {
             this->selectedCharacter -= RESULT_KEYBOARD_COLUMNS;
         }

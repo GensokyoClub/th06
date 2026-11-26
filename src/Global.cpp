@@ -37,7 +37,7 @@ Chain g_FuncChain;
 #if BUILT_SINCE(102g) || BUILT_BEFORE(101)
 JOYCAPS g_JoystickDevCaps;
 #endif
-u16 g_FocusButtonConflictState;
+u16 g_FocusTimer;
 u16 g_PreviousFrameKeys;
 u16 g_IsEigthFrameInput;
 u16 g_CountFramesInputsWereHeld;
@@ -500,25 +500,25 @@ u16 Controller::GetControllerInput(u16 buttons)
         {
             if (ac != 0)
             {
-                if (g_FocusButtonConflictState < 16)
+                if (g_FocusTimer < 16)
                 {
-                    g_FocusButtonConflictState++;
+                    g_FocusTimer++;
                 }
 
-                if (g_FocusButtonConflictState >= 8)
+                if (g_FocusTimer >= 8)
                 {
                     buttons |= TH_BUTTON_FOCUS;
                 }
             }
             else
             {
-                if (g_FocusButtonConflictState > 8)
+                if (g_FocusTimer > 8)
                 {
-                    g_FocusButtonConflictState -= 8;
+                    g_FocusTimer -= 8;
                 }
                 else
                 {
-                    g_FocusButtonConflictState = 0;
+                    g_FocusTimer = 0;
                 }
             }
         }
@@ -562,15 +562,15 @@ u16 Controller::GetControllerInput(u16 buttons)
         }
         else if (aa.dwButtons & g_ControllerMapping.focusButton)
         {
-            g_FocusButtonConflictState++;
-            if (g_FocusButtonConflictState >= 8)
+            g_FocusTimer++;
+            if (g_FocusTimer >= 8)
             {
                 buttons |= TH_BUTTON_FOCUS;
             }
         }
         else
         {
-            g_FocusButtonConflictState = 0;
+            g_FocusTimer = 0;
         }
         buttons |= JOYSTICK_MASK_PRESSED(TH_BUTTON_MENU, g_ControllerMapping.menuButton, aa.dwButtons);
         buttons |= JOYSTICK_MASK_PRESSED(TH_BUTTON_UP, g_ControllerMapping.upButton, aa.dwButtons);
@@ -651,25 +651,25 @@ u16 Controller::GetControllerInput(u16 buttons)
             {
                 if (a2 != 0)
                 {
-                    if (g_FocusButtonConflictState < 16)
+                    if (g_FocusTimer < 16)
                     {
-                        g_FocusButtonConflictState++;
+                        g_FocusTimer++;
                     }
 
-                    if (g_FocusButtonConflictState >= 8)
+                    if (g_FocusTimer >= 8)
                     {
                         buttons |= TH_BUTTON_FOCUS;
                     }
                 }
                 else
                 {
-                    if (g_FocusButtonConflictState > 8)
+                    if (g_FocusTimer > 8)
                     {
-                        g_FocusButtonConflictState -= 8;
+                        g_FocusTimer -= 8;
                     }
                     else
                     {
-                        g_FocusButtonConflictState = 0;
+                        g_FocusTimer = 0;
                     }
                 }
             }

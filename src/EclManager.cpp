@@ -852,15 +852,15 @@ restart_sub_changed:
 #pragma var_order(catk, length, csum)
         case ECL_OPCODE_SPELLCARD_START: {
             g_Gui.ShowSpellcard(GET_INSTR_SHORT_ARG(0), GET_INSTR_STRING_ARG(4));
-            g_EnemyManager.spellcardInfo.isCapturing = true;
-            g_EnemyManager.spellcardInfo.ticksActive = 1;
-            g_EnemyManager.spellcardInfo.id = GET_INSTR_SHORT_ARG(1);
-            g_EnemyManager.spellcardInfo.captureScore = g_SpellcardScore[g_EnemyManager.spellcardInfo.id];
+            g_EnemyManager.spellcard.isCapturing = true;
+            g_EnemyManager.spellcard.ticksActive = 1;
+            g_EnemyManager.spellcard.id = GET_INSTR_SHORT_ARG(1);
+            g_EnemyManager.spellcard.captureScore = g_SpellcardScore[g_EnemyManager.spellcard.id];
             g_BulletManager.CancelAllBullets();
             g_Stage.spellcardState = SPELL_STATE_FADING_IN;
             g_Stage.spellcardTicks = 0;
             enemy->ResetRank();
-            Catk *catk = &g_GameManager.catk[g_EnemyManager.spellcardInfo.id];
+            Catk *catk = &g_GameManager.catk[g_EnemyManager.spellcard.id];
             i32 csum = 0;
             i32 length;
 #if BUILT_SINCE(100)
@@ -880,7 +880,7 @@ restart_sub_changed:
                     catk->attempts = 0;
                     catk->nameCsum = csum;
                 }
-                catk->captureScore = g_EnemyManager.spellcardInfo.captureScore;
+                catk->captureScore = g_EnemyManager.spellcard.captureScore;
                 if (catk->attempts < MAX_SPELL_ATTEMPTS)
                 {
                     catk->attempts++;
@@ -889,23 +889,22 @@ restart_sub_changed:
             break;
         }
         case ECL_OPCODE_SPELLCARD_END:
-            if (g_EnemyManager.spellcardInfo.ticksActive != 0)
+            if (g_EnemyManager.spellcard.ticksActive != 0)
             {
                 g_Gui.EndEnemySpellcard();
-                if (g_EnemyManager.spellcardInfo.ticksActive == 1)
+                if (g_EnemyManager.spellcard.ticksActive == 1)
                 {
                     i32 scoreIncrease = g_BulletManager.DespawnBulletsForScore(12800, BULLET_CANCEL);
 #pragma var_order(catk, i, score)
-                    if (g_EnemyManager.spellcardInfo.isCapturing)
+                    if (g_EnemyManager.spellcard.isCapturing)
                     {
                         i32 i;
-                        Catk *catk = &g_GameManager.catk[g_EnemyManager.spellcardInfo.id];
-                        i32 score = g_EnemyManager.spellcardInfo.captureScore >= 500000
+                        Catk *catk = &g_GameManager.catk[g_EnemyManager.spellcard.id];
+                        i32 score = g_EnemyManager.spellcard.captureScore >= 500000
                                         ? 500000 / 10
-                                        : g_EnemyManager.spellcardInfo.captureScore / 10;
-                        scoreIncrease =
-                            g_EnemyManager.spellcardInfo.captureScore +
-                            g_EnemyManager.spellcardInfo.captureScore * g_Gui.SpellcardSecondsRemaining() / 10;
+                                        : g_EnemyManager.spellcard.captureScore / 10;
+                        scoreIncrease = g_EnemyManager.spellcard.captureScore +
+                                        g_EnemyManager.spellcard.captureScore * g_Gui.SpellcardSecondsRemaining() / 10;
                         g_Gui.ShowSpellcardBonus(scoreIncrease);
                         g_GameManager.AddScore(scoreIncrease);
 #if BUILT_SINCE(100)
@@ -923,7 +922,7 @@ restart_sub_changed:
                         g_GameManager.spellcardsCaptured++;
                     }
                 }
-                g_EnemyManager.spellcardInfo.ticksActive = 0;
+                g_EnemyManager.spellcard.ticksActive = 0;
             }
             g_Stage.spellcardState = SPELL_STATE_NOT_ACTIVE;
             break;

@@ -7,7 +7,6 @@
 
 namespace th06
 {
-ZunResult MusicRoom_RegisterChain();
 struct TrackDescriptor
 {
     TrackDescriptor()
@@ -31,8 +30,8 @@ struct MusicRoom
     BOOL ProcessInput();
     ZunResult CheckInputEnable();
 
-    ChainElem *calc_chain;
-    ChainElem *draw_chain;
+    ChainElem *calcChain;
+    ChainElem *drawChain;
     i32 waitFramesCount;
     BOOL enableInput;
     i32 cursor;
@@ -40,10 +39,12 @@ struct MusicRoom
     i32 listingOffset;
     i32 numDescriptors;
     TrackDescriptor *trackDescriptors;
-    AnmVm mainVm[1];
-    AnmVm titleSprites[32];
+    AnmVm mainVm[1];        // music00.anm
+    AnmVm titleSprites[32]; // music01.anm + music02.anm
     AnmVm descriptionSprites[16];
 };
 ZUN_ASSERT_TYPE(MusicRoom, 0x3434, 4);
+
+ZunResult MusicRoom_RegisterChain();
 
 } // namespace th06

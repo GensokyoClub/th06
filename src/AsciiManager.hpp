@@ -26,8 +26,8 @@ class StageMenu
     // Number of frames since last state change. Used to delay certain actions
     // until an animation is finished.
     i32 numFrames;
-    AnmVm menuSprites[6];
-    AnmVm menuBackground;
+    AnmVm vms[6];
+    AnmVm background;
 };
 ZUN_ASSERT_TYPE(StageMenu, 0x778, 4);
 

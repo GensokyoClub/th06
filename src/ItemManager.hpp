@@ -28,8 +28,8 @@ enum ItemState
 
 struct Item
 {
-    AnmVm sprite;
-    D3DXVECTOR3 currentPosition;
+    AnmVm vm;
+    D3DXVECTOR3 position;
     // For some reason ZUN reused the same field for both startPosition and velocity
     D3DXVECTOR3 startPositionVelocity;
     D3DXVECTOR3 targetPosition;

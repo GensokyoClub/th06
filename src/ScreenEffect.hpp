@@ -20,8 +20,8 @@ enum ScreenEffectType
 struct ScreenEffect
 {
     i32 type;
-    ChainElem *calcChainElement;
-    ChainElem *drawChainElement;
+    ChainElem *calcChain;
+    ChainElem *drawChain;
     unreferenced_fields(0x4);
     i32 fadeAlpha;
     i32 duration;

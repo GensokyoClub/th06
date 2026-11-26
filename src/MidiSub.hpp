@@ -18,7 +18,7 @@ typedef struct tagSMFMainInfo
 {
     u16 format;
     u16 numTracks;
-    u16 timeBase;
+    u16 divisions;
 } SMFMainInfo;
 typedef SMFMainInfo MidiInfo;
 
@@ -26,7 +26,7 @@ typedef SMFMainInfo MidiInfo;
 typedef struct tagSMFTrack
 {
     u32 magic;
-    u32 size;
+    u32 length;
 } SMFTrack;
 typedef SMFTrack MidiTrackHeader;
 
@@ -50,7 +50,7 @@ enum MidiOpcode
     MIDI_OPCODE_NOTE_OFF = 0x80,
     MIDI_OPCODE_NOTE_ON = 0x90,
     MIDI_OPCODE_POLYPHONIC_AFTERTOUCH = 0xA0,
-    MIDI_OPCODE_MODE_CHANGE = 0xB0,
+    MIDI_OPCODE_CONTROL_CHANGE = 0xB0,
     MIDI_OPCODE_PROGRAM_CHANGE = 0xC0,
     MIDI_OPCODE_CHANNEL_AFTERTOUCH = 0xD0,
     MIDI_OPCODE_PITCH_BEND_CHANGE = 0xE0,
@@ -72,20 +72,34 @@ enum MidiOpcode
     MIDI_OPCODE_SYSTEM_RESET = 0xFF,
 };
 
+enum MidiMetaEvent
+{
+    MIDI_META_EVENT_END_OF_TRACK = 0x2f,
+    MIDI_META_EVENT_TEMPO_CHANGE = 0x51
+};
+
+enum MidiCC
+{
+    MIDI_CC_BANK_SELECT_MSB = 0,
+    MIDI_CC_BREATH_CONTROL = 2,
+    MIDI_CC_FOOT_PEDAL = 4,
+    MIDI_CC_VOLUME = 7,
+    MIDI_CC_PAN = 10,
+    MIDI_CC_REVERB_DEPTH = 91,
+    MIDI_CC_CHORUS_DEPTH = 93
+};
+
 struct MidiTrack
 {
-    BOOL play;
-    // Tick at which the next event is due.
-    i32 count;
-    u32 size;
-    // Running status.
-    u8 status;
+    BOOL isPlaying;
+    i32 time;
+    u32 length;
+    u8 opcode;
     alignment_padding(0x3);
     u8 *data;
-    u8 *curTrackDataCursor;
-    // Saved by controller 2 and restored by controller 4.
-    u8 *loopTrackDataCursor;
-    i32 loopCount;
+    u8 *readCursor;
+    u8 *loopPointCursor;
+    i32 loopPointTime;
 };
 ZUN_ASSERT_TYPE(MidiTrack, 0x20, 4);
 

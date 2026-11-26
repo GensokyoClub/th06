@@ -150,8 +150,8 @@ static ChainCallbackResult ScreenEffect_ShakeScreen(ScreenEffect *effect)
 {
     if (g_GameManager.isTimeStopped)
     {
-        g_GameManager.gameRegionScreenPos.x = GAME_REGION_POS_X;
-        g_GameManager.gameRegionScreenPos.y = GAME_REGION_POS_Y;
+        g_GameManager.gameRegionPosition.x = GAME_REGION_POS_X;
+        g_GameManager.gameRegionPosition.y = GAME_REGION_POS_Y;
         g_GameManager.gameRegionSize.x = GAME_REGION_WIDTH;
         g_GameManager.gameRegionSize.y = GAME_REGION_HEIGHT;
         return CHAIN_CALLBACK_RESULT_CONTINUE;
@@ -160,8 +160,8 @@ static ChainCallbackResult ScreenEffect_ShakeScreen(ScreenEffect *effect)
     effect->timer++;
     if (effect->timer >= effect->duration)
     {
-        g_GameManager.gameRegionScreenPos.x = GAME_REGION_POS_X;
-        g_GameManager.gameRegionScreenPos.y = GAME_REGION_POS_Y;
+        g_GameManager.gameRegionPosition.x = GAME_REGION_POS_X;
+        g_GameManager.gameRegionPosition.y = GAME_REGION_POS_Y;
         g_GameManager.gameRegionSize.x = GAME_REGION_WIDTH;
         g_GameManager.gameRegionSize.y = GAME_REGION_HEIGHT;
         return CHAIN_CALLBACK_RESULT_CONTINUE_AND_REMOVE_JOB;
@@ -173,15 +173,15 @@ static ChainCallbackResult ScreenEffect_ShakeScreen(ScreenEffect *effect)
     switch (g_Rng.GetRandomU32InRange(3))
     {
     case 0:
-        g_GameManager.gameRegionScreenPos.x = GAME_REGION_POS_X;
+        g_GameManager.gameRegionPosition.x = GAME_REGION_POS_X;
         g_GameManager.gameRegionSize.x = GAME_REGION_WIDTH;
         break;
     case 1:
-        g_GameManager.gameRegionScreenPos.x = GAME_REGION_POS_X + screenOffset;
+        g_GameManager.gameRegionPosition.x = GAME_REGION_POS_X + screenOffset;
         g_GameManager.gameRegionSize.x = GAME_REGION_WIDTH - screenOffset;
         break;
     case 2:
-        g_GameManager.gameRegionScreenPos.x = GAME_REGION_POS_X;
+        g_GameManager.gameRegionPosition.x = GAME_REGION_POS_X;
         g_GameManager.gameRegionSize.x = GAME_REGION_WIDTH - screenOffset;
         break;
     }
@@ -189,15 +189,15 @@ static ChainCallbackResult ScreenEffect_ShakeScreen(ScreenEffect *effect)
     switch (g_Rng.GetRandomU32InRange(3))
     {
     case 0:
-        g_GameManager.gameRegionScreenPos.y = GAME_REGION_POS_Y;
+        g_GameManager.gameRegionPosition.y = GAME_REGION_POS_Y;
         g_GameManager.gameRegionSize.y = GAME_REGION_HEIGHT;
         break;
     case 1:
-        g_GameManager.gameRegionScreenPos.y = GAME_REGION_POS_Y + screenOffset;
+        g_GameManager.gameRegionPosition.y = GAME_REGION_POS_Y + screenOffset;
         g_GameManager.gameRegionSize.y = GAME_REGION_HEIGHT - screenOffset;
         break;
     case 2:
-        g_GameManager.gameRegionScreenPos.y = GAME_REGION_POS_Y;
+        g_GameManager.gameRegionPosition.y = GAME_REGION_POS_Y;
         g_GameManager.gameRegionSize.y = GAME_REGION_HEIGHT - screenOffset;
         break;
     }
@@ -213,66 +213,66 @@ static ZunResult ScreenEffect_AddedCallback(ScreenEffect *effect)
 
 static ZunResult ScreenEffect_DeletedCallback(ScreenEffect *effect)
 {
-    effect->calcChainElement->deletedCallback = NULL;
-    g_FuncChain.Cut(effect->drawChainElement);
-    effect->drawChainElement = NULL;
+    effect->calcChain->deletedCallback = NULL;
+    g_FuncChain.Cut(effect->drawChain);
+    effect->drawChain = NULL;
     ZUN_DELETE(effect);
 
     return ZUN_SUCCESS;
 }
 
-#pragma var_order(calcChainElem, drawChainElem, createdEffect)
+#pragma var_order(calcChain, drawChain, effect)
 ScreenEffect *ScreenEffect_RegisterChain(i32 type, u32 duration, u32 effectParam1, u32 effectParam2,
                                          u32 unusedEffectParam)
 {
-    ChainElem *calcChainElem = NULL;
-    ChainElem *drawChainElem = NULL;
+    ChainElem *calcChain = NULL;
+    ChainElem *drawChain = NULL;
 
-    ScreenEffect *createdEffect = ZUN_NEW(ScreenEffect);
+    ScreenEffect *effect = ZUN_NEW(ScreenEffect);
 
-    if (createdEffect == NULL)
+    if (effect == NULL)
     {
         return NULL;
     }
 
-    memset(createdEffect, 0, sizeof(*createdEffect));
+    memset(effect, 0, sizeof(*effect));
 
     switch (type)
     {
     case SCREEN_EFFECT_FADE_IN:
-        calcChainElem = g_FuncChain.CreateElem((ChainCallback)ScreenEffect_CalcFadeIn);
-        drawChainElem = g_FuncChain.CreateElem((ChainCallback)ScreenEffect_DrawFadeIn);
+        calcChain = g_FuncChain.CreateElem((ChainCallback)ScreenEffect_CalcFadeIn);
+        drawChain = g_FuncChain.CreateElem((ChainCallback)ScreenEffect_DrawFadeIn);
         break;
     case SCREEN_EFFECT_SHAKE:
-        calcChainElem = g_FuncChain.CreateElem((ChainCallback)ScreenEffect_ShakeScreen);
+        calcChain = g_FuncChain.CreateElem((ChainCallback)ScreenEffect_ShakeScreen);
         break;
     case SCREEN_EFFECT_FADE_OUT:
-        calcChainElem = g_FuncChain.CreateElem((ChainCallback)ScreenEffect_CalcFadeOut);
-        drawChainElem = g_FuncChain.CreateElem((ChainCallback)ScreenEffect_DrawFadeOut);
+        calcChain = g_FuncChain.CreateElem((ChainCallback)ScreenEffect_CalcFadeOut);
+        drawChain = g_FuncChain.CreateElem((ChainCallback)ScreenEffect_DrawFadeOut);
     }
 
-    calcChainElem->addedCallback = (ChainAddedCallback)ScreenEffect_AddedCallback;
-    calcChainElem->deletedCallback = (ChainAddedCallback)ScreenEffect_DeletedCallback;
-    calcChainElem->arg = createdEffect;
-    createdEffect->type = type;
-    createdEffect->duration = duration;
-    createdEffect->genericParam = effectParam1;
-    createdEffect->shakinessParam = effectParam2;
-    createdEffect->unusedParam = unusedEffectParam;
+    calcChain->addedCallback = (ChainAddedCallback)ScreenEffect_AddedCallback;
+    calcChain->deletedCallback = (ChainAddedCallback)ScreenEffect_DeletedCallback;
+    calcChain->arg = effect;
+    effect->type = type;
+    effect->duration = duration;
+    effect->genericParam = effectParam1;
+    effect->shakinessParam = effectParam2;
+    effect->unusedParam = unusedEffectParam;
 
-    if (g_FuncChain.AddToCalcChain(calcChainElem, TH_CHAIN_PRIO_CALC_SCREENEFFECT) != ZUN_SUCCESS)
+    if (g_FuncChain.AddToCalcChain(calcChain, TH_CHAIN_PRIO_CALC_SCREENEFFECT) != ZUN_SUCCESS)
     {
         return NULL;
     }
 
-    if (drawChainElem != NULL)
+    if (drawChain != NULL)
     {
-        drawChainElem->arg = createdEffect;
-        g_FuncChain.AddToDrawChain(drawChainElem, TH_CHAIN_PRIO_DRAW_SCREENEFFECT);
+        drawChain->arg = effect;
+        g_FuncChain.AddToDrawChain(drawChain, TH_CHAIN_PRIO_DRAW_SCREENEFFECT);
     }
 
-    createdEffect->calcChainElement = calcChainElem;
-    createdEffect->drawChainElement = drawChainElem;
-    return createdEffect;
+    effect->calcChain = calcChain;
+    effect->drawChain = drawChain;
+    return effect;
 }
 } // namespace th06

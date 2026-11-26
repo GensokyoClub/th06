@@ -369,7 +369,7 @@ ZunResult SoundPlayer::LoadWav(char *path)
     numSamplesPerSec = waveFile.m_pwfx->nSamplesPerSec;
     notifySize =
         numSamplesPerSec * BACKGROUND_MUSIC_STREAM_SECONDS * blockAlign / BACKGROUND_MUSIC_STREAM_NOTIFICATIONS;
-    notifySize -= (notifySize % blockAlign);
+    notifySize -= notifySize % blockAlign;
 #if BUILT_SINCE(100)
 #if BUILT_SINCE(101)
     this->backgroundMusicUpdateEvent = CreateEvent(NULL, FALSE, FALSE, NULL);

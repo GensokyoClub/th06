@@ -73,7 +73,7 @@ void RotatePoint(D3DXVECTOR3 *outVector, D3DXVECTOR3 *point, f32 angle);
 #define RAMP_DOWN_RANGE(high, low, time, duration) high - RAMP_UP(low, time, duration)
 #define RAMP_DOWN(val, time, duration) RAMP_DOWN_RANGE(val, val, time, duration)
 
-#define MULTIPLE_OF(val, mult) !((i32)(val) % (mult))
+#define MULTIPLE_OF(val, mult) !((val) % (mult))
 
 // 1.00/1.01 store a button bitmask; 1.02 switches to signed button indices.
 #if BUILT_SINCE(102)

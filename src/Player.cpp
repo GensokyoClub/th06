@@ -421,7 +421,7 @@ i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPosition, D3DXVECTOR3 *enemySize
                 bullet->size.x = 48.0f;
                 bullet->size.y = 48.0f;
             }
-            if (MULTIPLE_OF(bullet->lifetime, 6))
+            if (MULTIPLE_OF((i32)bullet->lifetime, 6))
             {
                 g_EffectManager.SpawnParticles(PARTICLE_SPARK_RED, &bullet->position);
             }
@@ -441,7 +441,7 @@ i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPosition, D3DXVECTOR3 *enemySize
             bullet->velocity.x /= 8.0f;
             bullet->velocity.y /= 8.0f;
         }
-        else if (!(++this->particleTimer % 8))
+        else if (MULTIPLE_OF(++this->particleTimer, 8))
         {
             bulletTopLeft = *enemyPosition;
             bulletTopLeft.x = bullet->position.x;
@@ -465,7 +465,7 @@ i32 Player::CalcDamageToEnemy(D3DXVECTOR3 *enemyPosition, D3DXVECTOR3 *enemySize
         }
         damage += this->damageRegionDamage[i];
         this->damageRegionDamageDealt[i] += this->damageRegionDamage[i];
-        if (!(++this->particleTimer % 4))
+        if (MULTIPLE_OF(++this->particleTimer, 4))
         {
             g_EffectManager.SpawnParticles(PARTICLE_BOMB_FLASH, enemyPosition);
         }
@@ -1044,8 +1044,7 @@ static ChainCallbackResult Player_OnUpdate(Player *player)
     {
         if (player->respawnTimer != 0)
         {
-            player->respawnTimer--;
-            if (player->respawnTimer == 0)
+            if (--player->respawnTimer == 0)
             {
                 g_GameManager.fullPowerScoreIdx = 0;
                 if (g_GameManager.livesRemaining > 0)

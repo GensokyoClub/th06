@@ -232,7 +232,7 @@ ChainCallbackResult MainMenu_OnUpdate(MainMenu *menu)
             }
             mapping++;
 #endif
-            if (!(i % 2))
+            if (MULTIPLE_OF(i, 2))
             {
                 g_AnmManager->SetSprite(vmList, mapping / 10 + ANM_SPRITE_TITLE01_START);
             }

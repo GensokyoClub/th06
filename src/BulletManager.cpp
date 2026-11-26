@@ -992,7 +992,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
             if (curLaser->timer >= curLaser->hitboxStartTime)
             {
                 g_Player.CalcLaserHitbox(&laserCenter, &laserSize, &curLaser->pos, curLaser->angle,
-                                         MULTIPLE_OF(curLaser->timer, LASER_GRAZE_RATE));
+                                         MULTIPLE_OF((i32)curLaser->timer, LASER_GRAZE_RATE));
             }
 
             if (curLaser->timer < curLaser->startTime)
@@ -1005,7 +1005,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
             // fallthrough
         case LASER_STATE_ACTIVE:
             g_Player.CalcLaserHitbox(&laserCenter, &laserSize, &curLaser->pos, curLaser->angle,
-                                     MULTIPLE_OF(curLaser->timer, LASER_GRAZE_RATE));
+                                     MULTIPLE_OF((i32)curLaser->timer, LASER_GRAZE_RATE));
 
             if (curLaser->timer < curLaser->duration)
             {
@@ -1051,7 +1051,7 @@ static ChainCallbackResult BulletManager_OnUpdate(BulletManager *mgr)
             if (curLaser->timer < curLaser->hitboxEndDelay)
             {
                 g_Player.CalcLaserHitbox(&laserCenter, &laserSize, &curLaser->pos, curLaser->angle,
-                                         MULTIPLE_OF(curLaser->timer, LASER_GRAZE_RATE));
+                                         MULTIPLE_OF((i32)curLaser->timer, LASER_GRAZE_RATE));
             }
 
             if (curLaser->timer < curLaser->despawnDuration)

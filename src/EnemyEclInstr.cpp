@@ -242,7 +242,7 @@ void ExInsStage56Func4(Enemy *enemy, EclRawInstr *curInstr)
                 }
 
                 if (currentBullet->vm.sprite != NULL && currentBullet->vm.sprite->height >= BULLET_SIZE_MEDIUM &&
-                    currentBullet->color != BULLET_GREEN8 && !(g_Rng.GetRandomU16() % 4))
+                    currentBullet->color != BULLET_GREEN8 && MULTIPLE_OF(g_Rng.GetRandomU16(), 4))
                 {
                     currentBullet->color = BULLET_GREEN8;
                     g_AnmManager->SetSprite(&currentBullet->vm, currentBullet->vm.baseSpriteId + currentBullet->color);
@@ -280,7 +280,7 @@ void ExInsStage56Func4(Enemy *enemy, EclRawInstr *curInstr)
                 }
 
                 if (currentBullet->vm.sprite != NULL && currentBullet->vm.sprite->height >= BULLET_SIZE_MEDIUM &&
-                    currentBullet->color != BULLET_GREEN8 && !(g_Rng.GetRandomU16() % 4))
+                    currentBullet->color != BULLET_GREEN8 && MULTIPLE_OF(g_Rng.GetRandomU16(), 4))
                 {
                     currentBullet->color = BULLET_GREEN8;
                     g_AnmManager->SetSprite(&currentBullet->vm, currentBullet->vm.baseSpriteId + currentBullet->color);
@@ -421,8 +421,9 @@ void ExInsBatWingEffect(Enemy *enemy, EclRawInstr *curInstr)
 #if BUILT_SINCE(100)
         enemy->batWingEffectTimer.HasTicked() &&
 #endif
-        (enemy->batWingEffectTimer > 120 || (enemy->batWingEffectTimer > 60 && !(enemy->batWingEffectTimer % 2)) ||
-         (enemy->batWingEffectTimer > 30 && !(enemy->batWingEffectTimer % 4)) || !(enemy->batWingEffectTimer % 8)))
+        (enemy->batWingEffectTimer > 120 || (enemy->batWingEffectTimer > 60 && MULTIPLE_OF(enemy->batWingEffectTimer, 2)) ||
+         (enemy->batWingEffectTimer > 30 && MULTIPLE_OF(enemy->batWingEffectTimer, 4)) ||
+         MULTIPLE_OF(enemy->batWingEffectTimer, 8)))
     {
         baseAngleModifier = enemy->batWingEffectTimer % 16;
         baseAngleModifier = g_Rng.GetRandomU16InRange(baseAngleModifier / 2) + baseAngleModifier / 2;

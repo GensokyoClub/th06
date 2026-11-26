@@ -1388,7 +1388,7 @@ i32 ResultScreen::HandleReplaySaveKeyboard()
         right_press_skip_spaces:
             this->selectedCharacter++;
 
-            if (!(this->selectedCharacter % RESULT_KEYBOARD_COLUMNS))
+            if (this->selectedCharacter % RESULT_KEYBOARD_COLUMNS == 0)
             {
                 this->selectedCharacter -= RESULT_KEYBOARD_COLUMNS;
             }

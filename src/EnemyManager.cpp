@@ -177,7 +177,7 @@ void EnemyManager::RunEclTimeline()
         // number of lives lost?
         i32 subrankIncreaseFrame = 10 * 4 * 60;
         subrankIncreaseFrame -= g_GameManager.GetLives() * 4 * 60;
-        if (this->timelineTime.HasTicked() && MULTIPLE_OF(this->timelineTime, subrankIncreaseFrame))
+        if (this->timelineTime.HasTicked() && MULTIPLE_OF((i32)this->timelineTime, subrankIncreaseFrame))
         {
             g_GameManager.IncreaseSubrank(100);
         }
@@ -649,7 +649,7 @@ static ChainCallbackResult EnemyManager_OnUpdate(EnemyManager *mgr)
                     }
                     else if (curEnemy->itemDrop == ITEM_RANDOM_ITEM)
                     {
-                        if (!(mgr->randomItemSpawnIndex % ITEM_SPAWNS))
+                        if (MULTIPLE_OF(mgr->randomItemSpawnIndex, ITEM_SPAWNS))
                         {
                             g_EffectManager.SpawnParticles(curEnemy->deathSparkParticle + PARTICLE_SPARK,
                                                            &curEnemy->position, 6);

@@ -46,7 +46,7 @@ void BombReimuACalc(Player *player)
     }
     if (player->bomb.timer >= 60 && player->bomb.timer < 180)
     {
-        if (MULTIPLE_OF(player->bomb.timer, 16))
+        if (MULTIPLE_OF((i32)player->bomb.timer, 16))
         {
             i = ((i32)player->bomb.timer - 60) / 16;
             if (i != 0)
@@ -301,7 +301,7 @@ void BombReimuBCalc(Player *player)
         for (i = 0; i < REIMU_B_BOMB_PROJECTILES; i++)
         {
             g_AnmManager->RunAnm(&player->bomb.vms[i]);
-            if (player->bomb.timer.HasTicked() && !MULTIPLE_OF(player->bomb.timer, 2))
+            if (player->bomb.timer.HasTicked() && !MULTIPLE_OF((i32)player->bomb.timer, 2))
             {
                 player->cancelRegions[i].pos.x = player->bomb.projectilePosition[i].x + player->bomb.vms[i].offset.x;
                 player->cancelRegions[i].pos.y = player->bomb.projectilePosition[i].y + player->bomb.vms[i].offset.y;
@@ -377,7 +377,7 @@ void BombMarisaACalc(Player *player)
         {
             player->bomb.projectilePosition[i] += player->bomb.projectileVelocity[i] * g_Supervisor.gameSpeed;
 
-            if (player->bomb.timer.HasTicked() && !MULTIPLE_OF(player->bomb.timer, 3))
+            if (player->bomb.timer.HasTicked() && !MULTIPLE_OF((i32)player->bomb.timer, 3))
             {
                 player->cancelRegions[i].pos.x = player->bomb.projectilePosition[i].x;
                 player->cancelRegions[i].pos.y = player->bomb.projectilePosition[i].y;
@@ -476,7 +476,7 @@ void BombMarisaBCalc(Player *player)
             ScreenEffect_RegisterChain(SCREEN_EFFECT_SHAKE, 200, 24, 0, 0);
         }
 
-        if (player->bomb.timer.HasTicked() && !MULTIPLE_OF(player->bomb.timer, 4))
+        if (player->bomb.timer.HasTicked() && !MULTIPLE_OF((i32)player->bomb.timer, 4))
         {
             player->cancelRegions[0].pos.x = GAME_REGION_CENTER_X;
             player->cancelRegions[0].pos.y = player->position.y / 2.0f;

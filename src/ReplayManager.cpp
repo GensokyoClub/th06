@@ -61,7 +61,7 @@ static ChainCallbackResult ReplayManager_OnUpdateDemoHighPrio(ReplayManager *mgr
     {
         if (g_CountFramesInputsWereHeld >= 30)
         {
-            if (!(g_CountFramesInputsWereHeld % 8))
+            if (MULTIPLE_OF(g_CountFramesInputsWereHeld, 8))
             {
                 g_IsEigthFrameInput = true;
             }

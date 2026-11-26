@@ -76,7 +76,8 @@ BOOL MusicRoom::ProcessInput()
             char lineCharBuffer[64];
             memset(lineCharBuffer, 0, sizeof(lineCharBuffer));
 
-            if (!(i % 2) || strlen(this->trackDescriptors[this->selectedSongIndex].description[i / 2]) > 32)
+            if (MULTIPLE_OF(i, 2) ||
+                strlen(this->trackDescriptors[this->selectedSongIndex].description[i / 2]) > 32)
             {
                 memcpy(lineCharBuffer,
                        &this->trackDescriptors[this->selectedSongIndex].description[i / 2][(i % 2) * 32], 32);
@@ -353,7 +354,8 @@ finishMusiccmtRead:
         char lineCharBuffer[64];
         memset(lineCharBuffer, 0, sizeof(lineCharBuffer));
 
-        if (!(i % 2) || strlen(musicRoom->trackDescriptors[musicRoom->selectedSongIndex].description[i / 2]) > 32)
+        if (MULTIPLE_OF(i, 2) ||
+            strlen(musicRoom->trackDescriptors[musicRoom->selectedSongIndex].description[i / 2]) > 32)
         {
             memcpy(lineCharBuffer, &musicRoom->trackDescriptors[0].description[i / 2][(i % 2) * 32], 32);
         }

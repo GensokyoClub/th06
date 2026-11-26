@@ -304,7 +304,7 @@ ZunResult MidiOutput::ParseFile(i32 fileIdx)
     //  patterns
     this->format = ConvWord(info->format);
 
-    // Read the divisions of this file. Note that this doesn't appear to support
+    // Read the time division of this file. Note that this doesn't appear to support
     // "negative SMPTE format", which happens when the MSB is set.
     this->divisions = ConvWord(info->divisions);
     // Read the number of tracks in this midi file.
@@ -377,7 +377,7 @@ ZunResult MidiOutput::Play()
     }
 
     this->PlayTracks();
-    this->midiOutDev.OpenDevice(0xFFFFFFFF);
+    this->midiOutDev.OpenDevice(MIDI_MAPPER);
     this->StartTimer(1, NULL, NULL);
 
     return ZUN_SUCCESS;

@@ -421,7 +421,8 @@ void ExInsBatWingEffect(Enemy *enemy, EclRawInstr *curInstr)
 #if BUILT_SINCE(100)
         enemy->batWingEffectTimer.HasTicked() &&
 #endif
-        (enemy->batWingEffectTimer > 120 || (enemy->batWingEffectTimer > 60 && MULTIPLE_OF(enemy->batWingEffectTimer, 2)) ||
+        (enemy->batWingEffectTimer > 120 ||
+         (enemy->batWingEffectTimer > 60 && MULTIPLE_OF(enemy->batWingEffectTimer, 2)) ||
          (enemy->batWingEffectTimer > 30 && MULTIPLE_OF(enemy->batWingEffectTimer, 4)) ||
          MULTIPLE_OF(enemy->batWingEffectTimer, 8)))
     {
